@@ -16,6 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from rest_framework import routers
+from app.views import PrimerViewSet
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 ]
+
+router = routers.DefaultRouter()
+router.register(r'primers', PrimerViewSet)
+urlpatterns += router.urls
