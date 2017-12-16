@@ -4,4 +4,4 @@ from .models import Primer
 class PrimerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Primer
-        fields = ('code',)
+        fields = ('url', 'code',)
