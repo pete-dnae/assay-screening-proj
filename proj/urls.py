@@ -17,7 +17,11 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from rest_framework import routers
-from app.views import PrimerViewSet, PrimerPairViewSet
+
+from app.views import PrimerViewSet
+from app.views import PrimerPairViewSet
+from app.views import OrganismViewSet
+from app.views import ArgViewSet
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -26,4 +30,7 @@ urlpatterns = [
 router = routers.DefaultRouter()
 router.register(r'primers', PrimerViewSet)
 router.register(r'primer-pairs', PrimerPairViewSet)
+router.register(r'organisms', OrganismViewSet)
+router.register(r'args', ArgViewSet)
+
 urlpatterns += router.urls

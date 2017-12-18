@@ -42,3 +42,14 @@ class PrimerPair(models.Model):
         self.string_code = '_X_'.join((
                 self.fwd_primer.string_code, self.rev_primer.string_code))
         super().save(*args, **kwargs)
+
+
+class Organism(models.Model):
+    abbreviation = models.CharField(
+            max_length=8, primary_key=True, unique=True)
+    full_name = models.CharField(max_length=30, unique=True)
+
+
+class Arg(models.Model):
+    name = models.CharField(
+            max_length=8, primary_key=True, unique=True)
