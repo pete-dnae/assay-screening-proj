@@ -53,3 +53,27 @@ class Organism(models.Model):
 class Arg(models.Model):
     name = models.CharField(
             max_length=8, primary_key=True, unique=True)
+
+
+class Strain(models.Model):
+    name = models.CharField(
+            max_length=20, primary_key=True, unique=True)
+    organism = models.ForeignKey(
+        Organism, related_name='strain', on_delete=models.PROTECT)
+    arg = models.ForeignKey(
+        Arg, related_name='Arg', on_delete=models.PROTECT)
+    genome_size = models.BigIntegerField()
+
+
+class CyclingPattern(models.Model):
+    pattern_name = models.CharField(
+            max_length=80, primary_key=True, unique=True)
+    activation_time = models.PositiveIntegerField()
+    activation_temp = models.PositiveIntegerField()
+    num_cycles = models.PositiveIntegerField()
+    denature_temp = models.PositiveIntegerField()
+    denature_time = models.PositiveIntegerField()
+    anneal_temp = models.PositiveIntegerField()
+    anneal_time = models.PositiveIntegerField()
+    extend_temp = models.PositiveIntegerField()
+    extend_time = models.PositiveIntegerField()

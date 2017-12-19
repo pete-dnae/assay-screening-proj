@@ -4,11 +4,15 @@ from .models import Primer
 from .models import PrimerPair
 from .models import Organism
 from .models import Arg
+from .models import Strain
+from .models import CyclingPattern
 
 from .serializers import PrimerSerializer
 from .serializers import PrimerPairSerializer
 from .serializers import OrganismSerializer
 from .serializers import ArgSerializer
+from .serializers import StrainSerializer
+from .serializers import CyclingPatternSerializer
 
 
 class PrimerViewSet(viewsets.ModelViewSet):
@@ -29,3 +33,13 @@ class OrganismViewSet(viewsets.ModelViewSet):
 class ArgViewSet(viewsets.ModelViewSet):
     queryset = Arg.objects.all()
     serializer_class = ArgSerializer
+
+
+class StrainViewSet(viewsets.ModelViewSet):
+    queryset = Strain.objects.all()
+    serializer_class = StrainSerializer
+
+
+class CyclingPatternViewSet(viewsets.ModelViewSet):
+    queryset = CyclingPattern.objects.all()
+    serializer_class = CyclingPatternSerializer

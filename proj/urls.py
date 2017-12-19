@@ -22,6 +22,8 @@ from app.views import PrimerViewSet
 from app.views import PrimerPairViewSet
 from app.views import OrganismViewSet
 from app.views import ArgViewSet
+from app.views import StrainViewSet
+from app.views import CyclingPatternViewSet
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -32,5 +34,7 @@ router.register(r'primers', PrimerViewSet)
 router.register(r'primer-pairs', PrimerPairViewSet)
 router.register(r'organisms', OrganismViewSet)
 router.register(r'args', ArgViewSet)
+router.register(r'strains', StrainViewSet)
+router.register(r'cycling-patterns', CyclingPatternViewSet)
 
 urlpatterns += router.urls
