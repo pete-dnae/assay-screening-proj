@@ -5,6 +5,7 @@ from .models import Organism
 from .models import Arg
 from .models import Strain
 from .models import CyclingPattern
+from .models import Concentration
 
 
 class PrimerSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,6 +23,7 @@ class PrimerPairSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class OrganismSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Organism
         fields = ('url', 'abbreviation', 'full_name')
@@ -46,3 +48,11 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'pattern_name', 'activation_time', 'activation_temp',
             'num_cycles', 'denature_temp', 'denature_time', 'anneal_temp', 
             'anneal_time', 'extend_temp', 'extend_time')
+
+
+class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
+    string_code = serializers.CharField(source='__str__', read_only=True)
+
+    class Meta:
+        model = Concentration
+        fields = ('url', 'string_code', 'stock', 'final', 'units')

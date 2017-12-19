@@ -24,6 +24,7 @@ from app.views import OrganismViewSet
 from app.views import ArgViewSet
 from app.views import StrainViewSet
 from app.views import CyclingPatternViewSet
+from app.views import ConcentrationViewSet
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -36,5 +37,6 @@ router.register(r'organisms', OrganismViewSet)
 router.register(r'args', ArgViewSet)
 router.register(r'strains', StrainViewSet)
 router.register(r'cycling-patterns', CyclingPatternViewSet)
+router.register(r'concentrations', ConcentrationViewSet)
 
 urlpatterns += router.urls

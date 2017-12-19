@@ -11,6 +11,17 @@ ROLE_CHOICES = (
     ('ID', 'Identification'),
 )
 
+CONC_UNITS_CHOICES = (
+    ('X', 'X'),
+    ('mM', 'mM'),
+    ('mg/ml', 'mg/ml'),
+    ('mM each', 'mM each'),
+    ('microM each', 'microM each'),
+    ('ng/ul', 'ng/ul'),
+    ('cp/ul', 'cp/ul'),
+    ('%', '%'),
+)
+
 
 class Primer(models.Model):
     string_code = models.CharField(
@@ -33,7 +44,6 @@ class PrimerPair(models.Model):
     role = models.CharField(max_length=2, choices=ROLE_CHOICES)
 
 
-
     """
     Override save(), in order to keep the string_code field in synch with
     the forward and reverse primers used.
@@ -48,6 +58,9 @@ class Organism(models.Model):
     abbreviation = models.CharField(
             max_length=8, primary_key=True, unique=True)
     full_name = models.CharField(max_length=30, unique=True)
+
+    def __str__(self):
+        return '%s:%s' % (self.abbreviation, self.full_name)
 
 
 class Arg(models.Model):
@@ -77,3 +90,12 @@ class CyclingPattern(models.Model):
     anneal_time = models.PositiveIntegerField()
     extend_temp = models.PositiveIntegerField()
     extend_time = models.PositiveIntegerField()
+
+
+class Concentration(models.Model):
+    stock = models.DecimalField(max_digits=8, decimal_places=2)
+    final = models.DecimalField(max_digits=8, decimal_places=2)
+    units = models.CharField(max_length=15, choices=CONC_UNITS_CHOICES)
+
+    def __str__(self):
+        return '%.2f->%.2f->%s' % (self.stock, self.final, self.units)

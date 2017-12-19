@@ -6,6 +6,7 @@ from .models import Organism
 from .models import Arg
 from .models import Strain
 from .models import CyclingPattern
+from .models import Concentration
 
 from .serializers import PrimerSerializer
 from .serializers import PrimerPairSerializer
@@ -13,6 +14,7 @@ from .serializers import OrganismSerializer
 from .serializers import ArgSerializer
 from .serializers import StrainSerializer
 from .serializers import CyclingPatternSerializer
+from .serializers import ConcentrationSerializer
 
 
 class PrimerViewSet(viewsets.ModelViewSet):
@@ -43,3 +45,8 @@ class StrainViewSet(viewsets.ModelViewSet):
 class CyclingPatternViewSet(viewsets.ModelViewSet):
     queryset = CyclingPattern.objects.all()
     serializer_class = CyclingPatternSerializer
+
+
+class ConcentrationViewSet(viewsets.ModelViewSet):
+    queryset = Concentration.objects.all()
+    serializer_class = ConcentrationSerializer
