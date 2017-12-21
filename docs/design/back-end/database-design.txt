@@ -1,0 +1,145 @@
+-------------------------------------------------------------------------------
+SUMMARY
+-------------------------------------------------------------------------------
+
+Concentration           Stock and final dilution ratio, plus units.
+ConcreateReagent        E.g. BSA.
+BufferMix               Table containing concrete reagents and volumes.
+MixedReagent            Meta-reagent comprising a BufferMix + concentration.
+PlaceHolderReagent      Generic type of reagent - e.g. Primer or Template.
+MasterMix               Table containing all types of reagents and volumes. 
+
+Gene                    E.g. uidA
+Primer                  Either a forward or reverse primer. E.g. Eco66
+PrimerPair              A matched pair of fwd/rev primers.
+PrimerKit               Collection of all primer pairs used in an experiment.
+
+Organism                E.g. Enterococcus faecalis.
+Arg                     E.g. vanB.
+Strain                  E.g. ATCC BAA-1705.
+StrainKit               Collection of all strains used in an experiment.
+
+CyclingPattern          Times, temparatures and counts.
+
+RowPattern              Describes a repeat pattern for a given row on a plate.
+AllocationInstructions  Repeat and pattern recipe for a plate.
+Plate                   Everything pertaining to a single plate.
+Experiment              Everything pertaining to one experiment.
+
+
+
+-------------------------------------------------------------------------------
+Detailed Properties for Each Type
+-------------------------------------------------------------------------------
+
+Concentration
+    Stock 
+    Final
+    Units
+
+ConcreteReagent
+    Name
+    Lot
+    Concentration
+
+BufferMix
+    List of ConcreteReagent(s)
+    Volume
+    Final volume
+
+MixedReagent
+    BufferMix
+    Concentration
+
+PlaceholderReagent
+    Type {Primer|Template|gDNA}
+    Concentration
+
+MasterMix
+    List of ConcreteReagent(s)
+    List of MixedReagent(s)
+    List of PlaceHolderReagent(s)
+    Final volume
+
+Gene
+    Name
+
+Primer
+    Oligo code e.g. Eco66
+    Full name e.g. Ecol_UidA_1_157_23_IDf
+    Sequence, e.g. TTGAA....
+    Role fwd/rev
+    Organism that targets
+    Gene that targets
+
+Primer Pair
+    forward primer (Primer)
+    reverse primer (Primer)
+    good for preamp boolean
+    good for ID boolean
+
+Primer Kit
+    PA primers // List of PrimerPair(s)
+    ID primers // List of PrimerPair(s)
+    Fwd Primer Concentration
+    Rev Primer Concentration
+
+Organism
+    Name
+    Abbreviation
+
+ARG
+    Name
+
+Strain
+    Name
+    Organism
+    Arg
+    Genome Size // e.g. 5300000
+
+StrainKit
+    List of Strain(s)
+
+CyclingPattern
+    Activation time
+    Activation temp
+    Number of cycles
+    Denat temp
+    Denat time
+    Anneal temp
+    Anneal time
+    Extend temp
+    Extend time
+
+RowPattern
+    Start column // 5
+    List of things // examples...
+        [5,5,500]
+        [None,None,None]
+        [Pool,Pool,Pool] 
+        [Ec_uidA_6.x_Eco63_Eco60, Efs_cpn60_1.x_Efs04_Efs01, 4 off]
+
+AllocationInstruction
+    Column group width // 4
+    Strain repeats // {Eco, EfsVanB, EfsVanB, Kok}
+    ID Primer repeats // Ec_uidA_x.2_Eco64_Eco66, Efs_cpn60_x.1_Efs03_Efs02
+    List of Template RowPattern(s)
+    List of gDNA RowPattern(s)
+    List of PA Primer RowPattern(s)
+    Dilution factor RowPattern
+    Suppressed Columns // {4,8,12}
+
+Plate
+    Name
+    AllocationInstruction
+
+Experiment
+    Designer name
+    PA MasterMix
+    ID MasterMix
+    PrimerKit
+    StrainsKit
+    List of Plate(s)
+    PA Cycling
+    ID Cycling
+
