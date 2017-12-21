@@ -128,6 +128,8 @@ STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, 'static'),
+    os.path.normpath(os.path.join(PROJECT_ROOT, '../webapp/dist/static')),
+    os.path.normpath(os.path.join(PROJECT_ROOT, '../webapp/dist')),
 ]
 
 # Simplified static file serving.

@@ -31,12 +31,12 @@ urlpatterns = [
 ]
 
 router = routers.DefaultRouter()
-router.register(r'app/primers', PrimerViewSet)
-router.register(r'app/primer-pairs', PrimerPairViewSet)
-router.register(r'app/organisms', OrganismViewSet)
-router.register(r'app/args', ArgViewSet)
-router.register(r'app/strains', StrainViewSet)
-router.register(r'app/cycling-patterns', CyclingPatternViewSet)
-router.register(r'app/concentrations', ConcentrationViewSet)
+router.register(r'api/primers', PrimerViewSet)
+router.register(r'api/primer-pairs', PrimerPairViewSet)
+router.register(r'api/organisms', OrganismViewSet)
+router.register(r'api/args', ArgViewSet)
+router.register(r'api/strains', StrainViewSet)
+router.register(r'api/cycling-patterns', CyclingPatternViewSet)
+router.register(r'api/concentrations', ConcentrationViewSet)
 
 urlpatterns += router.urls
