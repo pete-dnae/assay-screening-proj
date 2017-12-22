@@ -14,6 +14,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "bootstrap": "4.0.0-beta",
+    "jquery": "^3.2.1",
+    "node-sass": "^4.7.2",
+    "popper": "^1.0.1",
+    "popper.js": "^1.12.9",
+    "tooltip.js": "^1.1.7",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
