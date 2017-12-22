@@ -22,65 +22,114 @@ CONC_UNITS_CHOICES = (
     ('%', '%'),
 )
 
+PLACEHOLDER_CHOICES = (
+    ('Primer', 'Primer'),
+    ('Template', 'Template'),
+    ('gDNA', 'gDNA')
+)
 
-class Primer(models.Model):
-    string_code = models.CharField(
-            max_length=40, primary_key=True, unique=True)
-    direction = models.CharField(
-            max_length=7, choices=DIRECTION_CHOICES)
-
-
-class PrimerPair(models.Model):
-    # Note the *string_code* primary key is synthesised automatically in the 
-    # overidden save() method.
-    string_code = models.CharField(
-            primary_key=True, max_length=80, editable=False, unique=True)
-
-    fwd_primer = models.ForeignKey(
-        Primer, related_name='pair_fwd', on_delete=models.PROTECT)
-    rev_primer = models.ForeignKey(
-        Primer, related_name='pair_rev', on_delete=models.PROTECT)
-    # For ID or PA?
-    role = models.CharField(max_length=2, choices=ROLE_CHOICES)
+PRIMER_ROLE_CHOICES = (
+    ('fwd', 'forward'),
+    ('rev', 'reverse'),
+)
 
 
-    """
-    Override save(), in order to keep the string_code field in synch with
-    the forward and reverse primers used.
-    """
-    def save(self, *args, **kwargs):
-        self.string_code = '_X_'.join((
-                self.fwd_primer.string_code, self.rev_primer.string_code))
-        super().save(*args, **kwargs)
+class Concentration(models.Model):
+    stock = models.DecimalField(max_digits=8, decimal_places=2)
+    final = models.DecimalField(max_digits=8, decimal_places=2)
+    units = models.CharField(max_length=15, choices=CONC_UNITS_CHOICES)
+
+
+class ConcreteReagent(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    lot = models.CharField(max_length=30, unique=True)
+    concentration = models.ForeignKey(
+        Concentration, related_name='reagent', on_delete=models.PROTECT)
+
+
+class BufferMix(models.Model):
+    concrete_reagents = models.ManyToManyField(ConcreteReagents)
+    volume = models.PositiveIntegerField()
+    final_volume = models.PositiveIntegerField()
+
+
+class MixedReagent(models.Model):
+    MIXED_REAGENT = 'mixed_reagent'
+    buffer_mix = models.ForeignKey(BufferMix, 
+        related_name=self.MIXED_REAGENT, on_delete=models.PROTECT)
+    concentration = models.ForeignKey(Concentration, 
+        related_name=self.MIXED_REAGENT, on_delete=models.PROTECT)
+
+
+class PlaceholderReagent(models.Model):
+    type = models.CharField(max_length=15, choices=PLACEHOLDER_CHOICES)
+    concentration = models.ForeignKey(Concentration, 
+        related_name='placeholder_reagent', on_delete=models.PROTECT)
+
+
+class MasterMix(models.Model):
+    concrete_reagents = models.ManyToManyField(ConcreteReagents)
+    mixed_reagents = models.ManyToManyField(MixedReagents)
+    placeholder_reagents = models.ManyToManyField(PlaceholderReagents)
+    final_volume = models.PositiveIntegerField()
+
+
+class Gene(models.Model):
+    name = models.CharField(max_length=30, unique=True)
 
 
 class Organism(models.Model):
-    abbreviation = models.CharField(
-            max_length=8, primary_key=True, unique=True)
+    abbreviation = models.CharField(max_length=8, unique=True)
     full_name = models.CharField(max_length=30, unique=True)
 
-    def __str__(self):
-        return '%s:%s' % (self.abbreviation, self.full_name)
 
+class Primer(models.Model):
+    oligo_code = models.CharField(max_length=30, unique=True)
+    full_name = models.CharField(max_length=50, unique=True)
+    sequence = models.CharField(max_length=30, unique=True)
+    role = models.CharField(max_length=15, choices=PRIMER_ROLE_CHOICES)
+    organism = models.ForeignKey(Organism, 
+        related_name='primer', on_delete=models.PROTECT)
+    gene = models.ForeignKey(Gene, 
+        related_name='primer', on_delete=models.PROTECT)
+
+
+class PrimerPair(models.Model):
+    forward_primer = models.ForeignKey(Primer, 
+        related_name='primer_pair_fwd', on_delete=models.PROTECT)
+    reverse_primer = models.ForeignKey(Primer, 
+        related_name='primer_pair_rev', on_delete=models.PROTECT)
+    suitable_for_pa = models.BooleanField()
+    suitable_for_id = models.BooleanField()
+
+
+class PrimerKit(models.Model):
+    pa_primers = models.ManyToManyField(PrimerPair)
+    id_primers = models.ManyToManyField(PrimerPair)
+    fwd_concentration = models.ForeignKey(Concentration, 
+        related_name='primer_kit_fwd', on_delete=models.PROTECT)
+    rev_concentration = models.ForeignKey(Concentration, 
+        related_name='primer_kit_rev', on_delete=models.PROTECT)
+    
 
 class Arg(models.Model):
-    name = models.CharField(
-            max_length=8, primary_key=True, unique=True)
+    name = models.CharField(max_length=30, unique=True)
 
 
 class Strain(models.Model):
-    name = models.CharField(
-            max_length=20, primary_key=True, unique=True)
-    organism = models.ForeignKey(
-        Organism, related_name='strain', on_delete=models.PROTECT)
-    arg = models.ForeignKey(
-        Arg, related_name='Arg', on_delete=models.PROTECT)
+    name = models.CharField(max_length=30, unique=True)
+    organism = models.ForeignKey(Organism, 
+        related_name='strain_organism', on_delete=models.PROTECT)
+    arg = models.ForeignKey(Arg, 
+        related_name='strain_arg', on_delete=models.PROTECT)
     genome_size = models.BigIntegerField()
 
 
+class StrainKit(models.Model):
+    strains = models.ManyToManyField(Strain)
+
+
 class CyclingPattern(models.Model):
-    pattern_name = models.CharField(
-            max_length=80, primary_key=True, unique=True)
     activation_time = models.PositiveIntegerField()
     activation_temp = models.PositiveIntegerField()
     num_cycles = models.PositiveIntegerField()
@@ -92,10 +141,55 @@ class CyclingPattern(models.Model):
     extend_time = models.PositiveIntegerField()
 
 
-class Concentration(models.Model):
-    stock = models.DecimalField(max_digits=8, decimal_places=2)
-    final = models.DecimalField(max_digits=8, decimal_places=2)
-    units = models.CharField(max_length=15, choices=CONC_UNITS_CHOICES)
+class RowPattern(models.Model):
+    """
+    A row pattern is a sequence of string *items* that should be allocated to
+    columns in a row, in left-to-right fashion, starting at a particular
+    column. This model represents the item sequence in a single composite
+    string using comma as a delimiter.
+    """
 
-    def __str__(self):
-        return '%.2f->%.2f->%s' % (self.stock, self.final, self.units)
+    start_column = models.PositiveIntegerField()
+    """
+    Examples of items_csv field:
+
+        "5,5,500"
+        "None,None,None"
+        "Ec_uidA_6.x_Eco63_Eco60, Efs_cpn60_1.x_Efs01, etc'
+
+    In the final example, these are strings as provided by
+    PrimerPair.string_code()
+    """
+    items_csv = models.CharField(max_length=200)
+
+
+class AllocationInstructions(models.Model):
+    column_group_width = models.PositiveIntegerField() # e.g. 4
+
+    # These fields that are repeated for each column group.
+    strain_repeats = models.ManyToManyField(Strain)
+    id_primer_repeats = models.ManyToManyField(PrimerPair)
+
+    # These fields are broadcast (or expanded) according
+    # to RowPattern(s).
+    strain_expansions = models.ManyToManyField(RowPattern)
+    strain_count_expansions = models.ManyToManyField(RowPattern)
+    gdna_expansions = models.ManyToManyField(RowPattern)
+    pa_primer_expansions = models.ManyToManyField(RowPattern)
+    
+    # This field has a global RowPattern
+    dilution_factor = models.ForeignKey(RowPattern, 
+        related_name='dilution_factor', on_delete=models.PROTECT)
+
+    # e.g. "4, 8, 12"
+    suppressed_columns = models.CharField(max_length=200) 
+
+
+class Plate(models.Model):
+    name = models.CharField(max_length=20) 
+    allocation_instruction = models.ForeignKey(AlloctionInstruction, 
+        related_name='plate', on_delete=models.PROTECT)
+
+class
+
+

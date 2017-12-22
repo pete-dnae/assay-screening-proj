@@ -7,6 +7,25 @@ from .models import Strain
 from .models import CyclingPattern
 from .models import Concentration
 
+class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Concentration
+        fields = ('url', 'id', 'stock', 'final', 'units')
+
+
+class ConcreteReagentSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ConcreteReagent
+        fields = ('url', 'id', 'stock', 'final', 'units', 'concentration')
+
+
+
+
+
+
+
 
 class PrimerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -50,9 +69,3 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
             'anneal_time', 'extend_temp', 'extend_time')
 
 
-class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
-    string_code = serializers.CharField(source='__str__', read_only=True)
-
-    class Meta:
-        model = Concentration
-        fields = ('url', 'string_code', 'stock', 'final', 'units')
