@@ -19,15 +19,6 @@ from django.contrib import admin
 from rest_framework import routers
 
 from app.views import ConcentrationViewSet
-from app.views import ConcreteReagentSet
-
-from app.views import PrimerViewSet
-from app.views import PrimerPairViewSet
-from app.views import OrganismViewSet
-from app.views import ArgViewSet
-from app.views import StrainViewSet
-from app.views import CyclingPatternViewSet
-from app.views import ConcentrationViewSet
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -36,13 +27,5 @@ urlpatterns = [
 router = routers.DefaultRouter()
 
 router.register(r'api/concentrations', ConcentrationViewSet)
-router.register(r'api/concentrations', ConcreteReagentViewSet)
-
-router.register(r'api/primers', PrimerViewSet)
-router.register(r'api/primer-pairs', PrimerPairViewSet)
-router.register(r'api/organisms', OrganismViewSet)
-router.register(r'api/args', ArgViewSet)
-router.register(r'api/strains', StrainViewSet)
-router.register(r'api/cycling-patterns', CyclingPatternViewSet)
 
 urlpatterns += router.urls

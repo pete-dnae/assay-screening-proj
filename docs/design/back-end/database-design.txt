@@ -40,25 +40,25 @@ Concentration
 ConcreteReagent
     Name
     Lot
-    Concentration
+    FK:Concentration
 
 BufferMix
-    List of ConcreteReagent(s)
+    M:M List of ConcreteReagent(s)
     Volume
     Final volume
 
 MixedReagent
-    BufferMix
-    Concentration
+    FK: BufferMix
+    FK: Concentration
 
 PlaceholderReagent
     Type {Primer|Template|gDNA}
-    Concentration
+    FK: Concentration
 
 MasterMix
-    List of ConcreteReagent(s)
-    List of MixedReagent(s)
-    List of PlaceHolderReagent(s)
+    M:M List of ConcreteReagent(s)
+    M:M List of MixedReagent(s)
+    M:M List of PlaceHolderReagent(s)
     Final volume
 
 Gene
@@ -69,20 +69,20 @@ Primer
     Full name e.g. Ecol_UidA_1_157_23_IDf
     Sequence, e.g. TTGAA....
     Role fwd/rev
-    Organism that targets
-    Gene that targets
+    FK: Organism that targets
+    FK: Gene that targets
 
 Primer Pair
-    forward primer (Primer)
-    reverse primer (Primer)
+    FK: forward primer (Primer)
+    FK: reverse primer (Primer)
     good for preamp boolean
     good for ID boolean
 
 Primer Kit
-    PA primers // List of PrimerPair(s)
-    ID primers // List of PrimerPair(s)
-    Fwd Primer Concentration
-    Rev Primer Concentration
+    M:M PA primers // List of PrimerPair(s)
+    M:M ID primers // List of PrimerPair(s)
+    FK: Fwd Primer Concentration
+    FK: Rev Primer Concentration
 
 Organism
     Name
@@ -93,12 +93,12 @@ ARG
 
 Strain
     Name
-    Organism
-    Arg
+    FK: Organism
+    FK: Arg
     Genome Size // e.g. 5300000
 
 StrainKit
-    List of Strain(s)
+    M:M List of Strain(s)
 
 CyclingPattern
     Activation time
@@ -113,7 +113,7 @@ CyclingPattern
 
 RowPattern
     Start column // 5
-    List of things // examples...
+    List encoded in a single string
         [5,5,500]
         [None,None,None]
         [Pool,Pool,Pool] 
@@ -121,25 +121,25 @@ RowPattern
 
 AllocationInstruction
     Column group width // 4
-    Strain repeats // {Eco, EfsVanB, EfsVanB, Kok}
-    ID Primer repeats // Ec_uidA_x.2_Eco64_Eco66, Efs_cpn60_x.1_Efs03_Efs02
-    List of Template RowPattern(s)
-    List of gDNA RowPattern(s)
-    List of PA Primer RowPattern(s)
-    Dilution factor RowPattern
+    M:M Strain repeats // {Eco, EfsVanB, EfsVanB, Kok}
+    M:M ID Primer repeats // Ec_uidA_x.2_Eco64_Eco66, Efs_cpn60_x.1_Efs03_Efs02
+    M:M List of Template RowPattern(s)
+    M:M List of gDNA RowPattern(s)
+    M:M List of PA Primer RowPattern(s)
+    M:M Dilution factor RowPattern
     Suppressed Columns // {4,8,12}
 
 Plate
     Name
-    AllocationInstruction
+    F:K AllocationInstruction
 
 Experiment
     Designer name
-    PA MasterMix
-    ID MasterMix
-    PrimerKit
-    StrainsKit
-    List of Plate(s)
-    PA Cycling
-    ID Cycling
+    FK: PA MasterMix
+    ID FK: MasterMix
+    PrimerFK: Kit
+    StrainsKiFK: t
+    M:M List of Plate(s)
+    FK: PA Cycling
+    FK: ID Cycling
 

@@ -48,7 +48,7 @@ class ConcreteReagent(models.Model):
 
 
 class BufferMix(models.Model):
-    concrete_reagents = models.ManyToManyField(ConcreteReagents)
+    concrete_reagents = models.ManyToManyField(ConcreteReagent)
     volume = models.PositiveIntegerField()
     final_volume = models.PositiveIntegerField()
 
@@ -56,9 +56,9 @@ class BufferMix(models.Model):
 class MixedReagent(models.Model):
     MIXED_REAGENT = 'mixed_reagent'
     buffer_mix = models.ForeignKey(BufferMix, 
-        related_name=self.MIXED_REAGENT, on_delete=models.PROTECT)
+        related_name=MIXED_REAGENT, on_delete=models.PROTECT)
     concentration = models.ForeignKey(Concentration, 
-        related_name=self.MIXED_REAGENT, on_delete=models.PROTECT)
+        related_name=MIXED_REAGENT, on_delete=models.PROTECT)
 
 
 class PlaceholderReagent(models.Model):
@@ -68,9 +68,9 @@ class PlaceholderReagent(models.Model):
 
 
 class MasterMix(models.Model):
-    concrete_reagents = models.ManyToManyField(ConcreteReagents)
-    mixed_reagents = models.ManyToManyField(MixedReagents)
-    placeholder_reagents = models.ManyToManyField(PlaceholderReagents)
+    concrete_reagents = models.ManyToManyField(ConcreteReagent)
+    mixed_reagents = models.ManyToManyField(MixedReagent)
+    placeholder_reagents = models.ManyToManyField(PlaceholderReagent)
     final_volume = models.PositiveIntegerField()
 
 
@@ -187,7 +187,7 @@ class AllocationInstructions(models.Model):
 
 class Plate(models.Model):
     name = models.CharField(max_length=20) 
-    allocation_instruction = models.ForeignKey(AlloctionInstruction, 
+    allocation_instruction = models.ForeignKey(AllocationInstructions, 
         related_name='plate', on_delete=models.PROTECT)
 
 

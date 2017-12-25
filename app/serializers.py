@@ -1,11 +1,27 @@
 from rest_framework import serializers
+
+from .models import Concentration
+from .models import ConcreteReagent
+from .models import BufferMix
+from .models import MixedReagent
+from .models import PlaceholderReagent
+from .models import MasterMix
+from .models import Gene
+from .models import Organism
 from .models import Primer
 from .models import PrimerPair
-from .models import Organism
+from .models import PrimerKit
 from .models import Arg
 from .models import Strain
+from .models import StrainKit
 from .models import CyclingPattern
-from .models import Concentration
+from .models import RowPattern
+from .models import AllocationInstructions
+from .models import Plate
+from .models import Experiment
+
+
+
 
 class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -19,12 +35,6 @@ class ConcreteReagentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ConcreteReagent
         fields = ('url', 'id', 'stock', 'final', 'units', 'concentration')
-
-
-
-
-
-
 
 
 class PrimerSerializer(serializers.HyperlinkedModelSerializer):
@@ -67,5 +77,3 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'pattern_name', 'activation_time', 'activation_temp',
             'num_cycles', 'denature_temp', 'denature_time', 'anneal_temp', 
             'anneal_time', 'extend_temp', 'extend_time')
-
-
