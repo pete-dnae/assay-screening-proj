@@ -2,11 +2,18 @@
   <ul class="nav navbar-nav mt-3">
     <li class="dropdown dropdown-lg">
       <a href="#" class="dropdown-toggle float-left" data-toggle="dropdown">Rules <b class="caret"></b></a>
-      <ul class="dropdown-menu dropdown-menu-lg w-100">
+      <div v-bind:class="currentDisplayClass"  v-bind:style="currentDisplayStyle" onClick="event.stopPropagation();">
         <div class="row">
           <div class="input-group col-4 ml-3">
             <span class="input-group-addon" id="basic-addon1">Column Block</span>
             <input type="number" class="form-control" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
+          </div>
+          <div class="col-md-7">
+          </div>
+          <div class="col">
+            <a class="btn btn-danger"  aria-label="Delete" @click="handleRuleClose()">
+              <i class="fa fa-window-close" aria-hidden="true"></i>
+            </a>
           </div>
         </div>
         <div class="row mt-3">
@@ -45,39 +52,13 @@
             <div class="col">
               <span class="dropdown-header">Template Copies</span>
             </div>
-            <div class="col">
-              <select  multiple>
-                <option disabled value="">Please select one</option>
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
-                <option>E</option>
-                <option>F</option>
-              </select>
-            </div>
-            <div class="col">
-              <input placeholder="column numbers">
-            </div>
+            <expandColumns></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
               <span class="dropdown-header">HgDna</span>
             </div>
-            <div class="col">
-              <select  multiple>
-                <option disabled value="">Please select one</option>
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
-                <option>E</option>
-                <option>F</option>
-              </select>
-            </div>
-            <div class="col">
-              <input  placeholder="column numbers">
-            </div>
+            <expandColumns></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
@@ -153,8 +134,9 @@
             <span class="input-group-addon" id="basic-addon1">Suppress Columns</span>
             <input type="number" class="form-control" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
           </div>
+
         </div>
-      </ul>
+      </div>
 
     </li>
   </ul>

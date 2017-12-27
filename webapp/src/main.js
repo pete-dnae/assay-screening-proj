@@ -2,7 +2,8 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import 'font-awesome/css/font-awesome.css';
+import '@/assets/sass/app.scss';
 import 'bootstrap';
 import jQuery from 'jquery';
 import Vue from 'vue';
