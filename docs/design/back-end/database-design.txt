@@ -136,9 +136,9 @@ Plate
 Experiment
     Designer name
     FK: PA MasterMix
-    ID FK: MasterMix
-    PrimerFK: Kit
-    StrainsKiFK: t
+    FK: ID_MasterMix
+    FK: PrimerKit
+    FK: StrainsKit
     M:M List of Plate(s)
     FK: PA Cycling
     FK: ID Cycling
