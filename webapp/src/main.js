@@ -2,14 +2,16 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap';
 
+import 'bootstrap';
+import jQuery from 'jquery';
 import Vue from 'vue';
 import App from './App';
 import router from './router';
 
 Vue.config.productionTip = false;
-
+window.$ = jQuery;
+window.jQuery = jQuery;
 /* eslint-disable no-new */
 
 new Vue({

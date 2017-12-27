@@ -46,19 +46,18 @@
               <span class="dropdown-header">Template Copies</span>
             </div>
             <div class="col">
-              <div class="dropup">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropup
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu"  aria-labelledby="dropdownMenu2">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">Separated link</a></li>
-                </ul>
-              </div>
+              <select  multiple>
+                <option disabled value="">Please select one</option>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+                <option>E</option>
+                <option>F</option>
+              </select>
+            </div>
+            <div class="col">
+              <input placeholder="column numbers">
             </div>
           </div>
           <div class="row mt-3">
@@ -66,6 +65,79 @@
               <span class="dropdown-header">HgDna</span>
             </div>
             <div class="col">
+              <select  multiple>
+                <option disabled value="">Please select one</option>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+                <option>E</option>
+                <option>F</option>
+              </select>
+            </div>
+            <div class="col">
+              <input  placeholder="column numbers">
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <span class="dropdown-header">Dilution Factor</span>
+            </div>
+            <div class="col">
+
+            </div>
+            <div class="col">
+              <input  placeholder="values seperated by ','">
+            </div>
+          </div>
+
+        </div>
+        <div class="col-4" >
+          <h6 class="dropdown-header">PA Primers</h6>
+          <div class="row mt-3">
+            <div class="col">
+              <span class="dropdown-header">First Block</span>
+            </div>
+            <div class="col">
+              <select >
+                <option disabled value="">Please select one</option>
+                <option>Ec_uidA_6.x_Eco63_Eco60</option>
+                <option>PoolA</option>
+                <option>Ko_pehX_1.x_Kox05_Kox02</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <span class="dropdown-header">Second Block</span>
+            </div>
+            <div class="col">
+              <select >
+                <option disabled value="">Please select one</option>
+                <option>Ec_uidA_6.x_Eco63_Eco60</option>
+                <option>PoolA</option>
+                <option>Ko_pehX_1.x_Kox05_Kox02</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <span class="dropdown-header">Third Block</span>
+            </div>
+            <div class="col">
+              <select >
+                <option disabled value="">Please select one</option>
+                <option>Ec_uidA_6.x_Eco63_Eco60</option>
+                <option>PoolA</option>
+                <option>Ko_pehX_1.x_Kox05_Kox02</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <span class="dropdown-header">Custom</span>
+            </div>
+            <div class="col mr-2">
               <ul class="list-group">
                 <li class="list-group-item">Ec_uidA_6.x_Eco63_Eco60</li>
                 <li class="list-group-item">Efs_cpn60_1.x_Efs04_Efs01</li>
@@ -74,21 +146,13 @@
               </ul>
             </div>
           </div>
-          <div class="row-mt-3">
-            <div class="col">
-              <span class="dropdown-header">Dilution Factor</span>
-            </div>
-            <div class="col">
-
-              <span class="input-group-addon" id="basic-addon1">Dilution Factor</span>
-              <input type="number" class="form-control" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
-
-            </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="input-group col-4 m-3">
+            <span class="input-group-addon" id="basic-addon1">Suppress Columns</span>
+            <input type="number" class="form-control" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
           </div>
-        </div>
-        <div class="col-4" >
-          <h6 class="dropdown-header">PA Primers</h6>
-        </div>
         </div>
       </ul>
 
