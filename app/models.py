@@ -25,7 +25,7 @@ CONC_UNITS_CHOICES = (
 PLACEHOLDER_CHOICES = (
     ('Primer', 'Primer'),
     ('Template', 'Template'),
-    ('gDNA', 'gDNA')
+    ('HgDNA', 'HgDNA')
 )
 
 PRIMER_ROLE_CHOICES = (
@@ -42,7 +42,7 @@ class Concentration(models.Model):
 
 class ConcreteReagent(models.Model):
     name = models.CharField(max_length=30, unique=True)
-    lot = models.CharField(max_length=30, unique=True)
+    lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
         Concentration, related_name='reagent', on_delete=models.PROTECT)
 
@@ -104,8 +104,10 @@ class PrimerPair(models.Model):
 
 
 class PrimerKit(models.Model):
-    pa_primers = models.ManyToManyField(PrimerPair)
-    id_primers = models.ManyToManyField(PrimerPair)
+    pa_primers = models.ManyToManyField(PrimerPair,
+        related_name='primer_pair_pa')
+    id_primers = models.ManyToManyField(PrimerPair,
+        related_name='primer_pair_id')
     fwd_concentration = models.ForeignKey(Concentration, 
         related_name='primer_kit_fwd', on_delete=models.PROTECT)
     rev_concentration = models.ForeignKey(Concentration, 
@@ -173,9 +175,12 @@ class AllocationInstructions(models.Model):
     # These fields are broadcast (or expanded) according
     # to RowPattern(s).
     strain_expansions = models.ManyToManyField(RowPattern)
-    strain_count_expansions = models.ManyToManyField(RowPattern)
-    gdna_expansions = models.ManyToManyField(RowPattern)
-    pa_primer_expansions = models.ManyToManyField(RowPattern)
+    strain_count_expansions = models.ManyToManyField(RowPattern,
+        related_name='allocation_instructions_strains')
+    gdna_expansions = models.ManyToManyField(RowPattern,
+        related_name='allocation_instructions_gdna')
+    pa_primer_expansions = models.ManyToManyField(RowPattern,
+        related_name='allocation_instructions_primer_pa')
     
     # This field has a global RowPattern
     dilution_factor = models.ForeignKey(RowPattern, 
