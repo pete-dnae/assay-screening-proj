@@ -41,7 +41,7 @@ class Concentration(models.Model):
 
 
 class ConcreteReagent(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=30)
     lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
         Concentration, related_name='reagent', on_delete=models.PROTECT)
