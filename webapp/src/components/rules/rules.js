@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import expandColumns from '@/components/expandcolumns/expandcolumns.vue';
+import editableList from '@/components/editablelist/editablelist.vue';
 
 Vue.component('expandColumns', expandColumns);
+Vue.component('editableList', editableList);
 export default {
   name: 'rulesDropDown',
   data() {

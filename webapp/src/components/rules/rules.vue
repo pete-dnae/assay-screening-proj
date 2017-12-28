@@ -18,32 +18,26 @@
           </div>
         </div>
         <div class="row mt-3">
-        <div class="col-4 border-right" >
+        <div class="col-2 border-right" >
           <h6 class="dropdown-header">Repeated Every 4 Columns</h6>
           <div class="row">
             <div class="col">
               <span class="dropdown-header">Strains</span>
             </div>
+          </div>
+          <div class="row">
             <div class="col">
-              <ul class="list-group">
-                <li class="list-group-item">Eco</li>
-                <li class="list-group-item">Efs VanB</li>
-                <li class="list-group-item">Efs VanB</li>
-                <li class="list-group-item">Kox</li>
-              </ul>
+              <editableList></editableList>
             </div>
           </div>
           <div class="row mt-3">
             <div class="col">
               <span class="dropdown-header">ID Primers</span>
             </div>
+          </div>
+          <div class="row">
             <div class="col">
-              <ul class="list-group">
-                <li class="list-group-item">Ec_uidA_6.x_Eco63_Eco60</li>
-                <li class="list-group-item">Efs_cpn60_1.x_Efs04_Efs01</li>
-                <li class="list-group-item">Efs_vanB_1.x_van10_van06</li>
-                <li class="list-group-item">Ko_pehX_1.x_Kox05_Kox02</li>
-              </ul>
+              <editableList></editableList>
             </div>
           </div>
         </div>
@@ -120,12 +114,7 @@
               <span class="dropdown-header">Custom</span>
             </div>
             <div class="col mr-2">
-              <ul class="list-group">
-                <li class="list-group-item">Ec_uidA_6.x_Eco63_Eco60</li>
-                <li class="list-group-item">Efs_cpn60_1.x_Efs04_Efs01</li>
-                <li class="list-group-item">Efs_vanB_1.x_van10_van06</li>
-                <li class="list-group-item">Ko_pehX_1.x_Kox05_Kox02</li>
-              </ul>
+              <editableList></editableList>     
             </div>
           </div>
         </div>
