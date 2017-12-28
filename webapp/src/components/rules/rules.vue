@@ -3,6 +3,7 @@
     <li class="dropdown dropdown-lg">
       <a href="#" class="dropdown-toggle float-left" data-toggle="dropdown">Rules <b class="caret"></b></a>
       <div v-bind:class="currentDisplayClass"  v-bind:style="currentDisplayStyle" onClick="event.stopPropagation();">
+
         <div class="row">
           <div class="input-group col-4 ml-3">
             <span class="input-group-addon" id="basic-addon1">Column Block</span>
