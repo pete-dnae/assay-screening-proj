@@ -16,12 +16,13 @@
     <div class="tab-content" id="myTabContent" >
       <div class="tab-pane fade show active" id="Plate1" role="tabpanel" aria-labelledby="Plate-1">
         <rulesdropdown></rulesdropdown>
-        <plateLayout></plateLayout>
+        <plateLayout :templateData="templateData" :hgDNAData="hgDNAData"></plateLayout>
         <customfooter></customfooter>
       </div>
     <div class="tab-pane fade" id="Plate2" role="tabpanel" aria-labelledby="Plate-2">
       <rulesdropdown></rulesdropdown>
-      <plateLayout></plateLayout>
+      <plateLayout :templateData="templateData" :hgDNAData="hgDNAData"></plateLayout>
+
       <customfooter></customfooter>
     </div>
 
