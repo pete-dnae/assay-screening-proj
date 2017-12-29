@@ -15,14 +15,18 @@ export default {
         cursor: 'pointer',
       },
       currentDisplayClass: ['dropdown-menu', 'dropdown-menu-lg', 'w-100'],
+      columnRepeats: 0,
     };
   },
   methods: {
     handleRuleClose() {
       this.currentDisplayClass.pop();
     },
-    handleRuleChange(obj) {
-      this.$store.commit('SET_TEMPLATE_RULES', obj);
+    handleRuleChange(type, obj) {
+      const mutation = type == 'template' ? 'SET_TEMPLATE' : 'SET_HGDNA';
+
+      this.$store.commit(`${mutation}_RULES`, obj);
+      this.$store.commit(`${mutation}_PLATE`, obj);
     },
   },
 };

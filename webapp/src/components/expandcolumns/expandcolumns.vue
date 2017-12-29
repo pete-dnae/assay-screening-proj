@@ -13,15 +13,15 @@
         </select>
       </div>
       <div class="col">
-        <input v-model="data[rowId].concentration" placeholder="edit me">
+        <input :id="rowId+type" v-model="data[rowId].concentration" placeholder="edit me">
       </div>
       <div class="col">
         <a class="btn btn-danger"  aria-label="Delete" @click="handleRowDelete(rowId)">
           <i class="fa fa-trash-o" aria-hidden="true"></i>
         </a>
       </div>
-      <div class="col">
-        <input v-model="data[rowId].allRows"  disabled>
+      <div class="col"  >
+        <input  v-model="data[rowId].allRows"  disabled>
       </div>
     </div>
     <div class="row">
@@ -31,6 +31,9 @@
       </a>
     </div>
   </div>
+    <div ref='popup'class="popper" :id="'popup'+type" >
+    Fill concentration
+    </div>
   </div>
 </template>
 <script src="./expandcolumns.js"></script>

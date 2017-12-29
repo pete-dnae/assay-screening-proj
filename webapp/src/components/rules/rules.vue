@@ -7,7 +7,7 @@
         <div class="row">
           <div class="input-group col-4 ml-3">
             <span class="input-group-addon" id="basic-addon1">Column Block</span>
-            <input type="number" class="form-control" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
+            <input type="number" class="form-control" v-model="columnRepeats" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
           </div>
           <div class="col-md-7">
           </div>
@@ -47,13 +47,13 @@
             <div class="col">
               <span class="dropdown-header">Template Copies</span>
             </div>
-            <expandColumns @ruleChange="handleRuleChange"></expandColumns>
+            <expandColumns :columnRepeats="parseInt(columnRepeats)" :type="'template'" @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
               <span class="dropdown-header">HgDna</span>
             </div>
-            <expandColumns></expandColumns>
+            <expandColumns :columnRepeats="parseInt(columnRepeats)" :type="'HgDna'" @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">

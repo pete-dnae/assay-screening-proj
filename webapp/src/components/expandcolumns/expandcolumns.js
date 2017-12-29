@@ -1,7 +1,12 @@
 import _ from 'lodash';
+import { isConcentrationValid } from '@/models/rules.js';
 
 export default {
   name: 'ExpandColumns',
+  props: {
+    type: String,
+    columnRepeats: Number,
+  },
   data() {
     return {
       msg: 'This is ExpandColumns',
@@ -21,17 +26,35 @@ export default {
   },
   methods: {
     handleRowAdd() {
-      const newRowId = this.rows.length == 0 ? 0 : this.rows[this.rows.length - 1] + 1;
-      this.rows.push(newRowId);
-      this.data[newRowId] = {
-        startAt: '',
-        allRows: '',
-        concentration: '',
-      };
+      const currentRowId = this.rows.length - 1;
+      const newRowId = this.rows.length == 0 ? 0 : this.rows[currentRowId] + 1;
+
+      if (newRowId != 0 && !isConcentrationValid(this.data[currentRowId].concentration)) {
+        $(`#popup${this.type}`).show();
+        const popper = new Popper(
+          document.getElementById((newRowId - 1).toString() + this.type),
+          this.$refs.popup,
+          {
+            placement: 'top',
+          },
+        );
+      } else {
+        this.rows.push(newRowId);
+        this.data[newRowId] = {
+          startAt: '',
+          allRows: '',
+          concentration: '',
+          repeat: this.columnRepeats,
+        };
+        if (!_.isEmpty(_.filter(this.data, x => x.startAt != ''))) {
+          this.$emit('ruleChange', this.type, _.filter(this.data, x => x.startAt != ''));
+        }
+      }
     },
     handleRowDelete(rowId) {
       this.rows = this.rows.filter(x => x != rowId);
       delete this.data[rowId];
+      $(`#popup${this.type}`).hide();
       this.changeAllocationRules();
     },
     changeAllocationRules() {
@@ -48,7 +71,12 @@ export default {
           },
         });
       });
-      this.$emit('ruleChange', this.data);
     },
+  },
+  mounted() {
+    $(`#popup${this.type}`).hide();
+    $(`#popup${this.type}`).click(() => {
+      $(`#popup${this.type}`).hide();
+    });
   },
 };
