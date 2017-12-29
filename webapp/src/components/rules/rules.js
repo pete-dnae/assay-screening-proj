@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import expandColumns from '@/components/expandcolumns/expandcolumns.vue';
+import editableList from '@/components/editablelist/editablelist.vue';
 
 Vue.component('expandColumns', expandColumns);
+Vue.component('editableList', editableList);
 export default {
   name: 'rulesDropDown',
   data() {
@@ -18,6 +20,9 @@ export default {
   methods: {
     handleRuleClose() {
       this.currentDisplayClass.pop();
+    },
+    handleRuleChange(obj) {
+      this.$store.commit('SET_TEMPLATE_RULES', obj);
     },
   },
 };
