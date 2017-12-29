@@ -123,7 +123,7 @@ class Strain(models.Model):
     organism = models.ForeignKey(Organism, 
         related_name='strain_organism', on_delete=models.PROTECT)
     arg = models.ForeignKey(Arg, 
-        related_name='strain_arg', on_delete=models.PROTECT)
+        related_name='strain_arg', null=True, on_delete=models.PROTECT)
     genome_size = models.BigIntegerField()
 
 
