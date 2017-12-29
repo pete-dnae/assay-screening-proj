@@ -47,7 +47,7 @@
             <div class="col">
               <span class="dropdown-header">Template Copies</span>
             </div>
-            <expandColumns></expandColumns>
+            <expandColumns @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
@@ -114,7 +114,7 @@
               <span class="dropdown-header">Custom</span>
             </div>
             <div class="col mr-2">
-              <editableList></editableList>     
+              <editableList></editableList>
             </div>
           </div>
         </div>

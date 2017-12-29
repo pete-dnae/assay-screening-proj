@@ -15,33 +15,40 @@ export default {
         { text: 'G', value: 'G' },
         { text: 'H', value: 'H' },
       ],
-      rows: [0],
-      concentration: { 0: '' },
-      rowRepeat: { 0: '' },
-      selected: { 0: '' },
+      rows: [],
+      data: {},
     };
   },
   methods: {
     handleRowAdd() {
-      this.rows.push(this.rows.length == 0 ? 0 : this.rows[this.rows.length - 1] + 1);
+      const newRowId = this.rows.length == 0 ? 0 : this.rows[this.rows.length - 1] + 1;
+      this.rows.push(newRowId);
+      this.data[newRowId] = {
+        startAt: '',
+        allRows: '',
+        concentration: '',
+      };
     },
     handleRowDelete(rowId) {
       this.rows = this.rows.filter(x => x != rowId);
-      delete this.concentration[rowId];
-      delete this.rowRepeat[rowId];
-      delete this.selected[rowId];
-      this.handleDropDownChange();
+      delete this.data[rowId];
+      this.changeAllocationRules();
     },
-    handleDropDownChange() {
+    changeAllocationRules() {
       this.rows.map((rowId) => {
         const rowNames = this.options.map(x => x.value);
-        const currentStart = rowNames.indexOf(this.selected[rowId]);
-        const nextStart = this.selected[rowId + 1]
-          ? rowNames.indexOf(this.selected[rowId + 1])
+        const currentStart = rowNames.indexOf(this.data[rowId].startAt);
+        const nextStart = this.data[rowId + 1]
+          ? rowNames.indexOf(this.data[rowId + 1].startAt)
           : rowNames.length;
-
-        this.rowRepeat[rowId] = rowNames.slice(currentStart, nextStart);
+        this.data = Object.assign({}, this.data, {
+          [rowId]: {
+            ...this.data[rowId],
+            allRows: rowNames.slice(currentStart, nextStart),
+          },
+        });
       });
+      this.$emit('ruleChange', this.data);
     },
   },
 };

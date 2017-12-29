@@ -21,5 +21,8 @@ export default {
     handleRuleClose() {
       this.currentDisplayClass.pop();
     },
+    handleRuleChange(obj) {
+      this.$store.commit('SET_TEMPLATE_RULES', obj);
+    },
   },
 };
