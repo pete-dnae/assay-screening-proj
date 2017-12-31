@@ -10,9 +10,17 @@ export const state = {
   dilution: {
     data: {},
   },
-  plate: {
-    data: { templateConcentration: {}, hgDNAConcentration: {} },
+  strains: {
+    data: {},
   },
+  idPrimers: {
+    data: {},
+  },
+  plate: {
+    data: { templateConcentration: {}, hgDNAConcentration: {}, strains: {}, idPrimers: {} },
+  },
+  rowId: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+  colId: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
 };
 
 const actions = {};
@@ -47,6 +55,32 @@ const mutations = {
       return acc;
     }, {});
   },
+  [types.SET_STRAINS](state, data) {
+    state.strains.data = data;
+  },
+  [types.SET_ID_PRIMERS](state, data) {
+    state.idPrimers.data = data;
+  },
+  [types.SET_STRAINS_PLATE](state, args) {
+    const { data, repeats } = args;
+    state.plate.data.strains = state.rowId.reduce((acc, x) => {
+      acc[x] = _.times(repeats, () => Object.values(data)).reduce((a, x) => {
+        a = a.concat(x);
+        return a;
+      }, []);
+      return acc;
+    }, {});
+  },
+  [types.SET_ID_PRIMERS_PLATE](state, args) {
+    const { data, repeats } = args;
+    state.plate.data.idPrimers = state.rowId.reduce((acc, x) => {
+      acc[x] = _.times(repeats, () => Object.values(data)).reduce((a, x) => {
+        a = a.concat(x);
+        return a;
+      }, []);
+      return acc;
+    }, {});
+  },
 };
 const getters = {
   getTemplate(state, getters, rootState) {
@@ -57,6 +91,12 @@ const getters = {
   },
   getDilution(state, getters, rootState) {
     return state.dilution.data;
+  },
+  getStrains(state, getters, rootState) {
+    return state.plate.data.strains;
+  },
+  getIdPrimers(state, getters, rootState) {
+    return state.plate.data.idPrimers;
   },
 };
 

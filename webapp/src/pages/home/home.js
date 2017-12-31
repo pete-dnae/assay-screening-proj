@@ -21,6 +21,8 @@ export default {
       templateData: 'getTemplate',
       hgDNAData: 'gethgDNA',
       dilutionData: 'getDilution',
+      strainData: 'getStrains',
+      idPrimerData: 'getIdPrimers',
     }),
   },
 };
