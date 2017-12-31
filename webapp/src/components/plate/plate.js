@@ -4,6 +4,8 @@ export default {
     templateData: Object,
     hgDNAData: Object,
     dilutionData: Object,
+    strainData: Object,
+    idPrimerData: Object,
   },
   data() {
     return {

@@ -12,11 +12,20 @@
 
           <span>{{hgDNAData[row][col]}} hgDNA</span>
           </div>
+          <div class="row" v-if="idPrimerData[row] && idPrimerData[row][col]">
+
+            <span>{{idPrimerData[row][col]}} ID</span>
+            </div>
+            <div class="row" v-if="strainData[row] && strainData[row][col]">
+
+              <span>{{strainData[row][col]}}</span>
+            </div>
         </div>
       </div>
+
     </div>
 
-  </div>
+
 
 </template>
 <script src="./plate.js"></script>

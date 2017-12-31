@@ -27,7 +27,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <editableList></editableList>
+              <editableList :columnRepeats="parseInt(columnRepeats)" :type="'Strain'"></editableList>
             </div>
           </div>
           <div class="row mt-3">
@@ -37,7 +37,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <editableList></editableList>
+              <editableList :columnRepeats="parseInt(columnRepeats)" :type="'ID Primers'"></editableList>
             </div>
           </div>
         </div>
