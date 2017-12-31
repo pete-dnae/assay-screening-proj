@@ -84,9 +84,8 @@ class Organism(models.Model):
 
 
 class Primer(models.Model):
-    oligo_code = models.CharField(max_length=30, unique=True)
+    oligo_code = models.CharField(max_length=30)
     full_name = models.CharField(max_length=50, unique=True)
-    sequence = models.CharField(max_length=30, unique=True)
     role = models.CharField(max_length=15, choices=PRIMER_ROLE_CHOICES)
     organism = models.ForeignKey(Organism, 
         related_name='primer', on_delete=models.PROTECT)
