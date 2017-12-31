@@ -35,6 +35,13 @@ export default {
     },
     handleListDelete(rowId) {
       this.rows = this.rows.filter(x => x != rowId);
+      this.listItem = _.filter(this.listItem, x => this.rows.indexOf(x) != -1);
+      const mutation = this.type == 'Strain' ? 'SET_STRAINS' : 'SET_ID_PRIMERS';
+      this.$store.commit(mutation, { data: this.listItem, repeats: this.columnRepeats });
+      this.$store.commit(`${mutation}_PLATE`, {
+        data: this.listItem,
+        repeats: this.columnRepeats,
+      });
     },
   },
 };

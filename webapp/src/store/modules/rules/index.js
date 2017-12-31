@@ -33,25 +33,35 @@ const mutations = {
   },
   [types.SET_TEMPLATE_PLATE](state, data) {
     state.plate.data.templateConcentration = data.reduce((acc, x) => {
-      x.allRows.map(
-        y =>
-          (acc[y] = _.times(x.repeat, () => x.concentration.split(',')).reduce((a, x) => {
-            a = a.concat(x);
-            return a;
-          }, [])),
-      );
+      x.allRows.map((y) => {
+        let concList = x.concentration.split(',');
+
+        concList =
+          concList.length != 4 ? concList.concat(_.times(4 - concList.length, () => '')) : concList;
+
+        acc[y] = _.times(x.repeat, () => concList).reduce((a, x) => {
+          a = a.concat(x);
+          return a;
+        }, []);
+        return acc[y];
+      });
       return acc;
     }, {});
   },
   [types.SET_HGDNA_PLATE](state, data) {
     state.plate.data.hgDNAConcentration = data.reduce((acc, x) => {
-      x.allRows.map(
-        y =>
-          (acc[y] = _.times(x.repeat, () => x.concentration.split(',')).reduce((a, x) => {
-            a = a.concat(x);
-            return a;
-          }, [])),
-      );
+      x.allRows.map((y) => {
+        let concList = x.concentration.split(',');
+
+        concList =
+          concList.length != 4 ? concList.concat(_.times(4 - concList.length, () => '')) : concList;
+
+        acc[y] = _.times(x.repeat, () => concList).reduce((a, x) => {
+          a = a.concat(x);
+          return a;
+        }, []);
+        return acc[y];
+      });
       return acc;
     }, {});
   },
@@ -63,8 +73,13 @@ const mutations = {
   },
   [types.SET_STRAINS_PLATE](state, args) {
     const { data, repeats } = args;
+
     state.plate.data.strains = state.rowId.reduce((acc, x) => {
-      acc[x] = _.times(repeats, () => Object.values(data)).reduce((a, x) => {
+      const dataVals =
+        Object.values(data).length != 4
+          ? Object.values(data).concat(_.times(4 - Object.values(data).length, () => ''))
+          : Object.values(data);
+      acc[x] = _.times(repeats, () => dataVals).reduce((a, x) => {
         a = a.concat(x);
         return a;
       }, []);
@@ -73,8 +88,13 @@ const mutations = {
   },
   [types.SET_ID_PRIMERS_PLATE](state, args) {
     const { data, repeats } = args;
+
     state.plate.data.idPrimers = state.rowId.reduce((acc, x) => {
-      acc[x] = _.times(repeats, () => Object.values(data)).reduce((a, x) => {
+      const dataVals =
+        Object.values(data).length != 4
+          ? Object.values(data).concat(_.times(4 - Object.values(data).length, () => ''))
+          : Object.values(data);
+      acc[x] = _.times(repeats, () => dataVals).reduce((a, x) => {
         a = a.concat(x);
         return a;
       }, []);
