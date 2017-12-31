@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from app import models
-from app.lib.make_ref_exp import ReferenceExperiment
+from app.model_builders.make_ref_exp import ReferenceExperiment
 
 class CreateReferenceExperiment(TestCase):
 
