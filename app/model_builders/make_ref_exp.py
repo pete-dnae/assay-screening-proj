@@ -13,18 +13,25 @@ from app.models import MixedReagent
 from app.models import Organism
 from app.models import PlaceholderReagent
 from app.models import Primer
+from app.models import PrimerKit
 from app.models import PrimerPair
 from app.models import Strain
+from app.models import StrainKit
 
 
 class ReferenceExperiment():
+    """
+    Creates all the database entities required to assemble an example,
+    refrence models.Experiment, and returns the correpsonding instance.
+    """
 
     def __init__(self):
-        self._create_shared_entities() # Organisms, Stock reagents etc.
-        self._create_experiment()
+        self.experiment = None
 
     def create(self):
-        return None
+        self._create_shared_entities() # Organisms, Stock reagents etc.
+        self.experiment = self._create_experiment()
+        return self.experiment
 
     #-----------------------------------------------------------------------
     # Private below.
@@ -190,7 +197,7 @@ class ReferenceExperiment():
         self._create_primer_pair('van04', 'van02', False, True)
         self._create_primer_pair('Kox04', 'Kox03', False, True)
         self._create_primer_pair('Kpn03', 'Kpn02', False, True)
-        self._create_primer_pair('Pmi03', 'Pmi02', False, True)
+        self._create_primer_pair('Pmi02', 'Pmi03', False, True)
         self._create_primer_pair('Spo03', 'Spo05', False, True)
 
     def _create_primer_pair(self, fwd_name, rev_name, for_pa, for_id):
@@ -204,11 +211,11 @@ class ReferenceExperiment():
 
     def _create_experiment(self):
         exp = Experiment.objects.create(
-            name='reference_experiment_1',
+            experiment_name='reference_experiment_1',
             designer_name='PH',
-            pa_mastermix = self._create_pa_mastermix(),
-            id_mastermix = self._create_id_mastermix(),
-            primer_kit = self._create_primer_kit(),
+            pa_mastermix=self._create_pa_mastermix(),
+            id_mastermix=self._create_id_mastermix(),
+            primer_kit=self._create_primer_kit(),
             strain_kit = self._create_strain_kit(),
             pa_cycling = self._create_pa_cycling(),
             id_cycling = self._create_id_cycling(),
@@ -217,6 +224,7 @@ class ReferenceExperiment():
         exp.plates.add(self._create_slide_2())
 
         exp.save()
+        return exp
 
     def _create_pa_mastermix(self):
         mastermix = MasterMix.objects.create(
@@ -295,3 +303,53 @@ class ReferenceExperiment():
             type=placeholder_type,
             concentration=self._make_concentration(stock, final, units)
         )
+
+    def _create_primer_kit(self):
+        kit = PrimerKit.objects.create(
+            fwd_concentration=self._make_concentration(10, 0.4, 'uM'),
+            rev_concentration=self._make_concentration(10, 0.4, 'uM'),
+        )
+        self._add_pa_primers_to_kit(kit.pa_primers)
+        self._add_id_primers_to_kit(kit.id_primers)
+        kit.save()
+        return kit
+
+    def _add_pa_primers_to_kit(self, m2m_field):
+        f = m2m_field
+        pa = True
+        id = False
+        f.add(self._find_primer_pair('Eco63', 'Eco60', pa, id))
+        f.add(self._find_primer_pair('Efs04', 'Efs01', pa, id))
+        f.add(self._find_primer_pair('van10', 'van06', pa, id))
+        f.add(self._find_primer_pair('van05', 'van01', pa, id))
+        f.add(self._find_primer_pair('Kox05', 'Kox02', pa, id))
+        f.add(self._find_primer_pair('Kpn13', 'Kpn01', pa, id))
+        f.add(self._find_primer_pair('Pmi01', 'Pmi05', pa, id))
+        f.add(self._find_primer_pair('Spo09', 'Spo13', pa, id))
+
+    def _add_id_primers_to_kit(self, m2m_field):
+        f = m2m_field
+        pa = False
+        id = True
+        f.add(self._find_primer_pair('Eco64', 'Eco66', pa, id))
+        f.add(self._find_primer_pair('Efs03', 'Efs02', pa, id))
+        f.add(self._find_primer_pair('van30', 'van33', pa, id))
+        f.add(self._find_primer_pair('van04', 'van02', pa, id))
+        f.add(self._find_primer_pair('Kox04', 'Kox03', pa, id))
+        f.add(self._find_primer_pair('Kpn03', 'Kpn02', pa, id))
+        f.add(self._find_primer_pair('Pmi02', 'Pmi03', pa, id))
+        f.add(self._find_primer_pair('Spo03', 'Spo05', pa, id))
+
+    def _find_primer_pair(self, fwd_name, rev_name, 
+            suitable_for_pa, suitable_for_id):
+        print('XXXX %s %s' % (fwd_name, rev_name))
+        primer_pair = PrimerPair.objects.get(
+            forward_primer__full_name=fwd_name,
+            reverse_primer__full_name=rev_name,
+            suitable_for_pa=suitable_for_pa,
+            suitable_for_id=suitable_for_id,
+            )
+        return primer_pair
+
+    def _strains_kit(self):
+        got to here
