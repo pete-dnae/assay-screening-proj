@@ -151,30 +151,28 @@ class CyclingPattern(models.Model):
 
 class RowPattern(models.Model):
     """
-    A row pattern is a sequence of string *items* that should be allocated to
-    columns in a row, in left-to-right fashion, starting at a particular
-    column. This model represents the item sequence in a single composite
-    string using comma as a delimiter.
-    """
+    A row pattern defined thus: 
+        start column = 2
+        item_csv = 'A, B, C'
 
+    Means:
+
+        Column  2 3 4 5 6 7 8... until, see below.
+        Item    A B C A B C A...
+
+    RowPattern(s) live in groups and apply until either there are no more
+    columns, or until a sister RowPattern takes over (with a higher start
+    column).
+
+    """
     start_column = models.PositiveIntegerField()
-    """
-    Examples of items_csv field:
-
-        "5,5,500"
-        "None,None,None"
-        "Ec_uidA_6.x_Eco63_Eco60, Efs_cpn60_1.x_Efs01, etc'
-
-    In the final example, these are strings as provided by
-    PrimerPair.string_code()
-    """
     items_csv = models.CharField(max_length=200)
 
 
 class AllocationInstructions(models.Model):
     column_group_width = models.PositiveIntegerField() # e.g. 4
 
-    # These fields that are repeated for each column group.
+    # These fields that are repeated (by definiton) for each column group.
     strain_repeats = models.ManyToManyField(Strain)
     id_primer_repeats = models.ManyToManyField(PrimerPair)
 
@@ -187,10 +185,8 @@ class AllocationInstructions(models.Model):
         related_name='allocation_instructions_gdna')
     pa_primer_expansions = models.ManyToManyField(RowPattern,
         related_name='allocation_instructions_primer_pa')
-    
-    # This field has a global RowPattern
-    dilution_factor = models.ForeignKey(RowPattern, 
-        related_name='dilution_factor', on_delete=models.PROTECT)
+    dilution_factors = models.ManyToManyField(RowPattern, 
+        related_name='dilution_factor')
 
     # e.g. "4, 8, 12"
     suppressed_columns = models.CharField(max_length=200) 

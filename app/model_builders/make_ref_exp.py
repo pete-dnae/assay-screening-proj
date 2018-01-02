@@ -2,19 +2,23 @@
 Creates and stores a reference experiment in the database.
 """
 
+from app.models import AllocationInstructions
 from app.models import Arg
 from app.models import BufferMix
 from app.models import Concentration
 from app.models import ConcreteReagent
+from app.models import CyclingPattern
 from app.models import Experiment
 from app.models import Gene
 from app.models import MasterMix
 from app.models import MixedReagent
 from app.models import Organism
 from app.models import PlaceholderReagent
+from app.models import Plate
 from app.models import Primer
 from app.models import PrimerKit
 from app.models import PrimerPair
+from app.models import RowPattern
 from app.models import Strain
 from app.models import StrainKit
 
@@ -197,7 +201,7 @@ class ReferenceExperiment():
         self._create_primer_pair('van04', 'van02', False, True)
         self._create_primer_pair('Kox04', 'Kox03', False, True)
         self._create_primer_pair('Kpn03', 'Kpn02', False, True)
-        self._create_primer_pair('Pmi02', 'Pmi03', False, True)
+        self._crette_primer_pair('Pmi02', 'Pmi03', False, True)
         self._create_primer_pair('Spo03', 'Spo05', False, True)
 
     def _create_primer_pair(self, fwd_name, rev_name, for_pa, for_id):
@@ -210,8 +214,9 @@ class ReferenceExperiment():
 
 
     def _create_experiment(self):
+        _EXPERIMENT_NAME = 'reference_experiment_1',
         exp = Experiment.objects.create(
-            experiment_name='reference_experiment_1',
+            experiment_name=_EXPERIMENT_NAME,
             designer_name='PH',
             pa_mastermix=self._create_pa_mastermix(),
             id_mastermix=self._create_id_mastermix(),
@@ -220,8 +225,8 @@ class ReferenceExperiment():
             pa_cycling = self._create_pa_cycling(),
             id_cycling = self._create_id_cycling(),
         )
-        exp.plates.add(self._create_slide_1())
-        exp.plates.add(self._create_slide_2())
+        exp.plates.add(self._create_plate_1(_EXPERIMENT_NAME))
+        exp.plates.add(self._create_plate_2(_EXPERIMENT_NAME))
 
         exp.save()
         return exp
@@ -316,33 +321,46 @@ class ReferenceExperiment():
 
     def _add_pa_primers_to_kit(self, m2m_field):
         f = m2m_field
-        pa = True
-        id = False
-        f.add(self._find_primer_pair('Eco63', 'Eco60', pa, id))
-        f.add(self._find_primer_pair('Efs04', 'Efs01', pa, id))
-        f.add(self._find_primer_pair('van10', 'van06', pa, id))
-        f.add(self._find_primer_pair('van05', 'van01', pa, id))
-        f.add(self._find_primer_pair('Kox05', 'Kox02', pa, id))
-        f.add(self._find_primer_pair('Kpn13', 'Kpn01', pa, id))
-        f.add(self._find_primer_pair('Pmi01', 'Pmi05', pa, id))
-        f.add(self._find_primer_pair('Spo09', 'Spo13', pa, id))
+        f.add(self._find_pa_primer_pair('Eco63', 'Eco60'))
+        f.add(self._find_pa_primer_pair('Efs04', 'Efs01'))
+        f.add(self._find_pa_primer_pair('van10', 'van06'))
+        f.add(self._find_pa_primer_pair('van05', 'van01'))
+        f.add(self._find_pa_primer_pair('Kox05', 'Kox02'))
+        f.add(self._find_pa_primer_pair('Kpn13', 'Kpn01'))
+        f.add(self._find_pa_primer_pair('Pmi01', 'Pmi05'))
+        f.add(self._find_pa_primer_pair('Spo09', 'Spo13'))
 
     def _add_id_primers_to_kit(self, m2m_field):
         f = m2m_field
         pa = False
         id = True
-        f.add(self._find_primer_pair('Eco64', 'Eco66', pa, id))
-        f.add(self._find_primer_pair('Efs03', 'Efs02', pa, id))
-        f.add(self._find_primer_pair('van30', 'van33', pa, id))
-        f.add(self._find_primer_pair('van04', 'van02', pa, id))
-        f.add(self._find_primer_pair('Kox04', 'Kox03', pa, id))
-        f.add(self._find_primer_pair('Kpn03', 'Kpn02', pa, id))
-        f.add(self._find_primer_pair('Pmi02', 'Pmi03', pa, id))
-        f.add(self._find_primer_pair('Spo03', 'Spo05', pa, id))
+        f.add(self._find_id_primer_pair('Eco64', 'Eco66'))
+        f.add(self._find_id_primer_pair('Efs03', 'Efs02'))
+        f.add(self._find_id_primer_pair('van30', 'van33'))
+        f.add(self._find_id_primer_pair('van04', 'van02'))
+        f.add(self._find_id_primer_pair('Kox04', 'Kox03'))
+        f.add(self._find_id_primer_pair('Kpn03', 'Kpn02'))
+        f.add(self._find_id_primer_pair('Pmi02', 'Pmi03'))
+        f.add(self._find_id_primer_pair('Spo03', 'Spo05'))
+
+    def _find_id_primer_pair(self, fwd_name, rev_name):
+        primer_pair = PrimerPair.objects.get(
+            forward_primer__full_name=fwd_name,
+            reverse_primer__full_name=rev_name,
+            suitable_for_id=True,
+            )
+        return primer_pair
+
+    def _find_pa_primer_pair(self, fwd_name, rev_name):
+        primer_pair = PrimerPair.objects.get(
+            forward_primer__full_name=fwd_name,
+            reverse_primer__full_name=rev_name,
+            suitable_for_pa=True,
+            )
+        return primer_pair
 
     def _find_primer_pair(self, fwd_name, rev_name, 
             suitable_for_pa, suitable_for_id):
-        print('XXXX %s %s' % (fwd_name, rev_name))
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
             reverse_primer__full_name=rev_name,
@@ -351,5 +369,91 @@ class ReferenceExperiment():
             )
         return primer_pair
 
-    def _strains_kit(self):
-        got to here
+    def _create_strain_kit(self):
+        kit = StrainKit.objects.create()
+
+        kit.strains.add(Strain.objects.get(name='ATCC 15764'))
+        kit.strains.add(Strain.objects.get(name='ATCC 15764'))
+        kit.strains.add(Strain.objects.get(name='ATCC 26189'))
+        kit.strains.add(Strain.objects.get(name='ATCC 700802'))
+        kit.strains.add(Strain.objects.get(name='ATCC BAA-1705'))
+        kit.strains.add(Strain.objects.get(name='ATCC BAA-2317'))
+        kit.strains.add(Strain.objects.get(name='ATCC BAA-2355'))
+        kit.strains.add(Strain.objects.get(name='ATCC BAA-633'))
+        kit.strains.add(Strain.objects.get(name='ATCC BAA-633'))
+
+        kit.save()
+        return kit
+
+    def _create_pa_cycling(self):
+        return CyclingPattern.objects.create(
+            activation_time=120,
+            activation_temp=95,
+            num_cycles=20,
+            denature_time=10,
+            denature_temp=95,
+            anneal_time=10,
+            anneal_temp=62,
+            extend_temp=72,
+            extend_time=30,
+        )
+
+    def _create_id_cycling(self):
+        return CyclingPattern.objects.create(
+            activation_time=120,
+            activation_temp=95,
+            num_cycles=20,
+            denature_time=10,
+            denature_temp=95,
+            anneal_time=0,
+            anneal_temp=0,
+            extend_temp=62,
+            extend_time=25,
+        )
+
+    def _create_plate_1(self, experiment_name):
+        plate = Plate.objects.create(
+            name=('%s_1' % experiment_name),
+            allocation_instructions=self._make_allocation_1(),
+        )
+        return plate
+
+    def _make_allocation_1(self):
+        alloc = AllocationInstructions.objects.create(
+            column_group_width=4,
+            suppressed_columns='4, 8, 12',
+        )
+
+        self._add_strain_repeat(alloc.strain_repeats, 'ATCC BAA-2355')
+        self._add_strain_repeat(alloc.strain_repeats, 'ATCC 700802')
+        self._add_strain_repeat(alloc.strain_repeats, 'ATCC 700802')
+        self._add_strain_repeat(alloc.strain_repeats, 'ATCC 15764')
+
+        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kox04', 'Kox03')
+        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kpn03', 'Kpn02')
+        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Pmi02', 'Pmi03')
+        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Spo03', 'Spo05')
+
+        alloc.strain_expansions.add(foo)
+        alloc.gdna_expansions.add(foo)
+        alloc.pa_primer_expansions.add(foo)
+
+        alloc.dilution_factors.add(self._make_row_pattern(1, '30'))
+        alloc.dilution_factors.add(self._make_row_pattern(9, ''))
+
+        alloc.save()
+        return alloc
+
+    def _make_row_pattern(self, start_column, item_string):
+        return RowPattern.objects.create(
+            start_column=start_column,
+            items_csv=item_string
+        )
+
+    def _add_strain_repeat(self,  m2m_field, strain_name):
+        strain = Strain.objects.get(name=strain_name)
+        m2m_field.add(strain)
+
+    def _add_id_primer_repeat(self, m2m_field, fwd, rev):
+        pair = self._find_id_primer_pair(fwd, rev)
+        m2m_field.add(pair)
