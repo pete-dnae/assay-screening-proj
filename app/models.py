@@ -23,7 +23,7 @@ CONC_UNITS_CHOICES = (
 )
 
 PLACEHOLDER_CHOICES = (
-    ('Primer', 'Primer'),
+    ('Primers', 'Primers'),
     ('Template', 'Template'),
     ('HgDNA', 'HgDNA')
 )
@@ -68,9 +68,16 @@ class PlaceholderReagent(models.Model):
 
 
 class MasterMix(models.Model):
-    concrete_reagents = models.ManyToManyField(ConcreteReagent)
-    mixed_reagents = models.ManyToManyField(MixedReagent)
-    placeholder_reagents = models.ManyToManyField(PlaceholderReagent)
+    water = models.ForeignKey(ConcreteReagent, 
+        related_name='master_mix_water', on_delete=models.PROTECT)
+    buffer_mix = models.ForeignKey(MixedReagent,
+        related_name='master_mix_buffermix', on_delete=models.PROTECT)
+    primers = models.ForeignKey(PlaceholderReagent,
+        related_name='master_mix_primers', on_delete=models.PROTECT)
+    hgDNA = models.ForeignKey(PlaceholderReagent,
+        related_name='master_mix_hgDNA', null=True, on_delete=models.PROTECT)
+    template = models.ForeignKey(PlaceholderReagent,
+        related_name='master_mix_template', on_delete=models.PROTECT)
     final_volume = models.PositiveIntegerField()
 
 
