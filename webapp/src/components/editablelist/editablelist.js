@@ -22,6 +22,7 @@ export default {
   methods: {
     handleListAdd(modalText) {
       if (modalText != '') {
+        debugger;
         const newId = this.rows.length == 0 ? 0 : this.rows[this.rows.length - 1] + 1;
         this.rows.push(newId);
         this.listItem[newId] = modalText;

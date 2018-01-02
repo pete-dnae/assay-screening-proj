@@ -89,7 +89,7 @@ const mutations = {
   [types.SET_ID_PRIMERS_PLATE](state, args) {
     const { data, blocks, byBlock, blockNo } = args;
     let repeats = state.colId.length / blocks;
-    const dataVals = fillMissingValues(byBlock, blocks, state.colId, repeats, data);
+    const dataVals = fillMissingValues(byBlock, blockNo, blocks, state.colId, repeats, data);
     state.plate.data.idPrimers = getDataByBlock(byBlock, blocks, state.rowId, dataVals);
   },
 };
