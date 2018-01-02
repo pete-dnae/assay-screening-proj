@@ -5,20 +5,20 @@
         <div class="row">{{row}}--{{col +1}}</div>
         <div class="row" v-if="templateData[row] && templateData[row][col]">
 
-          <span>{{templateData[row][col]}} Cp</span>
+          <div class="col">{{templateData[row][col]}} Cp</div>
 
         </div>
         <div class="row" v-if="hgDNAData[row] && hgDNAData[row][col]">
 
-          <span>{{hgDNAData[row][col]}} hgDNA</span>
+          <div class="col">{{hgDNAData[row][col]}} hgDNA</div>
           </div>
           <div class="row" v-if="idPrimerData[row] && idPrimerData[row][col]">
 
-            <span>{{idPrimerData[row][col]}} ID</span>
+            <div class="col" style="color:green">{{idPrimerData[row][col]}} </div>
             </div>
             <div class="row" v-if="strainData[row] && strainData[row][col]">
 
-              <span>{{strainData[row][col]}}</span>
+              <div class="col" style="color:red">{{strainData[row][col]}}</div>
             </div>
         </div>
       </div>

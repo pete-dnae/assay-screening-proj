@@ -13,7 +13,7 @@
         </select>
       </div>
       <div class="col">
-        <input :id="rowId+type" v-model="data[rowId].concentration" placeholder="edit me">
+        <input :id="rowId+type" v-model="data[rowId].concentration" @keyup.enter="changeAllocationRules()"  placeholder="edit me">
       </div>
       <div class="col">
         <a class="btn btn-danger"  aria-label="Delete" @click="handleRowDelete(rowId)">
@@ -32,7 +32,7 @@
     </div>
   </div>
     <div ref='popup'class="popper" :id="'popup'+type" >
-    Fill concentration
+    Check concentration
     </div>
   </div>
 </template>

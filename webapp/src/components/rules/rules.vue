@@ -7,7 +7,7 @@
         <div class="row">
           <div class="input-group col-4 ml-3">
             <span class="input-group-addon" id="basic-addon1">Column Block</span>
-            <input type="number" class="form-control" v-model="columnRepeats" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
+            <input type="number" class="form-control" v-model="columnBlocks" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
           </div>
           <div class="col-md-7">
           </div>
@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="row mt-3">
-        <div class="col-2 border-right" >
+        <div class="col-3 border-right" >
           <h6 class="dropdown-header">Repeated Every 4 Columns</h6>
           <div class="row">
             <div class="col">
@@ -27,7 +27,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <editableList :columnRepeats="parseInt(columnRepeats)" :type="'Strain'"></editableList>
+              <editableList :columnBlocks="parseInt(columnBlocks)" :type="'Strain'"></editableList>
             </div>
           </div>
           <div class="row mt-3">
@@ -37,23 +37,23 @@
           </div>
           <div class="row">
             <div class="col">
-              <editableList :columnRepeats="parseInt(columnRepeats)" :type="'ID Primers'"></editableList>
+              <editableList :columnBlocks="parseInt(columnBlocks)" :type="'ID Primers'"></editableList>
             </div>
           </div>
         </div>
-        <div class="col-4 border-right" >
+        <div class="col-5 border-right" >
           <h6 class="dropdown-header">Expanded to 4 columns each</h6>
           <div class="row">
             <div class="col">
               <span class="dropdown-header">Template Copies</span>
             </div>
-            <expandColumns :columnRepeats="parseInt(columnRepeats)" :type="'template'" @ruleChange="handleRuleChange"></expandColumns>
+            <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'template'" @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
               <span class="dropdown-header">HgDna</span>
             </div>
-            <expandColumns :columnRepeats="parseInt(columnRepeats)" :type="'HgDna'" @ruleChange="handleRuleChange"></expandColumns>
+            <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'HgDna'" @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
