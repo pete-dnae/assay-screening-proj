@@ -15,7 +15,7 @@ export default {
         cursor: 'pointer',
       },
       currentDisplayClass: ['dropdown-menu', 'dropdown-menu-lg', 'w-100'],
-      columnRepeats: 0,
+      columnBlocks: 4,
     };
   },
   methods: {

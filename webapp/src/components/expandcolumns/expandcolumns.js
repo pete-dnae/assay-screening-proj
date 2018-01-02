@@ -5,7 +5,7 @@ export default {
   name: 'ExpandColumns',
   props: {
     type: String,
-    columnRepeats: Number,
+    columnBlocks: Number,
   },
   data() {
     return {
@@ -28,8 +28,10 @@ export default {
     handleRowAdd() {
       const currentRowId = this.rows.length - 1;
       const newRowId = this.rows.length == 0 ? 0 : this.rows[currentRowId] + 1;
-
-      if (newRowId != 0 && !isConcentrationValid(this.data[currentRowId].concentration)) {
+      if (
+        newRowId != 0 &&
+        !isConcentrationValid(this.columnBlocks, this.data[currentRowId].concentration)
+      ) {
         $(`#popup${this.type}`).show();
         const popper = new Popper(
           document.getElementById((newRowId - 1).toString() + this.type),
@@ -44,11 +46,8 @@ export default {
           startAt: '',
           allRows: '',
           concentration: '',
-          repeat: this.columnRepeats,
+          blocks: this.columnBlocks,
         };
-        if (!_.isEmpty(_.filter(this.data, x => x.startAt != ''))) {
-          this.$emit('ruleChange', this.type, _.filter(this.data, x => x.startAt != ''));
-        }
       }
     },
     handleRowDelete(rowId) {
@@ -71,6 +70,9 @@ export default {
           },
         });
       });
+      if (!_.isEmpty(_.filter(this.data, x => x.startAt != ''))) {
+        this.$emit('ruleChange', this.type, JSON.parse(JSON.stringify(_.map(this.data, x => x))));
+      }
     },
   },
   mounted() {

@@ -1,11 +1,13 @@
+/* eslint-disable */
+import _ from 'lodash';
 import * as types from './mutation-types';
-
+import { fillMissingValues, getDataByBlock } from '@/models/rules';
 export const state = {
   template: {
     data: [],
   },
   hgDNA: {
-    data: {},
+    data: [],
   },
   dilution: {
     data: {},
@@ -33,14 +35,17 @@ const mutations = {
   },
   [types.SET_TEMPLATE_PLATE](state, data) {
     state.plate.data.templateConcentration = data.reduce((acc, x) => {
-      x.allRows.map((y) => {
+      x.allRows.map(y => {
         let concList = x.concentration.split(',');
+        let repeats = state.colId.length / x.blocks;
 
         concList =
-          concList.length != 4 ? concList.concat(_.times(4 - concList.length, () => '')) : concList;
+          concList.length !== repeats
+            ? concList.concat(_.times(repeats - concList.length, () => ''))
+            : concList;
 
-        acc[y] = _.times(x.repeat, () => concList).reduce((a, x) => {
-          a = a.concat(x);
+        acc[y] = _.times(x.blocks, () => concList).reduce((a, el) => {
+          a = a.concat(el);
           return a;
         }, []);
         return acc[y];
@@ -50,14 +55,16 @@ const mutations = {
   },
   [types.SET_HGDNA_PLATE](state, data) {
     state.plate.data.hgDNAConcentration = data.reduce((acc, x) => {
-      x.allRows.map((y) => {
+      x.allRows.map(y => {
         let concList = x.concentration.split(',');
-
+        let repeats = state.colId.length / x.blocks;
         concList =
-          concList.length != 4 ? concList.concat(_.times(4 - concList.length, () => '')) : concList;
+          concList.length !== repeats
+            ? concList.concat(_.times(repeats - concList.length, () => ''))
+            : concList;
 
-        acc[y] = _.times(x.repeat, () => concList).reduce((a, x) => {
-          a = a.concat(x);
+        acc[y] = _.times(x.blocks, () => concList).reduce((a, el) => {
+          a = a.concat(el);
           return a;
         }, []);
         return acc[y];
@@ -72,34 +79,18 @@ const mutations = {
     state.idPrimers.data = data;
   },
   [types.SET_STRAINS_PLATE](state, args) {
-    const { data, repeats } = args;
+    const { data, blocks, byBlock, blockNo } = args;
 
-    state.plate.data.strains = state.rowId.reduce((acc, x) => {
-      const dataVals =
-        Object.values(data).length != 4
-          ? Object.values(data).concat(_.times(4 - Object.values(data).length, () => ''))
-          : Object.values(data);
-      acc[x] = _.times(repeats, () => dataVals).reduce((a, x) => {
-        a = a.concat(x);
-        return a;
-      }, []);
-      return acc;
-    }, {});
+    let repeats = state.colId.length / blocks;
+    const dataVals = fillMissingValues(byBlock, blockNo, blocks, state.colId, repeats, data);
+
+    state.plate.data.strains = getDataByBlock(byBlock, blocks, state.rowId, dataVals);
   },
   [types.SET_ID_PRIMERS_PLATE](state, args) {
-    const { data, repeats } = args;
-
-    state.plate.data.idPrimers = state.rowId.reduce((acc, x) => {
-      const dataVals =
-        Object.values(data).length != 4
-          ? Object.values(data).concat(_.times(4 - Object.values(data).length, () => ''))
-          : Object.values(data);
-      acc[x] = _.times(repeats, () => dataVals).reduce((a, x) => {
-        a = a.concat(x);
-        return a;
-      }, []);
-      return acc;
-    }, {});
+    const { data, blocks, byBlock, blockNo } = args;
+    let repeats = state.colId.length / blocks;
+    const dataVals = fillMissingValues(byBlock, blocks, state.colId, repeats, data);
+    state.plate.data.idPrimers = getDataByBlock(byBlock, blocks, state.rowId, dataVals);
   },
 };
 const getters = {
