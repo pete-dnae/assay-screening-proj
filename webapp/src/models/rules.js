@@ -3,33 +3,47 @@ import _ from 'lodash';
 export const isConcentrationValid = (repeats, value) =>
   !_.isEmpty(value) && value.split(',').length <= repeats;
 
-export const fillMissingValues = (byBlock, blockNo, blocks, cols, repeats, data) => {
-  let restructuredData;
-  if (byBlock) {
-    debugger;
-    restructuredData = cols.map((x, i) => (Math.floor(i / repeats) + 1 == blockNo ? data[0] : ''));
-  } else {
-    restructuredData =
-      Object.values(data).length !== repeats
-        ? Object.values(data).concat(_.times(repeats - Object.values(data).length, () => ''))
-        : Object.values(data);
-  }
+export const getRepeatedDataByColumn = (repeats, blocks, data) => {
+  const restructuredData =
+    data.length !== repeats
+      ? _.times(blocks, () => data.concat(_.times(repeats - data.length, () => ''))).reduce(
+          (a, el) => {
+            // eslint-disable-next-line
+            a = a.concat(el);
+            return a;
+          },
+          [],
+        )
+      : _.times(blocks, () => data).reduce((a, el) => {
+          // eslint-disable-next-line
+          a = a.concat(el);
+        return a;
+      }, []);
 
   return restructuredData;
 };
 
-export const getDataByBlock = (byBlock, blocks, rows, dataVals) => {
-  if (byBlock) {
-    return rows.reduce((acc, x) => {
-      acc[x] = dataVals;
-      return acc;
-    }, {});
-  }
-  return rows.reduce((acc, x) => {
-    acc[x] = _.times(blocks, () => dataVals).reduce((a, el) => {
-      a = a.concat(el);
+export const getitemsByColDict = (repeats, cols, repeatedDataByColumn, dataByBlock) => {
+  const itemsByColDict = dataByBlock.reduce(
+    (a, el) => {
+      _.range((el.blockNo - 1) * repeats, el.blockNo * repeats).forEach((number) => {
+        a[number] = el.Strain;
+      });
       return a;
-    }, []);
-    return acc;
-  }, {});
+    },
+    cols.reduce((acc, x) => {
+      acc[x] = null;
+      return acc;
+    }, {}),
+  );
+  return _.reduce(
+    itemsByColDict,
+    (acc, x, i) => {
+      if (!x) {
+        acc[i] = repeatedDataByColumn.shift();
+      }
+      return acc;
+    },
+    itemsByColDict,
+  );
 };
