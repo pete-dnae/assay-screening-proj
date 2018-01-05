@@ -149,44 +149,67 @@ class CyclingPattern(models.Model):
     extend_time = models.PositiveIntegerField()
 
 
-class RowPattern(models.Model):
+class Repeat(models.Model):
     """
-    A row pattern defined thus: 
-        start column = 2
-        item_csv = 'A, B, C'
+    This is an allocation distribution pattern.
 
-    Means:
-
-        Column  2 3 4 5 6 7 8... until, see below.
-        Item    A B C A B C A...
-
-    RowPattern(s) live in groups and apply until either there are no more
-    columns, or until a sister RowPattern takes over (with a higher start
-    column).
-
+    Allocates the CSV strings it holds to consecutive columns, starting
+    at its <start column>, and wrapping round to repeat itself. Stops when it
+    reaches the <start column> cited by another Repeat object in the same group.
+    Applies to its <start row> and all subsequent rows, until it reaches the
+    start row of another Repeat object in the same group.
     """
+    start_row = models.CharField(max_length=1)
     start_column = models.PositiveIntegerField()
+    items_csv = models.CharField(max_length=200)
+
+class Expansion(models.Model):
+    """
+    This is an allocation distribution pattern.
+
+    Has-A column group width. E.g. 4.
+    Allocates the first of its CSV strings to columns 1,2,3,4.
+    Allocates the next of its CSV strings to columns 5,6,7,8.
+    And so on.
+    Applies to its <start row> and all subsequent rows, until it reaches the
+    start row of another Expansion object in the same group.
+    """
+    column_group_width = models.PositiveIntegerField()
+    start_row = models.CharField(max_length=1)
     items_csv = models.CharField(max_length=200)
 
 
 class AllocationInstructions(models.Model):
     column_group_width = models.PositiveIntegerField() # e.g. 4
 
-    # These fields that are repeated (by definiton) for each column group.
-    strain_repeats = models.ManyToManyField(Strain)
-    id_primer_repeats = models.ManyToManyField(PrimerPair)
+    # Strains repeat across column blocks, uniformly for all rows.
+    strains = models.ForeignKey(Repeat, 
+        related_name='allocation_strains', on_delete=models.PROTECT)
 
-    # These fields are broadcast (or expanded) according
-    # to RowPattern(s).
-    strain_expansions = models.ManyToManyField(RowPattern)
-    strain_count_expansions = models.ManyToManyField(RowPattern,
-        related_name='allocation_instructions_strains')
-    gdna_expansions = models.ManyToManyField(RowPattern,
-        related_name='allocation_instructions_gdna')
-    pa_primer_expansions = models.ManyToManyField(RowPattern,
-        related_name='allocation_instructions_primer_pa')
-    dilution_factors = models.ManyToManyField(RowPattern, 
-        related_name='dilution_factor')
+    # Strain copies requires a separate expansion for each column group, and 
+    # also varies between rows.
+    strain_copies = models.ManyToManyField(Expansion, 
+        related_name='allocation_strains_copies')
+
+    # Human dna requires a separate expansion for each column group, and also
+    # varies between rows.
+    gdna = models.ManyToManyField(Expansion,
+        related_name='allocation_gdna')
+
+    # PA primers require a separate dedicated list for each column group, but
+    # is uniform for all rows. We use <Repeat> models, but their start columns
+    # are configured so that they don't ever actually repeat.
+    pa_primers = models.ManyToManyField(Repeat,
+        related_name='allocation_primer_pa')
+
+    # Dilution factor require a separate expansion for each column group, but
+    # is uniform for all rows.
+    dilution_factor = models.ManyToManyField(Expansion,
+        related_name='allocation_dilution_factor')
+
+    # ID Primers repeat across column blocks, uniformly for all rows.
+    id_primers = models.ForeignKey(Repeat, 
+        related_name='allocation_id_primers', on_delete=models.PROTECT)
 
     # e.g. "4, 8, 12"
     suppressed_columns = models.CharField(max_length=200) 

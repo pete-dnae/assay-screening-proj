@@ -15,7 +15,6 @@ from .models import Arg
 from .models import Strain
 from .models import StrainKit
 from .models import CyclingPattern
-from .models import RowPattern
 from .models import AllocationInstructions
 from .models import Plate
 from .models import Experiment
