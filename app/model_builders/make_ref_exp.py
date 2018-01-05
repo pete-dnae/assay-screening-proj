@@ -8,6 +8,7 @@ from app.models import BufferMix
 from app.models import Concentration
 from app.models import ConcreteReagent
 from app.models import CyclingPattern
+from app.models import Expansion
 from app.models import Experiment
 from app.models import Gene
 from app.models import MasterMix
@@ -18,7 +19,7 @@ from app.models import Plate
 from app.models import Primer
 from app.models import PrimerKit
 from app.models import PrimerPair
-from app.models import RowPattern
+from app.models import Repeat
 from app.models import Strain
 from app.models import StrainKit
 
@@ -201,7 +202,7 @@ class ReferenceExperiment():
         self._create_primer_pair('van04', 'van02', False, True)
         self._create_primer_pair('Kox04', 'Kox03', False, True)
         self._create_primer_pair('Kpn03', 'Kpn02', False, True)
-        self._crette_primer_pair('Pmi02', 'Pmi03', False, True)
+        self._create_primer_pair('Pmi02', 'Pmi03', False, True)
         self._create_primer_pair('Spo03', 'Spo05', False, True)
 
     def _create_primer_pair(self, fwd_name, rev_name, for_pa, for_id):
@@ -419,41 +420,54 @@ class ReferenceExperiment():
         return plate
 
     def _make_allocation_1(self):
+        CGW = 4 # Column group width.
+        _STRAINS = 'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764'
+
         alloc = AllocationInstructions.objects.create(
-            column_group_width=4,
+            column_group_width=CGW,
+            strains=self._create_repeat('A', 1, _STRAINS),
             suppressed_columns='4, 8, 12',
         )
 
-        self._add_strain_repeat(alloc.strain_repeats, 'ATCC BAA-2355')
-        self._add_strain_repeat(alloc.strain_repeats, 'ATCC 700802')
-        self._add_strain_repeat(alloc.strain_repeats, 'ATCC 700802')
-        self._add_strain_repeat(alloc.strain_repeats, 'ATCC 15764')
+        alloc.strain_copies.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
+        alloc.strain_copies.add(self.create_expansion(CGW, 'C', '5, 5, 50'))
+        alloc.strain_copies.add(self.create_expansion(CGW, 'E', '5, 5, 500'))
+        alloc.strain_copies.add(self.create_expansion(CGW, 'G', '5, 5, 5000'))
 
-        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kox04', 'Kox03')
-        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kpn03', 'Kpn02')
-        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Pmi02', 'Pmi03')
-        self._add_id_primer_repeat(alloc.id_primer_repeats, 'Spo03', 'Spo05')
+        alloc.gdna.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
+        alloc.gdna.add(self.create_expansion(CGW, 'B', '3000, 3000, 0'))
+        alloc.gdna.add(self.create_expansion(CGW, 'C', '0, 0, 0'))
+        alloc.gdna.add(self.create_expansion(CGW, 'F', '3000, 3000, 0'))
 
-        alloc.strain_expansions.add(foo)
-        alloc.gdna_expansions.add(foo)
-        alloc.pa_primer_expansions.add(foo)
+        alloc.pa_primers.add(self._create_repeat())
+            self._create_repeat('A', 1, 'pool, pool, pool, pool')
+        alloc.pa_primers.add(self._create_repeat())
+            self._create_repeat('A', 4, fmted_primer_pair_string_4_pairs)
+        alloc.pa_primers.add(self._create_repeat())
+            self._create_repeat('A', 9, ',,,')
 
-        alloc.dilution_factors.add(self._make_row_pattern(1, '30'))
-        alloc.dilution_factors.add(self._make_row_pattern(9, ''))
+        but this clashes with definition because of 2 dimensional indexing?
 
-        alloc.save()
-        return alloc
 
-    def _make_row_pattern(self, start_column, item_string):
-        return RowPattern.objects.create(
-            start_column=start_column,
-            items_csv=item_string
+
+        """
+        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kox04', 'Kox03')
+        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kpn03', 'Kpn02')
+        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Pmi02', 'Pmi03')
+        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Spo03', 'Spo05')
+        """
+
+
+    def _create_repeat(self, start_row, start_column, items_csv):
+        return Repeat.objects.create(
+            start_row = start_row,
+            start_column = start_column,
+            items_csv=items_csv,
         )
 
-    def _add_strain_repeat(self,  m2m_field, strain_name):
-        strain = Strain.objects.get(name=strain_name)
-        m2m_field.add(strain)
-
-    def _add_id_primer_repeat(self, m2m_field, fwd, rev):
-        pair = self._find_id_primer_pair(fwd, rev)
-        m2m_field.add(pair)
+    def create_expansion(self, column_group_width, start_row, items_csv):
+        return Expansion.objects.create(
+            column_group_width=column_group_width,
+            start_row=start_row,
+            items_csv=items_csv,
+        )
