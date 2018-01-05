@@ -3,12 +3,12 @@ Creates and stores a reference experiment in the database.
 """
 
 from app.models import AllocationInstructions
+from app.models import AllocRule
 from app.models import Arg
 from app.models import BufferMix
 from app.models import Concentration
 from app.models import ConcreteReagent
 from app.models import CyclingPattern
-from app.models import Expansion
 from app.models import Experiment
 from app.models import Gene
 from app.models import MasterMix
@@ -19,7 +19,6 @@ from app.models import Plate
 from app.models import Primer
 from app.models import PrimerKit
 from app.models import PrimerPair
-from app.models import Repeat
 from app.models import Strain
 from app.models import StrainKit
 
@@ -32,6 +31,7 @@ class ReferenceExperiment():
 
     def __init__(self):
         self.experiment = None
+        self._next_count = 0 
 
     def create(self):
         self._create_shared_entities() # Organisms, Stock reagents etc.
@@ -41,6 +41,10 @@ class ReferenceExperiment():
     #-----------------------------------------------------------------------
     # Private below.
     #-----------------------------------------------------------------------
+
+    def _tick(self):
+        self._next_count += 1
+        return self._next_count
 
     def _create_shared_entities(self):
         self._create_concrete_reagents()
@@ -421,13 +425,22 @@ class ReferenceExperiment():
 
     def _make_allocation_1(self):
         CGW = 4 # Column group width.
-        _STRAINS = 'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764'
 
         alloc = AllocationInstructions.objects.create(
             column_group_width=CGW,
-            strains=self._create_repeat('A', 1, _STRAINS),
             suppressed_columns='4, 8, 12',
         )
+        self._add_strains_rules_1(alloc.allocation_rules)
+        self._add_strains_copies_rules_1(alloc.allocation_rules)
+        self._add_hg_dna_rules_1(alloc.allocation_rules)
+        self._add_pa_primers_rules_1(alloc.allocation_rules)
+        self._add_dilution_factor_rules_1(alloc.allocation_rules)
+        self._add_id_primers_rules_1(alloc.allocation_rules)
+
+
+
+        """
+        fart revert to here once have built back up from create_rule()
 
         alloc.strain_copies.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
         alloc.strain_copies.add(self.create_expansion(CGW, 'C', '5, 5, 50'))
@@ -450,24 +463,54 @@ class ReferenceExperiment():
 
 
 
-        """
         #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kox04', 'Kox03')
         #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kpn03', 'Kpn02')
         #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Pmi02', 'Pmi03')
         #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Spo03', 'Spo05')
         """
+        alloc.save()
+        return alloc
+
+    def _add_strains_rules_1(self, m2m_field):
+        # Same pattern repeated every 4 columns, same for all rows.
+        strains_csv = 'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764'
+        m2m_field.add(self._create_alloc_rule(
+                self._tick(), AllocRule.STRAIN, strains_csv, 
+                AllocRule.CONSECUTIVE, ('A', 'H', 1, 12)))
+
+    def _add_strains_copies_rules_1(self, m2m_field):
+        # Sequence in english:
+        # Blanket fill with 5's everwhere first
+        # First two rows - filled with zeros.
+        # Larger numbers in small zones.
+        for payload, zone in zip(
+                ('5', '0', '50', '500', '5000'),
+                (
+                    ('A', 'H', 1, 12),
+                    ('A', 'B', 1, 12),
+                    ('C', 'D', 9, 12),
+                    ('E', 'F', 9, 12),
+                    ('G', 'H', 9, 12),
+                )
+            ):
+            m2m_field.add(self._create_alloc_rule(self._tick(), 
+                AllocRule.STRAIN_COUNT, payload, AllocRule.CONSECUTIVE, zone))
+
+    def _add_hg_dna_rules_1(self, m2m_field):
+        fart
+        zap 0 everywhere, then 3000 in small number of big blocks
 
 
-    def _create_repeat(self, start_row, start_column, items_csv):
-        return Repeat.objects.create(
-            start_row = start_row,
-            start_column = start_column,
-            items_csv=items_csv,
-        )
-
-    def create_expansion(self, column_group_width, start_row, items_csv):
-        return Expansion.objects.create(
-            column_group_width=column_group_width,
-            start_row=start_row,
-            items_csv=items_csv,
+    def _create_alloc_rule(self, rank_for_ordering, payload_type, payload_csv,
+            pattern, zone):
+        sr, er, sc, ec = zone
+        return AllocRule.objects.create(
+            rank_for_ordering=rank_for_ordering,
+            payload_type=payload_type,
+            payload_csv=payload_csv,
+            pattern=pattern,
+            start_row_letter=sr,
+            end_row_letter=er,
+            start_column=sc,
+            end_column=ec,
         )

@@ -33,6 +33,9 @@ PRIMER_ROLE_CHOICES = (
     ('rev', 'reverse'),
 )
 
+def _choices(items):
+    return (((i,i) for i in items))
+
 
 class Concentration(models.Model):
     stock = models.DecimalField(max_digits=8, decimal_places=2)
@@ -149,69 +152,35 @@ class CyclingPattern(models.Model):
     extend_time = models.PositiveIntegerField()
 
 
-class Repeat(models.Model):
-    """
-    This is an allocation distribution pattern.
+class AllocRule(models.Model):
 
-    Allocates the CSV strings it holds to consecutive columns, starting
-    at its <start column>, and wrapping round to repeat itself. Stops when it
-    reaches the <start column> cited by another Repeat object in the same group.
-    Applies to its <start row> and all subsequent rows, until it reaches the
-    start row of another Repeat object in the same group.
-    """
-    start_row = models.CharField(max_length=1)
+    STRAIN = 'Strain'
+    STRAIN_COUNT = 'Strain Count'
+    HG_DNA = 'HgDNA'
+    PA_PRIMERS = 'PA Primers'
+    DILUTION_FACTOR = 'Dilution Factor'
+    ID_PRIMERS = 'ID Primers'
+
+    CONSECUTIVE = 'Consecutive'
+    IN_BLOCKS = 'In Blocks'
+
+    payload_choices = _choices((STRAIN, STRAIN_COUNT, HG_DNA, PA_PRIMERS, 
+        DILUTION_FACTOR, ID_PRIMERS))
+    pattern_choices = _choices((CONSECUTIVE, IN_BLOCKS))
+
+    rank_for_ordering = models.DecimalField(max_digits=8, decimal_places=2)
+    payload_type = models.CharField(max_length=15, choices=payload_choices)
+    payload_csv = models.CharField(max_length=500)
+    pattern = models.CharField(max_length=15, choices=pattern_choices)
+    start_row_letter = models.CharField(max_length=1)
+    end_row_letter = models.CharField(max_length=1)
     start_column = models.PositiveIntegerField()
-    items_csv = models.CharField(max_length=200)
-
-class Expansion(models.Model):
-    """
-    This is an allocation distribution pattern.
-
-    Has-A column group width. E.g. 4.
-    Allocates the first of its CSV strings to columns 1,2,3,4.
-    Allocates the next of its CSV strings to columns 5,6,7,8.
-    And so on.
-    Applies to its <start row> and all subsequent rows, until it reaches the
-    start row of another Expansion object in the same group.
-    """
-    column_group_width = models.PositiveIntegerField()
-    start_row = models.CharField(max_length=1)
-    items_csv = models.CharField(max_length=200)
+    end_column = models.PositiveIntegerField()
 
 
 class AllocationInstructions(models.Model):
-    column_group_width = models.PositiveIntegerField() # e.g. 4
-
-    # Strains repeat across column blocks, uniformly for all rows.
-    strains = models.ForeignKey(Repeat, 
-        related_name='allocation_strains', on_delete=models.PROTECT)
-
-    # Strain copies requires a separate expansion for each column group, and 
-    # also varies between rows.
-    strain_copies = models.ManyToManyField(Expansion, 
-        related_name='allocation_strains_copies')
-
-    # Human dna requires a separate expansion for each column group, and also
-    # varies between rows.
-    gdna = models.ManyToManyField(Expansion,
-        related_name='allocation_gdna')
-
-    # PA primers require a separate dedicated list for each column group, but
-    # is uniform for all rows. We use <Repeat> models, but their start columns
-    # are configured so that they don't ever actually repeat.
-    pa_primers = models.ManyToManyField(Repeat,
-        related_name='allocation_primer_pa')
-
-    # Dilution factor require a separate expansion for each column group, but
-    # is uniform for all rows.
-    dilution_factor = models.ManyToManyField(Expansion,
-        related_name='allocation_dilution_factor')
-
-    # ID Primers repeat across column blocks, uniformly for all rows.
-    id_primers = models.ForeignKey(Repeat, 
-        related_name='allocation_id_primers', on_delete=models.PROTECT)
-
-    # e.g. "4, 8, 12"
+    column_group_width = models.PositiveIntegerField()
+    allocation_rules = models.ManyToManyField(AllocRule)
     suppressed_columns = models.CharField(max_length=200) 
 
 
@@ -237,3 +206,5 @@ class Experiment(models.Model):
         related_name='experiment_pa_cycling', on_delete=models.PROTECT)
     id_cycling = models.ForeignKey(CyclingPattern, 
         related_name='experiment_id_cycling', on_delete=models.PROTECT)
+
+
