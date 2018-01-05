@@ -3,7 +3,6 @@ import { mapGetters, mapActions } from 'vuex';
 import rules from '@/components/rules/rules.vue';
 import footer from '@/components/footer/footer.vue';
 import plate from '@/components/plate/plate.vue';
-import '@/assets/sass/app.scss';
 
 Vue.component('rulesdropdown', rules);
 Vue.component('customfooter', footer);
@@ -18,11 +17,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      templateData: 'getTemplate',
-      hgDNAData: 'gethgDNA',
-      dilutionData: 'getDilution',
-      strainData: 'getStrains',
-      idPrimerData: 'getIdPrimers',
+      templateData: 'getTemplateOnPlate',
+      hgDNAData: 'gethgDNAOnPlate',
+      dilutionData: 'getDilutionOnPlate',
+      strainData: 'getStrainsOnPlate',
+      idPrimerData: 'getIdPrimersOnPlate',
     }),
   },
 };

@@ -1,9 +1,10 @@
 <template>
+  <div>
   <ul class="nav navbar-nav mt-3">
     <li class="dropdown dropdown-lg">
-      <a href="#" class="dropdown-toggle float-left" data-toggle="dropdown">Rules <b class="caret"></b></a>
+      <a href="#" class="dropdown-toggle float-left" data-toggle="dropdown" >Rules <b class="caret"></b></a>
+      <button class="float-left ml-3" @click="showRight = true"> Show Rules on sidebar</button>
       <div v-bind:class="currentDisplayClass"  v-bind:style="currentDisplayStyle" onClick="event.stopPropagation();">
-
         <div class="row">
           <div class="input-group col-4 ml-3">
             <span class="input-group-addon" id="basic-addon1">Column Block</span>
@@ -47,13 +48,13 @@
             <div class="col">
               <span class="dropdown-header">Template Copies</span>
             </div>
-            <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'template'" @ruleChange="handleRuleChange"></expandColumns>
+            <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'template'" :data="templates" @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
               <span class="dropdown-header">HgDna</span>
             </div>
-            <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'HgDna'" @ruleChange="handleRuleChange"></expandColumns>
+            <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'HgDna'" :data="hgDNA" @ruleChange="handleRuleChange"></expandColumns>
           </div>
           <div class="row mt-3">
             <div class="col">
@@ -122,13 +123,67 @@
         <div class="row">
           <div class="input-group col-4 m-3">
             <span class="input-group-addon" id="basic-addon1">Suppress Columns</span>
-            <input type="number" class="form-control" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
+            <input type="number" class="form-control" v-model="surpressColumns" placeholder="No of repeats" aria-label="number" aria-describedby="basic-addon1">
           </div>
-
         </div>
       </div>
 
     </li>
+
   </ul>
+
+
+<sidebar :show="showRight" @close='showRight = false' placement="right" header="Rules" width="350">
+  <nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#strain" role="tab" aria-controls="strain" aria-selected="true">Repeat Col</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Expand Col</a>
+    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Primers</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="strain" role="tabpanel" aria-labelledby="nav-home-tab">
+    <div class="row mt-3">
+      <div class="col">
+        <span class="dropdown-header">Strains</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <editableList :columnBlocks="parseInt(columnBlocks)" :type="'Strain'"></editableList>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <span class="dropdown-header">ID Primers</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <editableList :columnBlocks="parseInt(columnBlocks)" :type="'ID Primers'"></editableList>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <div class="row">
+      <div class="col">
+        <span class="dropdown-header">Template Copies</span>
+      </div>
+      <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'template'" :data="templates" @ruleChange="handleRuleChange"></expandColumns>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <span class="dropdown-header">HgDna</span>
+      </div>
+      <expandColumns :columnBlocks="parseInt(columnBlocks)" :type="'HgDna'" :data="hgDNA" @ruleChange="handleRuleChange"></expandColumns>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+</div>
+
+
+
+</sidebar>
+</div>
 </template>
 <script src="./rules.js"></script>

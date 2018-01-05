@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3">
+  <div class="mt-3 container-fluid">
     <div v-for="row in rows" class="row">
       <div v-for="col in cols"  class="col border border-primary">
         <div class="row">{{row}}--{{col +1}}</div>

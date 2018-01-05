@@ -8,13 +8,11 @@
       <span ><b>Experiment</b></span>
       <div class="dropdown pl-3">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          A60E010
+          {{currentExpt}}
         </button>
 
-      <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-        <button class="dropdown-item" type="button">A82E131</button>
-        <button class="dropdown-item" type="button">A82E121</button>
-        <button class="dropdown-item" type="button">A82E101</button>
+      <div class="dropdown-menu" style="width:400px;height:100px" onClick="event.stopPropagation();" aria-labelledby="dropdownMenu2">
+        <ExptLoad @experimentChange="handleExptChange"></ExptLoad>
       </div>
     </div>
 

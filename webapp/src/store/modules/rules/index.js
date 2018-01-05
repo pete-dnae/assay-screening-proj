@@ -4,10 +4,10 @@ import * as types from './mutation-types';
 import { getRepeatedDataByColumn, getitemsByColDict } from '@/models/rules';
 export const state = {
   template: {
-    data: [],
+    data: {},
   },
   hgDNA: {
-    data: [],
+    data: {},
   },
   dilution: {
     data: {},
@@ -90,11 +90,11 @@ const mutations = {
     );
     let itemsByColDict = getitemsByColDict(repeats, state.colId, repeatedDataByColumn, dataByBlock);
 
-    const plateDisplayByBlock = state.rowId.reduce((acc, x) => {
+    const plateDisplayArray = state.rowId.reduce((acc, x) => {
       acc[x] = state.colId.map(colNum => (colNum in itemsByColDict ? itemsByColDict[colNum] : ''));
       return acc;
     }, {});
-    state.plate.data.strains = plateDisplayByBlock;
+    state.plate.data.strains = plateDisplayArray;
   },
   [types.SET_ID_PRIMERS_PLATE](state, args) {
     const { blocks, data } = args;
@@ -108,28 +108,40 @@ const mutations = {
     );
     let itemsByColDict = getitemsByColDict(repeats, state.colId, repeatedDataByColumn, dataByBlock);
 
-    const plateDisplayByBlock = state.rowId.reduce((acc, x) => {
+    const plateDisplayArray = state.rowId.reduce((acc, x) => {
       acc[x] = state.colId.map(colNum => (colNum in itemsByColDict ? itemsByColDict[colNum] : ''));
       return acc;
     }, {});
-    state.plate.data.idPrimers = plateDisplayByBlock;
+    state.plate.data.idPrimers = plateDisplayArray;
   },
 };
 const getters = {
-  getTemplate(state, getters, rootState) {
+  getTemplateOnPlate(state, getters, rootState) {
     return state.plate.data.templateConcentration;
   },
-  gethgDNA(state, getters, rootState) {
+  gethgDNAOnPlate(state, getters, rootState) {
     return state.plate.data.hgDNAConcentration;
   },
-  getDilution(state, getters, rootState) {
+  getTemplateRules(state, getters, rootState) {
+    return state.template.data;
+  },
+  gethgDNARules(state, getters, rootState) {
+    return state.hgDNA.data;
+  },
+  getDilutionOnPlate(state, getters, rootState) {
     return state.dilution.data;
   },
-  getStrains(state, getters, rootState) {
+  getStrainsOnPlate(state, getters, rootState) {
     return state.plate.data.strains;
   },
-  getIdPrimers(state, getters, rootState) {
+  getIdPrimersOnPlate(state, getters, rootState) {
     return state.plate.data.idPrimers;
+  },
+  getStrainsRules(state, getters, rootState) {
+    return state.strains.data;
+  },
+  getIdPrimersRules(state, getters, rootState) {
+    return state.idPrimers.data;
   },
 };
 

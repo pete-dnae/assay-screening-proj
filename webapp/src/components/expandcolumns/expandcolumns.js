@@ -1,11 +1,13 @@
 import _ from 'lodash';
 import { isConcentrationValid } from '@/models/rules.js';
+import { modal } from 'vue-strap';
 
 export default {
   name: 'ExpandColumns',
   props: {
     type: String,
     columnBlocks: Number,
+    data: Object,
   },
   data() {
     return {
@@ -21,25 +23,20 @@ export default {
         { text: 'H', value: 'H' },
       ],
       rows: [],
-      data: {},
+      showModal: false,
+      currentRowId: '',
     };
   },
   methods: {
     handleRowAdd() {
       const currentRowId = this.rows.length - 1;
       const newRowId = this.rows.length == 0 ? 0 : this.rows[currentRowId] + 1;
+      this.changeAllocationRules();
       if (
         newRowId != 0 &&
         !isConcentrationValid(this.columnBlocks, this.data[currentRowId].concentration)
       ) {
-        $(`#popup${this.type}`).show();
-        const popper = new Popper(
-          document.getElementById((newRowId - 1).toString() + this.type),
-          this.$refs.popup,
-          {
-            placement: 'top',
-          },
-        );
+        alert('Fill Concentration');
       } else {
         this.rows.push(newRowId);
         this.data[newRowId] = {
@@ -47,13 +44,13 @@ export default {
           allRows: '',
           concentration: '',
           blocks: this.columnBlocks,
+          blockNo: '',
         };
       }
     },
     handleRowDelete(rowId) {
       this.rows = this.rows.filter(x => x != rowId);
       delete this.data[rowId];
-      $(`#popup${this.type}`).hide();
       this.changeAllocationRules();
     },
     changeAllocationRules() {
@@ -74,11 +71,5 @@ export default {
         this.$emit('ruleChange', this.type, JSON.parse(JSON.stringify(_.map(this.data, x => x))));
       }
     },
-  },
-  mounted() {
-    $(`#popup${this.type}`).hide();
-    $(`#popup${this.type}`).click(() => {
-      $(`#popup${this.type}`).hide();
-    });
   },
 };
