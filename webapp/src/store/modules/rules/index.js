@@ -1,7 +1,7 @@
 /* eslint-disable */
 import _ from 'lodash';
 import * as types from './mutation-types';
-import { fillMissingValues, getDataByBlock } from '@/models/rules';
+import { getRepeatedDataByColumn, getitemsByColDict } from '@/models/rules';
 export const state = {
   template: {
     data: [],
@@ -22,7 +22,7 @@ export const state = {
     data: { templateConcentration: {}, hgDNAConcentration: {}, strains: {}, idPrimers: {} },
   },
   rowId: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-  colId: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  colId: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
 };
 
 const actions = {};
@@ -79,18 +79,40 @@ const mutations = {
     state.idPrimers.data = data;
   },
   [types.SET_STRAINS_PLATE](state, args) {
-    const { data, blocks, byBlock, blockNo } = args;
+    const { blocks, data } = args;
+    const repeats = state.colId.length / blocks;
+    const dataByBlock = _.filter(data, 'byBlock');
+    const dataByColumn = _.filter(data, x => !x.byBlock);
+    const repeatedDataByColumn = getRepeatedDataByColumn(
+      repeats,
+      blocks,
+      _.map(dataByColumn, 'Strain'),
+    );
+    let itemsByColDict = getitemsByColDict(repeats, state.colId, repeatedDataByColumn, dataByBlock);
 
-    let repeats = state.colId.length / blocks;
-    const dataVals = fillMissingValues(byBlock, blockNo, blocks, state.colId, repeats, data);
-
-    state.plate.data.strains = getDataByBlock(byBlock, blocks, state.rowId, dataVals);
+    const plateDisplayByBlock = state.rowId.reduce((acc, x) => {
+      acc[x] = state.colId.map(colNum => (colNum in itemsByColDict ? itemsByColDict[colNum] : ''));
+      return acc;
+    }, {});
+    state.plate.data.strains = plateDisplayByBlock;
   },
   [types.SET_ID_PRIMERS_PLATE](state, args) {
-    const { data, blocks, byBlock, blockNo } = args;
-    let repeats = state.colId.length / blocks;
-    const dataVals = fillMissingValues(byBlock, blocks, state.colId, repeats, data);
-    state.plate.data.idPrimers = getDataByBlock(byBlock, blocks, state.rowId, dataVals);
+    const { blocks, data } = args;
+    const repeats = state.colId.length / blocks;
+    const dataByBlock = _.filter(data, 'byBlock');
+    const dataByColumn = _.filter(data, x => !x.byBlock);
+    const repeatedDataByColumn = getRepeatedDataByColumn(
+      repeats,
+      blocks,
+      _.map(dataByColumn, 'ID Primers'),
+    );
+    let itemsByColDict = getitemsByColDict(repeats, state.colId, repeatedDataByColumn, dataByBlock);
+
+    const plateDisplayByBlock = state.rowId.reduce((acc, x) => {
+      acc[x] = state.colId.map(colNum => (colNum in itemsByColDict ? itemsByColDict[colNum] : ''));
+      return acc;
+    }, {});
+    state.plate.data.idPrimers = plateDisplayByBlock;
   },
 };
 const getters = {

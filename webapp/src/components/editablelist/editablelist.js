@@ -24,20 +24,14 @@ export default {
       if (modalText != '') {
         const newId = this.rows.length == 0 ? 0 : this.rows[this.rows.length - 1] + 1;
         this.rows.push(newId);
-        this.listItem[newId] = modalText;
+        this.listItem[newId] = {
+          byBlock: this.repeatOption == 'block',
+          blockNo: this.blockNo,
+          [this.type]: modalText,
+        };
         const mutation = this.type == 'Strain' ? 'SET_STRAINS' : 'SET_ID_PRIMERS';
-        this.$store.commit(mutation, {
-          blocks: this.columnBlocks,
-          byBlock: this.repeatOption == 'block',
-          blockNo: this.blockNo,
-          data: this.listItem,
-        });
-        this.$store.commit(`${mutation}_PLATE`, {
-          blocks: this.columnBlocks,
-          byBlock: this.repeatOption == 'block',
-          blockNo: this.blockNo,
-          data: this.listItem,
-        });
+        this.$store.commit(mutation, { data: this.listItem, blocks: this.columnBlocks });
+        this.$store.commit(`${mutation}_PLATE`, { blocks: this.columnBlocks, data: this.listItem });
       } else {
         alert('Please enter a valid name');
       }
@@ -47,19 +41,9 @@ export default {
 
       this.listItem = _.filter(this.listItem, (x, i) => this.rows.indexOf(parseInt(i)) != -1);
       const mutation = this.type == 'Strain' ? 'SET_STRAINS' : 'SET_ID_PRIMERS';
-      this.$store.commit(mutation, {
-        blocks: this.columnBlocks,
-        byBlock: this.repeatOption == 'block',
-        blockNo: this.blockNo,
-        data: this.listItem,
-      });
+      this.$store.commit(mutation, { blocks: this.columnBlocks, data: this.listItem });
 
-      this.$store.commit(`${mutation}_PLATE`, {
-        blocks: this.columnBlocks,
-        byBlock: this.repeatOption == 'block',
-        blockNo: this.blockNo,
-        data: this.listItem,
-      });
+      this.$store.commit(`${mutation}_PLATE`, { blocks: this.columnBlocks, data: this.listItem });
     },
   },
 };

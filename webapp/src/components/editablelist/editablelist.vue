@@ -3,7 +3,7 @@
     <ul class="list-group m-3">
       <div class="row" v-for="rowId in rows">
         <div class="col">
-        <li class="list-group-item" style="background-color: rgba(0,0,0,0);color:white">{{listItem[rowId]}}</li>
+        <li class="list-group-item" style="background-color: rgba(0,0,0,0);color:white">{{listItem[rowId][type]}}</li>
         </div>
         <div class="col">
           <a class="btn btn-info"  aria-label="delete"  @click="handleListDelete(rowId)">
