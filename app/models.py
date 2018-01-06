@@ -1,46 +1,25 @@
 from django.db import models
 
-
-DIRECTION_CHOICES = (
-    ('FWD', 'Forward'),
-    ('REV', 'Reverse'),
-)
-
-ROLE_CHOICES = (
-    ('PA', 'Pre-Amp'),
-    ('ID', 'Identification'),
-)
-
-CONC_UNITS_CHOICES = (
-    ('X', 'X'),
-    ('mM', 'mM'),
-    ('mg/ml', 'mg/ml'),
-    ('mM each', 'mM each'),
-    ('microM each', 'microM each'),
-    ('ng/ul', 'ng/ul'),
-    ('cp/ul', 'cp/ul'),
-    ('%', '%'),
-)
-
-PLACEHOLDER_CHOICES = (
-    ('Primers', 'Primers'),
-    ('Template', 'Template'),
-    ('HgDNA', 'HgDNA')
-)
-
-PRIMER_ROLE_CHOICES = (
-    ('fwd', 'forward'),
-    ('rev', 'reverse'),
-)
-
-def _choices(items):
-    return (((i,i) for i in items))
+# Utility to save typing in making 2-tuple lists required by model.choices.
+def _mk_choices(items):
+    return ((i,i) for i in items)
 
 
 class Concentration(models.Model):
+
+    units_choices = _mk_choices((
+        'X',
+        'mM',
+        'mg/ml',
+        'mM each',
+        'microM each',
+        'ng/ul',
+        'cp/ul',
+        '%'))
+
     stock = models.DecimalField(max_digits=8, decimal_places=2)
     final = models.DecimalField(max_digits=8, decimal_places=2)
-    units = models.CharField(max_length=15, choices=CONC_UNITS_CHOICES)
+    units = models.CharField(max_length=15, choices=units_choices)
 
 
 class ConcreteReagent(models.Model):
@@ -65,7 +44,9 @@ class MixedReagent(models.Model):
 
 
 class PlaceholderReagent(models.Model):
-    type = models.CharField(max_length=15, choices=PLACEHOLDER_CHOICES)
+    type_choices = _mk_choices(('Primers', 'Template', 'HgDNA'))
+
+    type = models.CharField(max_length=15, choices=type_choices)
     concentration = models.ForeignKey(Concentration, 
         related_name='placeholder_reagent', on_delete=models.PROTECT)
 
@@ -94,9 +75,12 @@ class Organism(models.Model):
 
 
 class Primer(models.Model):
+
+    primer_role_choices = _mk_choices(('fwd', 'rev'))
+
     oligo_code = models.CharField(max_length=30)
     full_name = models.CharField(max_length=50, unique=True)
-    role = models.CharField(max_length=15, choices=PRIMER_ROLE_CHOICES)
+    role = models.CharField(max_length=15, choices=primer_role_choices)
     organism = models.ForeignKey(Organism, 
         related_name='primer', on_delete=models.PROTECT)
     gene = models.ForeignKey(Gene, 
@@ -154,19 +138,15 @@ class CyclingPattern(models.Model):
 
 class AllocRule(models.Model):
 
-    STRAIN = 'Strain'
-    STRAIN_COUNT = 'Strain Count'
-    HG_DNA = 'HgDNA'
-    PA_PRIMERS = 'PA Primers'
-    DILUTION_FACTOR = 'Dilution Factor'
-    ID_PRIMERS = 'ID Primers'
+    payload_choices = _mk_choices((
+        'Strain',
+        'Strain Count',
+        'HgDNA',
+        'PA Primers',
+        'Dilution Factor',
+        'ID Primers'))
 
-    CONSECUTIVE = 'Consecutive'
-    IN_BLOCKS = 'In Blocks'
-
-    payload_choices = _choices((STRAIN, STRAIN_COUNT, HG_DNA, PA_PRIMERS, 
-        DILUTION_FACTOR, ID_PRIMERS))
-    pattern_choices = _choices((CONSECUTIVE, IN_BLOCKS))
+    pattern_choices = _mk_choices(('Consecutive', 'In Blocks'))
 
     rank_for_ordering = models.DecimalField(max_digits=8, decimal_places=2)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
@@ -179,14 +159,13 @@ class AllocRule(models.Model):
 
 
 class AllocationInstructions(models.Model):
-    column_group_width = models.PositiveIntegerField()
     allocation_rules = models.ManyToManyField(AllocRule)
     suppressed_columns = models.CharField(max_length=200) 
 
 
 class Plate(models.Model):
     name = models.CharField(max_length=20) 
-    allocation_instruction = models.ForeignKey(AllocationInstructions, 
+    allocation_instructions = models.ForeignKey(AllocationInstructions, 
         related_name='plate', on_delete=models.PROTECT)
 
 

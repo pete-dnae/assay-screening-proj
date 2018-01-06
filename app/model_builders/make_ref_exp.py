@@ -231,7 +231,7 @@ class ReferenceExperiment():
             id_cycling = self._create_id_cycling(),
         )
         exp.plates.add(self._create_plate_1(_EXPERIMENT_NAME))
-        exp.plates.add(self._create_plate_2(_EXPERIMENT_NAME))
+        #exp.plates.add(self._create_plate_2(_EXPERIMENT_NAME))
 
         exp.save()
         return exp
@@ -424,12 +424,11 @@ class ReferenceExperiment():
         return plate
 
     def _make_allocation_1(self):
-        CGW = 4 # Column group width.
 
         alloc = AllocationInstructions.objects.create(
-            column_group_width=CGW,
             suppressed_columns='4, 8, 12',
         )
+
         self._add_strains_rules_1(alloc.allocation_rules)
         self._add_strains_copies_rules_1(alloc.allocation_rules)
         self._add_hg_dna_rules_1(alloc.allocation_rules)
@@ -437,69 +436,82 @@ class ReferenceExperiment():
         self._add_dilution_factor_rules_1(alloc.allocation_rules)
         self._add_id_primers_rules_1(alloc.allocation_rules)
 
-
-
-        """
-        fart revert to here once have built back up from create_rule()
-
-        alloc.strain_copies.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
-        alloc.strain_copies.add(self.create_expansion(CGW, 'C', '5, 5, 50'))
-        alloc.strain_copies.add(self.create_expansion(CGW, 'E', '5, 5, 500'))
-        alloc.strain_copies.add(self.create_expansion(CGW, 'G', '5, 5, 5000'))
-
-        alloc.gdna.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
-        alloc.gdna.add(self.create_expansion(CGW, 'B', '3000, 3000, 0'))
-        alloc.gdna.add(self.create_expansion(CGW, 'C', '0, 0, 0'))
-        alloc.gdna.add(self.create_expansion(CGW, 'F', '3000, 3000, 0'))
-
-        alloc.pa_primers.add(self._create_repeat())
-            self._create_repeat('A', 1, 'pool, pool, pool, pool')
-        alloc.pa_primers.add(self._create_repeat())
-            self._create_repeat('A', 4, fmted_primer_pair_string_4_pairs)
-        alloc.pa_primers.add(self._create_repeat())
-            self._create_repeat('A', 9, ',,,')
-
-        but this clashes with definition because of 2 dimensional indexing?
-
-
-
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kox04', 'Kox03')
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kpn03', 'Kpn02')
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Pmi02', 'Pmi03')
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Spo03', 'Spo05')
-        """
         alloc.save()
         return alloc
 
     def _add_strains_rules_1(self, m2m_field):
         # Same pattern repeated every 4 columns, same for all rows.
-        strains_csv = 'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764'
-        m2m_field.add(self._create_alloc_rule(
-                self._tick(), AllocRule.STRAIN, strains_csv, 
-                AllocRule.CONSECUTIVE, ('A', 'H', 1, 12)))
+        data = (
+            (
+                'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764',
+                'In Blocks',
+                ('A', 'H', 1, 12),
+            ),
+        )
+        self._add_rules_from_data(m2m_field, 'Strain Count', data)
 
     def _add_strains_copies_rules_1(self, m2m_field):
-        # Sequence in english:
         # Blanket fill with 5's everwhere first
-        # First two rows - filled with zeros.
-        # Larger numbers in small zones.
-        for payload, zone in zip(
-                ('5', '0', '50', '500', '5000'),
-                (
-                    ('A', 'H', 1, 12),
-                    ('A', 'B', 1, 12),
-                    ('C', 'D', 9, 12),
-                    ('E', 'F', 9, 12),
-                    ('G', 'H', 9, 12),
-                )
-            ):
-            m2m_field.add(self._create_alloc_rule(self._tick(), 
-                AllocRule.STRAIN_COUNT, payload, AllocRule.CONSECUTIVE, zone))
+        # Then, first two rows - filled with zeros.
+        # Then, larger numbers in small zones.
+        data = (
+            ('5', 'Consecutive', ('A', 'H', 1, 12)),
+            ('0', 'Consecutive', ('A', 'B', 1, 12)),
+            ('50', 'Consecutive', ('C', 'D', 9, 12)),
+            ('500', 'Consecutive', ('E', 'F', 9, 12)),
+            ('5000', 'Consecutive', ('G', 'H', 9, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'Strain Count', data)
+
 
     def _add_hg_dna_rules_1(self, m2m_field):
-        fart
-        zap 0 everywhere, then 3000 in small number of big blocks
+        # Distribution in English.
+        # Blanket fill with 0 everywhere.
+        # Then 3000 in a bottom left block.
+        data = (
+            ('0', 'Consecutive', ('A', 'H', 1, 12)),
+            ('5000', 'Consecutive', ('F', 'H', 1, 8)),
+        )
+        self._add_rules_from_data(m2m_field, 'HgDNA', data)
 
+    def _add_pa_primers_rules_1(self, m2m_field):
+        # Distribution in English.
+        # Columns split into 3 groups, each with its own block allocation.
+        # Uniform for all rows.
+
+        primer_block = 'Eco63 Eco60, Efs04 Efs01, van10 van06, van05 van01'
+
+        data = (
+            ('poolB1', 'Consecutive', ('A', 'H', 1, 4)),
+            (primer_block, 'Consecutive', ('A', 'H', 5, 8)),
+            ('', 'Consecutive', ('A', 'H', 9, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'PA Primers', data)
+
+    def _add_dilution_factor_rules_1(self, m2m_field):
+        # Distribution in English.
+        # One constant value for left two thirds, and another for
+        # remaining two thirds.
+        data = (
+            ('30', 'Consecutive', ('A', 'H', 1, 8)),
+            ('', 'Consecutive', ('A', 'H', 9, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'Dilution Factor', data)
+
+    def _add_id_primers_rules_1(self, m2m_field):
+        # Distribution in English.
+        # One block repeating every 4 columns, for all rows.
+        primer_block = 'Kox04 Kox03, Kpn03 Kpn02, Pmi02 Pmi03, Spo03 Spo05'
+        data = (
+            (primer_block, 'Consecutive', ('A', 'H', 1, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'ID Primers', data)
+
+    def _add_rules_from_data(self, m2m_field, payload_type, data):
+        for rule in data:
+            payload, distribution_type, zone = rule
+            m2m_field.add(self._create_alloc_rule(self._tick(), 
+                payload_type, payload, distribution_type, zone))
 
     def _create_alloc_rule(self, rank_for_ordering, payload_type, payload_csv,
             pattern, zone):
