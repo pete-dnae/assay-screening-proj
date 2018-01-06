@@ -185,5 +185,3 @@ class Experiment(models.Model):
         related_name='experiment_pa_cycling', on_delete=models.PROTECT)
     id_cycling = models.ForeignKey(CyclingPattern, 
         related_name='experiment_id_cycling', on_delete=models.PROTECT)
-
-
