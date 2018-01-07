@@ -95,6 +95,17 @@ class PrimerPair(models.Model):
     suitable_for_pa = models.BooleanField()
     suitable_for_id = models.BooleanField()
 
+    def display_name(self):
+        """
+        E.g. Efm_vanA_1.x_van05_van01
+        """
+        return '_'.join(
+            self.forward_primer.organism.abbreviation,
+            self.forward_primer.gene,
+            self.forward_primer.oligo_code,
+            self.reverse_primer.oligo_code,
+        )
+
 
 class PrimerKit(models.Model):
     pa_primers = models.ManyToManyField(PrimerPair,
