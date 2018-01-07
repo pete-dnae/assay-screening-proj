@@ -219,7 +219,7 @@ class ReferenceExperiment():
 
 
     def _create_experiment(self):
-        _EXPERIMENT_NAME = 'reference_experiment_1',
+        _EXPERIMENT_NAME = 'reference_experiment_1'
         exp = Experiment.objects.create(
             experiment_name=_EXPERIMENT_NAME,
             designer_name='PH',

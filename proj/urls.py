@@ -19,6 +19,7 @@ from django.contrib import admin
 from rest_framework import routers
 
 from app.views import ConcentrationViewSet
+from app.views import ExperimentViewSet
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,5 +28,6 @@ urlpatterns = [
 router = routers.DefaultRouter()
 
 router.register(r'api/concentrations', ConcentrationViewSet)
+router.register(r'api/experiments', ExperimentViewSet)
 
 urlpatterns += router.urls

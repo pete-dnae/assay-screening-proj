@@ -1,24 +1,6 @@
 from django.contrib import admin
 
-from .models import Concentration
-from .models import ConcreteReagent
-from .models import BufferMix
-from .models import MixedReagent
-from .models import PlaceholderReagent
-from .models import MasterMix
-from .models import Gene
-from .models import Organism
-from .models import Primer
-from .models import PrimerPair
-from .models import PrimerKit
-from .models import Arg
-from .models import Strain
-from .models import StrainKit
-from .models import CyclingPattern
-from .models import AllocRule
-from .models import AllocationInstructions
-from .models import Plate
-from .models import Experiment
+from .models import *
 
 admin.site.register(Concentration)
 admin.site.register(ConcreteReagent)

@@ -1,52 +1,34 @@
 from rest_framework import viewsets
 
-from .models import Primer
-from .models import PrimerPair
-from .models import Organism
-from .models import Arg
-from .models import Strain
-from .models import CyclingPattern
-from .models import Concentration
 
-from .serializers import PrimerSerializer
-from .serializers import PrimerPairSerializer
-from .serializers import OrganismSerializer
-from .serializers import ArgSerializer
-from .serializers import StrainSerializer
-from .serializers import CyclingPatternSerializer
+from .models import *
 from .serializers import ConcentrationSerializer
+from .serializers import ListExperimentSerializer
+from .serializers import DetailExperimentSerializer
 
 
-class PrimerViewSet(viewsets.ModelViewSet):
-    queryset = Primer.objects.all()
-    serializer_class = PrimerSerializer
+class MultiSerializerViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A mix-in to allow a hosting serializer to offer different implementations
+    for list vs. detail requests.
+    Source: https://stackoverflow.com/questions/22616973/...
+    django-rest-framework-use-different-serializers-in-the-same-modelviewset
+    """
 
-
-class PrimerPairViewSet(viewsets.ModelViewSet):
-    queryset = PrimerPair.objects.all()
-    serializer_class = PrimerPairSerializer
-
-
-class OrganismViewSet(viewsets.ModelViewSet):
-    queryset = Organism.objects.all()
-    serializer_class = OrganismSerializer
-
-
-class ArgViewSet(viewsets.ModelViewSet):
-    queryset = Arg.objects.all()
-    serializer_class = ArgSerializer
-
-
-class StrainViewSet(viewsets.ModelViewSet):
-    queryset = Strain.objects.all()
-    serializer_class = StrainSerializer
-
-
-class CyclingPatternViewSet(viewsets.ModelViewSet):
-    queryset = CyclingPattern.objects.all()
-    serializer_class = CyclingPatternSerializer
+    def get_serializer_class(self):
+        print('XXXXXX action is: %s' % self.action)
+        return self.serializers.get(self.action, self.serializers['default'])
 
 
 class ConcentrationViewSet(viewsets.ModelViewSet):
     queryset = Concentration.objects.all()
     serializer_class = ConcentrationSerializer
+
+class ExperimentViewSet(MultiSerializerViewSet):
+    queryset = Experiment.objects.all()
+
+    serializers = {
+        'default': None,
+        'list': ListExperimentSerializer,
+        'retrieve': DetailExperimentSerializer,
+    }
