@@ -172,12 +172,15 @@ class AllocRule(models.Model):
         ordering = ('rank_for_ordering',)
 
     def display_string(self):
+        """
+        E.g.
+        'Strain Count, (ATCC BAA-2355, AT...), In Blocks, Rows:A-H, Cols:1-12'
+        """
         payload = self.payload_csv
         LIMIT = 17
         if len(self.payload_csv) > LIMIT:
             payload = self.payload_csv[:LIMIT] + '...'
-        return('Rule %s, %s, (%s), %s, %s' % (
-            self.rank_for_ordering,
+        return('%s, (%s), %s, %s' % (
             self.payload_type,
             payload,
             self.pattern,
