@@ -6,6 +6,7 @@ from .models.reagent_models import *
 from .models.primer_models import *
 from .models.strain_models import *
 from .models.plate_models import *
+from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 
 class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -106,10 +107,22 @@ class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 
     allocation_rules = AllocRuleSerializer(many=True, read_only=True)
+    allocation_results = serializers.SerializerMethodField('alloc_results')
 
     class Meta:
         model = AllocationInstructions
-        fields = ('url', 'allocation_rules', 'suppressed_columns')
+        fields = (
+            'url',
+            'allocation_rules',
+            'suppressed_columns',
+            'allocation_results'
+        )
+
+    def alloc_results(self, allocation_instructions):
+        rules = allocation_instructions.allocation_rules.all()
+        rule_interpreter = AllocRuleInterpreter(rules)
+        tabulated_result = rule_interpreter.interpret()
+        return tabulated_result
 
 
 class PlateSerializer(serializers.HyperlinkedModelSerializer):
