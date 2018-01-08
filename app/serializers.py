@@ -97,20 +97,24 @@ class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AllocRule
-        fields = ('__all__')
+        fields = ('url', 'display_string')
 
 class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 
+    allocation_rules = AllocRuleSerializer(many=True, read_only=True)
+
     class Meta:
         model = AllocationInstructions
-        fields = ('__all__')
+        fields = ('url', 'allocation_rules', 'suppressed_columns')
 
 
 class PlateSerializer(serializers.HyperlinkedModelSerializer):
 
+    allocation_instructions = AllocationInstructionsSerializer(read_only=True)
+
     class Meta:
         model = Plate
-        fields = ('__all__')
+        fields = ('url', 'name', 'allocation_instructions')
 
 
 class DetailExperimentSerializer(serializers.ModelSerializer):

@@ -168,6 +168,28 @@ class AllocRule(models.Model):
     start_column = models.PositiveIntegerField()
     end_column = models.PositiveIntegerField()
 
+    class Meta:
+        ordering = ('rank_for_ordering',)
+
+    def display_string(self):
+        payload = self.payload_csv
+        LIMIT = 17
+        if len(self.payload_csv) > LIMIT:
+            payload = self.payload_csv[:LIMIT] + '...'
+        return('Rule %s, %s, (%s), %s, %s' % (
+            self.rank_for_ordering,
+            self.payload_type,
+            payload,
+            self.pattern,
+            'Rows:%s-%s, Cols:%d-%d' % (
+                self.start_row_letter,
+                self.end_row_letter,
+                self.start_column,
+                self.end_column
+            ),
+        ))
+
+
 
 class AllocationInstructions(models.Model):
     allocation_rules = models.ManyToManyField(AllocRule)
