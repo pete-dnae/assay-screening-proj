@@ -2,25 +2,25 @@
 Creates and stores a reference experiment in the database.
 """
 
-from app.models import AllocationInstructions
-from app.models import AllocRule
-from app.models import Arg
-from app.models import BufferMix
-from app.models import Concentration
-from app.models import ConcreteReagent
-from app.models import CyclingPattern
-from app.models import Experiment
-from app.models import Gene
-from app.models import MasterMix
-from app.models import MixedReagent
-from app.models import Organism
-from app.models import PlaceholderReagent
-from app.models import Plate
-from app.models import Primer
-from app.models import PrimerKit
-from app.models import PrimerPair
-from app.models import Strain
-from app.models import StrainKit
+from app.models.allmodels import AllocationInstructions
+from app.models.allmodels import AllocRule
+from app.models.allmodels import Arg
+from app.models.allmodels import BufferMix
+from app.models.allmodels import Concentration
+from app.models.allmodels import ConcreteReagent
+from app.models.allmodels import CyclingPattern
+from app.models.allmodels import Experiment
+from app.models.allmodels import Gene
+from app.models.allmodels import MasterMix
+from app.models.allmodels import MixedReagent
+from app.models.allmodels import Organism
+from app.models.allmodels import PlaceholderReagent
+from app.models.allmodels import Plate
+from app.models.allmodels import Primer
+from app.models.allmodels import PrimerKit
+from app.models.allmodels import PrimerPair
+from app.models.allmodels import Strain
+from app.models.allmodels import StrainKit
 
 
 class ReferenceExperiment():

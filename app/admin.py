@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import *
+from .models.allmodels import *
 
 admin.site.register(Concentration)
 admin.site.register(ConcreteReagent)

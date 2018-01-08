@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import *
+from .models.allmodels import *
 
 
 class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):

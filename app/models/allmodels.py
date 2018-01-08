@@ -1,9 +1,9 @@
 from django.db import models
 
+
 # Utility to save typing in making 2-tuple lists required by model.choices.
 def _mk_choices(items):
     return ((i,i) for i in items)
-
 
 class Concentration(models.Model):
 
