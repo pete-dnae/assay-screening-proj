@@ -1,7 +1,11 @@
 from rest_framework import serializers
 
-from .models.allmodels import *
 
+from .models.experiment_model import *
+from .models.reagent_models import *
+from .models.primer_models import *
+from .models.strain_models import *
+from .models.plate_models import *
 
 class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
 

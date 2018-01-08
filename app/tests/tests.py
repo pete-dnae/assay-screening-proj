@@ -1,6 +1,5 @@
 from django.test import TestCase
 
-from app.models.allmodels import *
 from app.models.builders.make_ref_exp import ReferenceExperiment
 
 class CreateReferenceExperiment(TestCase):

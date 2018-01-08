@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from .models.allmodels import *
+from .models.experiment_model import *
+from .models.reagent_models import *
+from .models.primer_models import *
+from .models.strain_models import *
+from .models.plate_models import *
 
 admin.site.register(Concentration)
 admin.site.register(ConcreteReagent)
