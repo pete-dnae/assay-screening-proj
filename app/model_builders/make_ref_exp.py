@@ -433,7 +433,7 @@ class ReferenceExperiment():
                 ('A', 'H', 1, 12),
             ),
         )
-        self._add_rules_from_data(m2m_field, 'Strain Count', data)
+        self._add_rules_from_data(m2m_field, 'Strain', data)
 
     def _add_strains_copies_rules_1(self, m2m_field):
         # Blanket fill with 5's everwhere first
@@ -486,7 +486,7 @@ class ReferenceExperiment():
     def _add_id_primers_rules_1(self, m2m_field):
         # Distribution in English.
         # One block repeating every 4 columns, for all rows.
-        primer_block = 'Kox04 Kox03, Kpn03 Kpn02, Pmi02 Pmi03, Spo03 Spo05'
+        primer_block = 'Eco64 Eco66, Efs03 Efs02, van30 van33, van04 van02'
         data = (
             (primer_block, 'Consecutive', ('A', 'H', 1, 12)),
         )
@@ -511,3 +511,8 @@ class ReferenceExperiment():
             start_column=sc,
             end_column=ec,
         )
+
+
+if __name__ == "__main__":
+    ReferenceExperiment().create()
+

@@ -21,6 +21,7 @@ class AllocRuleInterpreter:
         return(self._table.rows)
 
     def _apply_rule_to_table(self, rule):
+        print('XXXXX payload type: <%s>' % rule.payload_type)
         row_indices_range = rule.enumerate_applicable_rows()
         for row_index in row_indices_range:
             self._apply_rule_to_row(rule, row_index)
@@ -40,7 +41,7 @@ class AllocRuleInterpreter:
             self._set_item_in_table(
                 row_index, column_index, rule.payload_type, 
                 payload_items[payload_item_index])
-            payload_items_index = (payload_item_index + 1) % len(payload_items)
+            payload_item_index = (payload_item_index + 1) % len(payload_items)
 
     def _in_blocks(self, payload_items, rule, row_index):
         number_of_blocks = len(payload_items)
