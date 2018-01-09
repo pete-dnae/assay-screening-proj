@@ -119,6 +119,7 @@ class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def alloc_results(self, allocation_instructions):
+        # The rules are ordered by definition in rank order.
         rules = allocation_instructions.allocation_rules.all()
         rule_interpreter = AllocRuleInterpreter(rules)
         tabulated_result = rule_interpreter.interpret()

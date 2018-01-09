@@ -20,11 +20,27 @@ class AllocRule(models.Model):
     pattern = models.CharField(max_length=15, choices=pattern_choices)
     start_row_letter = models.CharField(max_length=1)
     end_row_letter = models.CharField(max_length=1)
-    start_column = models.PositiveIntegerField()
-    end_column = models.PositiveIntegerField()
+    start_column = models.PositiveIntegerField() # Start at 1, not zero
+    end_column = models.PositiveIntegerField() # Start at 1, not zero
 
     class Meta:
         ordering = ('rank_for_ordering',)
+
+    def enumerate_applicable_rows(self):
+        start = ord(self.start_row_letter) - ord('A')
+        end = ord(self.end_row_letter) - ord('A')
+        return [i for i in range(start, end + 1)]
+
+    def number_of_columns(self):
+        return 1 + self.end_column - self.start_column
+
+    def enumerate_column_indices(self):
+        return [i for i in range(self.start_column - 1, self.end_column)]
+
+    def payload_items(self):
+        items = self.payload_csv.split(',')
+        items = [i.strip() for i in items]
+        return items
 
     def display_string(self):
         """
