@@ -215,8 +215,8 @@ class ReferenceExperiment():
             pa_cycling = self._create_pa_cycling(),
             id_cycling = self._create_id_cycling(),
         )
-        exp.plates.add(self._create_plate_1(_EXPERIMENT_NAME))
-        #exp.plates.add(self._create_plate_2(_EXPERIMENT_NAME))
+        exp.plates.add(self._create_plate_1('plate_1'))
+        #exp.plates.add(self._create_plate_2('plate_2'))
 
         exp.save()
         return exp
