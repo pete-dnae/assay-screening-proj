@@ -21,6 +21,7 @@ from .models import Strain
 from .models import StrainKit
 from .models import CyclingPattern
 from .models import AllocRule
+from .models import RuleList
 from .models import AllocationInstructions
 from .models import Plate
 from .models import Experiment
@@ -107,6 +108,10 @@ class StrainKitViewSet(viewsets.ModelViewSet):
 class CyclingPatternViewSet(viewsets.ModelViewSet):
     queryset = CyclingPattern.objects.all()
     serializer_class = CyclingPatternSerializer
+
+class RuleListViewSet(viewsets.ModelViewSet):
+    queryset = RuleList.objects.all()
+    serializer_class = RuleListSerializer
 
 class AllocRuleViewSet(viewsets.ModelViewSet):
     queryset = AllocRule.objects.all()

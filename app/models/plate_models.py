@@ -64,9 +64,13 @@ class AllocRule(models.Model):
         ))
 
 
+class RuleList(models.Model):
+    rules = models.ManyToManyField(AllocRule)
+
 
 class AllocationInstructions(models.Model):
-    allocation_rules = models.ManyToManyField(AllocRule)
+    rule_list = models.ForeignKey(RuleList, 
+        related_name='instructions', on_delete=models.PROTECT)
     suppressed_columns = models.CharField(max_length=200) 
 
 

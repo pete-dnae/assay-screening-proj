@@ -412,14 +412,17 @@ class ReferenceExperiment():
 
         alloc = AllocationInstructions.objects.create(
             suppressed_columns='4, 8, 12',
+            rule_list=RuleList.objects.create(),
         )
 
-        self._add_strains_rules_1(alloc.allocation_rules)
-        self._add_strains_copies_rules_1(alloc.allocation_rules)
-        self._add_hg_dna_rules_1(alloc.allocation_rules)
-        self._add_pa_primers_rules_1(alloc.allocation_rules)
-        self._add_dilution_factor_rules_1(alloc.allocation_rules)
-        self._add_id_primers_rules_1(alloc.allocation_rules)
+        m2m = alloc.rule_list.rules
+        
+        self._add_strains_rules_1(m2m)
+        self._add_strains_copies_rules_1(m2m)
+        self._add_hg_dna_rules_1(m2m)
+        self._add_pa_primers_rules_1(m2m)
+        self._add_dilution_factor_rules_1(m2m)
+        self._add_id_primers_rules_1(m2m)
 
         alloc.save()
         return alloc

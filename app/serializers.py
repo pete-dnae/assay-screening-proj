@@ -104,23 +104,31 @@ class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
         model = AllocRule
         fields = ('url', 'display_string')
 
+class RuleListSerializer(serializers.HyperlinkedModelSerializer):
+
+    rules = AllocRuleSerializer(many=True)
+
+    class Meta:
+        model = RuleList
+        fields = ('url', 'rules')
+
 class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 
-    allocation_rules = AllocRuleSerializer(many=True, read_only=True)
+    rule_list = RuleListSerializer()
     allocation_results = serializers.SerializerMethodField('alloc_results')
 
     class Meta:
         model = AllocationInstructions
         fields = (
             'url',
-            'allocation_rules',
+            'rule_list',
             'suppressed_columns',
             'allocation_results'
         )
 
     def alloc_results(self, allocation_instructions):
         # The rules are ordered by definition in rank order.
-        rules = allocation_instructions.allocation_rules.all()
+        rules = allocation_instructions.rule_list.rules.all()
         rule_interpreter = AllocRuleInterpreter(rules)
         tabulated_result = rule_interpreter.interpret()
         return tabulated_result

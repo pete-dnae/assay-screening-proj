@@ -41,6 +41,8 @@ class AllocRuleInterpreter:
             self._set_item_in_table(
                 row_index, column_index, rule.payload_type, 
                 payload_items[payload_item_index])
+            # Increment the payload item index using module division, to 
+            # make it wrap back round the start when it goes off the end.
             payload_item_index = (payload_item_index + 1) % len(payload_items)
 
     def _in_blocks(self, payload_items, rule, row_index):
