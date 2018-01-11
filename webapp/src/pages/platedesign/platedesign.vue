@@ -5,7 +5,7 @@
     width: 650px;
     height: 450px;
     display: inline-block;
-    background-image: url('../../assets/table.jpg');
+    /* background-image: url('../../assets/table.jpg'); */
     background-repeat: no-repeat;
 }
 
@@ -31,7 +31,7 @@
     <div class="row mt-3">
         <div class="col">
             <allocationrules @selectedRule="handleSelectedRule" ></allocationrules>
-            <selectedrule :element="selectedrule"></selectedrule>
+            <selectedrule :element="selectedrule" :allocationResults="allocationResults"></selectedrule>
         </div>
         <div class="col">
             <div id="overlay" v-on:mousemove="zoomIn"></div>
