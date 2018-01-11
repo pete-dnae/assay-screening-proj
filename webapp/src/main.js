@@ -7,6 +7,7 @@ import '@/assets/sass/app.scss';
 import '@/assets/css/popper.css';
 import 'bootstrap';
 import { sync } from 'vuex-router-sync';
+import Axios from 'axios';
 import Vue from 'vue';
 import App from './App';
 import router from './router';
@@ -17,6 +18,8 @@ Vue.config.productionTip = false;
 window.$ = jQuery;
 // eslint-disable-next-line
 window.jQuery = jQuery;
+Axios.defaults.headers.common.Accept = 'application/json';
+
 sync(store, router);
 /* eslint-disable no-new */
 

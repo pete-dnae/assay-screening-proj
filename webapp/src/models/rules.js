@@ -27,6 +27,7 @@ export const getitemsByColDict = (repeats, cols, repeatedDataByColumn, dataByBlo
   const itemsByColDict = dataByBlock.reduce(
     (a, el) => {
       _.range((el.blockNo - 1) * repeats, el.blockNo * repeats).forEach((number) => {
+        // eslint-disable-next-line
         a[number] = el.Strain;
       });
       return a;

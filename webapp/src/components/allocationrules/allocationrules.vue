@@ -1,32 +1,50 @@
+<style scoped>
+
+.grab {
+    cursor: grab;
+}
+.overflow {
+  width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+</style>
+
 <template>
-  <div class="fluid-container w-100 ml-3">
-      <div class="row ml-3">
+
+<div class="fluid-container w-100 ml-3">
+    <div class="row ml-3">
         <b>Allocation Rules</b>
-      </div>
-      <div class="row ml-3">
-        <draggable :list="items" class="pre-scrollable w-75" @choose="handleSelect">
-          <div class="list-group-item text-left" v-for="element in items" :key="element.id">
-            <div class="row">
-                  <i class="fa fa-bars col-1" aria-hidden="true"></i>
-                  <label class="col" >{{element.title}} - <i v-for="val in element.value">{{val.value}},</i>
-                    {{element.type}},{{element.rowRange}},{{element.colRange}}</label>
-                  <i class="fa fa-minus-square col-1 float-right" aria-hidden="true"></i>
-            </div>
-          </div>
+    </div>
+    <div class="row ml-3">
+
+        <draggable v-model="rules" class="pre-scrollable w-75" @choose="handleSelect" @filter="handleDelete" :options="{filter:'.fa-trash-o',chosenClass:'active'}">
+
+            <button class="list-group-item list-group-item-action text-left" v-for="element in rules" :key="element.id">
+                <div class="row">
+                    <i class="fa fa-bars col-1  grab" aria-hidden="true"></i>
+                    <label class="col overflow" ><b >{{element.id}}  </b>{{element.display_string}}</label>
+                    <i class="fa fa-trash-o col-1 float-right" aria-hidden="true"></i>
+                </div>
+            </button>
+
         </draggable>
-      </div>
-      <div class="row ml-3">
+    </div>
+    <div class="row ml-3">
         <label class="blockquote-footer">Later rules override earlier rules</label>
-      </div>
-      <div class="row">
+    </div>
+    <div class="row">
         <div class="col-md-5">
         </div>
         <div class="col">
-            <a class="btn btn-info">
-              <i class="fa fa-plus-square float-right" aria-hidden="true"></i>
-            </a>
+
+            <i class="fa fa-plus-square" @click="handleAddRule" aria-hidden="true"></i>
+
         </div>
-      </div>
-  </div>
+    </div>
+</div>
+
 </template>
 <script src="./allocationrules"></script>

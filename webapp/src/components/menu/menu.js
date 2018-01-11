@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { mapGetters, mapActions } from 'vuex';
 import experimentloader from '@/components/experimentloader/experimentloader.vue';
 
 Vue.component('ExptLoad', experimentloader);
@@ -10,6 +11,12 @@ export default {
       currentExpt: '',
       showDropDown: false,
     };
+  },
+  computed: {
+    ...mapGetters({
+      designerName: 'getDesignerName',
+      experimentName: 'getExperimentName',
+    }),
   },
   methods: {
     handleExptChange(expt) {

@@ -18,11 +18,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      templateData: 'getTemplateOnPlate',
-      hgDNAData: 'gethgDNAOnPlate',
-      dilutionData: 'getDilutionOnPlate',
-      strainData: 'getStrainsOnPlate',
-      idPrimerData: 'getIdPrimersOnPlate',
+      plateInfo: 'getPlateInfo',
+      allocationRules: 'getAllocationRules',
+      allocationResults: 'getAllocationResults',
+      designerName: 'getDesignerName',
+      experimentName: 'getExperimentName',
     }),
   },
   methods: {
@@ -32,5 +32,11 @@ export default {
     zoomIn(event) {
       zoomIn(event);
     },
+    zoomOut(event) {
+      zoomOut(event);
+    },
+  },
+  mounted() {
+    this.$store.commit('SET_RULE_ID', this.$route.params.plateId);
   },
 };
