@@ -1,27 +1,11 @@
 """
 Creates and stores a reference experiment in the database.
 """
-
-from app.models import AllocationInstructions
-from app.models import Arg
-from app.models import BufferMix
-from app.models import Concentration
-from app.models import ConcreteReagent
-from app.models import CyclingPattern
-from app.models import Expansion
-from app.models import Experiment
-from app.models import Gene
-from app.models import MasterMix
-from app.models import MixedReagent
-from app.models import Organism
-from app.models import PlaceholderReagent
-from app.models import Plate
-from app.models import Primer
-from app.models import PrimerKit
-from app.models import PrimerPair
-from app.models import Repeat
-from app.models import Strain
-from app.models import StrainKit
+from app.models.reagent_models import *
+from app.models.primer_models import *
+from app.models.strain_models import *
+from app.models.experiment_model import *
+from app.models.plate_models import *
 
 
 class ReferenceExperiment():
@@ -32,6 +16,7 @@ class ReferenceExperiment():
 
     def __init__(self):
         self.experiment = None
+        self._next_count = 0 
 
     def create(self):
         self._create_shared_entities() # Organisms, Stock reagents etc.
@@ -41,6 +26,10 @@ class ReferenceExperiment():
     #-----------------------------------------------------------------------
     # Private below.
     #-----------------------------------------------------------------------
+
+    def _tick(self):
+        self._next_count += 1
+        return self._next_count
 
     def _create_shared_entities(self):
         self._create_concrete_reagents()
@@ -215,7 +204,7 @@ class ReferenceExperiment():
 
 
     def _create_experiment(self):
-        _EXPERIMENT_NAME = 'reference_experiment_1',
+        _EXPERIMENT_NAME = 'reference_experiment_1'
         exp = Experiment.objects.create(
             experiment_name=_EXPERIMENT_NAME,
             designer_name='PH',
@@ -226,8 +215,8 @@ class ReferenceExperiment():
             pa_cycling = self._create_pa_cycling(),
             id_cycling = self._create_id_cycling(),
         )
-        exp.plates.add(self._create_plate_1(_EXPERIMENT_NAME))
-        exp.plates.add(self._create_plate_2(_EXPERIMENT_NAME))
+        exp.plates.add(self._create_plate_1('plate_1'))
+        #exp.plates.add(self._create_plate_2('plate_2'))
 
         exp.save()
         return exp
@@ -420,54 +409,110 @@ class ReferenceExperiment():
         return plate
 
     def _make_allocation_1(self):
-        CGW = 4 # Column group width.
-        _STRAINS = 'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764'
 
         alloc = AllocationInstructions.objects.create(
-            column_group_width=CGW,
-            strains=self._create_repeat('A', 1, _STRAINS),
             suppressed_columns='4, 8, 12',
         )
 
-        alloc.strain_copies.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
-        alloc.strain_copies.add(self.create_expansion(CGW, 'C', '5, 5, 50'))
-        alloc.strain_copies.add(self.create_expansion(CGW, 'E', '5, 5, 500'))
-        alloc.strain_copies.add(self.create_expansion(CGW, 'G', '5, 5, 5000'))
+        self._add_strains_rules_1(alloc.allocation_rules)
+        self._add_strains_copies_rules_1(alloc.allocation_rules)
+        self._add_hg_dna_rules_1(alloc.allocation_rules)
+        self._add_pa_primers_rules_1(alloc.allocation_rules)
+        self._add_dilution_factor_rules_1(alloc.allocation_rules)
+        self._add_id_primers_rules_1(alloc.allocation_rules)
 
-        alloc.gdna.add(self.create_expansion(CGW, 'A', '0, 0, 0'))
-        alloc.gdna.add(self.create_expansion(CGW, 'B', '3000, 3000, 0'))
-        alloc.gdna.add(self.create_expansion(CGW, 'C', '0, 0, 0'))
-        alloc.gdna.add(self.create_expansion(CGW, 'F', '3000, 3000, 0'))
+        alloc.save()
+        return alloc
 
-        alloc.pa_primers.add(self._create_repeat())
-            self._create_repeat('A', 1, 'pool, pool, pool, pool')
-        alloc.pa_primers.add(self._create_repeat())
-            self._create_repeat('A', 4, fmted_primer_pair_string_4_pairs)
-        alloc.pa_primers.add(self._create_repeat())
-            self._create_repeat('A', 9, ',,,')
+    def _add_strains_rules_1(self, m2m_field):
+        # Same pattern repeated every 4 columns, same for all rows.
+        data = (
+            (
+                'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764',
+                'In Blocks',
+                ('A', 'H', 1, 12),
+            ),
+        )
+        self._add_rules_from_data(m2m_field, 'Strain', data)
 
-        but this clashes with definition because of 2 dimensional indexing?
+    def _add_strains_copies_rules_1(self, m2m_field):
+        # Blanket fill with 5's everwhere first
+        # Then, first two rows - filled with zeros.
+        # Then, larger numbers in small zones.
+        data = (
+            ('5', 'Consecutive', ('A', 'H', 1, 12)),
+            ('0', 'Consecutive', ('A', 'B', 1, 12)),
+            ('50', 'Consecutive', ('C', 'D', 9, 12)),
+            ('500', 'Consecutive', ('E', 'F', 9, 12)),
+            ('5000', 'Consecutive', ('G', 'H', 9, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'Strain Count', data)
 
 
+    def _add_hg_dna_rules_1(self, m2m_field):
+        # Distribution in English.
+        # Blanket fill with 0 everywhere.
+        # Then 3000 in a bottom left block.
+        data = (
+            ('0', 'Consecutive', ('A', 'H', 1, 12)),
+            ('5000', 'Consecutive', ('F', 'H', 1, 8)),
+        )
+        self._add_rules_from_data(m2m_field, 'HgDNA', data)
 
-        """
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kox04', 'Kox03')
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Kpn03', 'Kpn02')
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Pmi02', 'Pmi03')
-        #self._add_id_primer_repeat(alloc.id_primer_repeats, 'Spo03', 'Spo05')
-        """
+    def _add_pa_primers_rules_1(self, m2m_field):
+        # Distribution in English.
+        # Columns split into 3 groups, each with its own block allocation.
+        # Uniform for all rows.
 
+        primer_block = 'Eco63 Eco60, Efs04 Efs01, van10 van06, van05 van01'
 
-    def _create_repeat(self, start_row, start_column, items_csv):
-        return Repeat.objects.create(
-            start_row = start_row,
-            start_column = start_column,
-            items_csv=items_csv,
+        data = (
+            ('poolB1', 'Consecutive', ('A', 'H', 1, 4)),
+            (primer_block, 'Consecutive', ('A', 'H', 5, 8)),
+            ('', 'Consecutive', ('A', 'H', 9, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'PA Primers', data)
+
+    def _add_dilution_factor_rules_1(self, m2m_field):
+        # Distribution in English.
+        # One constant value for left two thirds, and another for
+        # remaining two thirds.
+        data = (
+            ('30', 'Consecutive', ('A', 'H', 1, 8)),
+            ('', 'Consecutive', ('A', 'H', 9, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'Dilution Factor', data)
+
+    def _add_id_primers_rules_1(self, m2m_field):
+        # Distribution in English.
+        # One block repeating every 4 columns, for all rows.
+        primer_block = 'Eco64 Eco66, Efs03 Efs02, van30 van33, van04 van02'
+        data = (
+            (primer_block, 'Consecutive', ('A', 'H', 1, 12)),
+        )
+        self._add_rules_from_data(m2m_field, 'ID Primers', data)
+
+    def _add_rules_from_data(self, m2m_field, payload_type, data):
+        for rule in data:
+            payload, distribution_type, zone = rule
+            m2m_field.add(self._create_alloc_rule(self._tick(), 
+                payload_type, payload, distribution_type, zone))
+
+    def _create_alloc_rule(self, rank_for_ordering, payload_type, payload_csv,
+            pattern, zone):
+        sr, er, sc, ec = zone
+        return AllocRule.objects.create(
+            rank_for_ordering=rank_for_ordering,
+            payload_type=payload_type,
+            payload_csv=payload_csv,
+            pattern=pattern,
+            start_row_letter=sr,
+            end_row_letter=er,
+            start_column=sc,
+            end_column=ec,
         )
 
-    def create_expansion(self, column_group_width, start_row, items_csv):
-        return Expansion.objects.create(
-            column_group_width=column_group_width,
-            start_row=start_row,
-            items_csv=items_csv,
-        )
+
+if __name__ == "__main__":
+    ReferenceExperiment().create()
+

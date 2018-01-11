@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from rest_framework import routers
 
-from app.views import ConcentrationViewSet
+from app.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -26,6 +26,25 @@ urlpatterns = [
 
 router = routers.DefaultRouter()
 
+router.register(r'api/experiments', ExperimentViewSet)
 router.register(r'api/concentrations', ConcentrationViewSet)
+router.register(r'api/concretereagents', ConcreteReagentViewSet)
+router.register(r'api/buffermixes', BufferMixViewSet)
+router.register(r'api/mixedreagents', MixedReagentViewSet)
+router.register(r'api/placeholderreagents', PlaceholderReagentViewSet)
+router.register(r'api/mastermixes', MasterMixViewSet)
+router.register(r'api/genes', GeneViewSet)
+router.register(r'api/organisms', OrganismViewSet)
+router.register(r'api/primers', PrimerViewSet)
+router.register(r'api/primerpairs', PrimerPairViewSet)
+router.register(r'api/primerkits', PrimerKitViewSet)
+router.register(r'api/args', ArgViewSet)
+router.register(r'api/strains', StrainViewSet)
+router.register(r'api/strainkits', StrainKitViewSet)
+router.register(r'api/cyclingpatterns', CyclingPatternViewSet)
+router.register(r'api/allocrules', AllocRuleViewSet)
+router.register(r'api/allocationinstructions', AllocationInstructionsViewSet)
+router.register(r'api/plates', PlateViewSet)
+router.register(r'api/experiments', ExperimentViewSet)
 
 urlpatterns += router.urls

@@ -1,6 +1,5 @@
 from django.test import TestCase
 
-from app import models
 from app.model_builders.make_ref_exp import ReferenceExperiment
 
 class CreateReferenceExperiment(TestCase):
@@ -13,7 +12,7 @@ class CreateReferenceExperiment(TestCase):
 
 
     def _test_create_reference_experiment(self):
-        experiment = models.Experiment.objects.create(
+        experiment = Experiment.objects.create(
             experiment_name = 'A81_E131',
             designer_name = 'NC',
             pa_mastermix = self.make_pa_mastermix(),
@@ -28,14 +27,14 @@ class CreateReferenceExperiment(TestCase):
         self.assertTrue(True) # Test exists only to get model build to work.
 
     def make_pa_mastermix(self):
-        mastermix = models.MasterMix.objects.create(final_volume=50)
+        mastermix = MasterMix.objects.create(final_volume=50)
         mastermix.concrete_reagents.add(*self.make_pa_concrete_reagents())
         mastermix.mixed_reagents.add(*self.make_pa_mixed_reagents())
         mastermix.placeholder_reagents.add(*self.make_pa_placeholder_reagents())
         return mastermix
 
     def make_id_mastermix(self):
-        mastermix = models.MasterMix.objects.create(final_volume=50)
+        mastermix = MasterMix.objects.create(final_volume=50)
         #mastermix.concrete_reagents.add(*self.make_id_concrete_reagents())
         #mastermix.mixed_reagents.add(*self.make_id_mixed_reagents())
         #mastermix.placeholder_reagents.add(*self.make_id_placeholder_reagents())
@@ -52,9 +51,9 @@ class CreateReferenceExperiment(TestCase):
     def make_pa_mixed_reagents(self):
         reagents = []
         reagents.append(
-            models.MixedReagent.objects.create(
+            MixedReagent.objects.create(
                 buffer_mix = self.make_pa_buffer_mix(),
-                concentration = models.Concentration.objects.create(
+                concentration = Concentration.objects.create(
                     stock = 3.3,
                     final = 1.0,
                     units = 'X',
@@ -64,7 +63,7 @@ class CreateReferenceExperiment(TestCase):
         return reagents
 
     def make_pa_buffer_mix(self):
-        mix = models.BufferMix.objects.create(
+        mix = BufferMix.objects.create(
             volume = 15,
             final_volume = 50,
         )
@@ -93,9 +92,9 @@ class CreateReferenceExperiment(TestCase):
     def make_pa_placeholder_reagents(self):
         reagents = []
         reagents.append(
-            models.PlaceholderReagent.objects.create(
+            PlaceholderReagent.objects.create(
                 type = 'Primer',
-                concentration = models.Concentration.objects.create(
+                concentration = Concentration.objects.create(
                     stock = 10,
                     final = 0.4,
                     units = 'microM each',
@@ -103,9 +102,9 @@ class CreateReferenceExperiment(TestCase):
             )
         )
         reagents.append(
-            models.PlaceholderReagent.objects.create(
+            PlaceholderReagent.objects.create(
                 type = 'HgDNA',
-                concentration = models.Concentration.objects.create(
+                concentration = Concentration.objects.create(
                     stock = 120,
                     final = 60,
                     units = 'ng/ul',
@@ -113,9 +112,9 @@ class CreateReferenceExperiment(TestCase):
             )
         )
         reagents.append(
-            models.PlaceholderReagent.objects.create(
+            PlaceholderReagent.objects.create(
                 type = 'Template',
-                concentration = models.Concentration.objects.create(
+                concentration = Concentration.objects.create(
                     stock = 1,
                     final = 0.1,
                     units = 'cp/ul',
@@ -125,11 +124,11 @@ class CreateReferenceExperiment(TestCase):
         return reagents
 
     def _make_concrete_reagent(self, name, lot, stock, final, units):
-        return models.ConcreteReagent.objects.create(
+        return ConcreteReagent.objects.create(
             name = name,
             lot = lot,
             concentration = \
-                models.Concentration.objects.create(
+                Concentration.objects.create(
                     stock = stock,
                     final = final,
                     units = units,
