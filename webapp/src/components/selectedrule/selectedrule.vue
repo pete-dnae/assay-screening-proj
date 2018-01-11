@@ -18,7 +18,7 @@
 <template>
 
 <div>
-    <div class="fluid-container w-100 ml-3" v-if="'id' in element">
+    <div class="fluid-container w-100 ml-3" v-show="'id' in element">
         <h5 class="text-left">Selected Rule</h5>
         <div class="row">
             <div class="col-5 text-left">
@@ -81,7 +81,7 @@
                 </div>
             </div>
             <div class="col">
-                <img src="../../assets/table.jpg" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut" id="imgZoom" style="max-width: 100%;height: auto;">
+                <img src="../../assets/table.jpg" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut"  style="max-width: 100%;height: auto;">
                 <label class="blockquote-footer text-left">Hover over thumbnail to zoom</label>
             </div>
         </div>

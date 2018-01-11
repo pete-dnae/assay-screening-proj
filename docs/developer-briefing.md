@@ -108,7 +108,8 @@ Database initialisation
     
     # When running locally you get a pre-configured sqlite database, which
     # is included in the pip install above.
-
+    Find and delete the sqlite3 file in foo
+    Find and delete any migration files in foo/app
     python manage.py makemigrations 
     python manage.py migrate
 
@@ -116,18 +117,11 @@ Database initialisation
     # experiment do this bit...
 
     python manage.py shell
-    from app.model_builders.create_ref_exp import ReferenceExperiment
-    RerenceExperiment.create()
+    from app.model_builders.make_ref_exp import ReferenceExperiment
+    RerenceExperiment().create()
 
 
 Run the server to test the REST API
     
     python manage.py runserver
     # point browser at: http://localhost:8000/
-
-If you are already setup but want to completely reinit the database
-
-    Find and delete the sqlite3 file in foo/app
-    Find and delete any migration files in foo/app
-    python manage.py makemigrations 
-    python manage.py migrate
