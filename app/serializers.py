@@ -100,17 +100,47 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
 
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
+    display_string = serializers.CharField(read_only=True)
+
     class Meta:
         model = AllocRule
-        fields = ('url', 'display_string')
+        fields = ('__all__')
+
 
 class RuleListSerializer(serializers.HyperlinkedModelSerializer):
 
-    rules = AllocRuleSerializer(many=True)
+    # The fields for the read and write cases are completely
+    # different, and mutually exclusive...
+    
+    # When reading, we send back all the rules' details using a nested
+    # serializer for the m2m field.
+    rules = AllocRuleSerializer(many=True, read_only=True)
+
+    # When writing we expect to receive a list of integers, that we will
+    # treat as the ids for existing rules that should form the replacement
+    # list contents.
+    new_rules = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True)
+    
 
     class Meta:
         model = RuleList
-        fields = ('url', 'rules')
+        fields = ('__all__')
+
+    def update(self, instance, validated_data):
+
+        # Capture the ids of the incumbent AllocRules and those requested in 
+        # the incoming replacement list.
+        incumbent_ids = [rule.id for rule in instance.rules.all()]
+
+        # Delete any AllocRules that have fallen out of use, and are thus 
+        # no longer required.
+
+        # Completely replace the list held by the m2m field with the new
+        # ones.
+
+        # Do the save operation on the RuleList object.
+        
 
 class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 
