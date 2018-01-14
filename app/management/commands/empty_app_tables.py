@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand
 
-from django.db import models
-
 from app.models.experiment_model import *
 from app.models.reagent_models import *
 from app.models.primer_models import *

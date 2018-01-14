@@ -102,6 +102,7 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
     display_string = serializers.CharField(read_only=True)
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = AllocRule
@@ -151,7 +152,7 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
         # Repopulate the m2m field to swap out the incumbent rules with the
         # new.
         instance.rules.clear()
-        instance.rules.add(new_objs)
+        instance.rules.add(*new_objs)
 
         instance.save()
         return instance

@@ -10,6 +10,12 @@ class AllocRuleInterpreter:
         self._table = None
 
     def interpret(self):
+        # Treat there being zero rows as a special case, to avoid the
+        # call to max() below receiving an empty sequence.
+        if len(self._rules) == 0:
+            self._table = AllocTable(0, 0)
+            return self._table.rows
+        # Drop in to the general case.
         self._n_rows = \
             1 + ord(max((r.end_row_letter for r in self._rules))) - ord('A')
         self._n_cols = max((r.end_column for r in self._rules))
