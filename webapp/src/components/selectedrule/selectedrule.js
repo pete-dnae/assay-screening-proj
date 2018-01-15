@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import draggable from 'vuedraggable';
-import { zoomIn, zoomOut } from '@/models/utils';
+import { zoomIn, zoomOut, prepareResultsTable, makeSVG } from '@/models/utils';
 import { modal } from 'vue-strap';
 import { getNewIndex } from '@/models/utils';
 
@@ -38,38 +38,15 @@ export default {
     },
     validateRowRange() {},
     validateColRange() {},
-    drawCanvas() {
-      const tableHead = '<table class="table">';
-      let tableBody = '';
-      this.allocationResults.forEach((row) => {
-        tableBody += '<tr>';
-        row.forEach((col) => {
-          tableBody += '<td style="width:200px;border: 1px solid black">';
-          tableBody += `<span class="row" style="color:red">${col['ID Primers']}</span>`;
-          tableBody += `<span class="row" style="color:blue">${col['PA Primers']}</span>`;
-          tableBody += `<span class="row" style="color:red">${col['Strain Count']}cp</span>`;
-          tableBody += `<span class="row" style="color:red">${'Dil'}${
-            col['Dilution Factor']
-          }</span>`;
-          tableBody += '</td>';
-        });
-        tableBody += '</tr>';
-      });
-      const tableText = `${tableHead + tableBody}</table>`;
-      const data =
-        `${'<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">' +
-          '<foreignObject width="1000" height="1000">' +
-          '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10px">'}${tableText}</div>` +
-        '</foreignObject>' +
-        '</svg>';
-
-      const DOMURL = window.URL || window.webkitURL || window;
-      const svg = new Blob([data], { type: 'image/svg+xml' });
-      const url = DOMURL.createObjectURL(svg);
+    drawTableImage() {
+      const url = makeSVG(
+        window.URL || window.webkitURL || window,
+        prepareResultsTable(this.allocationResults),
+      );
       const element = document.getElementById('overlay');
-
-      document.getElementById('imgZoom').src = url;
       element.style.backgroundImage = `url('${url}')`;
+      document.getElementById('imgZoom').src = url;
+      this.$store.commit('SET_PLATE_IMAGE_URL', url);
     },
     handleAddValue() {
       const newIndex = getNewIndex('id', this.element.value);
@@ -84,6 +61,6 @@ export default {
     },
   },
   mounted() {
-    this.drawCanvas();
+    this.drawTableImage();
   },
 };

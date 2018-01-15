@@ -34,7 +34,8 @@
             <selectedrule :element="selectedrule" :allocationResults="allocationResults"></selectedrule>
         </div>
         <div class="col">
-            <div id="overlay" v-on:mousemove="zoomIn"></div>
+
+            <div class="row" id="overlay" v-on:mousemove="zoomIn" @click="handleDoubleClick"></div>
         </div>
     </div>
 </div>
