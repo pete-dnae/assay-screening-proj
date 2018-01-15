@@ -10,6 +10,12 @@ class AllocRuleInterpreter:
         self._table = None
 
     def interpret(self):
+        # Treat there being zero rows as a special case, to avoid the
+        # call to max() below receiving an empty sequence.
+        if len(self._rules) == 0:
+            self._table = AllocTable(0, 0)
+            return self._table.rows
+        # Drop in to the general case.
         self._n_rows = \
             1 + ord(max((r.end_row_letter for r in self._rules))) - ord('A')
         self._n_cols = max((r.end_column for r in self._rules))
@@ -21,7 +27,6 @@ class AllocRuleInterpreter:
         return(self._table.rows)
 
     def _apply_rule_to_table(self, rule):
-        print('XXXXX payload type: <%s>' % rule.payload_type)
         row_indices_range = rule.enumerate_applicable_rows()
         for row_index in row_indices_range:
             self._apply_rule_to_row(rule, row_index)
@@ -41,6 +46,8 @@ class AllocRuleInterpreter:
             self._set_item_in_table(
                 row_index, column_index, rule.payload_type, 
                 payload_items[payload_item_index])
+            # Increment the payload item index using module division, to 
+            # make it wrap back round the start when it goes off the end.
             payload_item_index = (payload_item_index + 1) % len(payload_items)
 
     def _in_blocks(self, payload_items, rule, row_index):

@@ -6,6 +6,7 @@ from .models.reagent_models import *
 from .models.primer_models import *
 from .models.strain_models import *
 from .models.plate_models import *
+
 from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 
 class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
@@ -100,27 +101,80 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
 
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
+    display_string = serializers.CharField(read_only=True)
+    id = serializers.ReadOnlyField()
+
     class Meta:
         model = AllocRule
-        fields = ('url', 'display_string')
+        fields = ('__all__')
+
+
+class RuleListSerializer(serializers.HyperlinkedModelSerializer):
+
+    # The fields for the read and write cases are completely
+    # different, and mutually exclusive...
+    
+    # When reading, we send back all the rules' details using a nested
+    # serializer for the m2m field.
+    rules = AllocRuleSerializer(many=True, read_only=True)
+
+    # When writing we expect to receive a list of integers, that we will
+    # treat as the ids for existing rules that should form the replacement
+    # list contents. Hence the need for a custom validator.
+    new_rules = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True
+    )
+    
+
+    class Meta:
+        model = RuleList
+        fields = ('__all__')
+
+    def update(self, instance, validated_data):
+        # Retreive all the AllocRules called for by the incoming request,
+        # thus implicitly validating this input.
+        new_ids = validated_data['new_rules'] # Retain requested sequence.
+        new_objs = [AllocRule.objects.get(pk=id) for id in new_ids]
+
+        # Set the *rank_for_ordering* field on each AllocRule in the new list 
+        # to model the right sequence, as defined by the new_id list.
+        for idx, rule in enumerate(new_objs):
+            rule.rank_for_ordering = idx
+            rule.save()
+
+        # Delete the AllocRules that will fall out of use once the list
+        # replacement is done.
+        incumbent_ids = set([rule.id for rule in instance.rules.all()])
+        to_delete_ids = incumbent_ids - set(new_ids)
+        AllocRule.objects.filter(pk__in=to_delete_ids).delete()
+
+        # Repopulate the m2m field to swap out the incumbent rules with the
+        # new.
+        instance.rules.clear()
+        instance.rules.add(*new_objs)
+
+        instance.save()
+        return instance
+
 
 class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 
-    allocation_rules = AllocRuleSerializer(many=True, read_only=True)
+    rule_list = RuleListSerializer()
     allocation_results = serializers.SerializerMethodField('alloc_results')
 
     class Meta:
         model = AllocationInstructions
         fields = (
             'url',
-            'allocation_rules',
+            'rule_list',
             'suppressed_columns',
             'allocation_results'
         )
 
     def alloc_results(self, allocation_instructions):
         # The rules are ordered by definition in rank order.
-        rules = allocation_instructions.allocation_rules.all()
+        rules = allocation_instructions.rule_list.rules.all()
         rule_interpreter = AllocRuleInterpreter(rules)
         tabulated_result = rule_interpreter.interpret()
         return tabulated_result
