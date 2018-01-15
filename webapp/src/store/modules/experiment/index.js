@@ -4,6 +4,7 @@ import * as types from './mutation-types';
 import experiment from '@/assets/json/response.json';
 export const state = {
   experiment,
+  plateImageUrl: '',
 };
 
 const actions = {};
@@ -13,6 +14,9 @@ const mutations = {
       state.experiment.plates[plateId].allocation_instructions.allocation_rules,
       (x, i) => (x = { ...x, id: i }),
     );
+  },
+  [types.SET_PLATE_IMAGE_URL](state, url) {
+    state.plateImageUrl = url;
   },
   [types.SET_RULE_ORDER_CHANGE](state, args) {
     const { data, plateId } = args;
@@ -39,6 +43,9 @@ const getters = {
   },
   getExperimentName() {
     return state.experiment.experiment_name;
+  },
+  getPlateImage() {
+    return state.plateImageUrl;
   },
 };
 

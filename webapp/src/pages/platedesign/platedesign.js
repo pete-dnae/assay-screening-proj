@@ -16,6 +16,14 @@ export default {
       selectedrule: {},
     };
   },
+  beforeRouteLeave(to, from, next) {
+    const answer = window.confirm('Do you really want to leave? you have unsaved changes!');
+    if (answer) {
+      next();
+    } else {
+      next(false);
+    }
+  },
   computed: {
     ...mapGetters({
       plateInfo: 'getPlateInfo',
@@ -23,6 +31,7 @@ export default {
       allocationResults: 'getAllocationResults',
       designerName: 'getDesignerName',
       experimentName: 'getExperimentName',
+      plateImage: 'getPlateImage',
     }),
   },
   methods: {
@@ -34,6 +43,14 @@ export default {
     },
     zoomOut(event) {
       zoomOut(event);
+    },
+
+    handleDoubleClick() {
+      const dl = document.createElement('a');
+      document.body.appendChild(dl);
+      dl.setAttribute('href', this.plateImage);
+      dl.setAttribute('download', 'test.svg');
+      dl.click();
     },
   },
   mounted() {
