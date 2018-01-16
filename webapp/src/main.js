@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.css';
 import '@/assets/sass/app.scss';
 import '@/assets/css/popper.css';
-import 'bootstrap';
 import { sync } from 'vuex-router-sync';
 import Axios from 'axios';
 import Vue from 'vue';
@@ -15,10 +14,9 @@ import store from './store';
 
 Vue.config.productionTip = false;
 // eslint-disable-next-line
-window.$ = jQuery;
-// eslint-disable-next-line
-window.jQuery = jQuery;
+
 Axios.defaults.headers.common.Accept = 'application/json';
+Axios.defaults.baseURL = process.env.API_LOCATION;
 
 sync(store, router);
 /* eslint-disable no-new */

@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import draggable from 'vuedraggable';
-import { zoomIn, zoomOut, prepareResultsTable, makeSVG } from '@/models/utils';
+import _ from 'lodash';
+import { zoomIn, zoomOut, getNewIndex } from '@/models/utils';
 import { modal } from 'vue-strap';
-import { getNewIndex } from '@/models/utils';
+
 
 Vue.component('modal', modal);
 export default {
@@ -13,6 +14,7 @@ export default {
   props: {
     element: Object,
     allocationResults: Array,
+    image: String,
   },
   data() {
     return {
@@ -21,7 +23,7 @@ export default {
       textElem: '',
       options: [
         { text: 'AAAA BBBB CCCC', value: 'In Blocks' },
-        { text: 'ABCD ABCD ABCD', value: 'Consecutively' },
+        { text: 'ABCD ABCD ABCD', value: 'Consecutive' },
       ],
       types: [
         { text: 'Template Copies', value: 'Template Copies' },
@@ -38,16 +40,6 @@ export default {
     },
     validateRowRange() {},
     validateColRange() {},
-    drawTableImage() {
-      const url = makeSVG(
-        window.URL || window.webkitURL || window,
-        prepareResultsTable(this.allocationResults),
-      );
-      const element = document.getElementById('overlay');
-      element.style.backgroundImage = `url('${url}')`;
-      document.getElementById('imgZoom').src = url;
-      this.$store.commit('SET_PLATE_IMAGE_URL', url);
-    },
     handleAddValue() {
       const newIndex = getNewIndex('id', this.element.value);
       this.element.value.push({
@@ -57,10 +49,10 @@ export default {
       this.textElem = '';
     },
     handleDeleteValue(evt) {
-      this.element.value = _.filter(this.element.value, (x, i) => i != evt.oldIndex);
+      this.element.value = _.filter(this.element.value, (x, i) => i !== evt.oldIndex);
     },
   },
   mounted() {
-    this.drawTableImage();
+    document.getElementById('imgZoom').src = this.image;
   },
 };

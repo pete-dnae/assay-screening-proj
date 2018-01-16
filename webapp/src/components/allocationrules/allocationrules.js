@@ -1,6 +1,6 @@
-import Vue from 'vue';
 import draggable from 'vuedraggable';
-import { getNewIndex } from '@/models/utils';
+import _ from 'lodash';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'AllocationRules',
@@ -15,18 +15,18 @@ export default {
   computed: {
     rules: {
       get() {
-        return this.$store.state.experiment.experiment.plates[this.$route.params.plateId]
-          .allocation_instructions.allocation_rules;
+        return this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.rules;
       },
       set(value) {
-        this.$store.commit('SET_RULE_ORDER_CHANGE', {
-          data: value,
-          plateId: this.$route.params.plateId,
+        this.updateAllocationRules({
+          data: _.map(value, 'id'),
+          url: this.$store.state.experiment.currentPlate.url,
         });
       },
     },
   },
   methods: {
+    ...mapActions(['updateAllocationRules']),
     handleSelect(evt) {
       this.$emit('selectedRule', this.rules[evt.oldIndex]);
     },

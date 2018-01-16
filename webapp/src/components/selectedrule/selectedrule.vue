@@ -7,30 +7,33 @@
 .zoomIn {
     cursor: zoom-in;
 }
+
 .overflow {
-  width: 200px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+    width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
+
 </style>
 
 <template>
 
 <div>
-    <div class="fluid-container w-100 ml-3" v-show="'id' in element">
+    <div class="fluid-container w-100 ml-3">
         <h5 class="text-left">Selected Rule</h5>
         <div class="row">
             <div class="col-5 text-left">
                 <label>Distribute these</label>
-                <select v-model="element['title']">
+                <!-- <select v-model="element['title']">
                     <option v-for="type in types" v-bind:value="type.value">
                         <label>{{type.text}}</label>
                     </option>
-                </select>
+                </select> -->
+                <input v-model="element['payload_type']" disabled>
             </div>
             <div class="col text-left">
-                <select v-model="element['type']">
+                <select v-model="element['pattern']">
                     <option v-for="option in options" v-bind:value="option.value">
                         <b>{{option.value}}</b>
                         <label>{{option.text}}</label>
@@ -67,21 +70,27 @@
                     <div class="col-2 text-left">
                         <label>Rows</label>
                     </div>
+                    <div class="col-2">
+                        <input style="width:50px" v-model="element['start_row_letter']" @keyup="validateRowRange">
+                    </div>
                     <div class="col-1">
-                        <input v-model="element['rowRange']" @keyup="validateRowRange">
+                        <input style="width:50px" v-model="element['end_row_letter']" @keyup="validateRowRange">
                     </div>
                 </div>
                 <div class="row mt-3">
                     <div class="col-2 text-left">
                         <label>Col</label>
                     </div>
+                    <div class="col-2">
+                        <input style="width:50px" v-model="element['start_column']" @keyup="validateColRange">
+                    </div>
                     <div class="col-1">
-                        <input v-model="element['colRange']" @keyup="validateColRange">
+                        <input style="width:50px" v-model="element['end_column']" @keyup="validateRowRange">
                     </div>
                 </div>
             </div>
             <div class="col">
-                <img src="../../assets/table.jpg" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut"  style="max-width: 100%;height: auto;">
+                <img src="../../assets/table.jpg" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut" style="max-width: 100%;height: auto;">
                 <label class="blockquote-footer text-left">Hover over thumbnail to zoom</label>
             </div>
         </div>
@@ -104,4 +113,5 @@
 </div>
 
 </template>
+
 <script src="./selectedrule"></script>

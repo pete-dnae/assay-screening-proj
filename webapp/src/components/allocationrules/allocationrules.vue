@@ -16,7 +16,7 @@
 
 <div class="fluid-container w-100 ml-3">
     <div class="row ml-3">
-        <b>Allocation Rules</b>
+        <b>Allocation Rules</b>        
     </div>
     <div class="row ml-3">
 

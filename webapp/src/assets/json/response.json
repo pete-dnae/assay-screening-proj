@@ -1,763 +1,763 @@
 {
-  "url": "http://assay-screening.herokuapp.com/api/experiments/1/",
-  "experiment_name": "reference_experiment_1",
-  "designer_name": "PH",
-  "plates": [
-    {
-      "url": "http://assay-screening.herokuapp.com/api/plates/1/",
-      "name": "plate_1_1",
-      "allocation_instructions": {
-        "url": "http://assay-screening.herokuapp.com/api/allocationinstructions/1/",
-        "allocation_rules": [
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/1/",
-            "display_string": "Strain Count, (ATCC BAA-2355, AT...), In Blocks, Rows:A-H, Cols:1-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/2/",
-            "display_string": "Strain Count, (5), Consecutive, Rows:A-H, Cols:1-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/3/",
-            "display_string": "Strain Count, (0), Consecutive, Rows:A-B, Cols:1-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/4/",
-            "display_string": "Strain Count, (50), Consecutive, Rows:C-D, Cols:9-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/5/",
-            "display_string": "Strain Count, (500), Consecutive, Rows:E-F, Cols:9-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/6/",
-            "display_string": "Strain Count, (5000), Consecutive, Rows:G-H, Cols:9-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/7/",
-            "display_string": "HgDNA, (0), Consecutive, Rows:A-H, Cols:1-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/8/",
-            "display_string": "HgDNA, (5000), Consecutive, Rows:F-H, Cols:1-8"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/9/",
-            "display_string": "PA Primers, (poolB1), Consecutive, Rows:A-H, Cols:1-4"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/10/",
-            "display_string": "PA Primers, (Eco63 Eco60, Efs0...), Consecutive, Rows:A-H, Cols:5-8"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/11/",
-            "display_string": "PA Primers, (), Consecutive, Rows:A-H, Cols:9-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/12/",
-            "display_string": "Dilution Factor, (30), Consecutive, Rows:A-H, Cols:1-8"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/13/",
-            "display_string": "Dilution Factor, (), Consecutive, Rows:A-H, Cols:9-12"
-          },
-          {
-            "url": "http://assay-screening.herokuapp.com/api/allocrules/14/",
-            "display_string": "ID Primers, (Kox04 Kox03, Kpn0...), Consecutive, Rows:A-H, Cols:1-12"
-          }
-        ],
-        "suppressed_columns": "4, 8, 12",
-        "allocation_results": [
-          [
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
+    "url": "http://assay-screening.herokuapp.com/api/experiments/1/",
+    "experiment_name": "reference_experiment_1",
+    "designer_name": "PH",
+    "plates": [
+        {
+            "url": "http://assay-screening.herokuapp.com/api/plates/1/",
+            "name": "plate_1_1",
+            "allocation_instructions": {
+                "url": "http://assay-screening.herokuapp.com/api/allocationinstructions/1/",
+                "allocation_rules": [
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/1/",
+                        "display_string": "Strain Count, (ATCC BAA-2355, AT...), In Blocks, Rows:A-H, Cols:1-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/2/",
+                        "display_string": "Strain Count, (5), Consecutive, Rows:A-H, Cols:1-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/3/",
+                        "display_string": "Strain Count, (0), Consecutive, Rows:A-B, Cols:1-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/4/",
+                        "display_string": "Strain Count, (50), Consecutive, Rows:C-D, Cols:9-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/5/",
+                        "display_string": "Strain Count, (500), Consecutive, Rows:E-F, Cols:9-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/6/",
+                        "display_string": "Strain Count, (5000), Consecutive, Rows:G-H, Cols:9-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/7/",
+                        "display_string": "HgDNA, (0), Consecutive, Rows:A-H, Cols:1-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/8/",
+                        "display_string": "HgDNA, (5000), Consecutive, Rows:F-H, Cols:1-8"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/9/",
+                        "display_string": "PA Primers, (poolB1), Consecutive, Rows:A-H, Cols:1-4"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/10/",
+                        "display_string": "PA Primers, (Eco63 Eco60, Efs0...), Consecutive, Rows:A-H, Cols:5-8"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/11/",
+                        "display_string": "PA Primers, (), Consecutive, Rows:A-H, Cols:9-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/12/",
+                        "display_string": "Dilution Factor, (30), Consecutive, Rows:A-H, Cols:1-8"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/13/",
+                        "display_string": "Dilution Factor, (), Consecutive, Rows:A-H, Cols:9-12"
+                    },
+                    {
+                        "url": "http://assay-screening.herokuapp.com/api/allocrules/14/",
+                        "display_string": "ID Primers, (Kox04 Kox03, Kpn0...), Consecutive, Rows:A-H, Cols:1-12"
+                    }
+                ],
+                "suppressed_columns": "4, 8, 12",
+                "allocation_results": [
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "0",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "0",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "50",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "500",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ],
+                    [
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "poolB1",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "30",
+                            "Strain Count": "5",
+                            "PA Primers": "Eco63 Eco60",
+                            "HgDNA": "5000"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        },
+                        {
+                            "ID Primers": "Kox04 Kox03",
+                            "Dilution Factor": "",
+                            "Strain Count": "5000",
+                            "PA Primers": "",
+                            "HgDNA": "0"
+                        }
+                    ]
+                ]
             }
-          ],
-          [
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "0",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ],
-          [
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ],
-          [
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "50",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ],
-          [
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ],
-          [
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "500",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ],
-          [
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ],
-          [
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "poolB1",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5",
-              "HgDNA": "5000",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "Eco63 Eco60",
-              "Dilution Factor": "30"
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            },
-            {
-              "Strain Count": "5000",
-              "HgDNA": "0",
-              "ID Primers": "Kox04 Kox03",
-              "PA Primers": "",
-              "Dilution Factor": ""
-            }
-          ]
-        ]
-      }
-    }
-  ]
+        }
+    ]
 }

@@ -31,7 +31,7 @@
     <div class="row mt-3">
         <div class="col">
             <allocationrules @selectedRule="handleSelectedRule" ></allocationrules>
-            <selectedrule :element="selectedrule" :allocationResults="allocationResults"></selectedrule>
+            <selectedrule v-if="selectedrule" :element="selectedrule" :image="plateImage" :allocationResults="allocationResults"></selectedrule>
         </div>
         <div class="col">
 

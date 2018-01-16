@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import rules from '@/components/rules/rules.vue';
 import footer from '@/components/footer/footer.vue';
 import plate from '@/components/plate/plate.vue';
