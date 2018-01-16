@@ -5,10 +5,11 @@ export const zoomIn = (event) => {
 
   element.style.display = 'inline-block';
   const img = document.getElementById('imgZoom');
-  const posX = event.offsetX ? event.offsetX : event.pageX - img.offsetLeft;
-  const posY = event.offsetY ? event.offsetY : event.pageY - img.offsetTop;
-
-  element.style.backgroundPosition = `${-posX * 3.5 + 10}px ${-posY * 2.5 + 10}px`;
+  let posX = event.offsetX ? event.offsetX : event.pageX - img.offsetLeft;
+  let posY = event.offsetY ? event.offsetY : event.pageY - img.offsetTop;
+  posX = (-posX * 3.5) + 10;
+  posY = (-posY * 2.5) + 10;
+  element.style.backgroundPosition = `${posX}px ${posY}px`;
 };
 export const zoomOut = () => {
   const element = document.getElementById('overlay');

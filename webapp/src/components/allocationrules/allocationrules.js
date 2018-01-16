@@ -1,11 +1,18 @@
-import Vue from 'vue';
 import draggable from 'vuedraggable';
-import { getNewIndex } from '@/models/utils';
+import _ from 'lodash';
+import {
+  mapActions, mapGetters,
+} from 'vuex';
+import {
+  spinner,
+} from 'vue-strap';
+
 
 export default {
   name: 'AllocationRules',
   components: {
     draggable,
+    spinner,
   },
   data() {
     return {
@@ -13,25 +20,45 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      spin: 'getPostingStatus',
+    }),
     rules: {
       get() {
-        return this.$store.state.experiment.experiment.plates[this.$route.params.plateId]
-          .allocation_instructions.allocation_rules;
+        return this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.rules;
       },
       set(value) {
-        this.$store.commit('SET_RULE_ORDER_CHANGE', {
-          data: value,
-          plateId: this.$route.params.plateId,
+        this.updateAllocationRules({
+          data: {
+            new_rules: _.map(value, 'id'),
+          },
+          url: this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.url,
+        }).then(() => {
+          this.fetchExperiment('1').then((res) => {
+            this.$store.commit('SET_CURRENT_PLATE', res.plates[parseInt(this.$route.params.plateId, 10)]);
+            this.$emit('ruleChanged');
+          });
         });
       },
     },
   },
   methods: {
+    ...mapActions(['updateAllocationRules', 'fetchExperiment']),
     handleSelect(evt) {
       this.$emit('selectedRule', this.rules[evt.oldIndex]);
     },
     handleDelete(evt) {
-      this.$emit('deletedRule', this.rules[evt.oldIndex]);
+      this.updateAllocationRules({
+        data: {
+          new_rules: _.map(_.filter(this.rules, (x, i) => i !== evt.oldIndex), 'id'),
+        },
+        url: this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.url,
+      }).then(() => {
+        this.fetchExperiment('1').then((res) => {
+          this.$store.commit('SET_CURRENT_PLATE', res.plates[parseInt(this.$route.params.plateId, 10)]);
+          this.$emit('ruleChanged');
+        });
+      });
     },
     handleAddRule() {
       this.$emit('requestNewRule');
