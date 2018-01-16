@@ -90,7 +90,7 @@
                 </div>
             </div>
             <div class="col">
-                <img src="../../assets/table.jpg" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut" style="max-width: 100%;height: auto;">
+                <img :src="image" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut" style="max-width: 100%;height: auto;">
                 <label class="blockquote-footer text-left">Hover over thumbnail to zoom</label>
             </div>
         </div>

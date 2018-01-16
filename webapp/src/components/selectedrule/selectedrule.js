@@ -5,9 +5,6 @@ import {
   zoomIn,
   zoomOut,
   getNewIndex,
-  prepareResultsTable,
-  makeSVG,
-  genCharArray,
 } from '@/models/utils';
 import {
   modal,
@@ -59,16 +56,6 @@ export default {
     },
     validateRowRange() {},
     validateColRange() {},
-    drawTableImage(currentSelection) {
-      const url = makeSVG(
-        window.URL || window.webkitURL || window,
-        prepareResultsTable(this.allocationResults, currentSelection),
-      );
-      const element = document.getElementById('overlay');
-      element.style.backgroundImage = `url('${url}')`;
-      document.getElementById('imgZoom').src = url;
-      this.$store.commit('SET_PLATE_IMAGE_URL', url);
-    },
     handleAddValue() {
       const newIndex = getNewIndex('id', this.element.value);
       this.element.value.push({
@@ -81,11 +68,5 @@ export default {
       this.element.value = _.filter(this.element.value, (x, i) => i !== evt.oldIndex);
     },
   },
-  mounted() {
-    document.getElementById('imgZoom').src = this.image;
-    this.drawTableImage({
-      rows: genCharArray(this.element.start_row_letter, this.element.end_row_letter),
-      cols: _.range(this.element.start_column, this.element.end_column),
-    });
-  },
+
 };
