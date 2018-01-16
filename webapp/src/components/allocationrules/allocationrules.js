@@ -27,18 +27,8 @@ export default {
       get() {
         return this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.rules;
       },
-      set(value) {
-        this.updateAllocationRules({
-          data: {
-            new_rules: _.map(value, 'id'),
-          },
-          url: this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.url,
-        }).then(() => {
-          this.fetchExperiment('1').then((res) => {
-            this.$store.commit('SET_CURRENT_PLATE', res.plates[parseInt(this.$route.params.plateId, 10)]);
-            this.$emit('ruleChanged');
-          });
-        });
+      set(changedRules) {
+        this.handleUpdateAllocation(_.map(changedRules, 'id'));
       },
     },
   },
@@ -47,10 +37,16 @@ export default {
     handleSelect(evt) {
       this.$emit('selectedRule', this.rules[evt.oldIndex]);
     },
-    handleDelete(evt) {
+    handleDelete(deletedRule) {
+      this.handleUpdateAllocation(_.map(_.filter(this.rules, (x, i) => i !== deletedRule.oldIndex), 'id'));
+    },
+    handleAddRule() {
+      this.$emit('requestNewRule');
+    },
+    handleUpdateAllocation(data) {
       this.updateAllocationRules({
         data: {
-          new_rules: _.map(_.filter(this.rules, (x, i) => i !== evt.oldIndex), 'id'),
+          new_rules: data,
         },
         url: this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.url,
       }).then(() => {
@@ -59,9 +55,6 @@ export default {
           this.$emit('ruleChanged');
         });
       });
-    },
-    handleAddRule() {
-      this.$emit('requestNewRule');
     },
   },
 };
