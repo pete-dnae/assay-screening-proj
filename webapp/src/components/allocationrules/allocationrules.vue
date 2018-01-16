@@ -10,15 +10,18 @@
   overflow: hidden;
 }
 
+
 </style>
 
 <template>
 
 <div class="fluid-container w-100 ml-3">
     <div class="row ml-3">
-        <b>Allocation Rules</b>        
+        <b>Allocation Rules</b>
     </div>
     <div class="row ml-3">
+
+        <spinner class="pre-scrollable w-75 m-4"  :value="spin" size="xl"  text="I will close in 2 secs"></spinner>
 
         <draggable v-model="rules" class="pre-scrollable w-75" @choose="handleSelect" @filter="handleDelete" :options="{filter:'.fa-trash-o',chosenClass:'active'}">
 

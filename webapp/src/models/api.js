@@ -10,9 +10,8 @@ const fetchRes = url =>
     return response;
   });
 
-const postRes = (url, data) => {
-  debugger;
-  return axios.post(
+const putRes = (url, data) =>
+  axios.put(
   url,
   data, {
     headers: {
@@ -20,8 +19,7 @@ const postRes = (url, data) => {
     },
   },
 );
-};
 
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 
-export const updateAllocationRules = (url, data) => postRes(url, data);
+export const updateAllocationRules = (url, data) => putRes(url, data);

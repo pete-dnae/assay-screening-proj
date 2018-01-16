@@ -22,6 +22,11 @@ export const state = {
       allocation_results: null
     }
   },
+  updateRule:{
+    isPosting: false,
+    posted: false,
+    didInvalidate: false,
+  },
   plateImageUrl: '',
 };
 
@@ -45,13 +50,13 @@ const actions = {
   },
   updateAllocationRules({
     commit
-  }, args) {    
+  }, args) {
     commit(types.REQUEST_UPDATE_RULE);
     const{data,url}=args;
     return new Promise(function(resolve, reject) {
       api
         .updateAllocationRules(url,data)
-        .then(data => {
+        .then(({data}) => {
           commit(types.UPDATE_RULE_SUCESS, data);
           resolve(data);
         })
@@ -85,6 +90,21 @@ const mutations = {
   [types.SET_PLATE_IMAGE_URL](state, url) {
     state.plateImageUrl = url;
   },
+  [types.REQUEST_UPDATE_RULE](state) {
+    state.updateRule.isPosting = true;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = false;
+  },
+  [types.UPDATE_RULE_SUCESS](state) {
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = true;
+    state.updateRule.didInvalidate = false;
+  },
+  [types.UPDATE_RULE_FAILURE](state) {
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = true;
+  },
 
 };
 const getters = {
@@ -107,6 +127,10 @@ const getters = {
   },
   getPlateImage() {
     return state.plateImageUrl;
+  },
+  getPostingStatus() {
+    return state.updateRule.isPosting ||
+    state.experiment.isFetching;
   },
 };
 

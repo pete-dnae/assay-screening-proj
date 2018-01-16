@@ -62,6 +62,9 @@ export default {
       element.style.backgroundImage = `url('${url}')`;
       this.$store.commit('SET_PLATE_IMAGE_URL', url);
     },
+    handleRuleChange() {
+      this.drawTableImage();
+    },
     handleDoubleClick() {
       const dl = document.createElement('a');
       document.body.appendChild(dl);

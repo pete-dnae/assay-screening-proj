@@ -139,7 +139,7 @@ class RuleListViewSet(viewsets.ModelViewSet):
     """
     queryset = RuleList.objects.all()
     serializer_class = RuleListSerializer
-    http_method_names = ['get', 'put', 'head']
+    http_method_names = ['get', 'put', 'head','options']
 
 class AllocRuleViewSet(viewsets.ModelViewSet):
     __doc__ = _DO_NOT_USE
