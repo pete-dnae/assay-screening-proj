@@ -13,17 +13,30 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib import admin
 
 from rest_framework import routers
+from rest_framework.urlpatterns import format_suffix_patterns
+
 
 from app.views import *
 
-urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-]
+fibble = ()
 
+# URL config for custom views.
+urlpatterns = [
+    re_path(r'^admin/', admin.site.urls),
+
+    # Contrary to the documentation, it seems that we must set the name kwarg
+    # explicitly to enable reverse-url lookups to work - when they are required
+    # by HyperlinkedModelSerializer nested serializer fields.
+    re_path(r'^api/viewlist-detail/(?P<pk>[0-9]+)/$', 
+        RuleListDetail.as_view(), name='viewlist-detail'),
+]
+urlpatterns = format_suffix_patterns(urlpatterns)
+
+# Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()
 
 router.register(r'api/experiments', ExperimentViewSet)
@@ -43,7 +56,7 @@ router.register(r'api/strains', StrainViewSet)
 router.register(r'api/strainkits', StrainKitViewSet)
 router.register(r'api/cyclingpatterns', CyclingPatternViewSet)
 router.register(r'api/allocrules', AllocRuleViewSet)
-router.register(r'api/rulelists', RuleListViewSet)
+#router.register(r'api/rulelists', RuleListViewSet)
 router.register(r'api/allocationinstructions', AllocationInstructionsViewSet)
 router.register(r'api/plates', PlateViewSet)
 router.register(r'api/experiments', ExperimentViewSet)

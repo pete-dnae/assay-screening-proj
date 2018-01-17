@@ -122,14 +122,16 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     # treat as the ids for existing rules that should form the replacement
     # list contents. Hence the need for a custom validator.
     new_rules = serializers.ListField(
-        child=serializers.IntegerField(),
-        write_only=True
-    )
-    
+        child=serializers.IntegerField(), write_only=True)
 
     class Meta:
         model = RuleList
         fields = ('__all__')
+        # Because we use one of these objects as a hyperlinkedmodelserializer
+        # field from the AllocationInstructionSerializer, we are obliged to
+        # specify the view name it should use as the reverse-lookup key when
+        # synthesizing the url to show as the link.
+        extra_kwargs = { 'url': {'view_name': 'viewlist-detail'} }
 
     def update(self, instance, validated_data):
         # Retreive all the AllocRules called for by the incoming request,

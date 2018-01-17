@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from rest_framework import mixins
+from rest_framework import generics
 
 from .serializers import *
 
@@ -109,22 +111,31 @@ class CyclingPatternViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CyclingPatternSerializer
 
 
-class RuleListViewSet(viewsets.ModelViewSet):
+class RuleListDetail(
+        mixins.RetrieveModelMixin,
+        mixins.UpdateModelMixin,
+        generics.GenericAPIView):
     """
-    The API lets you alter a RuleList, but not create them.
-
-    The **PUT** option is available to change the rules inside this 
-    **RuleList** or to change their order. The payload must provide a correctly
-    sequenced list of the **id**s of the rules required like this:
+    The API lets you alter a RuleList, but not create one.
+     
+    The **PUT** option is available to change the rules inside this
+    **RuleList** or to change their order. The payload must provide a
+    correctly sequenced list of the **id**s of the rules required like this:
 
         { "new_rules": [1, 2, 3] }
 
-    The **rank_for_ordering** field for each rule is adjusted automatically
+    The **rank_for_ordering** field for each rule is adjusted automatically 
     internally.
     """
     queryset = RuleList.objects.all()
     serializer_class = RuleListSerializer
-    http_method_names = ['get', 'post', 'put', 'head', 'options']
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+        
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
 
 class AllocRuleViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
