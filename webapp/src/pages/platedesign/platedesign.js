@@ -2,17 +2,20 @@ import { mapGetters, mapActions } from 'vuex';
 import allocationrules from '@/components/allocationrules/allocationrules.vue';
 import selectedrule from '@/components/selectedrule/selectedrule.vue';
 import { zoomIn, zoomOut, prepareResultsTable, makeSVG } from '@/models/utils';
+import {
+  spinner,
+} from 'vue-strap';
 
 export default {
   name: 'PlateDesign',
   components: {
     allocationrules,
     selectedrule,
+    spinner,
   },
   data() {
     return {
       msg: 'Welcome',
-      selectedrule: null,
     };
   },
   beforeRouteUpdate(to, from, next) {
@@ -33,19 +36,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      plateInfo: 'getPlateInfo',
       allocationRules: 'getAllocationRules',
       allocationResults: 'getAllocationResults',
       designerName: 'getDesignerName',
       experimentName: 'getExperimentName',
       plateImage: 'getPlateImage',
+      spin: 'getPostingStatus',
     }),
   },
   methods: {
-
     ...mapActions(['fetchExperiment']),
-    handleSelectedRule(evt) {
-      this.selectedrule = evt;
+    handleSelectedRule(ruleElem) {
+      this.$store.commit('SET_CURRENT_RULE', ruleElem);
     },
     zoomIn(event) {
       zoomIn(event);

@@ -32,7 +32,7 @@ export default {
     }),
     rules: {
       get() {
-        return this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.rules;
+        return this.$store.state.plate.currentPlate.allocation_instructions.rule_list.rules;
       },
       set(changedRules) {
         this.handleUpdateAllocation(_.map(changedRules, 'id'));
@@ -46,7 +46,7 @@ export default {
       this.drawTableImage({
         rows: genCharArray(this.rules[evt.oldIndex].start_row_letter,
            this.rules[evt.oldIndex].end_row_letter),
-        cols: _.range(this.rules[evt.oldIndex].start_column, this.rules[evt.oldIndex].end_column),
+        cols: _.range(this.rules[evt.oldIndex].start_column - 1, this.rules[evt.oldIndex].end_column),
       });
     },
     handleDelete(deletedRule) {
@@ -60,7 +60,7 @@ export default {
         data: {
           new_rules: data,
         },
-        url: this.$store.state.experiment.currentPlate.allocation_instructions.rule_list.url,
+        url: this.$store.state.plate.currentPlate.allocation_instructions.rule_list.url,
       }).then(() => {
         this.fetchExperiment('1').then((res) => {
           this.$store.commit('SET_CURRENT_PLATE', res.plates[parseInt(this.$route.params.plateId, 10)]);

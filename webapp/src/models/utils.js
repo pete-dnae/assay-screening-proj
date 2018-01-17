@@ -29,7 +29,7 @@ export const prepareResultsTable = (allocationResults, currentSelection) => {
       if (currentSelection) {
         if (currentSelection.rows.indexOf(String.fromCharCode(i + 65)) !== -1 &&
           currentSelection.cols.indexOf(j) !== -1) {
-          tableBody += '<td style="width:250px;border: 1px solid black;background-color:#6a6a6b">';
+          tableBody += '<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.3)">';
         } else {
           tableBody += '<td style="width:250px;border: 1px solid black">';
         }
@@ -37,14 +37,13 @@ export const prepareResultsTable = (allocationResults, currentSelection) => {
         tableBody += '<td style="width:250px;border: 1px solid black">';
       }
 
-      tableBody += `<div  class="row"><span style="color:red">${col['ID Primers']}</span></div>`;
-      tableBody += `<div class="row"><span style="color:blue">${col['PA Primers']}</span></div>`;
-      tableBody += `<div  class="row"><span style="color:green">${
+      tableBody += (col['ID Primers']) ? `<div  class="row"><span style="color:red">${col['ID Primers']}</span></div>` : '';
+      tableBody += (col['PA Primers']) ? `<div class="row"><span style="color:blue">${col['PA Primers']}</span></div>` : '';
+      tableBody += (col['Strain Count']) ? `<div  class="row"><span style="color:green">${
         col['Strain Count']
-      }cp</span></div>`;
-      if (col['Dilution Factor'] !== '') {
-        tableBody += `<div  class="row"><span>${'Dil '}${col['Dilution Factor']}</span></div>`;
-      }
+      }cp</span></div>` : '';
+      tableBody += (col['Dilution Factor']) ? `<div  class="row"><span>${'Dil '}${col['Dilution Factor']}</span></div>` : '';
+
 
       tableBody += '</td>';
     });
@@ -58,7 +57,7 @@ export const makeSVG = (DOMURL, html) => {
   const data =
     `${'<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850">' +
       '<foreignObject width="1400" height="850">' +
-      '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:20px">'}${html}</div>` +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10px">'}${html}</div>` +
     '</foreignObject>' +
     '</svg>';
   return DOMURL.createObjectURL(new Blob([data], {

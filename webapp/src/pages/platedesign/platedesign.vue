@@ -1,11 +1,11 @@
 <style scoped>
 
-#overlay {
+.overlay {
     border: 1px solid black;
-    width: 650px;
-    height: 450px;
+    width: 50%;
+    height: 50%;
     display: inline-block;
-    /* background-image: url('../../assets/table.jpg'); */
+
     background-repeat: no-repeat;
 }
 
@@ -13,8 +13,8 @@
 
 <template>
 
-<div class="fluid-container bg-light">
-  <div class="row">
+<div class="fluid-container">
+  <div class="row m-5">
     <div class="col text-left mt-3 ml-4">
       <label><b>Designer</b></label>
       <label>{{designerName}}</label>
@@ -28,14 +28,17 @@
     <div class="col-7">
     </div>
   </div>
-    <div class="row mt-3">
+    <div class="row m-5">
         <div class="col">
             <allocationrules @selectedRule="handleSelectedRule"  @ruleChanged="handleRuleChange"></allocationrules>
-            <selectedrule v-if="selectedrule" :element="selectedrule" :image="plateImage" :allocationResults="allocationResults"></selectedrule>
+            <selectedrule
+            :image="plateImage"
+            :allocationResults="allocationResults"
+            ></selectedrule>
         </div>
         <div class="col">
-
-            <div class="row" id="overlay" v-on:mousemove="zoomIn" @click="handleDoubleClick"></div>
+            <spinner :value="spin"></spinner>
+            <div class="row overlay" id="overlay" v-on:mousemove="zoomIn" @click="handleDoubleClick"></div>
         </div>
     </div>
 </div>

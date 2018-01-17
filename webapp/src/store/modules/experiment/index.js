@@ -12,22 +12,7 @@ export const state = {
     isFetching: false,
     fetched: false,
     didInvalidate: false,
-  },
-  currentPlate: {
-    allocation_instructions: {
-      rule_list: {
-        rules: null,
-        url: null
-      },
-      allocation_results: null
-    }
-  },
-  updateRule:{
-    isPosting: false,
-    posted: false,
-    didInvalidate: false,
-  },
-  plateImageUrl: '',
+  }
 };
 
 const actions = {
@@ -47,24 +32,6 @@ const actions = {
           reject(data);
         });
     });
-  },
-  updateAllocationRules({
-    commit
-  }, args) {
-    commit(types.REQUEST_UPDATE_RULE);
-    const{data,url}=args;
-    return new Promise(function(resolve, reject) {
-      api
-        .updateAllocationRules(url,data)
-        .then(({data}) => {
-          commit(types.UPDATE_RULE_SUCESS, data);
-          resolve(data);
-        })
-        .catch(e => {
-          commit(types.UPDATE_RULE_FAILURE);
-          reject(data);
-        });
-    });
   }
 };
 const mutations = {
@@ -72,9 +39,6 @@ const mutations = {
     state.experiment.isFetching = true;
     state.experiment.fetched = false;
     state.experiment.didInvalidate = false;
-  },
-  [types.SET_CURRENT_PLATE](state, data) {
-    state.currentPlate = data;
   },
   [types.RECEIVED_EXPERIMENT](state, data) {
     state.experiment.data = data;
@@ -87,50 +51,13 @@ const mutations = {
     state.experiment.fetched = false;
     state.experiment.didInvalidate = true;
   },
-  [types.SET_PLATE_IMAGE_URL](state, url) {
-    state.plateImageUrl = url;
-  },
-  [types.REQUEST_UPDATE_RULE](state) {
-    state.updateRule.isPosting = true;
-    state.updateRule.posted = false;
-    state.updateRule.didInvalidate = false;
-  },
-  [types.UPDATE_RULE_SUCESS](state) {
-    state.updateRule.isPosting = false;
-    state.updateRule.posted = true;
-    state.updateRule.didInvalidate = false;
-  },
-  [types.UPDATE_RULE_FAILURE](state) {
-    state.updateRule.isPosting = false;
-    state.updateRule.posted = false;
-    state.updateRule.didInvalidate = true;
-  },
-
 };
 const getters = {
-  getPlateInfo(state, getters, rootState) {
-    return state.currentPlate;
-  },
-  getAllocationRules(state, getters, rootState) {
-    return state.currentPlate.allocation_instructions
-      .rule_list.rules;
-  },
-  getAllocationResults(state, getters, rootState) {
-    return state.currentPlate.allocation_instructions
-      .allocation_results;
-  },
   getDesignerName(state, getters, rootState) {
     return state.experiment.data.designer_name;
   },
   getExperimentName() {
     return state.experiment.data.experiment_name;
-  },
-  getPlateImage() {
-    return state.plateImageUrl;
-  },
-  getPostingStatus() {
-    return state.updateRule.isPosting ||
-    state.experiment.isFetching;
   },
 };
 
