@@ -21,20 +21,29 @@ export const getNewIndex = (arg, items) => {
   return newIndex;
 };
 
-export const prepareResultsTable = (allocationResults) => {
+export const prepareResultsTable = (allocationResults, currentSelection) => {
   let tableBody = '<table class="table">';
-  allocationResults.forEach((row) => {
+  allocationResults.forEach((row, i) => {
     tableBody += '<tr style="height:100px">';
-    row.forEach((col) => {
-      tableBody += '<td style="width:250px;border: 1px solid black">';
-      tableBody += `<div  class="row"><span style="color:red">${col['ID Primers']}</span></div>`;
-      tableBody += `<div class="row"><span style="color:blue">${col['PA Primers']}</span></div>`;
-      tableBody += `<div  class="row"><span style="color:green">${
-        col['Strain Count']
-      }cp</span></div>`;
-      if (col['Dilution Factor'] !== '') {
-        tableBody += `<div  class="row"><span>${'Dil '}${col['Dilution Factor']}</span></div>`;
+    row.forEach((col, j) => {
+      if (currentSelection) {
+        if (currentSelection.rows.indexOf(String.fromCharCode(i + 65)) !== -1 &&
+          currentSelection.cols.indexOf(j) !== -1) {
+          tableBody += '<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.3)">';
+        } else {
+          tableBody += '<td style="width:250px;border: 1px solid black">';
+        }
+      } else {
+        tableBody += '<td style="width:250px;border: 1px solid black">';
       }
+
+      tableBody += (col['ID Primers']) ? `<div  class="row"><span style="color:red">${col['ID Primers']}</span></div>` : '';
+      tableBody += (col['PA Primers']) ? `<div class="row"><span style="color:blue">${col['PA Primers']}</span></div>` : '';
+      tableBody += (col['Strain Count']) ? `<div  class="row"><span style="color:green">${
+        col['Strain Count']
+      }cp</span></div>` : '';
+      tableBody += (col['Dilution Factor']) ? `<div  class="row"><span>${'Dil '}${col['Dilution Factor']}</span></div>` : '';
+
 
       tableBody += '</td>';
     });
@@ -51,5 +60,17 @@ export const makeSVG = (DOMURL, html) => {
       '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10px">'}${html}</div>` +
     '</foreignObject>' +
     '</svg>';
-  return DOMURL.createObjectURL(new Blob([data], { type: 'image/svg+xml' }));
+  return DOMURL.createObjectURL(new Blob([data], {
+    type: 'image/svg+xml',
+  }));
+};
+
+export const genCharArray = (start, end) => {
+  const result = [];
+  const i = start.charCodeAt(0);
+  const j = end.charCodeAt(0) + 1;
+  _.range(i, j).forEach((x) => {
+    result.push(String.fromCharCode(x));
+  });
+  return result;
 };

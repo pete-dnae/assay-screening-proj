@@ -24,16 +24,18 @@
         <h5 class="text-left">Selected Rule</h5>
         <div class="row">
             <div class="col-5 text-left">
-                <label>Distribute these</label>
+              <div class="form-group row">
+                <label class="col col-form-label">Distribute these</label>
                 <!-- <select v-model="element['title']">
                     <option v-for="type in types" v-bind:value="type.value">
                         <label>{{type.text}}</label>
                     </option>
                 </select> -->
-                <input v-model="element['payload_type']" disabled>
+                <input v-model="payloadType" class="form-control w-50"  disabled>
+                </div>
             </div>
             <div class="col text-left">
-                <select v-model="element['pattern']">
+                <select v-model="distPattern" class="btn btn-default dropdown-toggle">
                     <option v-for="option in options" v-bind:value="option.value">
                         <b>{{option.value}}</b>
                         <label>{{option.text}}</label>
@@ -41,15 +43,15 @@
                 </select>
             </div>
         </div>
-        <div class="row ">
+        <div class="row mt-4">
             <div class="col-5">
                 <div class="row">
-                    <draggable :list="element['value']" class="w-100 list-group" @filter="handleDeleteValue" :options="{filter:'.fa-trash-o',chosenClass: 'active'}">
+                    <draggable v-model="payload" class="w-100 list-group" @filter="handleDeleteValue" :options="{filter:'.fa-trash-o',chosenClass: 'active'}">
 
-                        <button class="list-group-item list-group-item-action text-left" v-for="element in element['value']" :key="element['value'].id">
+                        <button class="list-group-item list-group-item-action text-left" v-for="element in payload" :key="element.id">
                             <div class="row">
                                 <i class="fa fa-bars  col-1 grab" aria-hidden="true"></i>
-                                <label class="col">{{element['value']}}</label>
+                                <label class="col">{{element}}</label>
                                 <i class="fa fa-trash-o col-1" aria-hidden="true"></i>
                             </div>
                         </button>
@@ -66,15 +68,18 @@
             </div>
             <div class="col">
                 <h6 class="text-left"><b>Over</b></h6>
-                <div class="row">
+                <div class="row mt-4">
                     <div class="col-2 text-left">
                         <label>Rows</label>
                     </div>
                     <div class="col-2">
-                        <input style="width:50px" v-model="element['start_row_letter']" @keyup="validateRowRange">
+                        <input style="width:50px" v-model="rowStart" @keyup="validateRowRange">
                     </div>
-                    <div class="col-1">
-                        <input style="width:50px" v-model="element['end_row_letter']" @keyup="validateRowRange">
+                    <div class="col-2 text-right">
+                        <label>to</label>
+                    </div>
+                    <div class="col-1 ">
+                        <input style="width:50px" v-model="rowEnd" @keyup="validateRowRange">
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -82,15 +87,18 @@
                         <label>Col</label>
                     </div>
                     <div class="col-2">
-                        <input style="width:50px" v-model="element['start_column']" @keyup="validateColRange">
+                        <input style="width:50px" v-model="colStart" @keyup="validateColRange">
+                    </div>
+                    <div class="col-2 text-right">
+                        <label>to</label>
                     </div>
                     <div class="col-1">
-                        <input style="width:50px" v-model="element['end_column']" @keyup="validateRowRange">
+                        <input style="width:50px" v-model="colEnd" @keyup="validateRowRange">
                     </div>
                 </div>
             </div>
             <div class="col">
-                <img src="../../assets/table.jpg" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" v-on:mouseout="zoomOut" style="max-width: 100%;height: auto;">
+                <img :src="image" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn"  style="max-width: 100%;height: auto;">
                 <label class="blockquote-footer text-left">Hover over thumbnail to zoom</label>
             </div>
         </div>
