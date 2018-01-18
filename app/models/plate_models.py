@@ -14,7 +14,7 @@ class AllocRule(models.Model):
 
     pattern_choices = mk_choices(('Consecutive', 'In Blocks'))
 
-    rank_for_ordering = models.DecimalField(max_digits=8, decimal_places=2)
+    rank_for_ordering = models.PositiveIntegerField()
     payload_type = models.CharField(max_length=15, choices=payload_choices)
     payload_csv = models.CharField(max_length=500)
     pattern = models.CharField(max_length=15, choices=pattern_choices)
@@ -66,6 +66,26 @@ class AllocRule(models.Model):
 
 class RuleList(models.Model):
     rules = models.ManyToManyField(AllocRule)
+
+    @classmethod
+    def apply_ranking_order_to_rule_objs(cls, rules):
+        import pdb; pdb.set_trace()
+        for count, rule in enumerate(list(rules)):
+            rule.rank_for_ordering = count
+            rule.save()
+
+    @classmethod
+    def apply_ranking_order_to_rule_ids(cls, rule_ids):
+        rules = RuleList.objects.filter(pk__in=rule_ids)
+        cls.apply_ranking_order_to_rule_objs(rules)
+
+    @classmethod
+    def make_copy_of(cls, rule_id_to_copy):
+        rule = AllocRule.objects.get(pk=rule_id_to_copy)
+        rule.pk = None
+        rule.id = None
+        rule.save()
+        return rule
 
 
 class AllocationInstructions(models.Model):

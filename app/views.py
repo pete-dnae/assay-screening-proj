@@ -129,7 +129,13 @@ class RuleListDetail(
     """
     queryset = RuleList.objects.all()
     serializer_class = RuleListSerializer
-    
+
+    # Todo - I cannot work out how to remove the need to override get() and
+    # put() here. I expected by using the mixins with the class, I would be
+    # able to use the implementations from those mixins. But the view thus
+    # coded, blocks the GET / PUT methods. Nb. I tried explicitly setting
+    # the http allowed methods attribute explicitly, but that does not work.
+
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
         
