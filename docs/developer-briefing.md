@@ -54,34 +54,25 @@ things as reagent batch numbers.
 What you see is a Web App that shows you visually, the experiments avaiable,
 the details of each of them, the various primers, organisms, etc that are
 registered in the system. And then offers various forms and screens and so on
-to let you create new experiments, and edit them etc.
+to let you create new experiments, and edit them etc. This Web App is a modern
+Javascript application that runs in your browser. It follows the *Single Page 
+Application* architecture. And uses the *Vue.js* web framework, with the Vuex
+extension to manage application state. Plus the *Bootstrap* CSS library.
 
-what you see is js web app (in-house coded)- ie the gui. this is a modern js
-spa for which we
-This is js running locally in your browser.
-have chosen and the vue etc stack to simplify and speed up dev.
+Most of the logic and intelligence for the application resides in a back-end web
+service running in the Cloud. The Web App has a conversation with the back-end
+web service in order to decide what to show, at any one time, and it also sends
+messages to it when the user edits things, so that the web service can reply with
+changes in what to show in the new state. This conversation uses the *REST*
+communication methodology. The backend web service is implemented in Python using
+the *Django* framework, plus the *Django Rest Framework* extension. There is only
+one backend web service, but there can be multiple simultaneous Web App's being
+used by scientists all talking to the back end at once.
 
-respon only to show gui and handle user interactions with - most of intell
-lives in back end web service in cloud with which the gui has an ongoing conversation
-over tinternet.
-comms in style of rest api - so front end can send messages to back end to
-create new things, delete things, edit things, and get all info needs to
-populate menus, panels lists etc in gui. This is imple with DNa written code
-and using the Django open source, web app framework. Also use the DRF to speed
-up and simplify the creation of the rest api. Behind teh scenes this web
-service sends info to the db and retrieves info from.
-
-final leg is single shared backend database. Chosen a reln (sql) db, cos
-represets most closely the rigidly defined types of entity we are talking about
-and the relations between. This provided by off the shelf open source db
-provided as SAAS by cloud provider.
-
-Chosen Heroku as cloud provider. Today using free tier. This hosts all three of
-the front end code, the web service and the db, all in teh guise of PAAS.
-All code in single git repo - chosen Github SAAS implementation.
-Heroku offers very attractive deployment m.o. It presents replica git repo at
-its end, and you simply push your code to it, and it rebuilds the app and
-brings it up and deploys it facing the tinternet auto.
+The web service in the cloud is hosted on the *Heroku* Platform-As-A-Service
+(PAAS). Behind the web service is a database as the permanent data-store, and
+this is a *Relational* type database. In this case a cloud deployment of
+*PostgreSQL* provided as part of Heroku's PAAS.
 
 # Developer Getting Started Instructions
 
@@ -116,9 +107,7 @@ Database initialisation
     # If you want to populate the database automatically with our reference
     # experiment do this bit...
 
-    python manage.py shell
-    from app.model_builders.make_ref_exp import ReferenceExperiment
-    RerenceExperiment().create()
+    python manage.py reset_db
 
 
 Run the server to test the REST API
