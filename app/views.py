@@ -116,25 +116,27 @@ class RuleListDetail(
         mixins.UpdateModelMixin,
         generics.GenericAPIView):
     """
-    The API lets you alter a RuleList, but not create one.
-     
-    The **PUT** option is available to change the rules inside this
-    **RuleList** or to change their order. The payload must provide a
-    correctly sequenced list of the **id**s of the rules required like this:
+    Provides an endpoint that offers Read and Update operations for a
+    single instance of a RuleList instance.
+
+    Two different Update operations are provided by PUT requests:
+
+    To re-order the existing rules in the list, or to add or remove members,
+    provide the id(s) for the replacement rules in the sequence required as 
+    follows.
 
         { "new_rules": [1, 2, 3] }
 
-    The **rank_for_ordering** field for each rule is adjusted automatically 
-    internally.
+    To have a new AllocRule appended to the list, specify the id of an
+    existing AllocRule that can be copied to provide the new member, like this:
+
+        { "rule_to_copy": 2] }
+
+    In both cases, the **rank_for_ordering** field for each rule is adjusted 
+    automatically internally.
     """
     queryset = RuleList.objects.all()
     serializer_class = RuleListSerializer
-
-    # Todo - I cannot work out how to remove the need to override get() and
-    # put() here. I expected by using the mixins with the class, I would be
-    # able to use the implementations from those mixins. But the view thus
-    # coded, blocks the GET / PUT methods. Nb. I tried explicitly setting
-    # the http allowed methods attribute explicitly, but that does not work.
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

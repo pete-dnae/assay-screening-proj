@@ -110,6 +110,12 @@ class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RuleListSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    A serializer that supports the retrieval and update of a RuleList 
+    instance. Two update operations are supported - the first replaces the
+    AllocRules in the many to many field completely, whereas the other
+    appends a rule of the clients choice onto the end of it.
+    """
 
     # The fields for the read and write cases are completely
     # different, and mutually exclusive...
@@ -118,16 +124,13 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     # serializer for the m2m field.
     rules = AllocRuleSerializer(many=True, read_only=True)
 
-    # We support two styles of PUT operation.
-    # The first expects the *new_rules* field to be the list of AllocRule 
-    # ids that should replace the incumbent list.
-    # The second version lets you append a new list on the end of the list, and
-    # expects the *rule_to_copy* field to specify one of the AllocRule(s) that
-    # is already in the list, which will be copied and appended.
-
+    # To replace the list of rules wholesale, receive a list of the id(s)
+    # for the replacement rules.
     new_rules = serializers.ListField(
         child=serializers.IntegerField(), write_only=True, required=False)
 
+    # To append a new rule to the list, provide the id of an existing one
+    # that can be copied to become the new one.
     rule_to_copy = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
@@ -137,7 +140,6 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
         # field from the AllocationInstructionSerializer, we are obliged to
         # specify the view name it should use as the reverse-lookup key when
         # synthesizing the url to show as the link.
-
         extra_kwargs = { 'url': {'view_name': 'viewlist-detail'} }
 
     def update(self, instance, validated_data):
@@ -155,10 +157,17 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
 
     def _replace_rules(self, instance, new_rule_ids):
         # Retreive all the AllocRules called for by the incoming request,
-        # and set their ranking order field.
-        # thus implicitly validating this input.
-        new_rule_objs = [AllocRule.objects.get(pk=id) for id in new_rule_ids]
-        RuleList.apply_ranking_order_to_rule_objs(new_rule_objs)
+        # and set their ranking order field in accordance with their 
+        # position in the list.
+        new_rules = []
+        for id in new_rule_ids:
+            try:
+                rule = AllocRule.objects.get(pk=id)
+                new_rules.append(rule)
+            except AllocRule.DoesNotExist:
+                raise serializers.ValidationError(
+                    'There is no AllocRule with this id: %d' % id)
+        RuleList.apply_ranking_order_to_rule_objs(new_rules)
 
         # Delete the AllocRules that will fall out of use once the list
         # replacement is done.
@@ -169,12 +178,10 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
         # Repopulate the m2m field to swap out the incumbent rules with the
         # new.
         instance.rules.clear()
-        instance.rules.add(*new_rule_objs)
+        instance.rules.add(*new_rules)
         instance.save()
 
     def _append_rule(self, instance, rule_id_to_copy):
-        # Make a copy of the one cited by the *new_rule_id* parameter, and
-        import pdb; pdb.set_trace()
         incumbent_ids = [rule.id for rule in instance.rules.all()]
         new_rule = RuleList.make_copy_of(rule_id_to_copy)
         instance.rules.add(new_rule)

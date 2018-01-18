@@ -65,22 +65,39 @@ class AllocRule(models.Model):
 
 
 class RuleList(models.Model):
+    """
+    A class that encapsulates a list of AllocRule(s) by wrapping a 
+    ManyToManyField of them, and by providing a few convenience methods on 
+    the list.
+    """
     rules = models.ManyToManyField(AllocRule)
 
     @classmethod
     def apply_ranking_order_to_rule_objs(cls, rules):
-        import pdb; pdb.set_trace()
+        """
+        Changes the *rank_for_ordering* field on the supplied list of
+        AllocRule(s) to match the order in which they appear in the list.
+        """
         for count, rule in enumerate(list(rules)):
             rule.rank_for_ordering = count
             rule.save()
 
     @classmethod
     def apply_ranking_order_to_rule_ids(cls, rule_ids):
-        rules = RuleList.objects.filter(pk__in=rule_ids)
+        """
+        A wrapper around the sister method above that takes a list of
+        id(s) instead of a list of instances.
+        """
+        rules = AllocRule.objects.filter(pk__in=rule_ids)
         cls.apply_ranking_order_to_rule_objs(rules)
 
     @classmethod
     def make_copy_of(cls, rule_id_to_copy):
+        """
+        Makes a copy the specified AllocRule and saves it as a new, 
+        independent instance.
+        """
+        # Allow DoesNotExist exception to propagate when so.
         rule = AllocRule.objects.get(pk=rule_id_to_copy)
         rule.pk = None
         rule.id = None
