@@ -28,7 +28,7 @@
             <button class="list-group-item list-group-item-action text-left" v-for="element in rules" :key="element.id">
                 <div class="row">
                     <i class="fa fa-bars col-1  grab" aria-hidden="true"></i>
-                    <label class="col overflow" ><b >{{element.id}}  </b>{{element.display_string}}</label>
+                    <label class="col overflow" >{{element.display_string}}</label>
                     <i class="fa fa-trash-o col-1 float-right" aria-hidden="true"></i>
                 </div>
             </button>

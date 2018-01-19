@@ -18,11 +18,6 @@ export const state = {
     posted: false,
     didInvalidate: false,
   },
-  addRule: {
-    isPosting: false,
-    posted: false,
-    didInvalidate: false,
-  },
   plateImageUrl: '',
 };
 
@@ -83,19 +78,19 @@ const mutations = {
     state.updateRule.didInvalidate = true;
   },
   [types.REQUEST_ADD_RULE](state) {
-    state.addRule.isPosting = true;
-    state.addRule.posted = false;
-    state.addRule.didInvalidate = false;
+    state.updateRule.isPosting = true;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = false;
   },
   [types.ADD_RULE_SUCESS](state) {
-    state.addRule.isPosting = false;
-    state.addRule.posted = true;
-    state.addRule.didInvalidate = false;
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = true;
+    state.updateRule.didInvalidate = false;
   },
   [types.ADD_RULE_FAILURE](state) {
-    state.addRule.isPosting = false;
-    state.addRule.posted = false;
-    state.addRule.didInvalidate = true;
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = true;
   },
 };
 const getters = {
