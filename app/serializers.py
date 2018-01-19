@@ -144,15 +144,10 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, instance, validated_data):
         _NEW_RULES = 'new_rules'
-        _RULE_TO_COPY = 'rule_to_copy'
         if _NEW_RULES in validated_data:
             self._replace_rules(instance, validated_data[_NEW_RULES])
-        elif _RULE_TO_COPY in validated_data:
-            self._append_rule(instance, validated_data[_RULE_TO_COPY])
         else:
-            raise serializers.ValidationError(
-                "Must have either %s or %s key in payload." %
-                (_NEW_RULES, _RULE_TO_COPY))
+            self._append_rule(instance)
         return instance
 
     def _replace_rules(self, instance, new_rule_ids):
@@ -181,9 +176,9 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
         instance.rules.add(*new_rules)
         instance.save()
 
-    def _append_rule(self, instance, rule_id_to_copy):
+    def _append_rule(self, instance):
         incumbent_ids = [rule.id for rule in instance.rules.all()]
-        new_rule = RuleList.make_copy_of(rule_id_to_copy)
+        new_rule = AllocRule.make_placeholder_rule()
         instance.rules.add(new_rule)
         ids_to_sequence = incumbent_ids + [new_rule.id,]
         RuleList.apply_ranking_order_to_rule_ids(ids_to_sequence)

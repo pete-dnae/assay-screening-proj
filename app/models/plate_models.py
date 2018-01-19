@@ -5,6 +5,7 @@ from .odds_and_ends_models import mk_choices
 class AllocRule(models.Model):
 
     payload_choices = mk_choices((
+        'Unspecified',
         'Strain',
         'Strain Count',
         'HgDNA',
@@ -60,8 +61,25 @@ class AllocRule(models.Model):
                 self.end_row_letter,
                 self.start_column,
                 self.end_column
+
             ),
         ))
+
+    
+    @classmethod
+    def make_placeholder_rule(cls):
+        rule = AllocRule.objects.create(
+            rank_for_ordering = 0,
+            payload_type = 'Unspecified',
+            payload_csv = '',
+            pattern = 'Consecutive',
+            start_row_letter = 'A',
+            end_row_letter = 'B',
+            start_column = 1,
+            end_column = 2,
+        )
+        rule.save()
+        return rule
 
 
 class RuleList(models.Model):
@@ -88,7 +106,11 @@ class RuleList(models.Model):
         A wrapper around the sister method above that takes a list of
         id(s) instead of a list of instances.
         """
-        rules = AllocRule.objects.filter(pk__in=rule_ids)
+        # We want to iterate over the rule_ids in the given order, so avoid
+        # the mistake of accessing the AllocRule objects using a filter -
+        # becasue that will defeat the order mandated by the list, and re-sort
+        # according to the model's intrinsic ordering behaviour.
+        rules = [AllocRule.objects.get(pk=rule_id) for rule_id in rule_ids]
         cls.apply_ranking_order_to_rule_objs(rules)
 
     @classmethod

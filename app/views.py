@@ -127,10 +127,8 @@ class RuleListDetail(
 
         { "new_rules": [1, 2, 3] }
 
-    To have a new AllocRule appended to the list, specify the id of an
-    existing AllocRule that can be copied to provide the new member, like this:
-
-        { "rule_to_copy": 2] }
+    To cause a new placholder rule to be created, and be appended to the 
+    list, provide an empty payload.
 
     In both cases, the **rank_for_ordering** field for each rule is adjusted 
     automatically internally.
