@@ -129,18 +129,9 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     new_rules = serializers.ListField(
         child=serializers.IntegerField(), write_only=True, required=False)
 
-    # To append a new rule to the list, provide the id of an existing one
-    # that can be copied to become the new one.
-    rule_to_copy = serializers.IntegerField(write_only=True, required=False)
-
     class Meta:
         model = RuleList
         fields = ('__all__')
-        # Because we use one of these objects as a hyperlinkedmodelserializer
-        # field from the AllocationInstructionSerializer, we are obliged to
-        # specify the view name it should use as the reverse-lookup key when
-        # synthesizing the url to show as the link.
-        extra_kwargs = { 'url': {'view_name': 'viewlist-detail'} }
 
     def update(self, instance, validated_data):
         _NEW_RULES = 'new_rules'
