@@ -158,3 +158,8 @@ class PlateViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Plate.objects.all()
     serializer_class = PlateSerializer
 
+class AllocatableViewSet(viewsets.ReadOnlyModelViewSet):
+    __doc__ = _DO_NOT_USE
+    queryset = Allocatable.objects.all()
+    serializer_class = AllocatableSerializer
+

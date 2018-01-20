@@ -2,16 +2,33 @@ from django.db import models
 
 from .odds_and_ends_models import mk_choices
 
+class Allocatable(models.Model):
+    """ 
+    A place to define which things are "allocatable" to cells on a plate.
+    For example Pre-Amp Primer, or Strain etc. The wider system
+    is built with the aspiration that this set of types can be grown and
+    altered simply by adding things to this table at runtime rather than
+    changing the code and requiring a new build and deployment.
+    """
+    type = models.CharField(primary_key=True, max_length=20)
+
+    class Meta:
+        ordering = ('type',) # Handy to have alphabetical order.
+
+
 class AllocRule(models.Model):
 
     payload_choices = mk_choices((
-        'Unspecified',
-        'Strain',
-        'Strain Count',
-        'HgDNA',
-        'PA Primers',
-        'Dilution Factor',
-        'ID Primers'))
+            'Unspecified',
+
+            'Dilution Factor',
+            'HgDNA',
+            'PA Primers',
+            'ID Primers',
+            'Strain',
+            'Strain Count',
+        )
+    )
 
     pattern_choices = mk_choices(('Consecutive', 'In Blocks'))
 

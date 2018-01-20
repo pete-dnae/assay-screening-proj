@@ -57,5 +57,6 @@ router.register(r'api/allocrules', AllocRuleViewSet)
 router.register(r'api/allocationinstructions', AllocationInstructionsViewSet)
 router.register(r'api/plates', PlateViewSet)
 router.register(r'api/experiments', ExperimentViewSet)
+router.register(r'api/allocatables', AllocatableViewSet)
 
 urlpatterns += router.urls
