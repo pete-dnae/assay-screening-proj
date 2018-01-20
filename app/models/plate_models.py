@@ -18,22 +18,11 @@ class Allocatable(models.Model):
 
 class AllocRule(models.Model):
 
-    payload_choices = mk_choices((
-            'Unspecified',
-
-            'Dilution Factor',
-            'HgDNA',
-            'PA Primers',
-            'ID Primers',
-            'Strain',
-            'Strain Count',
-        )
-    )
-
     pattern_choices = mk_choices(('Consecutive', 'In Blocks'))
 
     rank_for_ordering = models.PositiveIntegerField()
-    payload_type = models.CharField(max_length=15, choices=payload_choices)
+    payload_type = models.ForeignKey(Allocatable, 
+        related_name='alloc_rule', on_delete=models.PROTECT)
     payload_csv = models.CharField(max_length=500)
     pattern = models.CharField(max_length=15, choices=pattern_choices)
     start_row_letter = models.CharField(max_length=1)
@@ -70,7 +59,7 @@ class AllocRule(models.Model):
         if len(self.payload_csv) > LIMIT:
             payload = self.payload_csv[:LIMIT] + '...'
         return('%s, (%s), %s, %s' % (
-            self.payload_type,
+            self.payload_type.type,
             payload,
             self.pattern,
             'Rows:%s-%s, Cols:%d-%d' % (
@@ -87,7 +76,8 @@ class AllocRule(models.Model):
     def make_placeholder_rule(cls):
         rule = AllocRule.objects.create(
             rank_for_ordering = 0,
-            payload_type = 'Unspecified',
+            # Note the next line won't execute unless the db is populated!
+            payload_type = Allocatable.objects.get(type='Unspecified'),
             payload_csv = '',
             pattern = 'Consecutive',
             start_row_letter = 'A',
