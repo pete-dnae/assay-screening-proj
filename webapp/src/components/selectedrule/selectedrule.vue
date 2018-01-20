@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="col text-left">
-                <select v-model="distPattern" class="btn btn-default dropdown-toggle">
+                <select v-model="distPattern" class="btn btn-info dropdown-toggle">
                     <option v-for="option in options" v-bind:value="option.value">
                         <b>{{option.value}}</b>
                         <label>{{option.text}}</label>

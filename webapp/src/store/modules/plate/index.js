@@ -1,19 +1,19 @@
 /* eslint-disable */
 import _ from 'lodash';
 import * as types from './mutation-types';
-import * as api from '@/models/api'
+import * as api from '@/models/api';
 import experiment from '@/assets/json/response.json';
 export const state = {
   currentPlate: {
     allocation_instructions: {
       rule_list: {
         rules: null,
-        url: null
+        url: null,
       },
-      allocation_results: null
-    }
+      allocation_results: null,
+    },
   },
-  updateRule:{
+  updateRule: {
     isPosting: false,
     posted: false,
     didInvalidate: false,
@@ -22,15 +22,13 @@ export const state = {
 };
 
 const actions = {
-  updateAllocationRules({
-    commit
-  }, args) {
+  updateAllocationRules({ commit }, args) {
     commit(types.REQUEST_UPDATE_RULE);
-    const{data,url}=args;
+    const { data, url } = args;
     return new Promise(function(resolve, reject) {
       api
-        .updateAllocationRules(url,data)
-        .then(({data}) => {
+        .updateAllocationRules(url, data)
+        .then(({ data }) => {
           commit(types.UPDATE_RULE_SUCESS, data);
           resolve(data);
         })
@@ -39,7 +37,23 @@ const actions = {
           reject(data);
         });
     });
-  }
+  },
+  addAllocationRule({ commit }, args) {
+    commit(types.REQUEST_ADD_RULE);
+    const { data, url } = args;
+    return new Promise(function(resolve, reject) {
+      api
+        .addAllocationRule(url, data)
+        .then(({ data }) => {
+          commit(types.ADD_RULE_SUCESS, data);
+          resolve(data);
+        })
+        .catch(e => {
+          commit(types.ADD_RULE_FAILURE);
+          reject(data);
+        });
+    });
+  },
 };
 const mutations = {
   [types.SET_CURRENT_PLATE](state, data) {
@@ -63,25 +77,37 @@ const mutations = {
     state.updateRule.posted = false;
     state.updateRule.didInvalidate = true;
   },
-
+  [types.REQUEST_ADD_RULE](state) {
+    state.updateRule.isPosting = true;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = false;
+  },
+  [types.ADD_RULE_SUCESS](state) {
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = true;
+    state.updateRule.didInvalidate = false;
+  },
+  [types.ADD_RULE_FAILURE](state) {
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = true;
+  },
 };
 const getters = {
   getPlateInfo(state, getters, rootState) {
     return state.currentPlate;
   },
   getAllocationRules(state, getters, rootState) {
-    return state.currentPlate.allocation_instructions
-      .rule_list.rules;
+    return state.currentPlate.allocation_instructions.rule_list.rules;
   },
   getAllocationResults(state, getters, rootState) {
-    return state.currentPlate.allocation_instructions
-      .allocation_results;
+    return state.currentPlate.allocation_instructions.allocation_results;
   },
   getPlateImage() {
     return state.plateImageUrl;
   },
   getPostingStatus() {
-    return state.updateRule.isPosting 
+    return state.updateRule.isPosting;
   },
 };
 

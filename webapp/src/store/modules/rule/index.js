@@ -1,8 +1,8 @@
 /* eslint-disable */
-import _ from 'lodash';
-import * as types from './mutation-types';
-import * as api from '@/models/api'
-import experiment from '@/assets/json/response.json';
+import _ from "lodash";
+import * as types from "./mutation-types";
+import * as api from "@/models/api";
+import experiment from "@/assets/json/response.json";
 export const state = {
   currentRule: {
     display_string: null,
@@ -19,13 +19,14 @@ export const state = {
   }
 };
 
-const actions = {
-
-};
+const actions = {};
 const mutations = {
   [types.SET_CURRENT_RULE](state, data) {
     state.currentRule = data;
-    state.currentRule.payload_csv = (typeof state.currentRule.payload_csv == 'string') ? state.currentRule.payload_csv.split(',') : state.currentRule.payload_csv;
+    state.currentRule.payload_csv =
+      typeof state.currentRule.payload_csv == "string"
+        ? state.currentRule.payload_csv.split(",")
+        : state.currentRule.payload_csv;
   },
   [types.SET_ROW_START](state, data) {
     state.currentRule.start_row_letter = data;
@@ -47,7 +48,7 @@ const mutations = {
   },
   [types.SET_PAYLOAD](state, data) {
     state.currentRule.payload_csv = data;
-  },
+  }
 };
 const getters = {
   getRowStart(state, getters, rootState) {
@@ -70,12 +71,12 @@ const getters = {
   },
   getPayload(state, getters, rootState) {
     return state.currentRule.payload_csv;
-  },
+  }
 };
 
 export default {
   state,
   actions,
   mutations,
-  getters,
+  getters
 };
