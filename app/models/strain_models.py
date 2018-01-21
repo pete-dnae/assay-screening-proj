@@ -15,6 +15,15 @@ class Strain(models.Model):
         related_name='strain_arg', null=True, on_delete=models.PROTECT)
     genome_size = models.BigIntegerField()
 
+    class Meta:
+        ordering = ('organism__abbreviation', 'arg__name')
+
+    def display_name(self):
+        buf = self.organism.abbreviation
+        if self.arg:
+            buf = '_'.join((buf, self.arg.name))
+        return buf
+
 
 class StrainKit(models.Model):
     strains = models.ManyToManyField(Strain)

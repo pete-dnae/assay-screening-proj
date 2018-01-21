@@ -151,14 +151,35 @@ class PrimerKitSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('__all__')
 
 
+class StrainSerializer(serializers.HyperlinkedModelSerializer):
+
+    display_name = serializers.SerializerMethodField()
+
+    def get_display_name(self, instance):
+        return instance.display_name()
+
+    class Meta:
+        model = Strain
+        fields = ('display_name',)
+
+
+class StrainKitSerializer(serializers.HyperlinkedModelSerializer):
+
+    strains = StrainSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = StrainKit
+        fields = (('url', 'strains'))
+
+
 class DetailExperimentSerializer(serializers.ModelSerializer):
 
     plates = PlateSerializer(many=True, read_only=True)
     primer_kit = PrimerKitSerializer(read_only=True)
+    strain_kit = StrainKitSerializer(read_only=True)
 
     class Meta:
         model = Experiment
-
 
         fields = (
            'url',
@@ -166,6 +187,7 @@ class DetailExperimentSerializer(serializers.ModelSerializer):
            'designer_name',
            'plates',
            'primer_kit',
+           'strain_kit',
         )
 
 class ListExperimentSerializer(serializers.ModelSerializer):
@@ -231,17 +253,6 @@ class ArgSerializer(serializers.HyperlinkedModelSerializer):
         model = Arg
         fields = ('__all__')
 
-class StrainSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Strain
-        fields = ('__all__')
-
-class StrainKitSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = StrainKit
-        fields = ('__all__')
 
 class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
 
