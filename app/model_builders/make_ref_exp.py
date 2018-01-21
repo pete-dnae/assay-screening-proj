@@ -34,19 +34,9 @@ class ReferenceExperiment():
         return self._next_count
 
     def _create_shared_entities(self):
-        self._create_constant_like_things()
         self._create_concrete_reagents()
         self._create_organisms_and_strains()
         self._create_genes_and_primers()
-
-    def _create_constant_like_things(self):
-        Allocatable.objects.create(type='Unspecified')
-        Allocatable.objects.create(type='Dilution-Factor')
-        Allocatable.objects.create(type='HgDNA')
-        Allocatable.objects.create(type='PA-Primers')
-        Allocatable.objects.create(type='ID-Primers')
-        Allocatable.objects.create(type='Strain')
-        Allocatable.objects.create(type='Strain-Count')
 
     def _create_concrete_reagents(self):
         self._create_concrete_reagent('BSA', '-', 20, 1, 'mg/ml')
@@ -448,7 +438,7 @@ class ReferenceExperiment():
                 ('A', 'H', 1, 12),
             ),
         )
-        self._add_rules_from_data(m2m_field, self._alloc_type('Strain'), data)
+        self._add_rules_from_data(m2m_field, 'Strain', data)
 
     def _add_strains_copies_rules_1(self, m2m_field):
         # Blanket fill with 5's everwhere first
@@ -462,7 +452,7 @@ class ReferenceExperiment():
             ('5000', 'Consecutive', ('G', 'H', 9, 12)),
         )
         self._add_rules_from_data(m2m_field,
-            self._alloc_type('Strain-Count'), data)
+            'Strain Count', data)
 
 
     def _add_hg_dna_rules_1(self, m2m_field):
@@ -473,7 +463,7 @@ class ReferenceExperiment():
             ('0', 'Consecutive', ('A', 'H', 1, 12)),
             ('5000', 'Consecutive', ('F', 'H', 1, 8)),
         )
-        self._add_rules_from_data(m2m_field, self._alloc_type('HgDNA'), data)
+        self._add_rules_from_data(m2m_field, 'HgDNA', data)
 
     def _add_pa_primers_rules_1(self, m2m_field):
         # Distribution in English.
@@ -488,7 +478,7 @@ class ReferenceExperiment():
             ('', 'Consecutive', ('A', 'H', 9, 12)),
         )
         self._add_rules_from_data(m2m_field, 
-            self._alloc_type('PA-Primers'), data)
+            'PA Primers', data)
 
 
     def _add_dilution_factor_rules_1(self, m2m_field):
@@ -500,7 +490,7 @@ class ReferenceExperiment():
             ('', 'Consecutive', ('A', 'H', 9, 12)),
         )
         self._add_rules_from_data(m2m_field, 
-            self._alloc_type('Dilution-Factor'), data)
+            'Dilution Factor', data)
 
     def _add_id_primers_rules_1(self, m2m_field):
         # Distribution in English.
@@ -509,8 +499,7 @@ class ReferenceExperiment():
         data = (
             (primer_block, 'Consecutive', ('A', 'H', 1, 12)),
         )
-        self._add_rules_from_data(m2m_field,
-            self._alloc_type('ID-Primers'), data)
+        self._add_rules_from_data(m2m_field, 'ID-Primers', data)
 
     def _add_rules_from_data(self, m2m_field, payload_type, data):
         for rule in data:
@@ -531,14 +520,6 @@ class ReferenceExperiment():
             start_column=sc,
             end_column=ec,
         )
-
-    def _alloc_type(self, type_string):
-        """
-        Provide the database object corresponding to the allocatable type
-        with the given type string.
-        """
-        return Allocatable.objects.get(type=type_string)
-
 
 if __name__ == "__main__":
     ReferenceExperiment().create()

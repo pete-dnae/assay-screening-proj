@@ -25,5 +25,4 @@ admin.site.register(AllocRule)
 admin.site.register(AllocationInstructions)
 admin.site.register(Plate)
 admin.site.register(Experiment)
-admin.site.register(Allocatable)
 

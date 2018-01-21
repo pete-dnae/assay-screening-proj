@@ -110,6 +110,7 @@ class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
         tabulated_result = rule_interpreter.interpret()
         return tabulated_result
 
+
 class PlateSerializer(serializers.HyperlinkedModelSerializer):
 
     allocation_instructions = AllocationInstructionsSerializer(read_only=True)
@@ -118,9 +119,42 @@ class PlateSerializer(serializers.HyperlinkedModelSerializer):
         model = Plate
         fields = ('url', 'name', 'allocation_instructions')
 
+
+class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Concentration
+        fields = ('__all__')
+
+
+class PrimerPairSerializer(serializers.HyperlinkedModelSerializer):
+
+    display_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PrimerPair
+        fields = ('display_name',)
+
+    def get_display_name(self, instance):
+        return instance.display_name()
+
+
+class PrimerKitSerializer(serializers.HyperlinkedModelSerializer):
+
+    fwd_concentration = ConcentrationSerializer(read_only=True)
+    rev_concentration = ConcentrationSerializer(read_only=True)
+    id_primers = PrimerPairSerializer(many=True, read_only=True)
+    pa_primers = PrimerPairSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PrimerKit
+        fields = ('__all__')
+
+
 class DetailExperimentSerializer(serializers.ModelSerializer):
 
     plates = PlateSerializer(many=True, read_only=True)
+    primer_kit = PrimerKitSerializer(read_only=True)
 
     class Meta:
         model = Experiment
@@ -131,6 +165,7 @@ class DetailExperimentSerializer(serializers.ModelSerializer):
            'experiment_name',
            'designer_name',
            'plates',
+           'primer_kit',
         )
 
 class ListExperimentSerializer(serializers.ModelSerializer):
@@ -141,15 +176,6 @@ class ListExperimentSerializer(serializers.ModelSerializer):
            'url',
            'experiment_name',
         )
-
-
-
-
-class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Concentration
-        fields = ('__all__')
 
 class ConcreteReagentSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -199,18 +225,6 @@ class PrimerSerializer(serializers.HyperlinkedModelSerializer):
         model = Primer
         fields = ('__all__')
 
-class PrimerPairSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Concentration
-        fields = ('__all__')
-
-class PrimerKitSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = PrimerKit
-        fields = ('__all__')
-
 class ArgSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
@@ -234,13 +248,3 @@ class CyclingPatternSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CyclingPattern
         fields = ('__all__')
-
-class AllocatableSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Allocatable
-        fields = ('__all__')
-
-
-
-

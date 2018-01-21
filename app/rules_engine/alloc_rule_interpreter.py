@@ -146,8 +146,7 @@ class AllocRuleInterpreter:
         # Note this might be overwriting a previous value because later
         # rules overwrite the results from earlier rules, by definition.
 
-        t = payload_type.type
-        self._table.rows[row_index][column_index][t] = payload_item
+        self._table.rows[row_index][column_index][payload_type] = payload_item
 
 
                 

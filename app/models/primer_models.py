@@ -4,7 +4,7 @@ from .odds_and_ends_models import mk_choices
 from .reagent_models import *
 
 class Gene(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(primary_key=True, max_length=30, unique=True)
 
 class Organism(models.Model):
     abbreviation = models.CharField(max_length=8, unique=True)
@@ -36,11 +36,12 @@ class PrimerPair(models.Model):
         """
         E.g. Efm_vanA_1.x_van05_van01
         """
-        return '_'.join(
+        return '_'.join((
             self.forward_primer.organism.abbreviation,
-            self.forward_primer.gene,
+            self.forward_primer.gene.name,
             self.forward_primer.oligo_code,
             self.reverse_primer.oligo_code,
+            )
         )
 
 
