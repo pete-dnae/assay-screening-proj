@@ -2,9 +2,7 @@ import { mapGetters, mapActions } from 'vuex';
 import allocationrules from '@/components/allocationrules/allocationrules.vue';
 import selectedrule from '@/components/selectedrule/selectedrule.vue';
 import { zoomIn, zoomOut, prepareResultsTable, makeSVG } from '@/models/utils';
-import {
-  spinner,
-} from 'vue-strap';
+import { spinner } from 'vue-strap';
 
 export default {
   name: 'PlateDesign',
@@ -20,14 +18,16 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     const plateId = to.params.plateId;
-    if (this.$store.state.experiment.experiment.data.plates[plateId]) {
+    if (this.$store.state.experiment.currentExperiment.data.plates[plateId]) {
       next();
     } else {
       next(false);
     }
   },
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm('Do you really want to leave? you have unsaved changes!');
+    const answer = window.confirm(
+      'Do you really want to leave? you have unsaved changes!',
+    );
     if (answer) {
       next();
     } else {
@@ -76,8 +76,11 @@ export default {
     },
   },
   mounted() {
-    this.fetchExperiment('1').then((res) => {
-      this.$store.commit('SET_CURRENT_PLATE', res.plates[parseInt(this.$route.params.plateId, 10)]);
+    this.fetchExperiment('1').then(res => {
+      this.$store.commit(
+        'SET_CURRENT_PLATE',
+        res.plates[parseInt(this.$route.params.plateId, 10)],
+      );
       this.drawTableImage();
     });
   },
