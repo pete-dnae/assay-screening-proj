@@ -143,8 +143,20 @@ class RuleListDetail(
         return self.update(request, *args, **kwargs)
 
 
-class AllocRuleViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
+class AllocRuleViewSet(viewsets.ModelViewSet):
+    """
+    Provides an endpoint that offers Read and Update operations for a
+    single instance of an AllocRule instance.
+
+    To update the rule use a *PUT* request, with a payload that is identical
+    in shape to that returned by a *GET* request.
+
+    All the fields in the *PUT* payload are optonal. So you could for example 
+    update just the *start_row_letter* field.
+
+    The following fields may be included harmlessly, but will be ignored:
+        id, url, display_string.
+    """
     queryset = AllocRule.objects.all()
     serializer_class = AllocRuleSerializer
 

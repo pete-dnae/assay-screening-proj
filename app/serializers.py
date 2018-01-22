@@ -16,11 +16,10 @@ from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
     display_string = serializers.CharField(read_only=True)
-    id = serializers.ReadOnlyField()
 
     class Meta:
         model = AllocRule
-        fields = ('__all__')
+        exclude = ('rank_for_ordering', )
 
 
 class RuleListSerializer(serializers.HyperlinkedModelSerializer):
