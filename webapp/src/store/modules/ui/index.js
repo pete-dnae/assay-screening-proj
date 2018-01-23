@@ -3,33 +3,70 @@ import _ from 'lodash';
 import * as types from './mutation-types';
 import * as api from '@/models/api';
 export const state = {
-  primerKit: {
-    id_primers: null,
-    pa_primers: null,
-  },
-  strainKit: {
-    strain: null,
-  },
+  kit: {},
+  currentPayloadOptions: null,
+  payloadTypeDropDown: [
+    {
+      text: 'Strain Count',
+      value: 'Strain Count',
+    },
+    {
+      text: 'Strain',
+      value: 'Strain',
+    },
+    {
+      text: 'Dilution Factor',
+      value: 'Dilution Factor',
+    },
+    {
+      text: 'PA Primers',
+      value: 'PA Primers',
+    },
+    {
+      text: 'ID-Primers',
+      value: 'ID-Primers',
+    },
+    {
+      text: 'HgDNA',
+      value: 'HgDNA',
+    },
+  ],
+  patternDropDown: [
+    {
+      text: 'AAAA BBBB CCCC',
+      value: 'In Blocks',
+    },
+    {
+      text: 'ABCD ABCD ABCD',
+      value: 'Consecutive',
+    },
+  ],
 };
 
 const actions = {};
 const mutations = {
   [types.SET_PRIMER_KIT](state, data) {
-    state.primerKit = data;
+    state.kit['ID-Primers'] = data.id_primers;
+    state.kit['PA Primers'] = data.pa_primers;
   },
   [types.SET_STRAIN_KIT](state, data) {
-    state.strainKit = data;
+    state.kit.Strain = data.strains;
+  },
+  [types.SET_PAYLOAD_OPTIONS](state, arg) {
+    state.currentPayloadOptions = state.kit[arg].map(x => {
+      return { text: x.display_name, value: x.display_name };
+    });
   },
 };
 const getters = {
-  getPaPrimers(state, getters, rootState) {
-    return state.primerKit.pa_primers;
+  getCurrentPayloadOptions(state, getters, rootState) {
+    return state.currentPayloadOptions;
   },
-  getIdPrimers() {
-    return state.primerKit.id_primers;
+  getPatternDropDown() {
+    return state.patternDropDown;
   },
-  getStrains() {
-    return state.strainKit.strain;
+  getPayloadTypeDropDown() {
+    return state.payloadTypeDropDown;
   },
 };
 

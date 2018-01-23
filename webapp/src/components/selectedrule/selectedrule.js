@@ -1,4 +1,5 @@
 import draggable from 'vuedraggable';
+import { mapGetters } from 'vuex';
 import _ from 'lodash';
 import {
   zoomIn,
@@ -8,11 +9,7 @@ import {
   genCharArray,
   makeSVG,
 } from '@/models/utils';
-import {
-  modal,
-  dropdown,
-} from 'vue-strap';
-
+import { modal, dropdown } from 'vue-strap';
 
 export default {
   name: 'selectedRule',
@@ -30,27 +27,15 @@ export default {
       msg: 'Welcome',
       showModal: false,
       textElem: '',
-      options: [{
-        text: 'AAAA BBBB CCCC',
-        value: 'In Blocks',
-      },
-      {
-        text: 'ABCD ABCD ABCD',
-        value: 'Consecutive',
-      },
-      ],
-      types: [{
-        text: 'Template Copies',
-        value: 'Template Copies',
-      },
-      {
-        text: 'ID Primers',
-        value: 'ID Primers',
-      },
-      ],
+      show: true,
     };
   },
   computed: {
+    ...mapGetters({
+      options: 'getPatternDropDown',
+      types: 'getPayloadTypeDropDown',
+      currentOptions: 'getCurrentPayloadOptions',
+    }),
     rowStart: {
       get() {
         return this.$store.state.rule.currentRule.start_row_letter;
@@ -58,8 +43,7 @@ export default {
       set(value) {
         this.$store.commit('SET_ROW_START', value);
         this.drawTableImage({
-          rows: genCharArray(value,
-             this.rowEnd),
+          rows: genCharArray(value, this.rowEnd),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
       },
@@ -71,8 +55,7 @@ export default {
       set(value) {
         this.$store.commit('SET_ROW_END', value);
         this.drawTableImage({
-          rows: genCharArray(this.rowStart,
-             value),
+          rows: genCharArray(this.rowStart, value),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
       },
@@ -84,8 +67,7 @@ export default {
       set(value) {
         this.$store.commit('SET_COL_START', value);
         this.drawTableImage({
-          rows: genCharArray(this.rowStart,
-             this.rowEnd),
+          rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(value - 1, this.colEnd),
         });
       },
@@ -97,8 +79,7 @@ export default {
       set(value) {
         this.$store.commit('SET_COL_END', value);
         this.drawTableImage({
-          rows: genCharArray(this.rowStart,
-             this.rowEnd),
+          rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(this.colStart - 1, value),
         });
       },
@@ -117,6 +98,8 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
+        this.$store.commit('SET_PAYLOAD_OPTIONS', value);
+        this.$store.commit('SET_PAYLOAD', ['']);
       },
     },
     payload: {
@@ -159,5 +142,4 @@ export default {
       this.$store.commit('SET_PAYLOAD', updatedRule);
     },
   },
-
 };
