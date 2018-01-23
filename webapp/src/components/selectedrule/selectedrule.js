@@ -1,5 +1,5 @@
 import draggable from 'vuedraggable';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import _ from 'lodash';
 import {
   zoomIn,
@@ -46,6 +46,7 @@ export default {
           rows: genCharArray(value, this.rowEnd),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
+        this.handleUpdateRule();
       },
     },
     rowEnd: {
@@ -58,6 +59,7 @@ export default {
           rows: genCharArray(this.rowStart, value),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
+        this.handleUpdateRule();
       },
     },
     colStart: {
@@ -70,6 +72,7 @@ export default {
           rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(value - 1, this.colEnd),
         });
+        this.handleUpdateRule();
       },
     },
     colEnd: {
@@ -82,6 +85,7 @@ export default {
           rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(this.colStart - 1, value),
         });
+        this.handleUpdateRule();
       },
     },
     distPattern: {
@@ -90,6 +94,7 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_DIST_PATTERN', value);
+        this.handleUpdateRule();
       },
     },
     payloadType: {
@@ -99,7 +104,8 @@ export default {
       set(value) {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
         this.$store.commit('SET_PAYLOAD_OPTIONS', value);
-        this.$store.commit('SET_PAYLOAD', ['']);
+        this.handleUpdateRule();
+        // this.$store.commit('SET_PAYLOAD', ['']);
       },
     },
     payload: {
@@ -108,10 +114,14 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_PAYLOAD', value);
+        if (value) {
+          this.handleUpdateRule();
+        }
       },
     },
   },
   methods: {
+    ...mapActions(['updateRule', 'fetchPlate']),
     zoomIn(event) {
       zoomIn(event);
     },
@@ -140,6 +150,16 @@ export default {
     handleDeleteValue(evt) {
       const updatedRule = _.filter(this.payload, (x, i) => i !== evt.oldIndex);
       this.$store.commit('SET_PAYLOAD', updatedRule);
+    },
+    handleUpdateRule() {
+      this.updateRule(this.$store.state.rule.currentRule.url).then(() => {
+        this.fetchPlate(parseInt(this.$route.params.plateId + 1, 10)).then(
+          res => {
+            this.$store.commit('SET_CURRENT_PLATE', res);
+            this.$emit('plateRefresh');
+          },
+        );
+      });
     },
   },
 };

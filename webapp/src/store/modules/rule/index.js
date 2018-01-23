@@ -17,9 +17,34 @@ export const state = {
     start_row_letter: null,
     url: null,
   },
+  updateRule: {
+    isPosting: false,
+    posted: false,
+    didInvalidate: false,
+  },
 };
 
-const actions = {};
+const actions = {
+  updateRule({ commit }, url) {
+    commit(types.REQUEST_UPDATE_RULE);
+    const data = {
+      ...state.currentRule,
+      payload_csv: state.currentRule.payload_csv.toString(),
+    };
+    return new Promise(function(resolve, reject) {
+      api
+        .updateRule(url, data)
+        .then(({ data }) => {
+          commit(types.UPDATE_RULE_SUCESS, data);
+          resolve(data);
+        })
+        .catch(e => {
+          commit(types.UPDATE_RULE_FAILURE);
+          reject(e);
+        });
+    });
+  },
+};
 const mutations = {
   [types.SET_CURRENT_RULE](state, data) {
     state.currentRule = data;
@@ -48,6 +73,21 @@ const mutations = {
   },
   [types.SET_PAYLOAD](state, data) {
     state.currentRule.payload_csv = data;
+  },
+  [types.REQUEST_UPDATE_RULE](state) {
+    state.updateRule.isPosting = true;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = false;
+  },
+  [types.UPDATE_RULE_SUCESS](state) {
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = true;
+    state.updateRule.didInvalidate = false;
+  },
+  [types.UPDATE_RULE_FAILURE](state) {
+    state.updateRule.isPosting = false;
+    state.updateRule.posted = false;
+    state.updateRule.didInvalidate = true;
   },
 };
 const getters = {

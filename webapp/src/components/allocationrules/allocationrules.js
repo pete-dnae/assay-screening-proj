@@ -22,7 +22,7 @@ export default {
     }),
     rules: {
       get() {
-        return this.$store.state.plate.currentPlate.allocation_instructions
+        return this.$store.state.plate.currentPlate.data.allocation_instructions
           .rule_list.rules;
       },
       set(changedRules) {
@@ -59,7 +59,7 @@ export default {
         data: {
           rule_to_copy: this.$store.state.rule.currentRule.id,
         },
-        url: this.$store.state.plate.currentPlate.allocation_instructions
+        url: this.$store.state.plate.currentPlate.data.allocation_instructions
           .rule_list.url,
       }).then(() => {
         this.fetchExperiment('1').then(res => {
@@ -76,7 +76,7 @@ export default {
         data: {
           new_rules: data,
         },
-        url: this.$store.state.plate.currentPlate.allocation_instructions
+        url: this.$store.state.plate.currentPlate.data.allocation_instructions
           .rule_list.url,
       }).then(() => {
         this.fetchExperiment('1').then(res => {

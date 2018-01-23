@@ -48,6 +48,7 @@ export default {
     ...mapActions(['fetchExperiment']),
     handleSelectedRule(ruleElem) {
       this.$store.commit('SET_CURRENT_RULE', ruleElem);
+      this.$store.commit('SET_PAYLOAD_OPTIONS', ruleElem.payload_type);
     },
     zoomIn(event) {
       zoomIn(event);
