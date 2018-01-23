@@ -1,9 +1,10 @@
 # Assay Screening Technical Briefing
 
 # Table of Contents
-- Intro and Overview
-- Computing Architecture Overview
-- Developer getting started instructions
+
+* Intro and Overview
+* Computing Architecture Overview
+* Developer getting started instructions
 
 # Intro and Overview
 
@@ -24,7 +25,7 @@ error-prone. They also defeat the notion of there being a single-source of
 truth within the company on these matters because the spreadsheets can be
 copied, modified and distributed at will.
 
-The Web App will use a centralised database behind the scenes to provide 
+The Web App will use a centralised database behind the scenes to provide
 a unitifed single source of truth for all users. The user experience for
 scientists to use it is a Web App accessible from their browser.
 
@@ -55,33 +56,34 @@ What you see is a Web App that shows you visually, the experiments avaiable,
 the details of each of them, the various primers, organisms, etc that are
 registered in the system. And then offers various forms and screens and so on
 to let you create new experiments, and edit them etc. This Web App is a modern
-Javascript application that runs in your browser. It follows the *Single Page 
-Application* architecture. And uses the *Vue.js* web framework, with the Vuex
-extension to manage application state. Plus the *Bootstrap* CSS library.
+Javascript application that runs in your browser. It follows the _Single Page
+Application_ architecture. And uses the _Vue.js_ web framework, with the Vuex
+extension to manage application state. Plus the _Bootstrap_ CSS library.
 
 Most of the logic and intelligence for the application resides in a back-end web
 service running in the Cloud. The Web App has a conversation with the back-end
 web service in order to decide what to show, at any one time, and it also sends
 messages to it when the user edits things, so that the web service can reply with
-changes in what to show in the new state. This conversation uses the *REST*
+changes in what to show in the new state. This conversation uses the _REST_
 communication methodology. The backend web service is implemented in Python using
-the *Django* framework, plus the *Django Rest Framework* extension. There is only
+the _Django_ framework, plus the _Django Rest Framework_ extension. There is only
 one backend web service, but there can be multiple simultaneous Web App's being
 used by scientists all talking to the back end at once.
 
-The web service in the cloud is hosted on the *Heroku* Platform-As-A-Service
+The web service in the cloud is hosted on the _Heroku_ Platform-As-A-Service
 (PAAS). Behind the web service is a database as the permanent data-store, and
-this is a *Relational* type database. In this case a cloud deployment of
-*PostgreSQL* provided as part of Heroku's PAAS.
+this is a _Relational_ type database. In this case a cloud deployment of
+_PostgreSQL_ provided as part of Heroku's PAAS.
 
 # Developer Getting Started Instructions
 
 ## Prerequisites
-- Python 3 installed
-- A virtual env installed
-- git installed
-- heroku command line client installed 
-    https://devcenter.heroku.com/articles/heroku-cli
+
+* Python 3 installed
+* A virtual env installed
+* git installed
+* heroku command line client installed
+  https://devcenter.heroku.com/articles/heroku-cli
 
 Create root directory of your choice, that we'll call <foo>.
 
@@ -96,21 +98,45 @@ Quick test so far...
     # then quit the server
 
 Database initialisation
-    
-    # When running locally you get a pre-configured sqlite database, which
-    # is included in the pip install above.
-    Find and delete the sqlite3 file in foo
-    Find and delete any migration files in foo/app
-    python manage.py makemigrations 
-    python manage.py migrate
+
+# When running locally you get a pre-configured sqlite database, which # is included in the pip install above.
+
+Find and delete the sqlite3 file in foo
+Find and delete any migration files in foo/app
+python manage.py makemigrations
+python manage.py migrate
 
     # If you want to populate the database automatically with our reference
     # experiment do this bit...
 
     python manage.py reset_db
 
-
 Run the server to test the REST API
-    
-    python manage.py runserver
-    # point browser at: http://localhost:8000/
+
+python manage.py runserver # point browser at: http://localhost:8000/
+
+##Getting Started for web application
+
+## Prerequisites
+
+#Tools for development
+-Node https://nodejs.org/en/
+-Yarn https://yarnpkg.com/en/docs/install
+#Tool for debugging
+-Vue devtools https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?hl=en
+
+#Placeholder
+<webapp>=assay-screening-proj/webapp/
+
+Installation of packages:
+From root directory <webapp>
+yarn install
+
+Starting up dev server:
+From root directory <webapp>
+yarn dev
+#point browser at http://localhost:8080/
+
+Building the app for deployment:
+From root directory <webapp>
+yarn build
