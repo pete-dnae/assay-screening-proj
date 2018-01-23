@@ -81,6 +81,8 @@ export default {
         'SET_CURRENT_PLATE',
         res.plates[parseInt(this.$route.params.plateId, 10)],
       );
+      this.$store.commit('SET_PRIMER_KIT', res.primer_kit);
+      this.$store.commit('SET_STRAIN_KIT', res.strain_kit);
       this.drawTableImage();
     });
   },
