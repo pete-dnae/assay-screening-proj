@@ -28,6 +28,8 @@ export default {
       showModal: false,
       textElem: '',
       show: true,
+      userText: {},
+      textBoxNo: 3,
     };
   },
   computed: {
@@ -104,8 +106,9 @@ export default {
       set(value) {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
         this.$store.commit('SET_PAYLOAD_OPTIONS', value);
-        this.handleUpdateRule();
-        // this.$store.commit('SET_PAYLOAD', ['']);
+        this.handleUpdateRule().then(() => {
+          this.$store.commit('SET_PAYLOAD', ['']);
+        });
       },
     },
     payload: {
@@ -114,7 +117,7 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_PAYLOAD', value);
-        if (value) {
+        if (!_.isEmpty(value)) {
           this.handleUpdateRule();
         }
       },
@@ -150,16 +153,36 @@ export default {
     handleDeleteValue(evt) {
       const updatedRule = _.filter(this.payload, (x, i) => i !== evt.oldIndex);
       this.$store.commit('SET_PAYLOAD', updatedRule);
+      this.handleUpdateRule();
     },
     handleUpdateRule() {
-      this.updateRule(this.$store.state.rule.currentRule.url).then(() => {
-        this.fetchPlate(parseInt(this.$route.params.plateId + 1, 10)).then(
-          res => {
+      return this.updateRule(this.$store.state.rule.currentRule.url)
+        .then(res => {
+          return this.fetchPlate(
+            parseInt(this.$route.params.plateId + 1, 10),
+          ).then(res => {
             this.$store.commit('SET_CURRENT_PLATE', res);
+            this.drawTableImage({
+              rows: genCharArray(this.rowStart, this.rowEnd),
+              cols: _.range(this.colStart - 1, this.colEnd),
+            });
             this.$emit('plateRefresh');
-          },
-        );
-      });
+            return res;
+          });
+        })
+        .catch(err => {
+          alert(JSON.stringify(err));
+        });
+    },
+    handleUserInput(data) {
+      this.$store.commit('SET_PAYLOAD', _.map(data, x => parseInt(x, 10)));
+      if (!_.isEmpty(data)) {
+        this.handleUpdateRule();
+      }
+    },
+    handleTextBoxDel() {
+      this.userText[this.textBoxNo] = undefined;
+      this.textBoxNo -= 1;
     },
   },
 };

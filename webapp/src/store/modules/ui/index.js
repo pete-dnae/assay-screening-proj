@@ -23,8 +23,8 @@ export const state = {
       value: 'PA Primers',
     },
     {
-      text: 'ID-Primers',
-      value: 'ID-Primers',
+      text: 'ID Primers',
+      value: 'ID Primers',
     },
     {
       text: 'HgDNA',
@@ -46,16 +46,20 @@ export const state = {
 const actions = {};
 const mutations = {
   [types.SET_PRIMER_KIT](state, data) {
-    state.kit['ID-Primers'] = data.id_primers;
+    state.kit['ID Primers'] = data.id_primers;
     state.kit['PA Primers'] = data.pa_primers;
   },
   [types.SET_STRAIN_KIT](state, data) {
     state.kit.Strain = data.strains;
   },
   [types.SET_PAYLOAD_OPTIONS](state, arg) {
-    state.currentPayloadOptions = state.kit[arg].map(x => {
-      return { text: x.display_name, value: x.display_name };
-    });
+    if (arg in state.kit) {
+      state.currentPayloadOptions = state.kit[arg].map(x => {
+        return { text: x.display_name, value: x.display_name };
+      });
+    } else {
+      state.currentPayloadOptions = 'userText';
+    }
   },
 };
 const getters = {

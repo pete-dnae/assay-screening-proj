@@ -61,22 +61,31 @@
 
                     </transition>
                     <transition name="custom-classes-transition" enter-active-class="animated fadeInLeft" leave-active-class="animated zoomOut">
-                      <select v-show="!show" class="pre-scrollable h-50 w-100 list-group" v-model="payload" multiple>
+                      <select v-if="!show && currentOptions!='userText'" class="pre-scrollable h-50 w-100 list-group" v-model="payload" multiple>
                         <option v-for="options in currentOptions" class="list-group-item list-group-item-action text-left">
                           <div class="row">
                               <label class="col">{{options.text}}</label>
                           </div>
                         </option>
                       </select>
-
+                      <div v-if="!show && currentOptions=='userText'" class="pre-scrollable h-50 w-100 list-group">
+                          <div v-for="option in textBoxNo"  class="list-group-item list-group-item-action text-left">
+                              <input class="row" type="number" v-model="userText[option]">
+                          </div>
+                      </div>
                     </transition>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-md-10">
+                    <div class="col-md-9">
                     </div>
                     <div class="col">
-                        <i class="fa fa-plus-square"  @click="show = !show" aria-hidden="true"></i>
-                        <i class="fa fa-long-arrow-left" v-show="!show" @click="show = !show"aria-hidden="true"></i>
+                      <div class="row">
+                        <i class="fa fa-long-arrow-left" v-if="!show" @click="show = !show"aria-hidden="true"></i>
+                        <i class="fa fa-floppy-o ml-3" v-if="!show && currentOptions=='userText'" @click="show = !show;handleUserInput(userText)" aria-hidden="true"></i>
+                        <i class="fa fa-plus ml-3" v-if="!show && currentOptions=='userText'" @click="textBoxNo+=1" aria-hidden="true"></i>
+                        <i class="fa fa-minus ml-3" v-if="!show && currentOptions=='userText'" @click="handleTextBoxDel()" aria-hidden="true"></i>
+                        <i class="fa fa-plus-square" v-if="show"  @click="show = !show" aria-hidden="true"></i>
+                      </div>
                     </div>
                 </div>
             </div>

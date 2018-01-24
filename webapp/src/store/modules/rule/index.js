@@ -34,10 +34,15 @@ const actions = {
     return new Promise(function(resolve, reject) {
       api
         .updateRule(url, data)
-        .then(({ data }) => {
-          commit(types.UPDATE_RULE_SUCESS, data);
-          resolve(data);
-        })
+        .then(
+          ({ data }) => {
+            commit(types.UPDATE_RULE_SUCESS, data);
+            resolve(data);
+          },
+          ({ response }) => {
+            reject(response.data);
+          },
+        )
         .catch(e => {
           commit(types.UPDATE_RULE_FAILURE);
           reject(e);
