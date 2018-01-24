@@ -2,8 +2,8 @@
 
 .overlay {
     border: 1px solid black;
-    width: 50%;
-    height: 50%;
+    width: 70%;
+    height: 100%;
     display: inline-block;
 
     background-repeat: no-repeat;
