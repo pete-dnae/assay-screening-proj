@@ -14,6 +14,8 @@ export default {
   data() {
     return {
       msg: 'Welcome',
+      show: false,
+      showAlert: false,
     };
   },
   beforeRouteUpdate(to, from, next) {
@@ -25,9 +27,7 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm(
-      'Do you really want to leave? you have unsaved changes!',
-    );
+    const answer = window.confirm('Do you really want to leave? ');
     if (answer) {
       next();
     } else {
@@ -49,6 +49,7 @@ export default {
     handleSelectedRule(ruleElem) {
       this.$store.commit('SET_CURRENT_RULE', ruleElem);
       this.$store.commit('SET_PAYLOAD_OPTIONS', ruleElem.payload_type);
+      this.show = true;
     },
     zoomIn(event) {
       zoomIn(event);
@@ -67,6 +68,7 @@ export default {
     },
     handleRuleChange() {
       this.drawTableImage();
+      this.show = false;
     },
     handleDoubleClick() {
       const dl = document.createElement('a');
@@ -74,6 +76,13 @@ export default {
       dl.setAttribute('href', this.plateImage);
       dl.setAttribute('download', 'test.svg');
       dl.click();
+    },
+    handleRuleDelete() {
+      this.show = false;
+    },
+    handleErrors(data) {
+      this.showAlert = true;
+      this.alert = data;
     },
   },
   mounted() {

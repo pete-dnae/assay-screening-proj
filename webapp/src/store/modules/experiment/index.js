@@ -27,7 +27,7 @@ const actions = {
         })
         .catch(e => {
           commit(types.EXPERIMENT_FAILURE);
-          reject(data);
+          reject(e);
         });
     });
   },

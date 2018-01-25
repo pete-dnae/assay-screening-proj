@@ -53,13 +53,17 @@ const mutations = {
     state.kit.Strain = data.strains;
   },
   [types.SET_PAYLOAD_OPTIONS](state, arg) {
-    if (arg in state.kit) {
-      state.currentPayloadOptions = state.kit[arg].map(x => {
-        return { text: x.display_name, value: x.display_name };
-      });
-    } else {
-      state.currentPayloadOptions = 'userText';
-    }
+    let kitProxy = new Proxy(state.kit, {
+      get(Obj, prop) {
+        return prop in Obj
+          ? Obj[prop].map(x => {
+              return { text: x.display_name, value: x.display_name };
+            })
+          : `userText`;
+      },
+    });
+
+    state.currentPayloadOptions = kitProxy[arg];
   },
 };
 const getters = {

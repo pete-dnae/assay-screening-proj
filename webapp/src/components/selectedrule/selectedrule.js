@@ -107,7 +107,7 @@ export default {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
         this.$store.commit('SET_PAYLOAD_OPTIONS', value);
         this.handleUpdateRule().then(() => {
-          this.$store.commit('SET_PAYLOAD', ['']);
+          this.$store.commit('DELETE_PAYLOAD');
         });
       },
     },
@@ -152,27 +152,24 @@ export default {
     },
     handleDeleteValue(evt) {
       const updatedRule = _.filter(this.payload, (x, i) => i !== evt.oldIndex);
-      this.$store.commit('SET_PAYLOAD', updatedRule);
+      this.$store.commit('UPDATE_PAYLOAD', updatedRule);
       this.handleUpdateRule();
     },
-    handleUpdateRule() {
-      return this.updateRule(this.$store.state.rule.currentRule.url)
-        .then(res => {
-          return this.fetchPlate(
-            parseInt(this.$route.params.plateId + 1, 10),
-          ).then(res => {
-            this.$store.commit('SET_CURRENT_PLATE', res);
-            this.drawTableImage({
-              rows: genCharArray(this.rowStart, this.rowEnd),
-              cols: _.range(this.colStart - 1, this.colEnd),
-            });
-            this.$emit('plateRefresh');
-            return res;
-          });
-        })
-        .catch(err => {
-          alert(JSON.stringify(err));
+    async handleUpdateRule() {
+      try {
+        await this.updateRule(this.$store.state.rule.currentRule.url);
+        const plateData = await this.fetchPlate(
+          parseInt(this.$route.params.plateId + 1, 10),
+        );
+        this.$store.commit('SET_CURRENT_PLATE', plateData);
+        this.drawTableImage({
+          rows: genCharArray(this.rowStart, this.rowEnd),
+          cols: _.range(this.colStart - 1, this.colEnd),
         });
+        this.$emit('plateRefresh');
+      } catch (err) {
+        this.$emit('error', JSON.stringify(err));
+      }
     },
     handleUserInput(data) {
       this.$store.commit('SET_PAYLOAD', _.map(data, x => parseInt(x, 10)));

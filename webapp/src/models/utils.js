@@ -82,8 +82,8 @@ export const prepareResultsTable = (allocationResults, currentSelection) => {
 
 export const makeSVG = (DOMURL, html) => {
   const data =
-    `${'<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000">' +
-      '<foreignObject width="1400" height="1000">' +
+    `${'<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1200">' +
+      '<foreignObject width="1400" height="1200">' +
       '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:15px">'}${html}</div>` +
     '</foreignObject>' +
     '</svg>';

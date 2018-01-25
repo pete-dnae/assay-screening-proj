@@ -50,11 +50,12 @@ const actions = {
         .updateAllocationRules(url, data)
         .then(({ data }) => {
           commit(types.UPDATE_RULE_ORDER_SUCESS, data);
-          resolve(data);
+          resolve('success');
         })
         .catch(e => {
+          debugger;
           commit(types.UPDATE_RULE_ORDER_FAILURE);
-          reject(data);
+          reject(e);
         });
     });
   },

@@ -77,6 +77,14 @@ const mutations = {
     state.currentRule.payload_type = data;
   },
   [types.SET_PAYLOAD](state, data) {
+    state.currentRule.payload_csv = state.currentRule.payload_csv
+      .filter(x => x)
+      .concat(data);
+  },
+  [types.DELETE_PAYLOAD](state, data) {
+    state.currentRule.payload_csv = [''];
+  },
+  [types.UPDATE_PAYLOAD](state, data) {
     state.currentRule.payload_csv = data;
   },
   [types.REQUEST_UPDATE_RULE](state) {
