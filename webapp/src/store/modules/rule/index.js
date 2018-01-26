@@ -84,6 +84,9 @@ const mutations = {
   [types.DELETE_PAYLOAD](state, data) {
     state.currentRule.payload_csv = [''];
   },
+  [types.REORDER_PAYLOAD](state, data) {
+    state.currentRule.payload_csv = data.filter(x => x);
+  },
   [types.UPDATE_PAYLOAD](state, data) {
     state.currentRule.payload_csv = data;
   },

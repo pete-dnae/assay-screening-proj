@@ -30,6 +30,7 @@ export default {
       show: true,
       userText: {},
       textBoxNo: 3,
+      selectMode: false,
     };
   },
   computed: {
@@ -116,8 +117,13 @@ export default {
         return this.$store.state.rule.currentRule.payload_csv;
       },
       set(value) {
-        this.$store.commit('SET_PAYLOAD', value);
-        if (!_.isEmpty(value)) {
+        if (this.selectMode) {
+          this.$store.commit('SET_PAYLOAD', value);
+
+          this.handleUpdateRule();
+        } else {
+          this.$store.commit('REORDER_PAYLOAD', value);
+
           this.handleUpdateRule();
         }
       },
