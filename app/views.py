@@ -116,22 +116,15 @@ class RuleListDetail(
         mixins.UpdateModelMixin,
         generics.GenericAPIView):
     """
-    Provides an endpoint that offers Read and Update operations for a
-    single instance of a RuleList instance.
+    A Rule List is an ordered sequence of Alloc Rule(s), i.e. 
+    allocation rules.
 
-    Two different Update operations are provided by PUT requests:
-
-    To re-order the existing rules in the list, or to add or remove members,
-    provide the id(s) for the replacement rules in the sequence required as 
-    follows.
+    You can replace the incumbent sequence with a new one using a *PUT* request,
+    for which the payload should be a list of the replacement Alloc Rule
+    *id(s)*. Like this:
 
         { "new_rules": [1, 2, 3] }
 
-    To cause a new placholder rule to be created, and be appended to the 
-    list, provide an empty payload.
-
-    In both cases, the **rank_for_ordering** field for each rule is adjusted 
-    automatically internally.
     """
     queryset = RuleList.objects.all()
     serializer_class = RuleListSerializer
@@ -177,15 +170,19 @@ class AllocRuleViewSet(viewsets.ModelViewSet):
 
         AAAA.. BBBB.. CCCC.. 
 
-    Note for PATCH requests on Alloc Rule instance: The following fields 
-    may be included harmlessly, 
-    but will be ignored:
-    
-        id, url, display_string.
+    PATCH:
+    Partial / selective update of a stored rule. Typically the user edited a
+    rule.
+
+    POST:
+    Creates a completely new rule.
+    Typically the user wants to add a new rule to a Rule List, so the client 
+    is creating a new instance in readiness to do that.
+    All fields are required except for id, url and display_string..
     """
     queryset = AllocRule.objects.all()
     serializer_class = AllocRuleSerializer
-    http_method_names = ['get', 'patch', 'head', 'options']
+    http_method_names = ['get', 'patch', 'post', 'head', 'options']
 
 class AllocationInstructionsViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE

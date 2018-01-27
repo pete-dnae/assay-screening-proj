@@ -1,4 +1,14 @@
 -------------------------------------------------------------------------------
+Introduction
+-------------------------------------------------------------------------------
+This document represents the design intent before the coding was started.
+We are bound to depart from it as we learn as we go, and don't expect to
+maintain this document to keep it up to date.
+
+Once the browsable API is available, that will supercede this as the source of
+truth.
+
+-------------------------------------------------------------------------------
 SUMMARY
 -------------------------------------------------------------------------------
 
@@ -26,7 +36,6 @@ AllocationInstructions  Repeat and pattern recipe for a plate.
 Plate                   Everything pertaining to a single plate.
 Experiment              Everything pertaining to one experiment.
 
-:
 
 -------------------------------------------------------------------------------
 Detailed Properties for Each Type

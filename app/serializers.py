@@ -16,6 +16,7 @@ from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
     display_string = serializers.CharField(read_only=True)
+    id=serializers.ReadOnlyField()
 
     class Meta:
         model = AllocRule
@@ -24,10 +25,8 @@ class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
 class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     """
-    A serializer that supports the retrieval and update of a RuleList 
-    instance. Two update operations are supported - the first replaces the
-    AllocRules in the many to many field completely, whereas the other
-    appends a rule of the clients choice onto the end of it.
+    A serializer that supports the retrieval or wholesale replacement of a 
+    RuleList instance. 
     """
 
     # The fields for the read and write cases are completely
@@ -40,19 +39,18 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     # To replace the list of rules wholesale, receive a list of the id(s)
     # for the replacement rules.
     new_rules = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True, required=False)
+        child=serializers.IntegerField(), write_only=True)
 
     class Meta:
         model = RuleList
         fields = ('__all__')
 
     def update(self, instance, validated_data):
-        _NEW_RULES = 'new_rules'
-        if _NEW_RULES in validated_data:
-            self._replace_rules(instance, validated_data[_NEW_RULES])
-        else:
-            self._append_rule(instance)
+        self._replace_rules(instance, validated_data['new_rules'])
         return instance
+
+    def create(self, validated_data):
+        return AllocRule.make_placeholder_rule()
 
     def _replace_rules(self, instance, new_rule_ids):
         # Retreive all the AllocRules called for by the incoming request,
@@ -80,13 +78,6 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
         instance.rules.add(*new_rules)
         instance.save()
 
-    def _append_rule(self, instance):
-        incumbent_ids = [rule.id for rule in instance.rules.all()]
-        new_rule = AllocRule.make_placeholder_rule()
-        instance.rules.add(new_rule)
-        ids_to_sequence = incumbent_ids + [new_rule.id,]
-        RuleList.apply_ranking_order_to_rule_ids(ids_to_sequence)
-        instance.save()
 
 class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 

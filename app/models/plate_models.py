@@ -10,7 +10,6 @@ from .odds_and_ends_models import mk_choices
 class AllocRule(models.Model):
 
     payload_choices = mk_choices((
-        'Unspecified',
         'Dilution Factor',
         'HgDNA',
         'PA Primers',
@@ -20,7 +19,11 @@ class AllocRule(models.Model):
 
     pattern_choices = mk_choices(('Consecutive', 'In Blocks'))
 
-    rank_for_ordering = models.PositiveIntegerField()
+    # This field is used to force some collections of AllocRule(s) to maintain
+    # a strict sequence with respect to others in the same collection. It gets
+    # set down the line, only when AllocRule instances get put into RuleList
+    # containers.
+    rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
     payload_csv = models.CharField(max_length=500)
     pattern = models.CharField(max_length=15, choices=pattern_choices)
@@ -41,7 +44,7 @@ class AllocRule(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        We override the model.save() method, in order to perform some
+        We override model.save() in order to perform some
         whole-model consistency checks (like start column is not less than end
         column).
         """
@@ -50,8 +53,8 @@ class AllocRule(models.Model):
 
     def clean(self):
         """
-        Ensure the start and end values for the row and column range
-        dont contradict each other.
+        Ensure the start and end values for the row and column ranges
+        do not contradict each other.
         """
         if self.start_row_letter > self.end_row_letter:
             raise ValidationError(
@@ -99,40 +102,11 @@ class AllocRule(models.Model):
         ))
 
     
-    @classmethod
-    def make_placeholder_rule(cls):
-        #TODO Discuss with pete about value assigned for payload_type, unable to find Allocatable Class
-        # rule = AllocRule.objects.create(
-        #     rank_for_ordering = 0,
-        #     # Note the next line won't execute unless the db is populated!
-        #     payload_type = Allocatable.objects.get(type='Unspecified'),
-        #     payload_csv = '',
-        #     pattern = 'Consecutive',
-        #     start_row_letter = 'A',
-        #     end_row_letter = 'B',
-        #     start_column = 1,
-        #     end_column = 2,
-        # )
-
-        rule = AllocRule.objects.create(
-            rank_for_ordering=0,
-            payload_type='Unspecified',
-            payload_csv='',
-            pattern='Consecutive',
-            start_row_letter='A',
-            end_row_letter='B',
-            start_column=1,
-            end_column=2,
-        )
-        rule.save()
-        return rule
-
-
 class RuleList(models.Model):
     """
     A class that encapsulates a list of AllocRule(s) by wrapping a 
-    ManyToManyField of them, and by providing a few convenience methods on 
-    the list.
+    ManyToManyField of them, and managing each rule's *rank_for_ordering*
+    field, in order to force them into a deliberate sequence.
     """
     rules = models.ManyToManyField(AllocRule)
 
@@ -140,37 +114,11 @@ class RuleList(models.Model):
     def apply_ranking_order_to_rule_objs(cls, rules):
         """
         Changes the *rank_for_ordering* field on the supplied list of
-        AllocRule(s) to match the order in which they appear in the list.
+        AllocRule(s) to match the order in which they appear in that list.
         """
         for count, rule in enumerate(list(rules)):
             rule.rank_for_ordering = count
             rule.save()
-
-    @classmethod
-    def apply_ranking_order_to_rule_ids(cls, rule_ids):
-        """
-        A wrapper around the sister method above that takes a list of
-        id(s) instead of a list of instances.
-        """
-        # We want to iterate over the rule_ids in the given order, so avoid
-        # the mistake of accessing the AllocRule objects using a filter -
-        # becasue that will defeat the order mandated by the list, and re-sort
-        # according to the model's intrinsic ordering behaviour.
-        rules = [AllocRule.objects.get(pk=rule_id) for rule_id in rule_ids]
-        cls.apply_ranking_order_to_rule_objs(rules)
-
-    @classmethod
-    def make_copy_of(cls, rule_id_to_copy):
-        """
-        Makes a copy the specified AllocRule and saves it as a new, 
-        independent instance.
-        """
-        # Allow DoesNotExist exception to propagate when so.
-        rule = AllocRule.objects.get(pk=rule_id_to_copy)
-        rule.pk = None
-        rule.id = None
-        rule.save()
-        return rule
 
 
 class AllocationInstructions(models.Model):
