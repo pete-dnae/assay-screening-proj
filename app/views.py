@@ -147,7 +147,7 @@ class AllocRuleViewSet(viewsets.ModelViewSet):
     """
     *Alloc Rule* is short for "Allocation Rule".
 
-    It encapsulates a recipe for allocating an arbitrary length list of 
+    It encapsulates a recipe for repeating an arbitrary length list of 
     strings to a rectangular region of an imaginary table. The list of 
     strings is held (concatenated) in the *payload_csv* field. The target
     region of the table is defined in terms of row and column ranges.
@@ -174,6 +174,7 @@ class AllocRuleViewSet(viewsets.ModelViewSet):
     """
     queryset = AllocRule.objects.all()
     serializer_class = AllocRuleSerializer
+    http_method_names = ['get', 'patch', 'head', 'options']
 
 class AllocationInstructionsViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE

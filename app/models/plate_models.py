@@ -1,4 +1,8 @@
+import re
+
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator, MaxValueValidator
 
 from .odds_and_ends_models import mk_choices
 
@@ -20,13 +24,41 @@ class AllocRule(models.Model):
     payload_type = models.CharField(max_length=15, choices=payload_choices)
     payload_csv = models.CharField(max_length=500)
     pattern = models.CharField(max_length=15, choices=pattern_choices)
-    start_row_letter = models.CharField(max_length=1)
-    end_row_letter = models.CharField(max_length=1)
-    start_column = models.PositiveIntegerField() # Start at 1, not zero
-    end_column = models.PositiveIntegerField() # Start at 1, not zero
+
+    letter = RegexValidator(re.compile(r'[A-Z]'), 'Enter a capital letter.')
+    start_row_letter = models.CharField(max_length=1, validators=[letter,])
+    end_row_letter = models.CharField(max_length=1, validators=[letter,])
+
+    max_column = MaxValueValidator(20)
+    # First column is 1, not zero.
+    start_column = models.PositiveSmallIntegerField(validators=[max_column,])
+    end_column = models.PositiveSmallIntegerField(validators=[max_column,])
+
+    # See also, whole-model validation checks in self.clean()
 
     class Meta:
         ordering = ('rank_for_ordering',)
+
+    def save(self, *args, **kwargs):
+        """
+        We override the model.save() method, in order to perform some
+        whole-model consistency checks (like start column is not less than end
+        column).
+        """
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """
+        Ensure the start and end values for the row and column range
+        dont contradict each other.
+        """
+        if self.start_row_letter > self.end_row_letter:
+            raise ValidationError(
+                'Start row must not be greater than end row')
+        if self.start_column > self.end_column:
+            raise ValidationError(
+                'Start column must not be greater than end column')
 
     def enumerate_applicable_rows(self):
         start = ord(self.start_row_letter) - ord('A')
@@ -84,7 +116,6 @@ class AllocRule(models.Model):
 
         rule = AllocRule.objects.create(
             rank_for_ordering=0,
-            # Note the next line won't execute unless the db is populated!
             payload_type='Unspecified',
             payload_csv='',
             pattern='Consecutive',
