@@ -10,8 +10,8 @@ from .models.plate_models import *
 from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 
 # It would be nicer to group these class definitions in some meaningful way,
-# but we cannot, because they must appear in dependency order for the
-# module to load.
+# but we cannot, because they comprise nested definitions, and thus must 
+# appear in dependency order for the module to load.
 
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 

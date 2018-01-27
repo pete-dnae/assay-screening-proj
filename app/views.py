@@ -145,16 +145,31 @@ class RuleListDetail(
 
 class AllocRuleViewSet(viewsets.ModelViewSet):
     """
-    Provides an endpoint that offers Read and Update operations for a
-    single instance of an AllocRule instance.
+    *Alloc Rule* is short for "Allocation Rule".
 
-    To update the rule use a *PUT* request, with a payload that is identical
-    in shape to that returned by a *GET* request.
+    It encapsulates a recipe for allocating an arbitrary length list of 
+    strings to a rectangular region of an imaginary table. The list of 
+    strings is held (concatenated) in the *payload_csv* field. The target
+    region of the table is defined in terms of row and column ranges.
 
-    All the fields in the *PUT* payload are optonal. So you could for example 
-    update just the *start_row_letter* field.
+    Two allocation recipes are provided to replicate and multiply the items 
+    column-wise. Consider the payload_csv being
+    
+        'A,B,C'
+    
+    The first recipe *Consecutive*, will do this until it runs out of columns:
+    
+        A B C A B C A B... 
 
-    The following fields may be included harmlessly, but will be ignored:
+    The second recipe with fill the available column range *In Blocks* of
+    equal size like this.
+
+        AAAA.. BBBB.. CCCC.. 
+
+    Note for PATCH requests on Alloc Rule instance: The following fields 
+    may be included harmlessly, 
+    but will be ignored:
+    
         id, url, display_string.
     """
     queryset = AllocRule.objects.all()
