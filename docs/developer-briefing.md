@@ -52,30 +52,30 @@ things as reagent batch numbers.
 
 # Computing Architecture Overview
 
-What you see is a Web App that shows you visually, the experiments avaiable,
-the details of each of them, the various primers, organisms, etc that are
-registered in the system. And then offers various forms and screens and so on
-to let you create new experiments, and edit them etc. This Web App is a modern
-Javascript application that runs in your browser. It follows the _Single Page
-Application_ architecture. And uses the _Vue.js_ web framework, with the Vuex
-extension to manage application state. Plus the _Bootstrap_ CSS library.
+What you see is a Web App that shows you visually, the experiments avaiable, the
+details of each of them, the various primers, organisms, etc that are registered
+in the system. And then offers various forms and screens and so on to let you
+create new experiments, and edit them etc. This Web App is a modern Javascript
+application that runs in your browser. It follows the _Single Page Application_
+architecture. And uses the _Vue.js_ web framework, with the Vuex extension to
+manage application state. Plus the _Bootstrap_ CSS library.
 
 Most of the logic and intelligence for the application resides in a back-end web
 service running in the Cloud. The Web App has a conversation with the back-end
 web service in order to decide what to show, at any one time, and it also sends
-messages to it when the user edits things, so that the web service can reply with
-changes in what to show in the new state. This conversation uses the _REST_
-communication methodology. The backend web service is implemented in Python using
-the _Django_ framework, plus the _Django Rest Framework_ extension. There is only
-one backend web service, but there can be multiple simultaneous Web App's being
-used by scientists all talking to the back end at once.
+messages to it when the user edits things, so that the web service can reply
+with changes in what to show in the new state. This conversation uses the _REST_
+communication methodology. The backend web service is implemented in Python
+using the _Django_ framework, plus the _Django Rest Framework_ extension. There
+is only one backend web service, but there can be multiple simultaneous Web
+App's being used by scientists all talking to the back end at once.
 
 The web service in the cloud is hosted on the _Heroku_ Platform-As-A-Service
 (PAAS). Behind the web service is a database as the permanent data-store, and
 this is a _Relational_ type database. In this case a cloud deployment of
 _PostgreSQL_ provided as part of Heroku's PAAS.
 
-# Developer Getting Started Instructions
+# Developer Getting Started Instructions (Back End)
 
 ## Prerequisites
 
@@ -99,23 +99,27 @@ Quick test so far...
 
 Database initialisation
 
-# When running locally you get a pre-configured sqlite database, which # is included in the pip install above.
+When running locally you get a pre-configured sqlite database, which is 
+included in the pip install above.
 
-Find and delete the sqlite3 file in foo
-Find and delete any migration files in foo/app
-python manage.py makemigrations
-python manage.py migrate
+To build for the first time or to stomp on any previous database and re baseline
+it to a suitable virgin state that contains one reference experiment object and
+its deep tree of dependencies do this:
 
-    # If you want to populate the database automatically with our reference
-    # experiment do this bit...
+    Automated for Linux as follows:
+    For more information, see documentation the script source.
 
-    python manage.py reset_db
+    cd foo
+    ./complete_reset.bash
+
+    Nb. Under the hood this uses a custome python manage.py script, which can be
+    found (as required) in foo/app/management/commands.
 
 Run the server to test the REST API
 
 python manage.py runserver # point browser at: http://localhost:8000/
 
-##Getting Started for web application
+# Getting Started for web application
 
 ## Prerequisites
 
