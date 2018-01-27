@@ -147,13 +147,24 @@ class AllocRuleViewSet(viewsets.ModelViewSet):
     """
     *Alloc Rule* is short for "Allocation Rule".
 
-    It encapsulates a recipe for repeating an arbitrary length list of 
-    strings to a rectangular region of an imaginary table. The list of 
-    strings is held (concatenated) in the *payload_csv* field. The target
-    region of the table is defined in terms of row and column ranges.
+    It encapsulates a recipe for repeating patterns of things like *primers,
+    strains, HgDNA* (and similar) to a rectangular region of an imaginary table.
+    The type of thing being repeated is specified in the *payload_type* field,
+    and must be one of the following:
+        
+        Dilution Factor
+        HgDNA
+        PA Primers
+        ID Primers
+        Strain
+        Strain Count
 
-    Two allocation recipes are provided to replicate and multiply the items 
-    column-wise. Consider the payload_csv being
+    The list of strings to be repeated are specified (concatenated) in the
+    *payload_csv* field. 
+    
+    The target region of the table is defined in terms of row and column
+    ranges.  Two allocation recipes are provided to replicate and multiply the
+    items column-wise. Consider the payload_csv being
     
         'A,B,C'
     
