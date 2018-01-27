@@ -1,4 +1,5 @@
 import draggable from 'vuedraggable';
+import { mapActions, mapGetters } from 'vuex';
 import _ from 'lodash';
 import {
   zoomIn,
@@ -8,11 +9,7 @@ import {
   genCharArray,
   makeSVG,
 } from '@/models/utils';
-import {
-  modal,
-  dropdown,
-} from 'vue-strap';
-
+import { modal, dropdown } from 'vue-strap';
 
 export default {
   name: 'selectedRule',
@@ -30,27 +27,18 @@ export default {
       msg: 'Welcome',
       showModal: false,
       textElem: '',
-      options: [{
-        text: 'AAAA BBBB CCCC',
-        value: 'In Blocks',
-      },
-      {
-        text: 'ABCD ABCD ABCD',
-        value: 'Consecutive',
-      },
-      ],
-      types: [{
-        text: 'Template Copies',
-        value: 'Template Copies',
-      },
-      {
-        text: 'ID Primers',
-        value: 'ID Primers',
-      },
-      ],
+      show: true,
+      userText: {},
+      textBoxNo: 3,
+      selectMode: false,
     };
   },
   computed: {
+    ...mapGetters({
+      options: 'getPatternDropDown',
+      types: 'getPayloadTypeDropDown',
+      currentOptions: 'getCurrentPayloadOptions',
+    }),
     rowStart: {
       get() {
         return this.$store.state.rule.currentRule.start_row_letter;
@@ -58,10 +46,10 @@ export default {
       set(value) {
         this.$store.commit('SET_ROW_START', value);
         this.drawTableImage({
-          rows: genCharArray(value,
-             this.rowEnd),
+          rows: genCharArray(value, this.rowEnd),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
+        this.handleUpdateRule();
       },
     },
     rowEnd: {
@@ -71,10 +59,10 @@ export default {
       set(value) {
         this.$store.commit('SET_ROW_END', value);
         this.drawTableImage({
-          rows: genCharArray(this.rowStart,
-             value),
+          rows: genCharArray(this.rowStart, value),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
+        this.handleUpdateRule();
       },
     },
     colStart: {
@@ -84,10 +72,10 @@ export default {
       set(value) {
         this.$store.commit('SET_COL_START', value);
         this.drawTableImage({
-          rows: genCharArray(this.rowStart,
-             this.rowEnd),
+          rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(value - 1, this.colEnd),
         });
+        this.handleUpdateRule();
       },
     },
     colEnd: {
@@ -97,10 +85,10 @@ export default {
       set(value) {
         this.$store.commit('SET_COL_END', value);
         this.drawTableImage({
-          rows: genCharArray(this.rowStart,
-             this.rowEnd),
+          rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(this.colStart - 1, value),
         });
+        this.handleUpdateRule();
       },
     },
     distPattern: {
@@ -109,6 +97,7 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_DIST_PATTERN', value);
+        this.handleUpdateRule();
       },
     },
     payloadType: {
@@ -117,6 +106,10 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
+        this.$store.commit('SET_PAYLOAD_OPTIONS', value);
+        this.handleUpdateRule().then(() => {
+          this.$store.commit('DELETE_PAYLOAD');
+        });
       },
     },
     payload: {
@@ -124,11 +117,20 @@ export default {
         return this.$store.state.rule.currentRule.payload_csv;
       },
       set(value) {
-        this.$store.commit('SET_PAYLOAD', value);
+        if (this.selectMode) {
+          this.$store.commit('SET_PAYLOAD', value);
+
+          this.handleUpdateRule();
+        } else {
+          this.$store.commit('REORDER_PAYLOAD', value);
+
+          this.handleUpdateRule();
+        }
       },
     },
   },
   methods: {
+    ...mapActions(['updateRule', 'fetchPlate']),
     zoomIn(event) {
       zoomIn(event);
     },
@@ -156,8 +158,34 @@ export default {
     },
     handleDeleteValue(evt) {
       const updatedRule = _.filter(this.payload, (x, i) => i !== evt.oldIndex);
-      this.$store.commit('SET_PAYLOAD', updatedRule);
+      this.$store.commit('UPDATE_PAYLOAD', updatedRule);
+      this.handleUpdateRule();
+    },
+    async handleUpdateRule() {
+      try {
+        await this.updateRule(this.$store.state.rule.currentRule.url);
+        const plateData = await this.fetchPlate(
+          parseInt(this.$route.params.plateId + 1, 10),
+        );
+        this.$store.commit('SET_CURRENT_PLATE', plateData);
+        this.drawTableImage({
+          rows: genCharArray(this.rowStart, this.rowEnd),
+          cols: _.range(this.colStart - 1, this.colEnd),
+        });
+        this.$emit('plateRefresh');
+      } catch (err) {
+        this.$emit('error', JSON.stringify(err));
+      }
+    },
+    handleUserInput(data) {
+      this.$store.commit('SET_PAYLOAD', _.map(data, x => parseInt(x, 10)));
+      if (!_.isEmpty(data)) {
+        this.handleUpdateRule();
+      }
+    },
+    handleTextBoxDel() {
+      this.userText[this.textBoxNo] = undefined;
+      this.textBoxNo -= 1;
     },
   },
-
 };

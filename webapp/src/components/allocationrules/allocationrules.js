@@ -22,7 +22,7 @@ export default {
     }),
     rules: {
       get() {
-        return this.$store.state.plate.currentPlate.allocation_instructions
+        return this.$store.state.plate.currentPlate.data.allocation_instructions
           .rule_list.rules;
       },
       set(changedRules) {
@@ -53,40 +53,45 @@ export default {
       this.handleUpdateAllocation(
         _.map(_.filter(this.rules, (x, i) => i !== deletedRule.oldIndex), 'id'),
       );
+      this.$emit('ruleDeleted');
     },
-    handleAddRule() {
-      this.addAllocationRule({
-        data: {
-          rule_to_copy: this.$store.state.rule.currentRule.id,
-        },
-        url: this.$store.state.plate.currentPlate.allocation_instructions
-          .rule_list.url,
-      }).then(() => {
-        this.fetchExperiment('1').then(res => {
-          this.$store.commit(
-            'SET_CURRENT_PLATE',
-            res.plates[parseInt(this.$route.params.plateId, 10)],
-          );
-          this.$emit('ruleChanged');
+    async handleAddRule() {
+      try {
+        await this.addAllocationRule({
+          data: {
+            rule_to_copy: this.$store.state.rule.currentRule.id,
+          },
+          url: this.$store.state.plate.currentPlate.data.allocation_instructions
+            .rule_list.url,
         });
-      });
+        const experiment = await this.fetchExperiment(this.$route.params.expt);
+        this.$store.commit(
+          'SET_CURRENT_PLATE',
+          experiment.plates[parseInt(this.$route.params.plateId, 10)],
+        );
+        this.$emit('ruleChanged');
+      } catch (err) {
+        this.$emit('error', err);
+      }
     },
-    handleUpdateAllocation(data) {
-      this.updateAllocationRules({
-        data: {
-          new_rules: data,
-        },
-        url: this.$store.state.plate.currentPlate.allocation_instructions
-          .rule_list.url,
-      }).then(() => {
-        this.fetchExperiment('1').then(res => {
-          this.$store.commit(
-            'SET_CURRENT_PLATE',
-            res.plates[parseInt(this.$route.params.plateId, 10)],
-          );
-          this.$emit('ruleChanged');
+    async handleUpdateAllocation(data) {
+      try {
+        await this.updateAllocationRules({
+          data: {
+            new_rules: data,
+          },
+          url: this.$store.state.plate.currentPlate.data.allocation_instructions
+            .rule_list.url,
         });
-      });
+        const experiment = await this.fetchExperiment(this.$route.params.expt);
+        this.$store.commit(
+          'SET_CURRENT_PLATE',
+          experiment.plates[parseInt(this.$route.params.plateId, 10)],
+        );
+        this.$emit('ruleChanged');
+      } catch (err) {
+        this.$emit('error', err);
+      }
     },
     drawTableImage(currentSelection) {
       const url = makeSVG(

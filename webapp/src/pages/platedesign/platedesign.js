@@ -2,9 +2,7 @@ import { mapGetters, mapActions } from 'vuex';
 import allocationrules from '@/components/allocationrules/allocationrules.vue';
 import selectedrule from '@/components/selectedrule/selectedrule.vue';
 import { zoomIn, zoomOut, prepareResultsTable, makeSVG } from '@/models/utils';
-import {
-  spinner,
-} from 'vue-strap';
+import { spinner } from 'vue-strap';
 
 export default {
   name: 'PlateDesign',
@@ -16,18 +14,20 @@ export default {
   data() {
     return {
       msg: 'Welcome',
+      show: false,
+      showAlert: false,
     };
   },
   beforeRouteUpdate(to, from, next) {
     const plateId = to.params.plateId;
-    if (this.$store.state.experiment.experiment.data.plates[plateId]) {
+    if (this.$store.state.experiment.currentExperiment.data.plates[plateId]) {
       next();
     } else {
       next(false);
     }
   },
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm('Do you really want to leave? you have unsaved changes!');
+    const answer = window.confirm('Do you really want to leave? ');
     if (answer) {
       next();
     } else {
@@ -48,6 +48,8 @@ export default {
     ...mapActions(['fetchExperiment']),
     handleSelectedRule(ruleElem) {
       this.$store.commit('SET_CURRENT_RULE', ruleElem);
+      this.$store.commit('SET_PAYLOAD_OPTIONS', ruleElem.payload_type);
+      this.show = true;
     },
     zoomIn(event) {
       zoomIn(event);
@@ -66,6 +68,7 @@ export default {
     },
     handleRuleChange() {
       this.drawTableImage();
+      this.show = false;
     },
     handleDoubleClick() {
       const dl = document.createElement('a');
@@ -74,10 +77,22 @@ export default {
       dl.setAttribute('download', 'test.svg');
       dl.click();
     },
+    handleRuleDelete() {
+      this.show = false;
+    },
+    handleErrors(data) {
+      this.showAlert = true;
+      this.alert = data;
+    },
   },
   mounted() {
-    this.fetchExperiment('1').then((res) => {
-      this.$store.commit('SET_CURRENT_PLATE', res.plates[parseInt(this.$route.params.plateId, 10)]);
+    this.fetchExperiment('1').then(res => {
+      this.$store.commit(
+        'SET_CURRENT_PLATE',
+        res.plates[parseInt(this.$route.params.plateId, 10)],
+      );
+      this.$store.commit('SET_PRIMER_KIT', res.primer_kit);
+      this.$store.commit('SET_STRAIN_KIT', res.strain_kit);
       this.drawTableImage();
     });
   },

@@ -14,10 +14,10 @@ export default new Router({
     },
     {
       path: '/',
-      redirect: '/plate/0',
+      redirect: '/1/0',
     },
     {
-      path: '/plate/:plateId',
+      path: '/:expt/:plateId',
       name: 'platedesign',
       component: platedesign,
     },

@@ -18,3 +18,5 @@ export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 
 export const updateAllocationRules = (url, data) => putRes(url, data);
 export const addAllocationRule = (url, data) => putRes(url, data);
+export const updateRule = (url, data) => putRes(url, data);
+export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);

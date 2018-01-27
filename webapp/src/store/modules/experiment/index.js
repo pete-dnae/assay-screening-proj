@@ -1,24 +1,22 @@
 /* eslint-disable */
 import _ from 'lodash';
 import * as types from './mutation-types';
-import * as api from '@/models/api'
+import * as api from '@/models/api';
 import experiment from '@/assets/json/response.json';
 export const state = {
-  experiment: {
+  currentExperiment: {
     data: {
       designer_name: '',
-      experiment_name: ''
+      experiment_name: '',
     },
     isFetching: false,
     fetched: false,
     didInvalidate: false,
-  }
+  },
 };
 
 const actions = {
-  fetchExperiment({
-    commit
-  }, args) {
+  fetchExperiment({ commit }, args) {
     commit(types.REQUEST_EXPERIMENT);
     return new Promise(function(resolve, reject) {
       api
@@ -29,35 +27,35 @@ const actions = {
         })
         .catch(e => {
           commit(types.EXPERIMENT_FAILURE);
-          reject(data);
+          reject(e);
         });
     });
-  }
+  },
 };
 const mutations = {
   [types.REQUEST_EXPERIMENT](state, plateId) {
-    state.experiment.isFetching = true;
-    state.experiment.fetched = false;
-    state.experiment.didInvalidate = false;
+    state.currentExperiment.isFetching = true;
+    state.currentExperiment.fetched = false;
+    state.currentExperiment.didInvalidate = false;
   },
   [types.RECEIVED_EXPERIMENT](state, data) {
-    state.experiment.data = data;
-    state.experiment.isFetching = false;
-    state.experiment.fetched = true;
-    state.experiment.didInvalidate = false;
+    state.currentExperiment.data = data;
+    state.currentExperiment.isFetching = false;
+    state.currentExperiment.fetched = true;
+    state.currentExperiment.didInvalidate = false;
   },
   [types.EXPERIMENT_FAILURE](state, plateId) {
-    state.experiment.isFetching = false;
-    state.experiment.fetched = false;
-    state.experiment.didInvalidate = true;
+    state.currentExperiment.isFetching = false;
+    state.currentExperiment.fetched = false;
+    state.currentExperiment.didInvalidate = true;
   },
 };
 const getters = {
   getDesignerName(state, getters, rootState) {
-    return state.experiment.data.designer_name;
+    return state.currentExperiment.data.designer_name;
   },
   getExperimentName() {
-    return state.experiment.data.experiment_name;
+    return state.currentExperiment.data.experiment_name;
   },
 };
 

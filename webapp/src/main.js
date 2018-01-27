@@ -4,7 +4,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.css';
 import '@/assets/sass/app.scss';
-import '@/assets/css/popper.css';
+import 'animate.css';
 import { sync } from 'vuex-router-sync';
 import Axios from 'axios';
 import Vue from 'vue';

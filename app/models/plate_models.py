@@ -69,16 +69,29 @@ class AllocRule(models.Model):
     
     @classmethod
     def make_placeholder_rule(cls):
+        #TODO Discuss with pete about value assigned for payload_type, unable to find Allocatable Class
+        # rule = AllocRule.objects.create(
+        #     rank_for_ordering = 0,
+        #     # Note the next line won't execute unless the db is populated!
+        #     payload_type = Allocatable.objects.get(type='Unspecified'),
+        #     payload_csv = '',
+        #     pattern = 'Consecutive',
+        #     start_row_letter = 'A',
+        #     end_row_letter = 'B',
+        #     start_column = 1,
+        #     end_column = 2,
+        # )
+
         rule = AllocRule.objects.create(
-            rank_for_ordering = 0,
+            rank_for_ordering=0,
             # Note the next line won't execute unless the db is populated!
-            payload_type = Allocatable.objects.get(type='Unspecified'),
-            payload_csv = '',
-            pattern = 'Consecutive',
-            start_row_letter = 'A',
-            end_row_letter = 'B',
-            start_column = 1,
-            end_column = 2,
+            payload_type='Unspecified',
+            payload_csv='',
+            pattern='Consecutive',
+            start_row_letter='A',
+            end_row_letter='B',
+            start_column=1,
+            end_column=2,
         )
         rule.save()
         return rule

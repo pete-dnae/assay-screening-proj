@@ -2,8 +2,8 @@
 
 .overlay {
     border: 1px solid black;
-    width: 50%;
-    height: 50%;
+    width: 70%;
+    height: 100%;
     display: inline-block;
 
     background-repeat: no-repeat;
@@ -30,13 +30,21 @@
   </div>
     <div class="row m-5">
         <div class="col">
-            <allocationrules @selectedRule="handleSelectedRule"  @ruleChanged="handleRuleChange"></allocationrules>
+            <allocationrules @selectedRule="handleSelectedRule" @ruleDeleted="handleRuleDelete" @error="handleErrors" @ruleChanged="handleRuleChange"></allocationrules>
+            <transition name="custom-classes-transition" enter-active-class="animated fadeInLeft" leave-active-class="animated zoomOut">
             <selectedrule
+            v-if="show"
             :image="plateImage"
             :allocationResults="allocationResults"
+            @error="handleErrors"
             ></selectedrule>
+          </transition>
         </div>
         <div class="col">
+          <div v-if="showAlert" class="alert alert-danger alert-dismissable" @click="showAlert=!showAlert">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" >&times;</a>
+            <strong>Error!</strong> {{alert}}.
+          </div>
             <spinner :value="spin"></spinner>
             <div class="row overlay" id="overlay" v-on:mousemove="zoomIn" @click="handleDoubleClick"></div>
         </div>
