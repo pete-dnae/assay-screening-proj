@@ -36,3 +36,28 @@ class Experiment(models.Model):
         related_name='experiment_pa_cycling', on_delete=models.PROTECT)
     id_cycling = models.ForeignKey(CyclingPattern, 
         related_name='experiment_id_cycling', on_delete=models.PROTECT)
+
+    def intelligent_copy(self):
+        """
+        Knows how to make (and save) a new instance of this model, including
+        making a judgement about which attributes (recursively must also be
+        replicated, vs which can be left shared).
+        """
+        # General solution is to set primary key on self to None and then 
+        # save() self thus getting a new object with a new primary key. But 
+        # in between of course recursively copying the attributes in cases
+        # where these must not remain shared between the original and the copy.
+        self.pk = None
+
+        self.experiment_name += '_copy'
+        self.pa_mastermix = self.pa_mastermix.intelligent_copy()
+        self.id_mastermix = self.id_mastermix.intelligent_copy()
+        self.primer_kit = self.primer_kit.intelligent_copy()
+        self.strain_kit = self.strain_kit.intelligent_copy()
+
+        m2m_intelligent_copy(self.plates)
+
+        self.pa_cycling = self.pa_cycling.intelligent_copy()
+        self.id_cycling = self.id_cycling.intelligent_copy()
+
+        return self.save()
