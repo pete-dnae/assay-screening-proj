@@ -1,10 +1,13 @@
 from django.db import models
 
-# Utility to save typing in making 2-tuple lists required by model.choices.
+# Utility to save typing by making 2-tuple lists required by model.choices.
 def mk_choices(items):
     return ((i,i) for i in items)
 
 class CyclingPattern(models.Model):
+    """
+    A little lost model with no home to go to.
+    """
     activation_time = models.PositiveIntegerField()
     activation_temp = models.PositiveIntegerField()
     num_cycles = models.PositiveIntegerField()

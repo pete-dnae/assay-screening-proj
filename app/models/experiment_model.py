@@ -7,6 +7,20 @@ from .strain_models import StrainKit
 from .plate_models import Plate
 
 class Experiment(models.Model):
+    """
+    The top level object that encapsulate an assay screening experiment.
+    Gathers together and qualifies a wide variety of input data, parameters and
+    quantities. Also carries the reagent allocation recipes, and will later on
+    encapsulate results data. Comprises the apex of a deeply hierarchical 
+    data structure. Which under the hood makes references out to steady-state
+    stock reagents, and also cumulative company knowledge bases, like the
+    primers in play.
+
+    In this first draft, the high level attributes correspond strongly to tabs
+    in today's spreadsheets. This modelling should probably be rationalised,
+    but it is more important today to get something to offer a promising rival
+    to the status quo and to learn lessons from that.
+    """
     experiment_name = models.CharField(max_length=80, unique=True) 
     designer_name = models.CharField(max_length=80) 
     pa_mastermix = models.ForeignKey(MasterMix, 

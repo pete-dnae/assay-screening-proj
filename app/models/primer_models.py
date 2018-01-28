@@ -1,17 +1,34 @@
+"""
+A group of closely related models - all concerned with Primers.
+"""
+
 from django.db import models
 
 from .odds_and_ends_models import mk_choices
 from .reagent_models import *
 
+
 class Gene(models.Model):
+    """
+    Little more than a string - i.e. that name of the Gene. But formalized so
+    it can take part in database relations.
+    """
     name = models.CharField(primary_key=True, max_length=30, unique=True)
 
+
 class Organism(models.Model):
+    """
+    For example "Eco", or it's longer proper name.
+    """
     abbreviation = models.CharField(max_length=8, unique=True)
     full_name = models.CharField(max_length=30, unique=True)
 
 
 class Primer(models.Model):
+    """
+    Encapsulates on particular primer in terms of its foward or reverse role,
+    its oligo code, and references to the Organism / Gene it targets.
+    """
 
     primer_role_choices = mk_choices(('fwd', 'rev'))
 
@@ -25,6 +42,13 @@ class Primer(models.Model):
 
 
 class PrimerPair(models.Model):
+    """
+    Enapsulates two Primers that scientists have decided to use as a recognized
+    pair, and whether for ID or preamp or both..
+
+    Know know to be problematically oversimplified. These primer assemblies are
+    not always simply pairs.
+    """
     forward_primer = models.ForeignKey(Primer, 
         related_name='primer_pair_fwd', on_delete=models.PROTECT)
     reverse_primer = models.ForeignKey(Primer, 
@@ -54,6 +78,13 @@ class PrimerPair(models.Model):
 
 
 class PrimerKit(models.Model):
+    """
+    Represents the primer pairs that a scientist has decided to pull together
+    into a conceptual "kit" that will be used by one particular experiment.
+    Every kit instance is dedicated to the experiment it belongs to. I.e. they
+    are not shared. Carries also the concentration data that will be used for
+    these at the meta level.
+    """
     pa_primers = models.ManyToManyField(PrimerPair,
         related_name='primer_pair_pa')
     id_primers = models.ManyToManyField(PrimerPair,

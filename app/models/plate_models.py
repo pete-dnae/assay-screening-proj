@@ -1,3 +1,9 @@
+"""
+A group of closely related model classes, which taken together define the
+reagent allocations for a Plate.
+"""
+
+
 import re
 
 from django.db import models
@@ -137,7 +143,7 @@ class AllocRule(models.Model):
     
 class RuleList(models.Model):
     """
-    A class that encapsulates a list of AllocRule(s) by wrapping a 
+    Encapsulates a list of AllocRule(s) by wrapping a 
     ManyToManyField of them, and managing each rule's *rank_for_ordering*
     field, in order to force them into a deliberate sequence.
     """
@@ -155,12 +161,25 @@ class RuleList(models.Model):
 
 
 class AllocationInstructions(models.Model):
+    """
+    A container for a RuleList, plus meta data for that rule list. Meta data
+    anticipated so far, is to say that some of the chamber allocations created
+    by applying the rules, are to be ignored because some entire columns were
+    found to be inviable in the lab during an experiment.
+    """
     rule_list = models.ForeignKey(RuleList, 
         related_name='instructions', on_delete=models.PROTECT)
     suppressed_columns = models.CharField(max_length=200) 
 
 
 class Plate(models.Model):
+    """
+    Represents a rectangular grid of chambers or wells (of indefinite size),
+    that can have reagents put in them. It has a name so that people can
+    identify several plates in an experiment, and it owns an
+    AllocationInstruction object that defines the reagents allocated to each of
+    its chambers.
+    """
     name = models.CharField(max_length=20) 
     allocation_instructions = models.ForeignKey(AllocationInstructions, 
         related_name='plate', on_delete=models.PROTECT)
