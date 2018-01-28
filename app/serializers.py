@@ -9,9 +9,9 @@ from .models.plate_models import *
 
 from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 
-# It would be nicer to group these class definitions in some meaningful way,
-# but we cannot, because they comprise nested definitions, and thus must 
-# appear in dependency order for the module to load.
+# It would be nicer to group these class definitions in a way that aided
+# comprehension but we cannot, because they comprise nested definitions, and
+# thus must appear in dependency order for the module to load.
 
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -36,8 +36,8 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     # serializer for the m2m field.
     rules = AllocRuleSerializer(many=True, read_only=True)
 
-    # To replace the list of rules wholesale, receive a list of the id(s)
-    # for the replacement rules.
+    # To replace the list of rules wholesale, we expect to receive a list of 
+    # the id(s) for the replacement rules.
     new_rules = serializers.ListField(
         child=serializers.IntegerField(), write_only=True)
 
@@ -48,9 +48,6 @@ class RuleListSerializer(serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
         self._replace_rules(instance, validated_data['new_rules'])
         return instance
-
-    def create(self, validated_data):
-        return AllocRule.make_placeholder_rule()
 
     def _replace_rules(self, instance, new_rule_ids):
         # Retreive all the AllocRules called for by the incoming request,

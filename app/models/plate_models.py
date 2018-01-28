@@ -8,6 +8,39 @@ from .odds_and_ends_models import mk_choices
 
 
 class AllocRule(models.Model):
+    """
+    *Alloc Rule* is short for "Allocation Rule".
+
+    It encapsulates a recipe for repeating patterns of things like *primers,
+    strains, HgDNA* (and similar) to a rectangular region of an imaginary table.
+    The type of thing being repeated is specified in the *payload_type* field,
+    and must be one of the following:
+        
+        Dilution Factor
+        HgDNA
+        PA Primers
+        ID Primers
+        Strain
+        Strain Count
+
+    The list of strings to be repeated are specified (concatenated) in the
+    *payload_csv* field. 
+    
+    The target region of the table is defined in terms of row and column
+    ranges.  Two allocation recipes are provided to replicate and multiply the
+    items column-wise. Consider the payload_csv being
+    
+        'A,B,C'
+    
+    The first recipe *Consecutive*, will do this until it runs out of columns:
+    
+        A B C A B C A B... 
+
+    The second recipe with fill the available column range *In Blocks* of
+    equal size like this.
+
+        AAAA.. BBBB.. CCCC.. 
+    """
 
     payload_choices = mk_choices((
         'Dilution Factor',
@@ -21,7 +54,7 @@ class AllocRule(models.Model):
 
     # This field is used to force some collections of AllocRule(s) to maintain
     # a strict sequence with respect to others in the same collection. It gets
-    # set down the line, only when AllocRule instances get put into RuleList
+    # updated later, only when AllocRule instances get put into RuleList
     # containers.
     rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)

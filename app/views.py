@@ -138,38 +138,6 @@ class RuleListDetail(
 
 class AllocRuleViewSet(viewsets.ModelViewSet):
     """
-    *Alloc Rule* is short for "Allocation Rule".
-
-    It encapsulates a recipe for repeating patterns of things like *primers,
-    strains, HgDNA* (and similar) to a rectangular region of an imaginary table.
-    The type of thing being repeated is specified in the *payload_type* field,
-    and must be one of the following:
-        
-        Dilution Factor
-        HgDNA
-        PA Primers
-        ID Primers
-        Strain
-        Strain Count
-
-    The list of strings to be repeated are specified (concatenated) in the
-    *payload_csv* field. 
-    
-    The target region of the table is defined in terms of row and column
-    ranges.  Two allocation recipes are provided to replicate and multiply the
-    items column-wise. Consider the payload_csv being
-    
-        'A,B,C'
-    
-    The first recipe *Consecutive*, will do this until it runs out of columns:
-    
-        A B C A B C A B... 
-
-    The second recipe with fill the available column range *In Blocks* of
-    equal size like this.
-
-        AAAA.. BBBB.. CCCC.. 
-
     PATCH:
     Partial / selective update of a stored rule. Typically the user edited a
     rule.
@@ -180,6 +148,10 @@ class AllocRuleViewSet(viewsets.ModelViewSet):
     is creating a new instance in readiness to do that.
     All fields are required except for id, url and display_string..
     """
+
+    # Prefix the doc string with the doc string from the model class. (DRY)
+    __doc__ = '\n'.join((AllocRule.__doc__, __doc__))
+
     queryset = AllocRule.objects.all()
     serializer_class = AllocRuleSerializer
     http_method_names = ['get', 'patch', 'post', 'head', 'options']
