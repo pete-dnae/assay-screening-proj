@@ -17,7 +17,7 @@ from .odds_and_ends_models import mk_choices
 class Concentration(models.Model):
     """
     A utility class to encapsulate one particular concentraction value
-    """.
+    """
 
     units_choices = mk_choices((
         'X',
@@ -40,7 +40,7 @@ class ConcreteReagent(models.Model):
     one that is bought-in and is physically sitting in some bottle somewhere.
     Hence it has its own concentration.
     """
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=30) # Names are not unique!
     lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
         Concentration, related_name='reagent', on_delete=models.PROTECT)
