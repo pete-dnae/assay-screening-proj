@@ -4,19 +4,15 @@ import _ from 'lodash';
 import {
   zoomIn,
   zoomOut,
-  getNewIndex,
   prepareResultsTable,
   genCharArray,
   makeSVG,
 } from '@/models/utils';
-import { modal, dropdown } from 'vue-strap';
 
 export default {
   name: 'selectedRule',
   components: {
     draggable,
-    dropdown,
-    modal,
   },
   props: {
     allocationResults: Array,
@@ -38,6 +34,8 @@ export default {
       options: 'getPatternDropDown',
       types: 'getPayloadTypeDropDown',
       currentOptions: 'getCurrentPayloadOptions',
+      rowOptions: 'getRowsDropDown',
+      colOptions: 'getColsDropDown',
     }),
     rowStart: {
       get() {
@@ -120,10 +118,9 @@ export default {
         // this.$store.commit('DELETE_PAYLOAD');
         this.handleUpdateRule({
           payload_type: this.$store.state.rule.currentRule.payload_type,
+        }).then(() => {
+          this.$store.commit('DELETE_PAYLOAD');
         });
-        // .then(() => {
-        //   this.$store.commit('DELETE_PAYLOAD');
-        // });
       },
     },
     payload: {

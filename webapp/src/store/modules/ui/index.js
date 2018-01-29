@@ -41,6 +41,74 @@ export const state = {
       value: 'Consecutive',
     },
   ],
+  rowsDropDown: [
+    {
+      text: 'A',
+      value: 'A',
+    },
+    {
+      text: 'B',
+      value: 'B',
+    },
+    {
+      text: 'C',
+      value: 'C',
+    },
+    {
+      text: 'D',
+      value: 'D',
+    },
+    {
+      text: 'E',
+      value: 'E',
+    },
+    {
+      text: 'F',
+      value: 'F',
+    },
+    {
+      text: 'G',
+      value: 'G',
+    },
+    {
+      text: 'H',
+      value: 'H',
+    },
+    {
+      text: 'I',
+      value: 'I',
+    },
+    {
+      text: 'J',
+      value: 'J',
+    },
+    {
+      text: 'K',
+      value: 'K',
+    },
+  ],
+  colsDropDown: [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    1,
+    18,
+    19,
+    20,
+  ],
 };
 
 const actions = {};
@@ -75,6 +143,12 @@ const getters = {
   },
   getPayloadTypeDropDown() {
     return state.payloadTypeDropDown;
+  },
+  getRowsDropDown() {
+    return state.rowsDropDown;
+  },
+  getColsDropDown() {
+    return state.colsDropDown;
   },
 };
 

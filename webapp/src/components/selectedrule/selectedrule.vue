@@ -94,28 +94,45 @@
                     <div class="col-2 text-left">
                         <label>Rows</label>
                     </div>
-                    <div class="col-2">
-                        <input style="width:50px" v-model="rowStart" >
+                    <div class="col-3">
+
+                        <select v-model="rowStart" class="btn btn-info dropdown-toggle">
+                            <option v-for="option in rowOptions" v-bind:value="option.value">
+                                <b>{{option.value}}</b>
+                            </option>
+                        </select>
                     </div>
                     <div class="col-2 text-right">
                         <label>to</label>
                     </div>
                     <div class="col-1 ">
-                        <input style="width:50px" v-model="rowEnd" >
+                        <select v-model="rowEnd" class="btn btn-info dropdown-toggle">
+                            <option v-for="option in rowOptions" v-bind:value="option.value">
+                                <b>{{option.value}}</b>
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <div class="row mt-3">
                     <div class="col-2 text-left">
                         <label>Col</label>
                     </div>
-                    <div class="col-2">
-                        <input style="width:50px" v-model="colStart" >
+                    <div class="col-3">
+                        <select v-model="colStart" class="btn btn-info dropdown-toggle">
+                            <option v-for="option in colOptions" v-bind:value="option">
+                                <b>{{option}}</b>
+                            </option>
+                        </select>
                     </div>
                     <div class="col-2 text-right">
                         <label>to</label>
                     </div>
-                    <div class="col-1">
-                        <input style="width:50px" v-model="colEnd" >
+                    <div class="col-1">                        
+                        <select v-model="colEnd" class="btn btn-info dropdown-toggle">
+                            <option v-for="option in colOptions" v-bind:value="option">
+                                <b>{{option}}</b>
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
