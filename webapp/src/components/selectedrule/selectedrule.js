@@ -117,12 +117,13 @@ export default {
       set(value) {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
         this.$store.commit('SET_PAYLOAD_OPTIONS', value);
-        this.$store.commit('DELETE_PAYLOAD');
+        // this.$store.commit('DELETE_PAYLOAD');
         this.handleUpdateRule({
           payload_type: this.$store.state.rule.currentRule.payload_type,
-        }).then(() => {
-          this.$store.commit('DELETE_PAYLOAD');
         });
+        // .then(() => {
+        //   this.$store.commit('DELETE_PAYLOAD');
+        // });
       },
     },
     payload: {
@@ -159,8 +160,6 @@ export default {
     zoomOut() {
       zoomOut();
     },
-    validateRowRange() {},
-    validateColRange() {},
     drawTableImage(currentSelection) {
       const url = makeSVG(
         window.URL || window.webkitURL || window,
@@ -170,10 +169,13 @@ export default {
       element.style.backgroundImage = `url('${url}')`;
       this.$store.commit('SET_PLATE_IMAGE_URL', url);
     },
-    handleDeleteValue(evt) {
-      const updatedRule = _.filter(this.payload, (x, i) => i !== evt.oldIndex);
+    handleDeleteValue(index) {
+      const updatedRule = _.filter(this.payload, (x, i) => i !== index);
       this.$store.commit('UPDATE_PAYLOAD', updatedRule);
-      this.handleUpdateRule();
+
+      this.handleUpdateRule({
+        payload_csv: this.$store.state.rule.currentRule.payload_csv.toString(),
+      });
     },
     async handleUpdateRule(data) {
       try {
@@ -197,31 +199,14 @@ export default {
     handleUserInput(data) {
       this.$store.commit('SET_PAYLOAD', _.map(data, x => parseInt(x, 10)));
       if (!_.isEmpty(data)) {
-        this.handleUpdateRule();
+        this.handleUpdateRule({
+          payload_csv: this.$store.state.rule.currentRule.payload_csv.toString(),
+        });
       }
     },
     handleTextBoxDel() {
       this.userText[this.textBoxNo] = undefined;
       this.textBoxNo -= 1;
-    },
-    async handleSaveRule() {
-      try {
-        await this.addAllocationRule({
-          data: {
-            ...this.$store.state.rule.currentRule,
-            payload_csv: this.$store.state.rule.currentRule.payload_csv.toString(),
-          },
-          url: 'http://localhost:8000/api/allocrules/',
-        });
-        const experiment = await this.fetchExperiment(this.$route.params.expt);
-        this.$store.commit(
-          'SET_CURRENT_PLATE',
-          experiment.plates[parseInt(this.$route.params.plateId, 10)],
-        );
-        this.$emit('ruleChanged');
-      } catch (err) {
-        this.$emit('error', err);
-      }
     },
   },
 };

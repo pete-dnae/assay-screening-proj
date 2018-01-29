@@ -46,13 +46,13 @@
             <div class="col-5">
                 <div class="row">
                     <transition name="custom-classes-transition" enter-active-class="animated fadeInLeft" leave-active-class="animated bounceOutRight">
-                        <draggable v-model="payload" v-show="show" class="w-100 list-group" @filter="handleDeleteValue" :options="{filter:'.fa-trash-o',chosenClass: 'active'}">
+                        <draggable v-model="payload" v-show="show" class="w-100 list-group"  :options="{filter:'.fa-trash-o',chosenClass: 'active'}">
 
-                            <button class="list-group-item list-group-item-action text-left" v-for="element in payload" :key="element.id">
+                            <button class="list-group-item list-group-item-action text-left" v-for="element,key in payload" :key="element.id">
                                 <div class="row">
                                     <i class="fa fa-bars  col-1 grab" aria-hidden="true"></i>
                                     <label class="col">{{element}}</label>
-                                    <i class="fa fa-trash-o btn btn-warning" aria-hidden="true"></i>
+                                    <i class="fa fa-trash-o btn btn-warning" @click="handleDeleteValue(key)" aria-hidden="true"></i>
                                 </div>
                             </button>
 
@@ -95,13 +95,13 @@
                         <label>Rows</label>
                     </div>
                     <div class="col-2">
-                        <input style="width:50px" v-model="rowStart" @keyup="validateRowRange">
+                        <input style="width:50px" v-model="rowStart" >
                     </div>
                     <div class="col-2 text-right">
                         <label>to</label>
                     </div>
                     <div class="col-1 ">
-                        <input style="width:50px" v-model="rowEnd" @keyup="validateRowRange">
+                        <input style="width:50px" v-model="rowEnd" >
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -109,13 +109,13 @@
                         <label>Col</label>
                     </div>
                     <div class="col-2">
-                        <input style="width:50px" v-model="colStart" @keyup="validateColRange">
+                        <input style="width:50px" v-model="colStart" >
                     </div>
                     <div class="col-2 text-right">
                         <label>to</label>
                     </div>
                     <div class="col-1">
-                        <input style="width:50px" v-model="colEnd" @keyup="validateRowRange">
+                        <input style="width:50px" v-model="colEnd" >
                     </div>
                 </div>
             </div>
