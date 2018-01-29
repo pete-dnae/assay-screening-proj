@@ -19,6 +19,7 @@ export default {
     ...mapGetters({
       spin: 'getPostingStatus',
       allocationResults: 'getAllocationResults',
+      defaultRule: 'getDefaultRule',
     }),
     rules: {
       get() {
@@ -55,11 +56,25 @@ export default {
       );
       this.$emit('ruleDeleted');
     },
-    async handleAddRule() {
+    async handleAddRule({ copy, id }) {
       try {
-        await this.addAllocationRule({
+        const newRule = await this.addAllocationRule({
+          data: copy
+            ? {
+                ..._.find(this.rules, {
+                  id,
+                }),
+                payload_csv: _.find(this.rules, {
+                  id,
+                }).payload_csv.toString(),
+              }
+            : this.defaultRule,
+          url: 'http://localhost:8000/api/allocrules/',
+        });
+
+        await this.updateAllocationRules({
           data: {
-            rule_to_copy: this.$store.state.rule.currentRule.id,
+            new_rules: _.map(this.rules, 'id').concat(newRule.id),
           },
           url: this.$store.state.plate.currentPlate.data.allocation_instructions
             .rule_list.url,

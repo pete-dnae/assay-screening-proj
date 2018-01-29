@@ -49,7 +49,9 @@ export default {
           rows: genCharArray(value, this.rowEnd),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
-        this.handleUpdateRule();
+        this.handleUpdateRule({
+          start_row_letter: this.$store.state.rule.currentRule.start_row_letter,
+        });
       },
     },
     rowEnd: {
@@ -62,7 +64,9 @@ export default {
           rows: genCharArray(this.rowStart, value),
           cols: _.range(this.colStart - 1, this.colEnd),
         });
-        this.handleUpdateRule();
+        this.handleUpdateRule({
+          end_row_letter: this.$store.state.rule.currentRule.end_row_letter,
+        });
       },
     },
     colStart: {
@@ -75,7 +79,9 @@ export default {
           rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(value - 1, this.colEnd),
         });
-        this.handleUpdateRule();
+        this.handleUpdateRule({
+          start_column: this.$store.state.rule.currentRule.start_column,
+        });
       },
     },
     colEnd: {
@@ -88,7 +94,9 @@ export default {
           rows: genCharArray(this.rowStart, this.rowEnd),
           cols: _.range(this.colStart - 1, value),
         });
-        this.handleUpdateRule();
+        this.handleUpdateRule({
+          end_column: this.$store.state.rule.currentRule.end_column,
+        });
       },
     },
     distPattern: {
@@ -97,7 +105,9 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_DIST_PATTERN', value);
-        this.handleUpdateRule();
+        this.handleUpdateRule({
+          pattern: this.$store.state.rule.currentRule.pattern,
+        });
       },
     },
     payloadType: {
@@ -107,7 +117,10 @@ export default {
       set(value) {
         this.$store.commit('SET_PAYLOAD_TYPE', value);
         this.$store.commit('SET_PAYLOAD_OPTIONS', value);
-        this.handleUpdateRule().then(() => {
+        this.$store.commit('DELETE_PAYLOAD');
+        this.handleUpdateRule({
+          payload_type: this.$store.state.rule.currentRule.payload_type,
+        }).then(() => {
           this.$store.commit('DELETE_PAYLOAD');
         });
       },
@@ -120,17 +133,26 @@ export default {
         if (this.selectMode) {
           this.$store.commit('SET_PAYLOAD', value);
 
-          this.handleUpdateRule();
+          this.handleUpdateRule({
+            payload_csv: this.$store.state.rule.currentRule.payload_csv.toString(),
+          });
         } else {
           this.$store.commit('REORDER_PAYLOAD', value);
 
-          this.handleUpdateRule();
+          this.handleUpdateRule({
+            payload_csv: this.$store.state.rule.currentRule.payload_csv.toString(),
+          });
         }
       },
     },
   },
   methods: {
-    ...mapActions(['updateRule', 'fetchPlate']),
+    ...mapActions([
+      'updateRule',
+      'fetchPlate',
+      'addAllocationRule',
+      'fetchExperiment',
+    ]),
     zoomIn(event) {
       zoomIn(event);
     },
@@ -148,22 +170,17 @@ export default {
       element.style.backgroundImage = `url('${url}')`;
       this.$store.commit('SET_PLATE_IMAGE_URL', url);
     },
-    handleAddValue() {
-      const newIndex = getNewIndex('id', this.element.value);
-      this.element.value.push({
-        id: newIndex,
-        value: this.textElem,
-      });
-      this.textElem = '';
-    },
     handleDeleteValue(evt) {
       const updatedRule = _.filter(this.payload, (x, i) => i !== evt.oldIndex);
       this.$store.commit('UPDATE_PAYLOAD', updatedRule);
       this.handleUpdateRule();
     },
-    async handleUpdateRule() {
+    async handleUpdateRule(data) {
       try {
-        await this.updateRule(this.$store.state.rule.currentRule.url);
+        await this.updateRule({
+          data,
+          url: this.$store.state.rule.currentRule.url,
+        });
         const plateData = await this.fetchPlate(
           parseInt(this.$route.params.plateId + 1, 10),
         );
@@ -186,6 +203,25 @@ export default {
     handleTextBoxDel() {
       this.userText[this.textBoxNo] = undefined;
       this.textBoxNo -= 1;
+    },
+    async handleSaveRule() {
+      try {
+        await this.addAllocationRule({
+          data: {
+            ...this.$store.state.rule.currentRule,
+            payload_csv: this.$store.state.rule.currentRule.payload_csv.toString(),
+          },
+          url: 'http://localhost:8000/api/allocrules/',
+        });
+        const experiment = await this.fetchExperiment(this.$route.params.expt);
+        this.$store.commit(
+          'SET_CURRENT_PLATE',
+          experiment.plates[parseInt(this.$route.params.plateId, 10)],
+        );
+        this.$emit('ruleChanged');
+      } catch (err) {
+        this.$emit('error', err);
+      }
     },
   },
 };

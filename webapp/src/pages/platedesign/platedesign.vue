@@ -30,13 +30,14 @@
   </div>
     <div class="row m-5">
         <div class="col">
-            <allocationrules @selectedRule="handleSelectedRule" @ruleDeleted="handleRuleDelete" @error="handleErrors" @ruleChanged="handleRuleChange"></allocationrules>
+            <allocationrules @selectedRule="handleSelectedRule" @ruleDeleted="handleRuleDelete"  @error="handleErrors" ></allocationrules>
             <transition name="custom-classes-transition" enter-active-class="animated fadeInLeft" leave-active-class="animated zoomOut">
             <selectedrule
             v-if="show"
             :image="plateImage"
             :allocationResults="allocationResults"
             @error="handleErrors"
+            @ruleChanged="handleRuleChange"
             ></selectedrule>
           </transition>
         </div>

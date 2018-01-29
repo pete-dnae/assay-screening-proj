@@ -22,15 +22,21 @@ export const state = {
     posted: false,
     didInvalidate: false,
   },
+  defaultRule: {
+    end_column: 12,
+    end_row_letter: 'C',
+    pattern: 'Consecutive',
+    payload_type: 'Strain Count',
+    payload_csv: '50',
+    start_column: 1,
+    start_row_letter: 'A',
+  },
 };
 
 const actions = {
-  updateRule({ commit }, url) {
+  updateRule({ commit }, { data, url }) {
     commit(types.REQUEST_UPDATE_RULE);
-    const data = {
-      ...state.currentRule,
-      payload_csv: state.currentRule.payload_csv.toString(),
-    };
+
     return new Promise(function(resolve, reject) {
       api
         .updateRule(url, data)
@@ -127,6 +133,9 @@ const getters = {
   },
   getPayload(state, getters, rootState) {
     return state.currentRule.payload_csv;
+  },
+  getDefaultRule(state, getters, rootState) {
+    return state.defaultRule;
   },
 };
 

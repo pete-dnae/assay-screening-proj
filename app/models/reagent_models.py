@@ -17,8 +17,7 @@ from .odds_and_ends_models import mk_choices
 class Concentration(models.Model):
     """
     A utility class to encapsulate one particular concentraction value
-    """.
-
+    """
     units_choices = mk_choices((
         'X',
         'mM',

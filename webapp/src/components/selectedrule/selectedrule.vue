@@ -52,7 +52,7 @@
                                 <div class="row">
                                     <i class="fa fa-bars  col-1 grab" aria-hidden="true"></i>
                                     <label class="col">{{element}}</label>
-                                    <i class="fa fa-trash-o btn btn-warning" aria-hidden="true"></i>                                    
+                                    <i class="fa fa-trash-o btn btn-warning" aria-hidden="true"></i>
                                 </div>
                             </button>
 
@@ -119,7 +119,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col mr-2">
                 <img :src="image" id="imgZoom" class="zoomIn" v-on:mousemove="zoomIn" style="max-width: 100%;height: auto;">
                 <label class="blockquote-footer text-left">Hover over thumbnail to zoom</label>
             </div>

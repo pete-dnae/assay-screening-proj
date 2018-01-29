@@ -79,11 +79,13 @@ const actions = {
 const mutations = {
   [types.SET_CURRENT_PLATE](state, data) {
     state.currentPlate.data = data;
-    state.currentPlate.data.allocation_instructions.rule_list.rules = state.currentPlate.data.allocation_instructions.rule_list.rules.map(
-      (x, i) => {
-        return { ...x, id: i + 1 };
-      },
-    );
+    state.currentPlate.data.allocation_instructions.rule_list.rules =
+      state.currentPlate.data.allocation_instructions.rule_list.rules;
+    // .map(
+    //   (x, i) => {
+    //     return { ...x, id: i + 1 };
+    //   },
+    // );
   },
   [types.SET_PLATE_IMAGE_URL](state, url) {
     state.plateImageUrl = url;

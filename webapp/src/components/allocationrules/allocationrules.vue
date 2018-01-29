@@ -30,6 +30,7 @@
                     <i class="fa fa-bars col-1  grab" aria-hidden="true"></i>
                     <label class="col overflow" >{{element.display_string}}</label>
                     <i class="fa fa-trash-o btn btn-warning" aria-hidden="true"></i>
+                    <i class="fa fa-files-o btn btn-primary ml-1" @click="handleAddRule({copy:true,id:element.id})" aria-hidden="true"></i>
                 </div>
             </button>
 
@@ -43,7 +44,7 @@
         </div>
         <div class="col-4 text-right">
 
-            <i class="fa fa-plus-square fa-2x" @click="handleAddRule" aria-hidden="true"></i>
+            <i class="fa fa-plus-square fa-2x" @click="handleAddRule({copy:false,id:null})" aria-hidden="true"></i>
 
         </div>
     </div>
