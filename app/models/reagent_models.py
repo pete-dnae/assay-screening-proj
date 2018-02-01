@@ -99,3 +99,26 @@ class MasterMix(models.Model):
     template = models.ForeignKey(PlaceholderReagent,
         related_name='master_mix_template', on_delete=models.PROTECT)
     final_volume = models.PositiveIntegerField()
+    
+    def intelligent_copy(self):
+        """
+        Knows how to make (and save) a new instance of this model, including
+        making a judgement about which attributes (recursively must also be
+        replicated, vs which can be left shared).
+        """
+        # General solution is to set primary key on self to None and then 
+        # save() self thus getting a new object with a new primary key. But 
+        # in between of course recursively copying the attributes in cases
+        # where these must not remain shared between the original and the copy.
+        self.pk = None
+
+        self.water = self.water.intelligent_copy()
+        # TODO FINISH THESE
+        #self.buffer_mix = self.buffer_mix.intelligent_copy()
+        #self.primers = self.primers.intelligent_copy()
+        #self.hgDNA = self.hgDNA.intelligent_copy()
+        #self.template = self.template.intelligent_copy()
+
+        self.save()
+        return self
+
