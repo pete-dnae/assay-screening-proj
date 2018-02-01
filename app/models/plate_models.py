@@ -118,6 +118,7 @@ class AllocRule(models.Model):
         items = [i.strip() for i in items]
         return items
 
+    # todo consider moving this into __str or __repr
     def display_string(self):
         """
         E.g.
