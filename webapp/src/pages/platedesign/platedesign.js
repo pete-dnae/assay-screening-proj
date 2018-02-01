@@ -51,12 +51,8 @@ export default {
       this.$store.commit('SET_PAYLOAD_OPTIONS', ruleElem.payload_type);
       this.show = true;
     },
-    zoomIn(event) {
-      zoomIn(event);
-    },
-    zoomOut(event) {
-      zoomOut(event);
-    },
+    zoomIn,
+    zoomOut,
     drawTableImage() {
       const url = makeSVG(
         window.URL || window.webkitURL || window,
