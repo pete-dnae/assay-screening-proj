@@ -151,12 +151,8 @@ export default {
       'addAllocationRule',
       'fetchExperiment',
     ]),
-    zoomIn(event) {
-      zoomIn(event);
-    },
-    zoomOut() {
-      zoomOut();
-    },
+    zoomIn,
+    zoomOut,
     drawTableImage(currentSelection) {
       const url = makeSVG(
         window.URL || window.webkitURL || window,
