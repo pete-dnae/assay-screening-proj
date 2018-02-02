@@ -13,6 +13,10 @@ class Arg(models.Model):
     """
     name = models.CharField(max_length=30, unique=True)
 
+    @classmethod
+    def make(cls, name):
+        return Arg.objects.create(name=name)
+
 
 class Strain(models.Model):
     """
@@ -34,6 +38,13 @@ class Strain(models.Model):
         if self.arg:
             buf = '_'.join((buf, self.arg.name))
         return buf
+
+    @classmethod
+    def make(cls, name, organism_abbreviation, arg_name, genome_size):
+        organism = Organism.objects.get(abbreviation=organism_abbreviation)
+        arg = Arg.objects.get(name=arg_name) if arg_name else None
+        Strain.objects.create(name=name, organism=organism, 
+            arg=arg, genome_size=genome_size)
 
 
 class StrainKit(models.Model):

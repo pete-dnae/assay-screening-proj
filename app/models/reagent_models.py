@@ -33,6 +33,11 @@ class Concentration(models.Model):
     final = models.DecimalField(max_digits=8, decimal_places=2)
     units = models.CharField(max_length=15, choices=units_choices)
 
+    @classmethod
+    def make(cls, stock, final, units):
+        return Concentration.objects.create(
+            stock=stock, final=final, units=units)
+
 
 class ConcreteReagent(models.Model):
     """
@@ -44,6 +49,13 @@ class ConcreteReagent(models.Model):
     lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
         Concentration, related_name='reagent', on_delete=models.PROTECT)
+
+    @classmethod
+    def make(self, name, lot, stock, final, units):
+        concentration = Concentration.make(stock, final, units)
+        reagent = ConcreteReagent.objects.create(
+            name=name, lot=lot, concentration=concentration)
+        return reagent
 
 
 class BufferMix(models.Model):
@@ -80,6 +92,13 @@ class PlaceholderReagent(models.Model):
     type = models.CharField(max_length=15, choices=type_choices)
     concentration = models.ForeignKey(Concentration, 
         related_name='placeholder_reagent', on_delete=models.PROTECT)
+
+    @classmethod
+    def make(self, placeholder_type, stock, final, units):
+        return PlaceholderReagent.objects.create(
+            type=placeholder_type,
+            concentration=Concentration.make(stock, final, units)
+        )
 
 
 class MasterMix(models.Model):

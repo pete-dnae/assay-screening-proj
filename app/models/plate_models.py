@@ -102,6 +102,21 @@ class AllocRule(models.Model):
             raise ValidationError(
                 'Start column must not be greater than end column')
 
+    @classmethod
+    def make(cls, rank_for_ordering, payload_type, payload_csv,
+            pattern, zone):
+        sr, er, sc, ec = zone
+        return AllocRule.objects.create(
+            rank_for_ordering=rank_for_ordering,
+            payload_type=payload_type,
+            payload_csv=payload_csv,
+            pattern=pattern,
+            start_row_letter=sr,
+            end_row_letter=er,
+            start_column=sc,
+            end_column=ec,
+        )
+
     def enumerate_applicable_rows(self):
         start = ord(self.start_row_letter) - ord('A')
         end = ord(self.end_row_letter) - ord('A')

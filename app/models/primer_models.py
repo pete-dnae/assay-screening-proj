@@ -23,6 +23,10 @@ class Organism(models.Model):
     abbreviation = models.CharField(max_length=8, unique=True)
     full_name = models.CharField(max_length=30, unique=True)
 
+    @classmethod
+    def make(cls, abbr, full_name):
+        return Organism.objects.create(abbreviation=abbr, full_name=full_name)
+
 
 class Primer(models.Model):
     """
@@ -39,6 +43,17 @@ class Primer(models.Model):
         related_name='primer', on_delete=models.PROTECT)
     gene = models.ForeignKey(Gene, 
         related_name='primer', on_delete=models.PROTECT)
+
+
+    @classmethod
+    def make(self, organism, primer_name, fwd_or_rev, gene):
+        return Primer.objects.create(
+            oligo_code=organism,
+            full_name=primer_name,
+            role=fwd_or_rev,
+            organism=Organism.objects.get(abbreviation=organism),
+            gene=Gene.objects.get(name=gene),
+        )
 
 
 class PrimerPair(models.Model):
@@ -74,6 +89,15 @@ class PrimerPair(models.Model):
             self.forward_primer.full_name,
             self.reverse_primer.full_name,
             )
+        )
+
+    @classmethod
+    def make(cls, fwd_name, rev_name, for_pa, for_id):
+        PrimerPair.objects.create(
+            forward_primer = Primer.objects.get(full_name=fwd_name),
+            reverse_primer = Primer.objects.get(full_name=rev_name),
+            suitable_for_pa = for_pa,
+            suitable_for_id = for_id,
         )
 
 
