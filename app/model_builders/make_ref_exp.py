@@ -39,29 +39,18 @@ class ReferenceExperiment():
         self._create_genes_and_primers()
 
     def _create_concrete_reagents(self):
-        self._create_concrete_reagent('BSA', '-', 20, 1, 'mg/ml')
-        self._create_concrete_reagent('DNA Free Water', '22884100', 0, 0, 'X')
-        self._create_concrete_reagent('dNTPs', '-', 10, 0.2, 'mM each')
-        self._create_concrete_reagent('KCl', '-', 1000, 48, 'mM')
-        self._create_concrete_reagent('KOH', '-', 100, 1, 'mM')
-        self._create_concrete_reagent('MgCl2', '449890', 25, 2.06, 'mM')
-        self._create_concrete_reagent('Titanium PCR Buffer', '1602046A', 
+        ConcreteReagent.make('BSA', '-', 20, 1, 'mg/ml')
+        ConcreteReagent.make('DNA Free Water', '22884100', 0, 0, 'X')
+        ConcreteReagent.make('dNTPs', '-', 10, 0.2, 'mM each')
+        ConcreteReagent.make('KCl', '-', 1000, 48, 'mM')
+        ConcreteReagent.make('KOH', '-', 100, 1, 'mM')
+        ConcreteReagent.make('MgCl2', '449890', 25, 2.06, 'mM')
+        ConcreteReagent.make('Titanium PCR Buffer', '1602046A', 
             10, 0.13, 'X')
-        self._create_concrete_reagent('SYBRgreen', '-', 100, 0.32, 'X')
-        self._create_concrete_reagent('Titanium Taq', '1607230A', 50, 1.0, 'x')
-        self._create_concrete_reagent('Titanium Taq', '1607230A', 50, 1.3, 'x')
-        self._create_concrete_reagent('Triton', '-', 10, 0.04, '%')
-
-
-    def _create_concrete_reagent(self, name, lot, stock, final, units):
-        concentration = self._make_concentration(stock, final, units)
-        reagent = ConcreteReagent.objects.create(
-            name=name, lot=lot, concentration=concentration)
-        return reagent
-
-    def _make_concentration(self, stock, final, units):
-        return Concentration.objects.create(
-            stock=stock, final=final, units=units)
+        ConcreteReagent.make('SYBRgreen', '-', 100, 0.32, 'X')
+        ConcreteReagent.make('Titanium Taq', '1607230A', 50, 1.0, 'x')
+        ConcreteReagent.make('Titanium Taq', '1607230A', 50, 1.3, 'x')
+        ConcreteReagent.make('Triton', '-', 10, 0.04, '%')
 
 
     def _create_organisms_and_strains(self):
@@ -70,42 +59,29 @@ class ReferenceExperiment():
         self._create_strains()
 
     def _create_organisms(self):
-        Organism.objects.create(
-            abbreviation='Eco', full_name='Escherichia coli')
-        Organism.objects.create(
-            abbreviation='Efm', full_name='Enterococcus faecium')
-        Organism.objects.create(
-            abbreviation='Efs', full_name='Enterococcus faecalis')
-        Organism.objects.create(
-            abbreviation='Kox', full_name='Klebsiella oxytoca')
-        Organism.objects.create(
-            abbreviation='Kpn', full_name='Klebsiella pneumoniae')
-        Organism.objects.create(
-            abbreviation='Pmi', full_name='Proteus mirabilis')
-        Organism.objects.create(
-            abbreviation='Spo', full_name='Schizosaccharomyces pombe')
+        Organism.make('Eco', 'Escherichia coli')
+        Organism.make('Efm', 'Enterococcus faecium')
+        Organism.make('Efs', 'Enterococcus faecalis')
+        Organism.make('Kox', 'Klebsiella oxytoca')
+        Organism.make('Kpn', 'Klebsiella pneumoniae')
+        Organism.make('Pmi', 'Proteus mirabilis')
+        Organism.make('Spo', 'Schizosaccharomyces pombe')
 
     def _create_args(self):
-        Arg.objects.create(name='CTX-M9 TEM-WT')
-        Arg.objects.create(name='KPC')
-        Arg.objects.create(name='vanA')
-        Arg.objects.create(name='vanB')
+        Arg.make('CTX-M9 TEM-WT')
+        Arg.make('KPC')
+        Arg.make('vanA')
+        Arg.make('vanB')
 
     def _create_strains(self):
-        self._create_strain('ATCC 15764', 'Kox', None, 6684900)
-        self._create_strain('ATCC 26189', 'Spo', None, 12570000)
-        self._create_strain('ATCC 700802', 'Efs', 'vanB', 3220000)
-        self._create_strain('ATCC BAA-1705', 'Kpn', 'KPC', 5300000)
-        self._create_strain('ATCC BAA-2317', 'Efm', 'vanA', 2698130)
-        self._create_strain('ATCC BAA-2355', 'Eco', 'vanA', 4600000)
-        self._create_strain('ATCC BAA-633', 'Pmi', None, 4063000)
+        Strain.make('ATCC 15764', 'Kox', None, 6684900)
+        Strain.make('ATCC 26189', 'Spo', None, 12570000)
+        Strain.make('ATCC 700802', 'Efs', 'vanB', 3220000)
+        Strain.make('ATCC BAA-1705', 'Kpn', 'KPC', 5300000)
+        Strain.make('ATCC BAA-2317', 'Efm', 'vanA', 2698130)
+        Strain.make('ATCC BAA-2355', 'Eco', 'vanA', 4600000)
+        Strain.make('ATCC BAA-633', 'Pmi', None, 4063000)
 
-    def _create_strain(self, strain_name, organism_abbreviation, 
-            arg_name, genome_size):
-        organism = Organism.objects.get(abbreviation=organism_abbreviation)
-        arg = Arg.objects.get(name=arg_name) if arg_name else None
-        Strain.objects.create(name=strain_name, organism=organism, 
-            arg=arg, genome_size=genome_size)
         
     def _create_genes_and_primers(self):
         self._create_genes()
@@ -128,81 +104,64 @@ class ReferenceExperiment():
         # Ordering with groups is PA then ID.
         # Secondary ordering is 'fwd' / 'rev'
 
-        self._create_primer('Eco', 'Eco63', 'fwd', 'uidA')
-        self._create_primer('Eco', 'Eco60', 'rev', 'uidA')
-        self._create_primer('Eco', 'Eco64', 'fwd', 'uidA')
-        self._create_primer('Eco', 'Eco66', 'rev', 'uidA')
+        Primer.make('Eco', 'Eco63', 'fwd', 'uidA')
+        Primer.make('Eco', 'Eco60', 'rev', 'uidA')
+        Primer.make('Eco', 'Eco64', 'fwd', 'uidA')
+        Primer.make('Eco', 'Eco66', 'rev', 'uidA')
 
-        self._create_primer('Efm', 'van05', 'fwd', 'vanA')
-        self._create_primer('Efm', 'van01', 'rev', 'vanA')
-        self._create_primer('Efm', 'van04', 'fwd', 'vanA')
-        self._create_primer('Efm', 'van02', 'rev', 'vanA')
+        Primer.make('Efm', 'van05', 'fwd', 'vanA')
+        Primer.make('Efm', 'van01', 'rev', 'vanA')
+        Primer.make('Efm', 'van04', 'fwd', 'vanA')
+        Primer.make('Efm', 'van02', 'rev', 'vanA')
 
-        self._create_primer('Efs', 'Efs04', 'fwd', 'cpn60')
-        self._create_primer('Efs', 'Efs01', 'rev', 'cpn60')
-        self._create_primer('Efs', 'Efs03', 'fwd', 'cpn60')
-        self._create_primer('Efs', 'Efs02', 'rev', 'cpn60')
+        Primer.make('Efs', 'Efs04', 'fwd', 'cpn60')
+        Primer.make('Efs', 'Efs01', 'rev', 'cpn60')
+        Primer.make('Efs', 'Efs03', 'fwd', 'cpn60')
+        Primer.make('Efs', 'Efs02', 'rev', 'cpn60')
 
-        self._create_primer('Efs', 'van10', 'fwd', 'vanB')
-        self._create_primer('Efs', 'van06', 'rev', 'vanB')
-        self._create_primer('Efs', 'van30', 'fwd', 'vanB')
-        self._create_primer('Efs', 'van33', 'rev', 'vanB')
+        Primer.make('Efs', 'van10', 'fwd', 'vanB')
+        Primer.make('Efs', 'van06', 'rev', 'vanB')
+        Primer.make('Efs', 'van30', 'fwd', 'vanB')
+        Primer.make('Efs', 'van33', 'rev', 'vanB')
 
-        self._create_primer('Kox', 'Kox05', 'fwd', 'peh')
-        self._create_primer('Kox', 'Kox02', 'rev', 'peh')
-        self._create_primer('Kox', 'Kox04', 'fwd', 'peh')
-        self._create_primer('Kox', 'Kox03', 'rev', 'peh')
+        Primer.make('Kox', 'Kox05', 'fwd', 'peh')
+        Primer.make('Kox', 'Kox02', 'rev', 'peh')
+        Primer.make('Kox', 'Kox04', 'fwd', 'peh')
+        Primer.make('Kox', 'Kox03', 'rev', 'peh')
 
-        self._create_primer('Kpn', 'Kpn13', 'fwd', 'khe')
-        self._create_primer('Kpn', 'Kpn01', 'rev', 'khe')
-        self._create_primer('Kpn', 'Kpn03', 'fwd', 'khe')
-        self._create_primer('Kpn', 'Kpn02', 'rev', 'khe')
+        Primer.make('Kpn', 'Kpn13', 'fwd', 'khe')
+        Primer.make('Kpn', 'Kpn01', 'rev', 'khe')
+        Primer.make('Kpn', 'Kpn03', 'fwd', 'khe')
+        Primer.make('Kpn', 'Kpn02', 'rev', 'khe')
 
-        self._create_primer('Pmi', 'Pmi01', 'fwd', 'zapA')
-        self._create_primer('Pmi', 'Pmi05', 'rev', 'zapA')
-        self._create_primer('Pmi', 'Pmi02', 'fwd', 'zapA')
-        self._create_primer('Pmi', 'Pmi03', 'rev', 'zapA')
+        Primer.make('Pmi', 'Pmi01', 'fwd', 'zapA')
+        Primer.make('Pmi', 'Pmi05', 'rev', 'zapA')
+        Primer.make('Pmi', 'Pmi02', 'fwd', 'zapA')
+        Primer.make('Pmi', 'Pmi03', 'rev', 'zapA')
 
-        self._create_primer('Spo', 'Spo09', 'fwd', 'gp')
-        self._create_primer('Spo', 'Spo13', 'rev', 'gp')
-        self._create_primer('Spo', 'Spo03', 'fwd', 'gp')
-        self._create_primer('Spo', 'Spo05', 'rev', 'gp')
-
-    def _create_primer(self, organism, primer_name, fwd_or_rev, gene):
-        Primer.objects.create(
-            oligo_code=organism,
-            full_name=primer_name,
-            role=fwd_or_rev,
-            organism=Organism.objects.get(abbreviation=organism),
-            gene=Gene.objects.get(name=gene),
-        )
+        Primer.make('Spo', 'Spo09', 'fwd', 'gp')
+        Primer.make('Spo', 'Spo13', 'rev', 'gp')
+        Primer.make('Spo', 'Spo03', 'fwd', 'gp')
+        Primer.make('Spo', 'Spo05', 'rev', 'gp')
 
     def _create_primer_pairs(self):
-        self._create_primer_pair('Eco63', 'Eco60', True, False)
-        self._create_primer_pair('Efs04', 'Efs01', True, False)
-        self._create_primer_pair('van10', 'van06', True, False)
-        self._create_primer_pair('van05', 'van01', True, False)
-        self._create_primer_pair('Kox05', 'Kox02', True, False)
-        self._create_primer_pair('Kpn13', 'Kpn01', True, False)
-        self._create_primer_pair('Pmi01', 'Pmi05', True, False)
-        self._create_primer_pair('Spo09', 'Spo13', True, False)
+        PrimerPair.make('Eco63', 'Eco60', True, False)
+        PrimerPair.make('Efs04', 'Efs01', True, False)
+        PrimerPair.make('van10', 'van06', True, False)
+        PrimerPair.make('van05', 'van01', True, False)
+        PrimerPair.make('Kox05', 'Kox02', True, False)
+        PrimerPair.make('Kpn13', 'Kpn01', True, False)
+        PrimerPair.make('Pmi01', 'Pmi05', True, False)
+        PrimerPair.make('Spo09', 'Spo13', True, False)
 
-        self._create_primer_pair('Eco64', 'Eco66', False, True)
-        self._create_primer_pair('Efs03', 'Efs02', False, True)
-        self._create_primer_pair('van30', 'van33', False, True)
-        self._create_primer_pair('van04', 'van02', False, True)
-        self._create_primer_pair('Kox04', 'Kox03', False, True)
-        self._create_primer_pair('Kpn03', 'Kpn02', False, True)
-        self._create_primer_pair('Pmi02', 'Pmi03', False, True)
-        self._create_primer_pair('Spo03', 'Spo05', False, True)
-
-    def _create_primer_pair(self, fwd_name, rev_name, for_pa, for_id):
-        PrimerPair.objects.create(
-            forward_primer = Primer.objects.get(full_name=fwd_name),
-            reverse_primer = Primer.objects.get(full_name=rev_name),
-            suitable_for_pa = for_pa,
-            suitable_for_id = for_id,
-        )
+        PrimerPair.make('Eco64', 'Eco66', False, True)
+        PrimerPair.make('Efs03', 'Efs02', False, True)
+        PrimerPair.make('van30', 'van33', False, True)
+        PrimerPair.make('van04', 'van02', False, True)
+        PrimerPair.make('Kox04', 'Kox03', False, True)
+        PrimerPair.make('Kpn03', 'Kpn02', False, True)
+        PrimerPair.make('Pmi02', 'Pmi03', False, True)
+        PrimerPair.make('Spo03', 'Spo05', False, True)
 
 
     def _create_experiment(self):
@@ -230,13 +189,13 @@ class ReferenceExperiment():
                 name='DNA Free Water'),
             buffer_mix=MixedReagent.objects.create(
                 buffer_mix= self._create_pa_buffermix(),
-                concentration = self._make_concentration(3.3, 1, 'X'),
+                concentration = Concentration.make(3.3, 1, 'X'),
             ),
-            primers=self._create_placeholder_reagent(
+            primers=PlaceholderReagent.make(
                 'Primers', 10, 0.4, 'uM each'),
-            hgDNA=self._create_placeholder_reagent(
+            hgDNA=PlaceholderReagent.make(
                 'HgDNA', 120, 60, 'ng/ul'),
-            template=self._create_placeholder_reagent(
+            template=PlaceholderReagent.make(
                 'Template', 1, 0.1, 'cp/ul'),
         )
         return mastermix
@@ -248,12 +207,12 @@ class ReferenceExperiment():
                 name='DNA Free Water'),
             buffer_mix=MixedReagent.objects.create(
                 buffer_mix= self._create_id_buffermix(),
-                concentration = self._make_concentration(2, 1, 'X'),
+                concentration = Concentration.make(2, 1, 'X'),
             ),
-            primers=self._create_placeholder_reagent(
+            primers=PlaceholderReagent.make(
                 'Primers', 10, 0.4, 'uM each'),
             hgDNA=None,
-            template=self._create_placeholder_reagent(
+            template=PlaceholderReagent.make(
                 'Template', 10, 2.5, 'cp/ul'),
         )
         return mastermix
@@ -294,17 +253,10 @@ class ReferenceExperiment():
         return buffermix
 
 
-    def _create_placeholder_reagent(self, placeholder_type, 
-            stock, final, units):
-        return PlaceholderReagent.objects.create(
-            type=placeholder_type,
-            concentration=self._make_concentration(stock, final, units)
-        )
-
     def _create_primer_kit(self):
         kit = PrimerKit.objects.create(
-            fwd_concentration=self._make_concentration(10, 0.4, 'uM'),
-            rev_concentration=self._make_concentration(10, 0.4, 'uM'),
+            fwd_concentration=Concentration.make(10, 0.4, 'uM'),
+            rev_concentration=Concentration.make(10, 0.4, 'uM'),
         )
         self._add_pa_primers_to_kit(kit.pa_primers)
         self._add_id_primers_to_kit(kit.id_primers)
@@ -504,22 +456,8 @@ class ReferenceExperiment():
     def _add_rules_from_data(self, m2m_field, payload_type, data):
         for rule in data:
             payload, distribution_type, zone = rule
-            m2m_field.add(self._create_alloc_rule(self._tick(), 
+            m2m_field.add(AllocRule.make(self._tick(), 
                 payload_type, payload, distribution_type, zone))
-
-    def _create_alloc_rule(self, rank_for_ordering, payload_type, payload_csv,
-            pattern, zone):
-        sr, er, sc, ec = zone
-        return AllocRule.objects.create(
-            rank_for_ordering=rank_for_ordering,
-            payload_type=payload_type,
-            payload_csv=payload_csv,
-            pattern=pattern,
-            start_row_letter=sr,
-            end_row_letter=er,
-            start_column=sc,
-            end_column=ec,
-        )
 
 if __name__ == "__main__":
     ReferenceExperiment().create()

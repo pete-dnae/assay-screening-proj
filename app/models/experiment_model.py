@@ -1,7 +1,6 @@
 from django.db import models
 
 from .odds_and_ends_models import CyclingPattern 
-from .odds_and_ends_models import smart_deep_copy_model 
 from .reagent_models import MasterMix
 from .primer_models import PrimerKit
 from .strain_models import StrainKit

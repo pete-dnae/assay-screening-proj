@@ -33,6 +33,11 @@ class Concentration(models.Model):
     final = models.DecimalField(max_digits=8, decimal_places=2)
     units = models.CharField(max_length=15, choices=units_choices)
 
+    @classmethod
+    def make(cls, stock, final, units):
+        return Concentration.objects.create(
+            stock=stock, final=final, units=units)
+
 
 class ConcreteReagent(models.Model):
     """
@@ -44,6 +49,13 @@ class ConcreteReagent(models.Model):
     lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
         Concentration, related_name='reagent', on_delete=models.PROTECT)
+
+    @classmethod
+    def make(self, name, lot, stock, final, units):
+        concentration = Concentration.make(stock, final, units)
+        reagent = ConcreteReagent.objects.create(
+            name=name, lot=lot, concentration=concentration)
+        return reagent
 
 
 class BufferMix(models.Model):
@@ -81,6 +93,13 @@ class PlaceholderReagent(models.Model):
     concentration = models.ForeignKey(Concentration, 
         related_name='placeholder_reagent', on_delete=models.PROTECT)
 
+    @classmethod
+    def make(self, placeholder_type, stock, final, units):
+        return PlaceholderReagent.objects.create(
+            type=placeholder_type,
+            concentration=Concentration.make(stock, final, units)
+        )
+
 
 class MasterMix(models.Model):
     """
@@ -99,26 +118,3 @@ class MasterMix(models.Model):
     template = models.ForeignKey(PlaceholderReagent,
         related_name='master_mix_template', on_delete=models.PROTECT)
     final_volume = models.PositiveIntegerField()
-    
-    def intelligent_copy(self):
-        """
-        Knows how to make (and save) a new instance of this model, including
-        making a judgement about which attributes (recursively must also be
-        replicated, vs which can be left shared).
-        """
-        # General solution is to set primary key on self to None and then 
-        # save() self thus getting a new object with a new primary key. But 
-        # in between of course recursively copying the attributes in cases
-        # where these must not remain shared between the original and the copy.
-        self.pk = None
-
-        self.water = self.water.intelligent_copy()
-        # TODO FINISH THESE
-        #self.buffer_mix = self.buffer_mix.intelligent_copy()
-        #self.primers = self.primers.intelligent_copy()
-        #self.hgDNA = self.hgDNA.intelligent_copy()
-        #self.template = self.template.intelligent_copy()
-
-        self.save()
-        return self
-
