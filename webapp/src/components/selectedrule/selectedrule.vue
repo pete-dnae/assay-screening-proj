@@ -79,7 +79,7 @@
                     <div class="col">
                       <div class="row">
                         <i class="fa fa-long-arrow-left" v-if="!show" @click="show = !show;selectMode=!selectMode"aria-hidden="true"></i>
-                        <i class="fa fa-floppy-o ml-3" v-if="!show && currentOptions=='userText'" @click="show = !show;handleUserInput(userText)" aria-hidden="true"></i>
+                        <i class="fa fa-floppy-o ml-3" v-if="!show && currentOptions=='userText'" @click="show = !show;handleUserInput(userText);selectMode=!selectMode" aria-hidden="true"></i>
                         <i class="fa fa-plus ml-3" v-if="!show && currentOptions=='userText'" @click="textBoxNo+=1" aria-hidden="true"></i>
                         <i class="fa fa-minus ml-3" v-if="!show && currentOptions=='userText'" @click="handleTextBoxDel()" aria-hidden="true"></i>
                         <i class="fa fa-plus-square" v-if="show"  @click="show = !show;selectMode=!selectMode" aria-hidden="true"></i>
