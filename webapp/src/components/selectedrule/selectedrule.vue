@@ -36,7 +36,7 @@
             <div class="col text-left">
                 <select v-model="distPattern" class="btn btn-info dropdown-toggle">
                     <option v-for="option in options" v-bind:value="option.value">
-                        <b>{{option.value}}</b>                        
+                        <b>{{option.value}}</b>
                     </option>
                 </select>
             </div>
@@ -101,10 +101,10 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-2 text-right">
+                    <div class="col-3">
                         <label>to</label>
                     </div>
-                    <div class="col-1 ">
+                    <div class="col-3 ">
                         <select v-model="rowEnd" class="btn btn-info dropdown-toggle">
                             <option v-for="option in rowOptions" v-bind:value="option.value">
                                 <b>{{option.value}}</b>
@@ -123,12 +123,12 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-2 text-right">
+                    <div class="col-3 ">
                         <label>to</label>
                     </div>
-                    <div class="col-1">
+                    <div class="col-3">
                         <select v-model="colEnd" class="btn btn-info dropdown-toggle">
-                            <option v-for="option in colOptions" v-bind:value="option">
+                            <option v-for="option in colOptions" class="dropdown-item" v-bind:value="option">
                                 <b>{{option}}</b>
                             </option>
                         </select>
