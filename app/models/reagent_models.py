@@ -118,3 +118,27 @@ class MasterMix(models.Model):
     template = models.ForeignKey(PlaceholderReagent,
         related_name='master_mix_template', on_delete=models.PROTECT)
     final_volume = models.PositiveIntegerField()
+
+    @classmethod
+    def make(cls, water, buffer_mix, primers, hgDNA, template, final_volume):
+        return MasterMix.objects.create(
+            water=water,
+            buffer_mix=buffer_mix,
+            primers=primers,
+            hgDNA=hgDNA,
+            template=template,
+            final_volume=final_volume,
+        )
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            src.water, # FK ok to inherit ConcreteReagent used by src.
+            src.buffer_mix.clone(), # Must get its own BufferMix.
+            src.primers.clone(), # Must get its own placeholder reagents.
+            src.hgDNA.clone(), # Must get its own placeholder reagents.
+            src.template.clone(), # Must get its own placeholder reagents.
+            src.final_volume, # Is a plain value, not a relation.
+        )
+        
+

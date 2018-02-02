@@ -8,7 +8,7 @@ from .serializers import *
 # First, a few mix-ins and utilities
 #----------------------------------------------------------------------------
 
-class MultiSerializerViewSet(viewsets.ReadOnlyModelViewSet):
+class MultiSerializerViewSet(viewsets.ModelViewSet):
     """
     A mix-in to allow a hosting serializer to offer different implementations
     for list vs. detail requests.
@@ -33,7 +33,9 @@ class ExperimentViewSet(MultiSerializerViewSet):
         'default': None,
         'list': ListExperimentSerializer,
         'retrieve': DetailExperimentSerializer,
+        'create': ListExperimentSerializer,
     }
+    http_method_names = ['get', 'post', 'head', 'options']
 
 class ConcentrationViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE

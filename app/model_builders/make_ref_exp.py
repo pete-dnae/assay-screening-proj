@@ -183,40 +183,32 @@ class ReferenceExperiment():
         return exp
 
     def _create_pa_mastermix(self):
-        mastermix = MasterMix.objects.create(
-            final_volume=50,
-            water=ConcreteReagent.objects.get(
-                name='DNA Free Water'),
-            buffer_mix=MixedReagent.objects.create(
-                buffer_mix= self._create_pa_buffermix(),
-                concentration = Concentration.make(3.3, 1, 'X'),
-            ),
-            primers=PlaceholderReagent.make(
-                'Primers', 10, 0.4, 'uM each'),
-            hgDNA=PlaceholderReagent.make(
-                'HgDNA', 120, 60, 'ng/ul'),
-            template=PlaceholderReagent.make(
-                'Template', 1, 0.1, 'cp/ul'),
-        )
+        water=ConcreteReagent.objects.get(name='DNA Free Water')
+        buffer_mix=MixedReagent.objects.create(
+            buffer_mix= self._create_pa_buffermix(),
+            concentration = Concentration.make(3.3, 1, 'X'))
+        primers=PlaceholderReagent.make('Primers', 10, 0.4, 'uM each')
+        hgDNA=PlaceholderReagent.make('HgDNA', 120, 60, 'ng/ul')
+        template=PlaceholderReagent.make('Template', 1, 0.1, 'cp/ul')
+        final_volume=50
+
+        mastermix = MasterMix.make(
+            water, buffer_mix, primers, hgDNA, template, final_volume)
         return mastermix
 
     def _create_id_mastermix(self):
-        mastermix = MasterMix.objects.create(
-            final_volume=20,
-            water=ConcreteReagent.objects.get(
-                name='DNA Free Water'),
-            buffer_mix=MixedReagent.objects.create(
-                buffer_mix= self._create_id_buffermix(),
-                concentration = Concentration.make(2, 1, 'X'),
-            ),
-            primers=PlaceholderReagent.make(
-                'Primers', 10, 0.4, 'uM each'),
-            hgDNA=None,
-            template=PlaceholderReagent.make(
-                'Template', 10, 2.5, 'cp/ul'),
-        )
-        return mastermix
+        water=ConcreteReagent.objects.get(name='DNA Free Water')
+        buffer_mix=MixedReagent.objects.create(
+            buffer_mix= self._create_id_buffermix(),
+            concentration = Concentration.make(2.0, 1, 'X'))
+        primers=PlaceholderReagent.make('Primers', 10, 0.4, 'uM each')
+        hgDNA=None
+        template=PlaceholderReagent.make('Template', 10, 2.5, 'cp/ul')
+        final_volume=20
 
+        mastermix = MasterMix.make(
+            water, buffer_mix, primers, hgDNA, template, final_volume)
+        return mastermix
 
     def _create_pa_buffermix(self):
         buffermix = BufferMix.objects.create(
