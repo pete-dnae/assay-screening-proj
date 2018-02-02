@@ -36,7 +36,7 @@
             <div class="col text-left">
                 <select v-model="distPattern" class="btn btn-info dropdown-toggle">
                     <option v-for="option in options" v-bind:value="option.value">
-                        <b>{{option.value}}</b>                        
+                        <b>{{option.value}}</b>
                     </option>
                 </select>
             </div>
@@ -79,7 +79,7 @@
                     <div class="col">
                       <div class="row">
                         <i class="fa fa-long-arrow-left" v-if="!show" @click="show = !show;selectMode=!selectMode"aria-hidden="true"></i>
-                        <i class="fa fa-floppy-o ml-3" v-if="!show && currentOptions=='userText'" @click="show = !show;handleUserInput(userText)" aria-hidden="true"></i>
+                        <i class="fa fa-floppy-o ml-3" v-if="!show && currentOptions=='userText'" @click="show = !show;handleUserInput(userText);selectMode=!selectMode" aria-hidden="true"></i>
                         <i class="fa fa-plus ml-3" v-if="!show && currentOptions=='userText'" @click="textBoxNo+=1" aria-hidden="true"></i>
                         <i class="fa fa-minus ml-3" v-if="!show && currentOptions=='userText'" @click="handleTextBoxDel()" aria-hidden="true"></i>
                         <i class="fa fa-plus-square" v-if="show"  @click="show = !show;selectMode=!selectMode" aria-hidden="true"></i>
@@ -101,10 +101,10 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-2 text-right">
+                    <div class="col-3">
                         <label>to</label>
                     </div>
-                    <div class="col-1 ">
+                    <div class="col-3 ">
                         <select v-model="rowEnd" class="btn btn-info dropdown-toggle">
                             <option v-for="option in rowOptions" v-bind:value="option.value">
                                 <b>{{option.value}}</b>
@@ -123,12 +123,12 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-2 text-right">
+                    <div class="col-3 ">
                         <label>to</label>
                     </div>
-                    <div class="col-1">
+                    <div class="col-3">
                         <select v-model="colEnd" class="btn btn-info dropdown-toggle">
-                            <option v-for="option in colOptions" v-bind:value="option">
+                            <option v-for="option in colOptions" class="dropdown-item" v-bind:value="option">
                                 <b>{{option}}</b>
                             </option>
                         </select>

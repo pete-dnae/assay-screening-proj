@@ -7,8 +7,8 @@ export const zoomIn = event => {
   const img = document.getElementById('imgZoom');
   let posX = event.offsetX ? event.offsetX : event.pageX - img.offsetLeft;
   let posY = event.offsetY ? event.offsetY : event.pageY - img.offsetTop;
-  posX = -posX * 4 + 50;
-  posY = -posY * 3 + 50;
+  posX = -(posX * 5) + 50;
+  posY = -(posY * 4) + 50;
   element.style.backgroundPosition = `${posX}px ${posY}px`;
 };
 export const zoomOut = () => {
@@ -82,8 +82,8 @@ export const prepareResultsTable = (allocationResults, currentSelection) => {
 
 export const makeSVG = (DOMURL, html) => {
   const data =
-    `${'<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1200">' +
-      '<foreignObject width="1400" height="1200">' +
+    `${'<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1200">' +
+      '<foreignObject width="2000" height="1200">' +
       '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:15px">'}${html}</div>` +
     '</foreignObject>' +
     '</svg>';
