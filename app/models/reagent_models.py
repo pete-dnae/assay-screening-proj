@@ -38,6 +38,10 @@ class Concentration(models.Model):
         return Concentration.objects.create(
             stock=stock, final=final, units=units)
 
+    @classmethod
+    def clone(cls, src):
+        return cls.make(src.stock, src.final, src.units)
+
 
 class ConcreteReagent(models.Model):
     """
@@ -80,6 +84,20 @@ class MixedReagent(models.Model):
     concentration = models.ForeignKey(Concentration, 
         related_name=MIXED_REAGENT, on_delete=models.PROTECT)
 
+    @classmethod
+    def make(cls, buffer_mix, concentration):
+        return MixedReagent.objects.create(
+            buffer_mix=buffer_mix,
+            concentration=concentration
+        )
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            src.buffer_mix, # Shared reuse
+            Concentration.clone(src.concentration), # New
+        )
+
 
 class PlaceholderReagent(models.Model):
     """
@@ -94,10 +112,17 @@ class PlaceholderReagent(models.Model):
         related_name='placeholder_reagent', on_delete=models.PROTECT)
 
     @classmethod
-    def make(self, placeholder_type, stock, final, units):
+    def make(self, placeholder_type, concentration):
         return PlaceholderReagent.objects.create(
             type=placeholder_type,
-            concentration=Concentration.make(stock, final, units)
+            concentration=concentration
+        )
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            src.type, # Plain copy
+            Concentration.clone(src.concentration) # New
         )
 
 
@@ -133,12 +158,12 @@ class MasterMix(models.Model):
     @classmethod
     def clone(cls, src):
         return cls.make(
-            src.water, # FK ok to inherit ConcreteReagent used by src.
-            src.buffer_mix.clone(), # Must get its own BufferMix.
-            src.primers.clone(), # Must get its own placeholder reagents.
-            src.hgDNA.clone(), # Must get its own placeholder reagents.
-            src.template.clone(), # Must get its own placeholder reagents.
-            src.final_volume, # Is a plain value, not a relation.
+            src.water, # Shared reuse
+            src.buffer_mix.clone(src.buffer_mix), # New
+            src.primers.clone(src.primers), # New
+            src.hgDNA.clone(src.hgDNA) if src.hgDNA else None, # New
+            src.template.clone(src.template), # New
+            src.final_volume, # Plain copy
         )
         
 

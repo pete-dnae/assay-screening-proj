@@ -37,3 +37,35 @@ class Experiment(models.Model):
     id_cycling = models.ForeignKey(CyclingPattern, 
         related_name='experiment_id_cycling', on_delete=models.PROTECT)
 
+    @classmethod
+    def make(cls, experiment_name, designer_name, pa_mastermix, id_mastermix,
+            primer_kit, strain_kit, plates, pa_cycling, id_cycling):
+        exp = Experiment.objects.create(
+            experiment_name = experiment_name,
+            designer_name = designer_name,
+            pa_mastermix = pa_mastermix,
+            id_mastermix = id_mastermix,
+            primer_kit = primer_kit,
+            strain_kit = strain_kit,
+            pa_cycling = pa_cycling ,
+            id_cycling = id_cycling,
+        )
+        for plate in plates:
+            exp.plates.add(plate)
+        exp.save()
+        return exp
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            src.experiment_name, # Plain copy
+            src.designer_name, # Plain copy
+            MasterMix.clone(src.pa_mastermix), # New
+            MasterMix.clone(src.id_mastermix), # New
+            PrimerKit.clone(src.primer_kit), # New
+            StrainKit.clone(src.strain_kit), # New
+            [Plate.clone(plate) for plate in src.plates.all()], # New
+            CyclingPattern.clone(src.pa_cycling), # New
+            CyclingPattern.clone(src.id_cycling) # New
+        )
+

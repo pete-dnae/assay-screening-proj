@@ -33,18 +33,17 @@ class Strain(models.Model):
     class Meta:
         ordering = ('organism__abbreviation', 'arg__name')
 
+
+    @classmethod
+    def make(cls, name, organism, arg, genome_size):
+        return Strain.objects.create(name=name, organism=organism, 
+            arg=arg, genome_size=genome_size)
+
     def display_name(self):
         buf = self.organism.abbreviation
         if self.arg:
             buf = '_'.join((buf, self.arg.name))
         return buf
-
-    @classmethod
-    def make(cls, name, organism_abbreviation, arg_name, genome_size):
-        organism = Organism.objects.get(abbreviation=organism_abbreviation)
-        arg = Arg.objects.get(name=arg_name) if arg_name else None
-        Strain.objects.create(name=name, organism=organism, 
-            arg=arg, genome_size=genome_size)
 
 
 class StrainKit(models.Model):
@@ -53,5 +52,19 @@ class StrainKit(models.Model):
     conceptual kit to deploy in an experiment.
     """
     strains = models.ManyToManyField(Strain)
+
+    @classmethod
+    def make(cls, strains):
+        kit = StrainKit.objects.create()
+        for strain in strains:
+            kit.strains.add(strain)
+        kit.save()
+        return kit
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            [strain for strain in src.strains.all()] # Plain copy
+        )
 
 

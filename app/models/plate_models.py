@@ -117,6 +117,21 @@ class AllocRule(models.Model):
             end_column=ec,
         )
 
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            src.rank_for_ordering, # Plain copy
+            src.payload_type, # Plain copy
+            src.payload_csv, # Plain copy
+            src.pattern, # Plain copy
+            ( # Plain copy
+                src.start_row_letter, 
+                src.end_row_letter,
+                src.start_column,
+                src.end_column
+            )
+        )
+
     def enumerate_applicable_rows(self):
         start = ord(self.start_row_letter) - ord('A')
         end = ord(self.end_row_letter) - ord('A')
@@ -175,6 +190,21 @@ class RuleList(models.Model):
             rule.rank_for_ordering = count
             rule.save()
 
+    @classmethod
+    def make(cls, rules):
+        rule_list = RuleList.objects.create(
+        )
+        for rule in rules:
+            rule_list.rules.add(rule)
+        rule_list.save()
+        return rule_list
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            [AllocRule.clone(rule) for rule in src.rules.all()] # New
+        )
+
 
 class AllocationInstructions(models.Model):
     """
@@ -186,6 +216,20 @@ class AllocationInstructions(models.Model):
     rule_list = models.ForeignKey(RuleList, 
         related_name='instructions', on_delete=models.PROTECT)
     suppressed_columns = models.CharField(max_length=200) 
+
+    @classmethod
+    def make(cls, rule_list, suppressed_columns):
+        return AllocationInstructions.objects.create(
+            rule_list=rule_list,
+            suppressed_columns = suppressed_columns
+        )
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            RuleList.clone(src.rule_list), # New
+            src.suppressed_columns # Plain copy
+        )
 
 
 class Plate(models.Model):
@@ -199,3 +243,17 @@ class Plate(models.Model):
     name = models.CharField(max_length=20) 
     allocation_instructions = models.ForeignKey(AllocationInstructions, 
         related_name='plate', on_delete=models.PROTECT)
+
+    @classmethod
+    def make(cls, name, allocation_instructions):
+        return Plate.objects.create(
+            name=name,
+            allocation_instructions=allocation_instructions
+        )
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            src.name + '_1', # Increment name
+            AllocationInstructions.clone(src.allocation_instructions) # New
+        )

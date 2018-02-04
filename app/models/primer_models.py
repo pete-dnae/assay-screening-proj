@@ -51,10 +51,9 @@ class Primer(models.Model):
             oligo_code=organism,
             full_name=primer_name,
             role=fwd_or_rev,
-            organism=Organism.objects.get(abbreviation=organism),
-            gene=Gene.objects.get(name=gene),
+            organism=organism,
+            gene=gene
         )
-
 
 class PrimerPair(models.Model):
     """
@@ -79,6 +78,25 @@ class PrimerPair(models.Model):
             'reverse_primer__full_name'
         )
 
+
+    @classmethod
+    def make(cls, fwd_primer, rev_primer, for_pa, for_id):
+        return PrimerPair.objects.create(
+            forward_primer = fwd_primer,
+            reverse_primer = rev_primer,
+            suitable_for_pa = for_pa,
+            suitable_for_id = for_id,
+        )
+
+    @classmethod
+    def clone(cls, src):
+        return PrimerPair.make(
+            src.forward_primer, # Shared reuse
+            src.reverse_primer, # Shared reuse
+            src.suitable_for_pa, # Plain copy
+            src.suitable_for_id # Plain copy
+        )
+
     def display_name(self):
         """
         E.g. Efm_vanA_1.x_van05_van01
@@ -89,15 +107,6 @@ class PrimerPair(models.Model):
             self.forward_primer.full_name,
             self.reverse_primer.full_name,
             )
-        )
-
-    @classmethod
-    def make(cls, fwd_name, rev_name, for_pa, for_id):
-        PrimerPair.objects.create(
-            forward_primer = Primer.objects.get(full_name=fwd_name),
-            reverse_primer = Primer.objects.get(full_name=rev_name),
-            suitable_for_pa = for_pa,
-            suitable_for_id = for_id,
         )
 
 
@@ -117,3 +126,26 @@ class PrimerKit(models.Model):
         related_name='primer_kit_fwd', on_delete=models.PROTECT)
     rev_concentration = models.ForeignKey(Concentration, 
         related_name='primer_kit_rev', on_delete=models.PROTECT)
+
+    @classmethod
+    def make(
+        cls, pa_primers, id_primers, fwd_concentration, rev_concentration):
+        primer_kit = PrimerKit.objects.create(
+            fwd_concentration = fwd_concentration,
+            rev_concentration = rev_concentration
+        )
+        for foo in pa_primers:
+            primer_kit.pa_primers.add(foo)
+        for p in id_primers:
+            primer_kit.id_primers.add(p)
+        primer_kit.save()
+        return primer_kit
+
+    @classmethod
+    def clone(cls, src):
+        return PrimerKit.make(
+            [PrimerPair.clone(pp) for pp in src.pa_primers.all()], # New
+            [PrimerPair.clone(pp) for pp in src.id_primers.all()], # New
+            Concentration.clone(src.fwd_concentration), # New
+            Concentration.clone(src.rev_concentration) # New
+        )

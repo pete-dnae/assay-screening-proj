@@ -200,21 +200,7 @@ class ListExperimentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                     'There is no Experiment with this id: %d' % id)
 
-        src = experiment_to_copy
-
-        exp = Experiment.objects.create(
-            experiment_name=validated_data['experiment_name'],
-            designer_name=validated_data['designer_name'],
-            pa_mastermix=MasterMix.clone(src.pa_mastermix),
-            #id_mastermix=self._create_id_mastermix(),
-            #primer_kit=self._create_primer_kit(),
-            #strain_kit = self._create_strain_kit(),
-            #pa_cycling = self._create_pa_cycling(),
-            #id_cycling = self._create_id_cycling(),
-        )
-        for plate in src.plates:
-            #exp.plates.add(Plate.clone(plate))
-            pass
+        exp = Experiment.clone(experiment_to_copy)
         return exp
 
 
