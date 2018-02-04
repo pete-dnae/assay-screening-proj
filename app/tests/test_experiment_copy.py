@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 
+from app.models.experiment_model import Experiment
 from app.model_builders.make_ref_exp import ReferenceExperiment
 
 class CopyExperimentTest(APITestCase):
@@ -27,6 +28,27 @@ class CopyExperimentTest(APITestCase):
         }
         response = client.post(
             '/api/experiments/', payload, format='multipart')
-        print('XXX received: %s' % response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(True)
+
+        # Copied experiment should have id of 2
+        new_exp = Experiment.objects.get(id=2)
+
+        # Same rule in both eperiments should be different object, but with
+        # same content.
+        rule_a = self.experiment.plates.all()[
+                    0].allocation_instructions.rule_list.rules.all()[0]
+        rule_b = new_exp.plates.all()[
+                    0].allocation_instructions.rule_list.rules.all()[0]
+        self.assertNotEqual(rule_a.id, rule_b.id)
+        self.assertEqual(rule_a.display_string(), rule_b.display_string())
+
+        # Same primer pair in each should share same FK for targetted
+        # organism.
+
+        primer_pair_a_id = self.experiment.primer_kit.id_primers.all()[
+                0].forward_primer.id
+        primer_pair_b_id = new_exp.primer_kit.id_primers.all()[
+                0].forward_primer.id
+        self.assertEqual(primer_pair_a_id, primer_pair_b_id)
+
+

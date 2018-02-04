@@ -27,6 +27,14 @@ _DO_NOT_USE = '# DO NOT CONSUME THIS API (YET) - IT IS FOR INFO ONLY'
 #----------------------------------------------------------------------------
 
 class ExperimentViewSet(MultiSerializerViewSet):
+    """
+    POST:
+    Creates a completely new Experiment by cloning the one you specify in the
+    payload like this:
+
+        { "experiment_to_copy": 1 }
+
+    """
     queryset = Experiment.objects.all()
 
     serializers = {
@@ -163,7 +171,15 @@ class AllocationInstructionsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AllocationInstructions.objects.all()
     serializer_class = AllocationInstructionsSerializer
 
-class PlateViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
+class PlateViewSet(viewsets.ModelViewSet):
+    """
+    POST:
+    Creates a completely new Plate by cloning the one you specify in the
+    payload like this:
+
+        { "plate_to_copy": 1 }
+
+    """
     queryset = Plate.objects.all()
     serializer_class = PlateSerializer
+    http_method_names = ['get', 'post', 'head', 'options']

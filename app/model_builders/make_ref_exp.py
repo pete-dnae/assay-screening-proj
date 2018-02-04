@@ -337,7 +337,7 @@ class ReferenceExperiment():
 
 
     def _create_pa_cycling(self):
-        return CyclingPattern.objects.create(
+        return CyclingPattern.make(
             activation_time=120,
             activation_temp=95,
             num_cycles=20,
@@ -346,11 +346,11 @@ class ReferenceExperiment():
             anneal_time=10,
             anneal_temp=62,
             extend_temp=72,
-            extend_time=30,
+            extend_time=30
         )
 
     def _create_id_cycling(self):
-        return CyclingPattern.objects.create(
+        return CyclingPattern.make(
             activation_time=120,
             activation_temp=95,
             num_cycles=20,
@@ -359,7 +359,7 @@ class ReferenceExperiment():
             anneal_time=0,
             anneal_temp=0,
             extend_temp=62,
-            extend_time=25,
+            extend_time=25
         )
 
     def _create_plate_1(self, experiment_name):

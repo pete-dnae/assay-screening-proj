@@ -101,10 +101,25 @@ class AllocationInstructionsSerializer(serializers.HyperlinkedModelSerializer):
 class PlateSerializer(serializers.HyperlinkedModelSerializer):
 
     allocation_instructions = AllocationInstructionsSerializer(read_only=True)
+    name = serializers.ReadOnlyField()
+
+    plate_to_copy = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Plate
-        fields = ('url', 'name', 'allocation_instructions')
+        fields = ('url', 'name', 'allocation_instructions', 'plate_to_copy')
+
+    def create(self, validated_data):
+        # Create a Plate as a clone of the one requested.
+        id = validated_data['plate_to_copy']
+        try:
+            plate_to_copy = Plate.objects.get(id=id)
+        except Plate.DoesNotExist: 
+            raise serializers.ValidationError(
+                    'There is no Plate with this id: %d' % id)
+
+        plate = Plate.clone(plate_to_copy)
+        return plate
 
 
 class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
@@ -181,13 +196,13 @@ class DetailExperimentSerializer(serializers.ModelSerializer):
 class ListExperimentSerializer(serializers.ModelSerializer):
 
     experiment_to_copy = serializers.IntegerField(write_only=True)
+    experiment_name = serializers.ReadOnlyField()
 
     class Meta:
         model = Experiment
         fields = (
            'url',
            'experiment_name',
-           'designer_name',
            'experiment_to_copy',
         )
 
@@ -201,6 +216,8 @@ class ListExperimentSerializer(serializers.ModelSerializer):
                     'There is no Experiment with this id: %d' % id)
 
         exp = Experiment.clone(experiment_to_copy)
+        exp.experiment_name = 'copy_of_' + experiment_to_copy.experiment_name
+        exp.save()
         return exp
 
 
