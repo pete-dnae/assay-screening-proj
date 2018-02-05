@@ -179,6 +179,8 @@ class PlateViewSet(viewsets.ModelViewSet):
 
         { "plate_to_copy": 1 }
 
+    The new plate will be associated with the same parent Experiment as the
+    one from which it is copied.
     """
     queryset = Plate.objects.all()
     serializer_class = PlateSerializer
