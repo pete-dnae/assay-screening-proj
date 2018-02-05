@@ -118,7 +118,16 @@ class PlateSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError(
                     'There is no Plate with this id: %d' % id)
 
+        # Create and save the new plate.
         plate = Plate.clone(plate_to_copy)
+
+        # Find the parent Experiment with a reverse lookup.
+        # (Should be exactly one)
+        # So we can add this plate also to the same parent experiment.
+        experiment = plate_to_copy.experiment_set.all()[0]
+        experiment.plates.add(plate)
+        experiment.save()
+
         return plate
 
 
