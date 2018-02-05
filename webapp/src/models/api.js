@@ -29,7 +29,7 @@ const patchRes = (url, data) =>
   });
 
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
-
+export const getExperimentList = () => fetchRes('api/experiments/');
 export const updateAllocationRules = (url, data) => putRes(url, data);
 export const addAllocationRule = (url, data) => postRes(url, data);
 export const updateRule = (url, data) => patchRes(url, data);

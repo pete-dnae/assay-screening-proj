@@ -13,6 +13,12 @@ export const state = {
     fetched: false,
     didInvalidate: false,
   },
+  experimentList: {
+    data: null,
+    isFetching: false,
+    fetched: false,
+    didInvalidate: false,
+  },
 };
 
 const actions = {
@@ -27,6 +33,21 @@ const actions = {
         })
         .catch(e => {
           commit(types.EXPERIMENT_FAILURE);
+          reject(e);
+        });
+    });
+  },
+  fetchExperimentList({ commit }) {
+    commit(types.REQUEST_EXPERIMENT_LIST);
+    return new Promise(function(resolve, reject) {
+      api
+        .getExperimentList()
+        .then(data => {
+          commit(types.RECEIVED_EXPERIMENT_LIST, data);
+          resolve(data);
+        })
+        .catch(e => {
+          commit(types.EXPERIMENT_LIST_FAILURE);
           reject(e);
         });
     });
@@ -49,6 +70,22 @@ const mutations = {
     state.currentExperiment.fetched = false;
     state.currentExperiment.didInvalidate = true;
   },
+  [types.REQUEST_EXPERIMENT_LIST](state, plateId) {
+    state.experimentList.isFetching = true;
+    state.experimentList.fetched = false;
+    state.experimentList.didInvalidate = false;
+  },
+  [types.RECEIVED_EXPERIMENT_LIST](state, data) {
+    state.experimentList.data = data;
+    state.experimentList.isFetching = false;
+    state.experimentList.fetched = true;
+    state.experimentList.didInvalidate = false;
+  },
+  [types.EXPERIMENT_LIST_FAILURE](state, plateId) {
+    state.experimentList.isFetching = false;
+    state.experimentList.fetched = false;
+    state.experimentList.didInvalidate = true;
+  },
 };
 const getters = {
   getDesignerName(state, getters, rootState) {
@@ -56,6 +93,9 @@ const getters = {
   },
   getExperimentName() {
     return state.currentExperiment.data.experiment_name;
+  },
+  getExperimentList() {
+    return state.experimentList.data;
   },
 };
 
