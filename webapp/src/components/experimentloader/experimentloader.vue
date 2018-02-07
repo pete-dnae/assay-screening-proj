@@ -1,27 +1,21 @@
 <template>
   <div class="container">
+  <div slot="modal-header" class="modal-header">
+    <h4 class="modal-title">
+      <i>Load Experiment</i>
+    </h4>
+  </div>
+  <div slot="modal-body" class="modal-body">
     <div class="row">
       <div class="col">
-        <h5>Title</h5>
+        <button type="button" class="btn btn-primary btn-lg">Create new experiment</button>
       </div>
       <div class="col">
-        <input type="text">
-      </div>
-      <div class="col">
-        <i class="fa fa-search" aria-hidden="true"></i>
+          <button v-if="!showTypehead" type="button" class="btn btn-primary btn-lg" @click="showTypehead=!showTypehead">Copy existing experiment</button>
+          <typeahead @typeaheadBack="handleTypeheadBack" v-if="showTypehead" :options="expts"  :prop="'experiment_name'"></typeahead>
       </div>
     </div>
-    <div class="row mt-3">
-
-        <select class="w-100" v-model="currentExpt" stacked>
-          <option>A81_E004</option>
-          <option>A81_E005</option>
-          <option>A81_E008</option>
-        </select>
-        <br>
-        <span>Selected Expt: {{ currentExpt }}</span>
-
-    </div>
+  </div>
   </div>
 </template>
 <script src="./experimentloader.js"></script>

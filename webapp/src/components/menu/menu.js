@@ -1,15 +1,18 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import experimentloader from '@/components/experimentloader/experimentloader.vue';
+import { modal } from 'vue-strap';
 
-Vue.component('ExptLoad', experimentloader);
 export default {
   name: 'HelloWorld',
+  components: {
+    modal,
+    experimentloader,
+  },
   data() {
     return {
       msg: 'Welcome to Your Vue.js App ',
       currentExpt: '',
-      showDropDown: false,
     };
   },
   computed: {
