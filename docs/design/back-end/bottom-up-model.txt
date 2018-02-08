@@ -59,6 +59,7 @@ Measure (as-in a measure of Rum)
 
     A physical, single, tangible, particular instance of a volume of some 
     liquid.
+    Is immutable.
     A glug, a shot, a splash.
     Has a prescribed volume.
     Has a prescribed Composition.
@@ -106,6 +107,7 @@ practical), we gain alot:
     - It rules out human error.
     - It liberates experiment designers to change their mind, with no cost
       associated.
+    - It improves certainty, confidence, and record keeping of what went where.
 
 # Can we Define and Validate Such an Automated Process?
 
