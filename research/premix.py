@@ -1,93 +1,89 @@
+from collections import Counter
+
+
 class Premix:
     """
-    This is an abstraction of an analysis that can be done of a 
-    mandate to fill a set of *buckets* with different mixtures of *items*.
+    If you are going to put various mixtures of *items* into some *buckets*, 
+    it can be valuable to pre-mix some items in advance and then dispense 
+    a share of the prepared mixture into several buckets.
 
-    We have a set of numbered Buckets [0,1,2..]. 
-    The items that can go in them are capital letters.
-    For each bucket we specify the set of letters it is to receive.
+    This code is able to receive mixture specifications for buckets, and deduce
+    the opportunity to make pre-mixes. Including nested pre_mixes, and a level 
+    of heuristic optimisation.
 
-    Putting a letter into a bucket carries a cost, but we can reduce the 
-    overall cost by pre-mixing sets of letters that can be deployed into 
-    multiple buckets.
-
-    This class is capable of inspecting the filling mandate and deducing
-    opportunities for pre-mixing. Including some optimisation heuristics, and
-    including nested pre-mixing.
+    It uses buckets numbered (0,1,2...).
+    The client provides the mixture specification for each bucket by providing
+    a set of *items* for each one. The code takes no interest in what the 
+    items are. It requires only that they are hashable.
     """
 
-    def __init__(self, buckets):
+    def __init__(self, mixtures):
         """
-        Specify the buckets like this:
-        ['ABC', 'ABCD', 'PQ',...]
+        Example mixtures for integer items in 3 buckets:
+        ({1,2,3}, {2,3}, {2,4,5})
         """
-        self._buckets = buckets
-        self._premixes = []
-        self._assert_input_correctness()
+        self._mixtures = mixtures
+        self._all_items = self._all_items() # A set.
 
     def find_premixes(self):
         while True:
-            seed_letter = self._most_prolific_letter()
-            if seed_letter is None:
-                break
-                fart capture target buckets here
-                fart store xrefs between premixes and target bucket lists
-            premix = self._expand_premix_from_seed(seed_letter)
+            seed_item = self._most_prolific_item() 
+            if seed_item is None:
+                break # Finished
+            target_buckets = self._buckets_containing_item(seed_item):
+            # See what other items, are always present with this seed item.
+            premix = self._cohabitees_of(seed_item, target_buckets)
+            # Capture it.
             self._premixes.append(premix)
-            self._deplete_buckets(premix, target)
+            # Housekeeping before next iteration.
+            self._remove_premixed_items_from_buckets(premix, target_buckets)
 
    #-----------------------------------------------------------------------
    # Private below
    #-----------------------------------------------------------------------
 
-    def _most_prolific_letter(self):
+    def _all_items(self):
         """
-        Which letter is the most prevalent across all buckets?
+        The set of items across all buckets - in their current condition.
+        """
+        items = set()
+        for bucket in self._buckets:
+            items.union_update(bucket)
+        return items
+
+    def _most_prolific_item(self):
+        """
+        Evaluate the item most prevalent in the buckets, and providing its 
+        frequency is greater than one, return it. Otherwise return None.
         """
         counter = Counter()
         for bucket in self._buckets:
-            counter.update(bucket)
-        chosen_letter = counter.most_common().pop()
-        return chosen_letter
+            for item in bucket:
+                counter[item] += 1
+        ranked_items = counter.most_common()
+        if len(ranked_items) == 0:
+            return None
+        item = ranked_items.pop()
+        return item if counter[item] > 1 else None
 
-    def _expand_premix_from_seed(self, seed_letter):
+    def _cohabitees_of(self, seed_item, target_buckets):
         """
-        Finds which other letters are co-located with the seed letter in all
-        the same chambers as it is.
+        Which other items can be found that coexist with the seed_item
+        in all the same buckets as it lives in..
         """
-        premix = {seed_letter}
-        potential_letters = set(''.join(self._buckets))
-        targeted_buckets = self._buckets_containing(seed_letter)
-        for letter in potential_letters:
-            if self._letter_is_present_in_all_of(targeted_buckets):
-                premix.add(letter)
-        return ''.join(list(premix).sorted())
-                
-    def _buckets_containing(self, letter)
-        """ Which buckets contain this letter?"""
-        return [bucket for bucket in self._buckets if letter in bucket]
+        # Start with all items and then remove any item that doesn't show up
+        # in any of the target buckets.
+        cohabitees = set(self._all_items) 
+        for bucket in target_buckets:
+            cohabitees.intersection_update(bucket)
+        return cohabitees
 
-    def _letter_is_present_in_all_of(self, letter, buckets):
-        """
-        Is the letter present in all these buckets?
-        """
-        is_in = [bucket for bucket in buckets if letter in bucket]
-        return len(is_in) == len(buckets)
+    def _buckets_containing_item(self, item):
+        buckets = [bucket for bucket in self._buckets if item in bucket]
+        return buckets
 
-    def _deplete_buckets(self, premix, target_bucket_indices):
-        """
-        Remove all the letters in the premix from the target buckets.
-        """
-        for index in target_bucket_indices:
-            bucket = self._buckets[index]
-            retain = set(bucket) - set(premix)
-            as_sorted_string = ''.join(list(retain).sort())
-            self._buckets[index] = as_sorted_string
 
-    def _assert_input_correctness(self):
-        for bucket in self._buckets:
-            if upper(bucket) != bucket:
-                raise RuntimeError('Only upper case letters allowed in a bucket')
-            if len(set(bucket)) != len(bucket):
-                raise RuntimeError('No duplicate letters allowed in a bucket.')
+    def _remove_premixed_items_from_buckets(self, premix, target_buckets):
+        for bucket in target_buckets:
+            bucket.intersection_update(premix)
 
