@@ -11,18 +11,20 @@ Work log and Plan for <Bottomup> change of emphasis
 *  Write replacement reagents.py as above - keeping old version for reference.
 *  Change Concentration to use only a floating point number as its single 
    source of truth. (But retain units for human presentation).
-o  Adopt the new models and fix all existing code to use them.
+*  Adopt the new models and fix all existing code to use them.
     *  Scan through these trying first stab of code modes without running
         *  Models
         *  Views
         *  Serializers
         *  Urls
-    o  Drive out integration work needed using
-        o  Existing unit tests
-        o  reset db
-        o  Boot server
-        o  Serve some pages from browser
-o  In the reference experiment, ignore units temporarily and treat the ratio of
+    *  Drive out integration work needed using
+        *  Existing unit tests
+            *  app.tests.test_system.py
+            *  test_experiment_copy
+        *  reset db
+        *  Boot server
+        *  Serve some pages from browser
+*  In the reference experiment, ignore units temporarily and treat the ratio of
    the two numbers as being the absolute concentration value.
 o  Change AllocRule to have no BLOCKS or CONSECUTIVE property - and instead
    just be a plain rectangular region specification. E.g. A-H, 1-5

@@ -166,8 +166,6 @@ class StrainSerializer(serializers.HyperlinkedModelSerializer):
 class DetailExperimentSerializer(serializers.ModelSerializer):
 
     plates = PlateSerializer(many=True, read_only=True)
-    primer_kit = PrimerKitSerializer(read_only=True)
-    strain_kit = StrainKitSerializer(read_only=True)
 
     class Meta:
         model = Experiment

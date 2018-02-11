@@ -34,23 +34,23 @@ class ReferenceExperiment():
         return self._next_count
 
     def _create_shared_entities(self):
-        self._create_concrete_reagents()
+        self._create_reagents()
         self._create_organisms_and_strains()
         self._create_genes_and_primers()
 
-    def _create_concrete_reagents(self):
-        ConcreteReagent.make('BSA', '-', 20, 1, 'mg/ml')
-        ConcreteReagent.make('DNA Free Water', '22884100', 0, 0, 'X')
-        ConcreteReagent.make('dNTPs', '-', 10, 0.2, 'mM each')
-        ConcreteReagent.make('KCl', '-', 1000, 48, 'mM')
-        ConcreteReagent.make('KOH', '-', 100, 1, 'mM')
-        ConcreteReagent.make('MgCl2', '449890', 25, 2.06, 'mM')
-        ConcreteReagent.make('Titanium PCR Buffer', '1602046A', 
-            10, 0.13, 'X')
-        ConcreteReagent.make('SYBRgreen', '-', 100, 0.32, 'X')
-        ConcreteReagent.make('Titanium Taq', '1607230A', 50, 1.0, 'x')
-        ConcreteReagent.make('Titanium Taq', '1607230A', 50, 1.3, 'x')
-        ConcreteReagent.make('Triton', '-', 10, 0.04, '%')
+    def _create_reagents(self):
+        Reagent.make_from_quotient('BSA', '-', 20, 1, 'mg/ml')
+        Reagent.make_from_quotient('DNA Free Water', '22884100', 1, 1, 'X')
+        Reagent.make_from_quotient('dNTPs', '-', 10, 0.2, 'mM each')
+        Reagent.make_from_quotient('KCl', '-', 1000, 48, 'mM')
+        Reagent.make_from_quotient('KOH', '-', 100, 1, 'mM')
+        Reagent.make_from_quotient('MgCl2', '449890', 25, 2.06, 'mM')
+        Reagent.make_from_quotient(
+            'Titanium PCR Buffer', '1602046A', 10, 0.13, 'X')
+        Reagent.make_from_quotient('SYBRgreen', '-', 100, 0.32, 'X')
+        Reagent.make_from_quotient('Titanium Taq', '1607230A', 50, 1.0, 'x')
+        Reagent.make_from_quotient('Titanium Taq', '1607230A', 50, 1.3, 'x')
+        Reagent.make_from_quotient('Triton', '-', 10, 0.04, '%')
 
 
     def _create_organisms_and_strains(self):
@@ -188,88 +188,11 @@ class ReferenceExperiment():
         return Experiment.make(
             'reference_experiment_1',
             'PH',
-            self._create_pa_mastermix(),
-            self._create_id_mastermix(),
-            self._create_primer_kit(),
-            self._create_strain_kit(),
             [self._create_plate_1('plate_1')], 
             self._create_pa_cycling(),
             self._create_id_cycling(),
         )
 
-    def _create_pa_mastermix(self):
-        water=ConcreteReagent.objects.get(name='DNA Free Water')
-        buffer_mix=MixedReagent.make(
-            self._create_pa_buffermix(), Concentration.make(3.3, 1, 'X'))
-        primers=PlaceholderReagent.make('Primers', 
-            Concentration.make(10, 0.4, 'uM each'))
-        hgDNA=PlaceholderReagent.make('HgDNA', 
-            Concentration.make(120, 60, 'ng/ul'))
-        template=PlaceholderReagent.make('Template', 
-            Concentration.make(1, 0.1, 'cp/ul'))
-        final_volume=50
-
-        mastermix = MasterMix.make(
-            water, buffer_mix, primers, hgDNA, template, final_volume)
-        return mastermix
-
-    def _create_id_mastermix(self):
-        water=ConcreteReagent.objects.get(name='DNA Free Water')
-        buffer_mix=MixedReagent.make(
-            self._create_id_buffermix(), Concentration.make(2.0, 1, 'X'))
-        primers=PlaceholderReagent.make('Primers', 
-            Concentration.make(10, 0.4, 'uM each'))
-        hgDNA=None
-        template=PlaceholderReagent.make('Template', 
-            Concentration.make(10, 2.5, 'cp/ul'))
-        final_volume=20
-
-        mastermix = MasterMix.make(
-            water, buffer_mix, primers, hgDNA, template, final_volume)
-        return mastermix
-
-    def _create_pa_buffermix(self):
-        buffermix = BufferMix.objects.create(
-            volume=15,
-            final_volume=50,
-        )
-        for name in ('DNA Free Water', 'Titanium PCR Buffer', 'KCl', 'MgCl2',
-                'BSA', 'dNTPs'):
-            reagent = ConcreteReagent.objects.get(name=name)
-            buffermix.concrete_reagents.add(reagent)
-        # Taq requires additional disambiguation.
-        taq = ConcreteReagent.objects.get(
-            name='Titanium Taq', concentration__final=1.00)
-        buffermix.concrete_reagents.add(taq)
-
-        buffermix.save()
-        return buffermix
-
-    def _create_id_buffermix(self):
-        buffermix = BufferMix.objects.create(
-            volume=10,
-            final_volume=20,
-        )
-        for name in ('DNA Free Water', 'KCl', 'MgCl2', 'BSA', 
-                'Triton', 'SYBRgreen', 'dNTPs', 'KOH'):
-            reagent = ConcreteReagent.objects.get(name=name)
-            buffermix.concrete_reagents.add(reagent)
-        # Taq requires additional disambiguation.
-        taq = ConcreteReagent.objects.get(
-            name='Titanium Taq', concentration__final=1.3)
-        buffermix.concrete_reagents.add(taq)
-
-        buffermix.save()
-        return buffermix
-
-
-    def _create_primer_kit(self):
-        return PrimerKit.make(
-            self._make_pa_primers(),
-            self._make_id_primers(),
-            Concentration.make(10, 0.4, 'uM'),
-            Concentration.make(10, 0.4, 'uM'),
-        )
 
     def _make_pa_primers(self):
         res = []
@@ -321,19 +244,6 @@ class ReferenceExperiment():
             )
         return primer_pair
 
-    def _create_strain_kit(self):
-        strains = [Strain.objects.get(name=name) for name in (
-            'ATCC 15764',
-            'ATCC 15764',
-            'ATCC 26189',
-            'ATCC 700802',
-            'ATCC BAA-1705',
-            'ATCC BAA-2317',
-            'ATCC BAA-2355',
-            'ATCC BAA-633',
-            'ATCC BAA-633'
-        )]
-        return StrainKit.make(strains)
 
 
     def _create_pa_cycling(self):

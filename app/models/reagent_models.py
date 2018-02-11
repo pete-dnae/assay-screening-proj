@@ -28,7 +28,8 @@ class Concentration(models.Model):
         '%'))
 
     value = models.FloatField()
-    preferred_units = models.CharField(max_length=15, choices=units_choices)
+    preferred_units = models.CharField(
+            max_length=15, choices=presentation_units_choices )
 
     @classmethod
     def make(cls, value, preferred_units):
@@ -56,6 +57,16 @@ class Reagent(models.Model):
     def make(self, name, lot, stock, final, units):
         concentration = Concentration.make(stock, final, units)
         reagent = ConcreteReagent.objects.create(
+            name=name, lot=lot, concentration=concentration)
+        return reagent
+
+    @classmethod
+    def make_from_quotient(self, name, lot, stock, final, units):
+        """ Cludge until concentrations are remodelled properly.
+        """
+        conc_value = final / stock
+        concentration = Concentration.make(conc_value, units)
+        reagent = Reagent.objects.create(
             name=name, lot=lot, concentration=concentration)
         return reagent
 
