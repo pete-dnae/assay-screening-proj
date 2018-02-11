@@ -1,0 +1,40 @@
+Work log and Plan for <Bottomup> change of emphasis
+
+*  Do a bit of analysis and design
+*  See if can write code to infer premix opportunities
+*  Go back to the model suggestions in bottom-up-model.txt to see if they 
+   match properly this plan.
+    *  Concentration needs fundamental change.
+    *  Need new Reagent with name, lot, concentration
+    *  Composition is a completely new class
+    *  Measure
+*  Write replacement reagents.py as above - keeping old version for reference.
+*  Change Concentration to use only a floating point number as its single 
+   source of truth. (But retain units for human presentation).
+o  Adopt the new models and fix all existing code to use them.
+    *  Scan through these trying first stab of code modes without running
+        *  Models
+        *  Views
+        *  Serializers
+        *  Urls
+    o  Drive out integration work needed using
+        o  Existing unit tests
+        o  reset db
+        o  Boot server
+        o  Serve some pages from browser
+o  In the reference experiment, ignore units temporarily and treat the ratio of
+   the two numbers as being the absolute concentration value.
+o  Change AllocRule to have no BLOCKS or CONSECUTIVE property - and instead
+   just be a plain rectangular region specification. E.g. A-H, 1-5
+o  Refer to chambers by column letter and row number in API
+o  Focus just on the pre-amp plate for the time being...
+o  Change the reference experiment to expand out primer kits, buffermix and
+   mastermix and allocate these to wells explicitly with rules. (This makes
+   the modelling of MasterMix and BufferMix redundant).
+o  Remove all references to Mastermix and Buffermix in code and docs.
+o  Work out how to make a well ingredient with its concentration hashable in
+   preparation for the next step...
+o  See if the Premix class works. I.e. is cabable of deducing the premix 
+   opportunities for this new setup just in terms of the sets of what to mix.
+o  Now add the volume / concentration calculations.
+o  Explore how to expose the bottom-up inference of premixes through the API.

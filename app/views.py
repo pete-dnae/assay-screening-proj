@@ -50,30 +50,20 @@ class ConcentrationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Concentration.objects.all()
     serializer_class = ConcentrationSerializer
 
-class ConcreteReagentViewSet(viewsets.ReadOnlyModelViewSet):
+class ReagentViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
-    queryset = ConcreteReagent.objects.all()
-    serializer_class = ConcreteReagentSerializer
+    queryset = Reagent.objects.all()
+    serializer_class = ReagentSerializer
 
-class BufferMixViewSet(viewsets.ReadOnlyModelViewSet):
+class CompositionViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
-    queryset = BufferMix.objects.all()
-    serializer_class = BufferMixSerializer
+    queryset = Composition.objects.all()
+    serializer_class = CompositionSerializer
 
-class MixedReagentViewSet(viewsets.ReadOnlyModelViewSet):
+class MeasureViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
-    queryset = MixedReagent.objects.all()
-    serializer_class = MixedReagentSerializer
-
-class PlaceholderReagentViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = PlaceholderReagent.objects.all()
-    serializer_class = PlaceholderReagentSerializer
-
-class MasterMixViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = MasterMix.objects.all()
-    serializer_class = MasterMixSerializer
+    queryset = Measure.objects.all()
+    serializer_class = MeasureSerializer
 
 class GeneViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
@@ -95,11 +85,6 @@ class PrimerPairViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PrimerPair.objects.all()
     serializer_class = PrimerPairSerializer
 
-class PrimerKitViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = PrimerKit.objects.all()
-    serializer_class = PrimerKitSerializer
-
 class ArgViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
     queryset = Arg.objects.all()
@@ -110,16 +95,10 @@ class StrainViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Strain.objects.all()
     serializer_class = StrainSerializer
 
-class StrainKitViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = StrainKit.objects.all()
-    serializer_class = StrainKitSerializer
-
 class CyclingPatternViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
     queryset = CyclingPattern.objects.all()
     serializer_class = CyclingPatternSerializer
-
 
 class RuleListDetail(
         mixins.RetrieveModelMixin,
