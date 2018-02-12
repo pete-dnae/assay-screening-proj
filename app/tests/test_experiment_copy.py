@@ -41,14 +41,3 @@ class CopyExperimentTest(APITestCase):
                     0].allocation_instructions.rule_list.rules.all()[0]
         self.assertNotEqual(rule_a.id, rule_b.id)
         self.assertEqual(rule_a.display_string(), rule_b.display_string())
-
-        # Same primer pair in each should share same FK for targetted
-        # organism.
-
-        primer_pair_a_id = self.experiment.primer_kit.id_primers.all()[
-                0].forward_primer.id
-        primer_pair_b_id = new_exp.primer_kit.id_primers.all()[
-                0].forward_primer.id
-        self.assertEqual(primer_pair_a_id, primer_pair_b_id)
-
-

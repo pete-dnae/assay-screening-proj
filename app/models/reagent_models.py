@@ -1,12 +1,5 @@
 """
 A set of related model classes that help us define reagents.
-
-This model is know to be quite badly flawed and represent really just a line in
-the sand from which to get going.
-
-In particular we must define the conceptual entities more rigourously.
-And explore the abandoment of all references to volumes in favour of
-concentrations.
 """
 
 from django.db import models
@@ -16,10 +9,15 @@ from .odds_and_ends_models import mk_choices
 
 class Concentration(models.Model):
     """
-    A utility class to encapsulate one particular concentraction value
+    A utility class to encapsulate one particular concentraction value, defined
+    as a floating point, volumetric ratio w.r.t. water.
+
+    A concentration also has preferred display units to make the numbers easier
+    for humans to read or enter. But internally the value held is
+    by-defintion dimensionless.
     """
 
-    units_choices = mk_choices((
+    presentation_units_choices = mk_choices((
         'X',
         'mM',
         'mg/ml',
@@ -29,30 +27,31 @@ class Concentration(models.Model):
         'cp/ul',
         '%'))
 
-    stock = models.DecimalField(max_digits=8, decimal_places=2)
-    final = models.DecimalField(max_digits=8, decimal_places=2)
-    units = models.CharField(max_length=15, choices=units_choices)
+    value = models.FloatField()
+    preferred_units = models.CharField(
+            max_length=15, choices=presentation_units_choices )
 
     @classmethod
-    def make(cls, stock, final, units):
+    def make(cls, value, preferred_units):
         return Concentration.objects.create(
-            stock=stock, final=final, units=units)
+            value=value, preferred_units=preferred_units)
 
     @classmethod
     def clone(cls, src):
-        return cls.make(src.stock, src.final, src.units)
+        return cls.make(src.value, src.preferred_units)
 
 
-class ConcreteReagent(models.Model):
+class Reagent(models.Model):
     """
-    One of several types of reagent we acknowledge in the system. In this case
-    one that is bought-in and is physically sitting in some bottle somewhere.
-    Hence it has its own concentration.
+    A prescribed *type* of liquid, that we can go out and procure at a known
+    concentration. E.g. a primer, TAQ, a template etc.
     """
-    name = models.CharField(max_length=30) # Names are not unique!
+    # Note names are not unique, because a different Reagent is defined for
+    # each concentration.
+    name = models.CharField(max_length=30) 
     lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
-        Concentration, related_name='reagent', on_delete=models.PROTECT)
+        Concentration, related_name='retgent', on_delete=models.PROTECT)
 
     @classmethod
     def make(self, name, lot, stock, final, units):
@@ -61,109 +60,75 @@ class ConcreteReagent(models.Model):
             name=name, lot=lot, concentration=concentration)
         return reagent
 
+    @classmethod
+    def make_from_quotient(self, name, lot, stock, final, units):
+        """ Cludge until concentrations are remodelled properly.
+        """
+        conc_value = final / stock
+        concentration = Concentration.make(conc_value, units)
+        reagent = Reagent.objects.create(
+            name=name, lot=lot, concentration=concentration)
+        return reagent
 
-class BufferMix(models.Model):
-    """
-    We model two types of mixture explicitly, of which this is one.
-    This one captures a list of ConcreteReagents that will be mixed to be used
-    downstream..
-    """
-    concrete_reagents = models.ManyToManyField(ConcreteReagent)
-    volume = models.PositiveIntegerField()
-    final_volume = models.PositiveIntegerField()
 
+class Composition(models.Model):
+    """
+    A way to specify the makeup type for a liquid mixture. It is a type for a
+    liquid, not the presence, or an instance of some liquid. It lists the
+    *Reagent*s the mixture is made up from. (Recall that every Reagent is
+    defined with a concentration value.) A Composition does not have a
+    volume; it is a type for a thing, not a thing.
+    """
 
-class MixedReagent(models.Model):
-    """
-    A wrapper around a BufferMix, which allows the same BufferMix to be used at
-    alternative concentrations.
-    """
-    MIXED_REAGENT = 'mixed_reagent'
-    buffer_mix = models.ForeignKey(BufferMix, 
-        related_name=MIXED_REAGENT, on_delete=models.PROTECT)
-    concentration = models.ForeignKey(Concentration, 
-        related_name=MIXED_REAGENT, on_delete=models.PROTECT)
+    reagents = models.ForeignKey(
+        Reagent, related_name='composition', on_delete=models.PROTECT)
 
     @classmethod
-    def make(cls, buffer_mix, concentration):
-        return MixedReagent.objects.create(
-            buffer_mix=buffer_mix,
-            concentration=concentration
+    def make(cls, reagents):
+        composition = Composition.objects.create(
+        )
+        for reagent in reagents:
+            composition.reagents.add(reagent)
+        composition.save()
+        return composition
+
+    @classmethod
+    def clone(cls, src):
+        return cls.make(
+            [Composition.clone(ra) for ra in src.reagents.all()] # New
+        )
+
+class Measure(models.Model):
+    """
+    As in 'A measure of Rum'. A physical, single, tangible, particular
+    instance of a volume of some liquid. Is immutable. A glug, a shot, a
+    splash. Has a prescribed volume. Has a prescribed Composition. Can only
+    meaningfully exist in a container which we can identify. Such as a
+    bottle, beaker, tube , well, or chamber. Every Measure has exactly one
+    container. Every container has exactly one Measure. The names are in fact
+    interchangeable. The logical role of the container is make it possible to
+    identify the Measure. To make the Measure *addressable*. For example a
+    label on a bottle, or the plate/row/column indices of a chamber.
+    """
+
+    # E.g. label on bottle or tube, or the row/column of a well.
+    address = models.CharField(max_length=30)
+
+    # We choose (arbitrarily) to use milli-litres as our normalised units for
+    # volume here.
+    volume_in_ml = models.FloatField()
+
+
+    @classmethod
+    def make(cls, address, volume_in_ml):
+        return Measure.objects.create(
+            address=address,
+            volume_in_ml=volume_in_ml,
         )
 
     @classmethod
     def clone(cls, src):
         return cls.make(
-            src.buffer_mix, # Shared reuse
-            Concentration.clone(src.concentration), # New
+            src.address,
+            src.volume_in_ml,
         )
-
-
-class PlaceholderReagent(models.Model):
-    """
-    A type of virtual reagent we recognize that can be talked about in in 
-    vague terms in parts of our model, but for which the details are specified
-    elsehwere.
-    """
-    type_choices = mk_choices(('Primers', 'Template', 'HgDNA'))
-
-    type = models.CharField(max_length=15, choices=type_choices)
-    concentration = models.ForeignKey(Concentration, 
-        related_name='placeholder_reagent', on_delete=models.PROTECT)
-
-    @classmethod
-    def make(self, placeholder_type, concentration):
-        return PlaceholderReagent.objects.create(
-            type=placeholder_type,
-            concentration=concentration
-        )
-
-    @classmethod
-    def clone(cls, src):
-        return cls.make(
-            src.type, # Plain copy
-            Concentration.clone(src.concentration) # New
-        )
-
-
-class MasterMix(models.Model):
-    """
-    Our second kind of recognized mixture. In this case teh MasterMix is
-    comprised, by definition of a water component, a reference to a buffer mix,
-    and references to PlacehoderReagents such as 'Primers' or 'HgDNA'.
-    """
-    water = models.ForeignKey(ConcreteReagent, 
-        related_name='master_mix_water', on_delete=models.PROTECT)
-    buffer_mix = models.ForeignKey(MixedReagent,
-        related_name='master_mix_buffermix', on_delete=models.PROTECT)
-    primers = models.ForeignKey(PlaceholderReagent,
-        related_name='master_mix_primers', on_delete=models.PROTECT)
-    hgDNA = models.ForeignKey(PlaceholderReagent,
-        related_name='master_mix_hgDNA', null=True, on_delete=models.PROTECT)
-    template = models.ForeignKey(PlaceholderReagent,
-        related_name='master_mix_template', on_delete=models.PROTECT)
-    final_volume = models.PositiveIntegerField()
-
-    @classmethod
-    def make(cls, water, buffer_mix, primers, hgDNA, template, final_volume):
-        return MasterMix.objects.create(
-            water=water,
-            buffer_mix=buffer_mix,
-            primers=primers,
-            hgDNA=hgDNA,
-            template=template,
-            final_volume=final_volume,
-        )
-
-    @classmethod
-    def clone(cls, src):
-        return cls.make(
-            src.water, # Shared reuse
-            src.buffer_mix.clone(src.buffer_mix), # New
-            src.primers.clone(src.primers), # New
-            src.hgDNA.clone(src.hgDNA) if src.hgDNA else None, # New
-            src.template.clone(src.template), # New
-            src.final_volume, # Plain copy
-        )
-        
-

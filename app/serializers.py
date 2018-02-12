@@ -150,17 +150,6 @@ class PrimerPairSerializer(serializers.HyperlinkedModelSerializer):
         return instance.display_name()
 
 
-class PrimerKitSerializer(serializers.HyperlinkedModelSerializer):
-
-    fwd_concentration = ConcentrationSerializer(read_only=True)
-    rev_concentration = ConcentrationSerializer(read_only=True)
-    id_primers = PrimerPairSerializer(many=True, read_only=True)
-    pa_primers = PrimerPairSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = PrimerKit
-        fields = ('__all__')
-
 
 class StrainSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -174,20 +163,9 @@ class StrainSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('display_name',)
 
 
-class StrainKitSerializer(serializers.HyperlinkedModelSerializer):
-
-    strains = StrainSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = StrainKit
-        fields = (('url', 'strains'))
-
-
 class DetailExperimentSerializer(serializers.ModelSerializer):
 
     plates = PlateSerializer(many=True, read_only=True)
-    primer_kit = PrimerKitSerializer(read_only=True)
-    strain_kit = StrainKitSerializer(read_only=True)
 
     class Meta:
         model = Experiment
@@ -197,8 +175,6 @@ class DetailExperimentSerializer(serializers.ModelSerializer):
            'experiment_name',
            'designer_name',
            'plates',
-           'primer_kit',
-           'strain_kit',
         )
 
 
@@ -230,35 +206,24 @@ class ListExperimentSerializer(serializers.ModelSerializer):
         return exp
 
 
-class ConcreteReagentSerializer(serializers.HyperlinkedModelSerializer):
+class ReagentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = ConcreteReagent
+        model = Reagent
         fields = ('__all__')
 
-class BufferMixSerializer(serializers.HyperlinkedModelSerializer):
+class CompositionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = BufferMix
+        model = Composition
         fields = ('__all__')
 
-class MixedReagentSerializer(serializers.HyperlinkedModelSerializer):
+class MeasureSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = MixedReagent
+        model = Measure
         fields = ('__all__')
 
-class PlaceholderReagentSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = PlaceholderReagent
-        fields = ('__all__')
-
-class MasterMixSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = MasterMix
-        fields = ('__all__')
 
 class GeneSerializer(serializers.HyperlinkedModelSerializer):
 

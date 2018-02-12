@@ -19,22 +19,18 @@ _APP_MODEL_CLASSES = (
     RuleList,
     AllocRule,
 
-    PrimerKit,
     PrimerPair,
     Primer,
 
-    StrainKit,
     Strain,
     Organism,
     Gene,
     Arg,
 
-    MasterMix,
-    PlaceholderReagent,
-    MixedReagent,
-    BufferMix,
-    ConcreteReagent,
     Concentration,
+    Reagent,
+    Composition,
+    Measure,
 )
 
 class EmptyAppTables():
