@@ -300,11 +300,9 @@ class ReferenceExperiment():
     def _strains_rules_1(self):
         # Same pattern repeated every 4 columns, same for all rows.
         data = (
-            (
-                'ATCC BAA-2355, ATCC 700802, ATCC 700802, ATCC 15764',
-                'In Blocks',
-                ('A', 'H', 1, 12),
-            ),
+            ('ATCC BAA-2355',('A', 'H', 1, 4)),
+            ('ATCC 700802',('A', 'H', 4, 8)),
+            ('ATCC 15764',('A', 'H', 8, 12),)
         )
         return self._rules_from_data('Strain', data)
 
@@ -313,11 +311,11 @@ class ReferenceExperiment():
         # Then, first two rows - filled with zeros.
         # Then, larger numbers in small zones.
         data = (
-            ('5', 'Consecutive', ('A', 'H', 1, 12)),
-            ('0', 'Consecutive', ('A', 'B', 1, 12)),
-            ('50', 'Consecutive', ('C', 'D', 9, 12)),
-            ('500', 'Consecutive', ('E', 'F', 9, 12)),
-            ('5000', 'Consecutive', ('G', 'H', 9, 12)),
+            ('5', ('A', 'H', 1, 12)),
+            ('0', ('A', 'B', 1, 12)),
+            ('50', ('C', 'D', 9, 12)),
+            ('500', ('E', 'F', 9, 12)),
+            ('5000', ('G', 'H', 9, 12)),
         )
         return self._rules_from_data('Strain Count', data)
 
@@ -327,8 +325,8 @@ class ReferenceExperiment():
         # Blanket fill with 0 everywhere.
         # Then 3000 in a bottom left block.
         data = (
-            ('0', 'Consecutive', ('A', 'H', 1, 12)),
-            ('5000', 'Consecutive', ('F', 'H', 1, 8)),
+            ('0', ('A', 'H', 1, 12)),
+            ('5000', ('F', 'H', 1, 8)),
         )
         return self._rules_from_data('HgDNA', data)
 
@@ -337,12 +335,13 @@ class ReferenceExperiment():
         # Columns split into 3 groups, each with its own block allocation.
         # Uniform for all rows.
 
-        primer_block = 'Eco63 Eco60, Efs04 Efs01, van10 van06, van05 van01'
-
         data = (
-            ('poolB1', 'Consecutive', ('A', 'H', 1, 4)),
-            (primer_block, 'Consecutive', ('A', 'H', 5, 8)),
-            ('', 'Consecutive', ('A', 'H', 9, 12)),
+            ('poolB1',('A', 'H', 1, 4)),
+            ('Eco63 Eco60',  ('A', 'H', 5, 5)),
+            ('Efs04 Efs01', ('A', 'H', 6, 6)),
+            ('van10 van06', ('A', 'H', 7, 7)),
+            ('van05 van01', ('A', 'H', 8, 8)),
+            ('', ('A', 'H', 9, 12)),
         )
         return self._rules_from_data('PA Primers', data)
 
@@ -352,8 +351,8 @@ class ReferenceExperiment():
         # One constant value for left two thirds, and another for
         # remaining two thirds.
         data = (
-            ('30', 'Consecutive', ('A', 'H', 1, 8)),
-            ('', 'Consecutive', ('A', 'H', 9, 12)),
+            ('30', ('A', 'H', 1, 8)),
+            ('', ('A', 'H', 9, 12)),
         )
         return self._rules_from_data('Dilution Factor', data)
 
@@ -362,16 +361,19 @@ class ReferenceExperiment():
         # One block repeating every 4 columns, for all rows.
         primer_block = 'Eco64 Eco66, Efs03 Efs02, van30 van33, van04 van02'
         data = (
-            (primer_block, 'Consecutive', ('A', 'H', 1, 12)),
+            ('Eco64 Eco66', ('A', 'H', 1, 3)),
+            ('Efs03 Efs02', ('A', 'H', 3, 6)),
+            ('van30 van33', ('A', 'H', 6, 9)),
+            ('van04 van02', ('A', 'H', 9, 12)),
         )
         return self._rules_from_data('ID-Primers', data)
 
     def _rules_from_data(self, payload_type, data):
         rules = []
         for rule in data:
-            payload, distribution_type, zone = rule
+            payload, zone = rule
             rules.append(AllocRule.make(self._tick(), 
-                payload_type, payload, distribution_type, zone))
+                payload_type, payload, zone))
         return rules
 
 if __name__ == "__main__":

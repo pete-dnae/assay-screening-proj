@@ -29,23 +29,11 @@ class AllocRule(models.Model):
         Strain
         Strain Count
 
-    The list of strings to be repeated are specified (concatenated) in the
-    *payload_csv* field. 
     
     The target region of the table is defined in terms of row and column
     ranges.  Two allocation recipes are provided to replicate and multiply the
-    items column-wise. Consider the payload_csv being
-    
-        'A,B,C'
-    
-    The first recipe *Consecutive*, will do this until it runs out of columns:
-    
-        A B C A B C A B... 
+    items column-wise.
 
-    The second recipe with fill the available column range *In Blocks* of
-    equal size like this.
-
-        AAAA.. BBBB.. CCCC.. 
     """
 
     payload_choices = mk_choices((
@@ -54,9 +42,9 @@ class AllocRule(models.Model):
         'PA Primers',
         'ID Primers',
         'Strain',
-        'Strain Count',)) 
+        'Strain Count',))
 
-    pattern_choices = mk_choices(('Consecutive', 'In Blocks'))
+
 
     # This field is used to force some collections of AllocRule(s) to maintain
     # a strict sequence with respect to others in the same collection. It gets
@@ -64,8 +52,8 @@ class AllocRule(models.Model):
     # containers.
     rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
-    payload_csv = models.CharField(max_length=500)
-    pattern = models.CharField(max_length=15, choices=pattern_choices)
+    payload = models.CharField(max_length=500)
+
 
     letter = RegexValidator(re.compile(r'[A-Z]'), 'Enter a capital letter.')
     start_row_letter = models.CharField(max_length=1, validators=[letter,])
@@ -103,14 +91,12 @@ class AllocRule(models.Model):
                 'Start column must not be greater than end column')
 
     @classmethod
-    def make(cls, rank_for_ordering, payload_type, payload_csv,
-            pattern, zone):
+    def make(cls, rank_for_ordering, payload_type, payload, zone):
         sr, er, sc, ec = zone
         return AllocRule.objects.create(
             rank_for_ordering=rank_for_ordering,
             payload_type=payload_type,
-            payload_csv=payload_csv,
-            pattern=pattern,
+            payload=payload,
             start_row_letter=sr,
             end_row_letter=er,
             start_column=sc,
@@ -122,8 +108,7 @@ class AllocRule(models.Model):
         return cls.make(
             src.rank_for_ordering, # Plain copy
             src.payload_type, # Plain copy
-            src.payload_csv, # Plain copy
-            src.pattern, # Plain copy
+            src.payload, # Plain copy
             ( # Plain copy
                 src.start_row_letter, 
                 src.end_row_letter,
@@ -143,10 +128,8 @@ class AllocRule(models.Model):
     def enumerate_column_indices(self):
         return [i for i in range(self.start_column - 1, self.end_column)]
 
-    def payload_items(self):
-        items = self.payload_csv.split(',')
-        items = [i.strip() for i in items]
-        return items
+    def payload_item(self):
+        return self.payload
 
     # todo consider moving this into __str or __repr
     def display_string(self):
@@ -154,14 +137,13 @@ class AllocRule(models.Model):
         E.g.
         'Strain Count, (ATCC BAA-2355, AT...), In Blocks, Rows:A-H, Cols:1-12'
         """
-        payload = self.payload_csv
+        payload = self.payload
         LIMIT = 17
-        if len(self.payload_csv) > LIMIT:
-            payload = self.payload_csv[:LIMIT] + '...'
-        return('%s, (%s), %s, %s' % (
+        if len(self.payload) > LIMIT:
+            payload = self.payload[:LIMIT] + '...'
+        return('%s, %s,%s' % (
             self.payload_type,
             payload,
-            self.pattern,
             'Rows:%s-%s, Cols:%d-%d' % (
                 self.start_row_letter,
                 self.end_row_letter,
