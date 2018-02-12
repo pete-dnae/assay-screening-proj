@@ -14,27 +14,28 @@ class AllocTable():
     def __init__(self, n_rows, n_cols):
         """
         This object's structure intends to make it easy to render the 
-        table in an HTML <Table> element, by mimicing the <TR><TD> 
+        table in an HTML <Table> element, by minimicing the <TR><TD>
         nested sequences that are used in the HTML element.
 
-        The table comprises an ordered sequence of rows.
+        The table comprises an dictionary of rows.
         Each row is an ordered sequence of cells.
         Each cell is a dictionary keyed on strings like 'Strain'.
 
         The values against each of these keys is the string to display to
         represent that thing in the cell..
 
-        Example for table row 2, column 3: (zero based indices).
+        Example for table row B, column 3: (zero based indices).
 
-            table[2][3]['PA-Primers'] = 'Efm_vanA_1.x_van05_van01'
+            table[B][3]['PA-Primers'] = 'Efm_vanA_1.x_van05_van01'
 
         The constructor creates the data structure ready for the specified
         number of rows and columns, but nothing yet in the cell dictionaries.
         """
-        self.rows = []
+        self.rows = {}
         for row_idx in range(n_rows):
             row = []
-            self.rows.append(row)
+            row_alph = chr(65+row_idx)
+            self.rows[row_alph]=row
             for col in range(n_cols):
                 row.append({})
 
@@ -108,8 +109,8 @@ class AllocRuleInterpreter:
             payload_item):
         # Note this might be overwriting a previous value because later
         # rules overwrite the results from earlier rules, by definition.
-
-        self._table.rows[row_index][column_index][payload_type] = payload_item
+        row_alph = chr(65 + row_index)
+        self._table.rows[row_alph][column_index][payload_type] = payload_item
 
 
                 

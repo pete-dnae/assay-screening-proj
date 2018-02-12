@@ -42,7 +42,8 @@ class AllocRule(models.Model):
         'PA Primers',
         'ID Primers',
         'Strain',
-        'Strain Count',))
+        'Strain Count',
+        'Reagent'))
 
 
 
@@ -53,8 +54,6 @@ class AllocRule(models.Model):
     rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
     payload = models.CharField(max_length=500)
-
-
     letter = RegexValidator(re.compile(r'[A-Z]'), 'Enter a capital letter.')
     start_row_letter = models.CharField(max_length=1, validators=[letter,])
     end_row_letter = models.CharField(max_length=1, validators=[letter,])
