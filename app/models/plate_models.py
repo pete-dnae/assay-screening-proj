@@ -31,9 +31,7 @@ class AllocRule(models.Model):
 
     
     The target region of the table is defined in terms of row and column
-    ranges.  Two allocation recipes are provided to replicate and multiply the
-    items column-wise.
-
+    ranges.
     """
 
     payload_choices = mk_choices((
@@ -53,7 +51,7 @@ class AllocRule(models.Model):
     # containers.
     rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
-    payload = models.CharField(max_length=500)
+    payload = models.CharField(max_length=50)
     letter = RegexValidator(re.compile(r'[A-Z]'), 'Enter a capital letter.')
     start_row_letter = models.CharField(max_length=1, validators=[letter,])
     end_row_letter = models.CharField(max_length=1, validators=[letter,])
@@ -127,14 +125,11 @@ class AllocRule(models.Model):
     def enumerate_column_indices(self):
         return [i for i in range(self.start_column - 1, self.end_column)]
 
-    def payload_item(self):
-        return self.payload
-
     # todo consider moving this into __str or __repr
     def display_string(self):
         """
         E.g.
-        'Strain Count, (ATCC BAA-2355, AT...), In Blocks, Rows:A-H, Cols:1-12'
+        'Strain, ATCC BAA-2355, Rows:A-H, Cols:1-12'
         """
         payload = self.payload
         LIMIT = 17

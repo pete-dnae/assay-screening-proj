@@ -47,4 +47,4 @@ class HighLevelSystemSmokeTest(APITestCase):
         display_string = a_rule['display_string']
 
         self.assertEqual(display_string, 
-            'Strain Count, (5), Consecutive, Rows:A-H, Cols:1-12')
+            'Strain, ATCC 700802,Rows:A-H, Cols:4-8')

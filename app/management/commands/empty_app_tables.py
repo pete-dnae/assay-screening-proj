@@ -27,10 +27,10 @@ _APP_MODEL_CLASSES = (
     Gene,
     Arg,
 
-    Concentration,
-    Reagent,
-    Composition,
     Measure,
+    Composition,
+    Reagent,
+    Concentration,
 )
 
 class EmptyAppTables():

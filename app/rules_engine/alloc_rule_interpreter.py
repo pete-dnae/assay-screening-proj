@@ -46,7 +46,7 @@ class AllocRuleInterpreter:
     of AllocRule(s).
 
     Yoo construct it with a sequence of AllocRule(s), then can call its
-    *interpret() method.
+    *interpret()* method.
 
     It returns the *rows* attribute from the AllocTable it uses internally.
     """
@@ -92,15 +92,15 @@ class AllocRuleInterpreter:
         """
         Apply the given AllocRule to a single specified row in the table.
         """
-        payload_item = rule.payload_item()
-        self._fill_row(payload_item, rule, row_index)
+        self._fill_row(rule.payload, rule, row_index)
 
 
     def _fill_row(self, payload_item, rule, row_index):
         """
-        Takes the item available in *payload_item* and fills them in a given range
+        Takes the item available in *payload_item* and fills them in a 
+        given range.
         """
-        for column_index in range(rule.start_column-1,rule.end_column):
+        for column_index in rule.enumerate_column_indices():
             self._set_item_in_table(
                 row_index, column_index, rule.payload_type,
                 payload_item)
@@ -111,8 +111,3 @@ class AllocRuleInterpreter:
         # rules overwrite the results from earlier rules, by definition.
         row_alph = chr(65 + row_index)
         self._table.rows[row_alph][column_index][payload_type] = payload_item
-
-
-                
-
-

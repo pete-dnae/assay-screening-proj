@@ -26,9 +26,16 @@ Work log and Plan for <Bottomup> change of emphasis
         *  Serve some pages from browser
 *  In the reference experiment, ignore units temporarily and treat the ratio of
    the two numbers as being the absolute concentration value.
-o  Change AllocRule to have no BLOCKS or CONSECUTIVE property - and instead
-   just be a plain rectangular region specification. E.g. A-H, 1-5
-o  Refer to chambers by column letter and row number in API
+*  Change AllocRule to have no BLOCKS or CONSECUTIVE property - and instead
+   just be a plain rectangular region specification. E.g. "A-H 1-5"
+*  Refer to chambers by column letter and row number in API
+o  Pete code review Prasanna's changes
+    o  rule and rule interpreter
+    o  make reference experiment
+    o  plate models
+o  Do unit tests still work?
+o  Does reset_db still work?
+o  Does api still serve?
 o  Focus just on the pre-amp plate for the time being...
 o  Change the reference experiment to expand out primer kits, buffermix and
    mastermix and allocate these to wells explicitly with rules. (This makes
@@ -40,3 +47,7 @@ o  See if the Premix class works. I.e. is cabable of deducing the premix
    opportunities for this new setup just in terms of the sets of what to mix.
 o  Now add the volume / concentration calculations.
 o  Explore how to expose the bottom-up inference of premixes through the API.
+o  Change the contract for AllocRule - to drop the idea that later rules
+   override earlier ones. Also provide info in the API about which cells have
+   been covered by a rule set, and which have not. Treat two rules allocating
+   something to the same cell as an error.
