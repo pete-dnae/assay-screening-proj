@@ -92,12 +92,7 @@ class AllocRuleInterpreter:
         Apply the given AllocRule to a single specified row in the table.
         """
         payload_items = rule.payload_items()
-        # Have to use == (instead of 'is') to make equality test work 
-        # between python string and Django models.CharField.
-        if rule.pattern == 'Consecutive':
-            self._consecutive(payload_items, rule, row_index)
-        elif rule.pattern == 'In Blocks':
-            self._in_blocks(payload_items, rule, row_index)
+        self._fill_row(payload_items, rule, row_index)
 
     def _consecutive(self, payload_items, rule, row_index):
         """
@@ -140,6 +135,15 @@ class AllocRuleInterpreter:
                 self._set_item_in_table(
                     row_index, column_index, rule.payload_type, 
                     payload_item)
+
+    def _fill_row(self, payload_item, rule, row_index):
+        """
+        Takes the items available in *payload_items* and fills them in a given range
+        """
+        for column_index in range(rule.start_column,rule.end_column):
+            self._set_item_in_table(
+                row_index, column_index, rule.payload_type,
+                payload_item)
 
     def _set_item_in_table(self, row_index, column_index, payload_type,
             payload_item):
