@@ -13,7 +13,7 @@
 <template>
 
 <div>
-    <titlemenu></titlemenu>
+    <!-- <titlemenu></titlemenu> -->
     <div id="app">
 
         <router-view/>
