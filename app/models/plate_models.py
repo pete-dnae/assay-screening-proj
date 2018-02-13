@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MaxValueValidator
 
 from .odds_and_ends_models import mk_choices
+from .reagent_models import Reagent
 
 
 class AllocRule(models.Model):
@@ -44,14 +45,14 @@ class AllocRule(models.Model):
         'Reagent'))
 
 
-
     # This field is used to force some collections of AllocRule(s) to maintain
     # a strict sequence with respect to others in the same collection. It gets
     # updated later, only when AllocRule instances get put into RuleList
     # containers.
     rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
-    payload = models.CharField(max_length=50)
+    payload = models.ForeignKey(Reagent, 
+        related_name='allocrule', on_delete=models.PROTECT)
     letter = RegexValidator(re.compile(r'[A-Z]'), 'Enter a capital letter.')
     start_row_letter = models.CharField(max_length=1, validators=[letter,])
     end_row_letter = models.CharField(max_length=1, validators=[letter,])
@@ -105,7 +106,7 @@ class AllocRule(models.Model):
         return cls.make(
             src.rank_for_ordering, # Plain copy
             src.payload_type, # Plain copy
-            src.payload, # Plain copy
+            src.payload, # Shared reuse
             ( # Plain copy
                 src.start_row_letter, 
                 src.end_row_letter,
@@ -131,13 +132,9 @@ class AllocRule(models.Model):
         E.g.
         'Strain, ATCC BAA-2355, Rows:A-H, Cols:1-12'
         """
-        payload = self.payload
-        LIMIT = 17
-        if len(self.payload) > LIMIT:
-            payload = self.payload[:LIMIT] + '...'
         return('%s, %s,%s' % (
             self.payload_type,
-            payload,
+            payload.name,
             'Rows:%s-%s, Cols:%d-%d' % (
                 self.start_row_letter,
                 self.end_row_letter,

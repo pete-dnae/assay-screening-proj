@@ -34,23 +34,62 @@ class ReferenceExperiment():
         return self._next_count
 
     def _create_shared_entities(self):
-        self._create_reagents()
+        self._create_concentrations()
         self._create_organisms_and_strains()
+        self._create_buffer_reagents()
+        self._create_strain_reagents()
+        self._create_hgdna_reagents()
         self._create_genes_and_primers()
 
-    def _create_reagents(self):
-        Reagent.make_from_quotient('BSA', '-', 20, 1, 'mg/ml')
-        Reagent.make_from_quotient('DNA Free Water', '22884100', 1, 1, 'X')
-        Reagent.make_from_quotient('dNTPs', '-', 10, 0.2, 'mM each')
-        Reagent.make_from_quotient('KCl', '-', 1000, 48, 'mM')
-        Reagent.make_from_quotient('KOH', '-', 100, 1, 'mM')
-        Reagent.make_from_quotient('MgCl2', '449890', 25, 2.06, 'mM')
-        Reagent.make_from_quotient(
-            'Titanium PCR Buffer', '1602046A', 10, 0.13, 'X')
-        Reagent.make_from_quotient('SYBRgreen', '-', 100, 0.32, 'X')
-        Reagent.make_from_quotient('Titanium Taq', '1607230A', 50, 1.0, 'x')
-        Reagent.make_from_quotient('Titanium Taq', '1607230A', 50, 1.3, 'x')
-        Reagent.make_from_quotient('Triton', '-', 10, 0.04, '%')
+    def _create_concentrations(self):
+        for denom, numerator, pref_units in (
+                (1, 1, 'X'),
+                (10, 0.13, 'X'),
+                (10, 0.2, 'mM each'),
+                (10, 0.04, '%'),
+                (20, 1, 'mg/ml'),
+                (25, 2.06, 'mM'),
+                (50, 1.0, 'x'),
+                (50, 1.3, 'x'),
+                (100, 0.32, 'X'),
+                (100, 1, 'mM'),
+                (1000, 48, 'mM')):
+            Concentration.make(numerator / float(denom), pref_units)
+
+
+    def _create_buffer_reagents(self):
+        Reagent.make('BSA', '-', self._conc_rat(20, 1, 'mg/ml'))
+        Reagent.make('DNA Free Water', '22884100', self._conc_rat(1, 1, 'X'))
+        Reagent.make('dNTPs', '-', self._conc_rat(10, 0.2, 'mM each'))
+        Reagent.make('KCl', '-', self._conc_rat(1000, 48, 'mM'))
+        Reagent.make('KOH', '-', self._conc_rat(100, 1, 'mM'))
+        Reagent.make('MgCl2', '449890', self._conc_rat(25, 2.06, 'mM'))
+        Reagent.make('Titanium PCR Buffer', '1602046A', 
+            self._conc_rat(10, 0.13, 'X'))
+        Reagent.make('SYBRgreen', '-', self._conc_rat(100, 0.32, 'X'))
+        Reagent.make('Titanium Taq', '1607230A', self._conc_rat(50, 1.0, 'x'))
+        Reagent.make('Titanium Taq', '1607230A', self._conc_rat(50, 1.3, 'x'))
+        Reagent.make('Triton', '-', self._conc_rat(10, 0.04, '%'))
+
+    def _create_strain_reagents(self):
+        for count in (5, 50, 500, 5000):
+            # TODO this is not the correct conversion between a strain count
+            # and a concentration value.
+            conc = Concentration.make(count, 'x')
+
+            Reagent.make('ATCC 15764', '-', conc)
+            Reagent.make('ATCC 26189', '-', conc)
+            Reagent.make('ATCC 700802', '-', conc)
+            Reagent.make('ATCC BAA-1705', '-', conc)
+            Reagent.make('ATCC BAA-2317', '-', conc)
+            Reagent.make('ATCC BAA-2355', '-', conc)
+            Reagent.make('ATCC BAA-633', '-', conc)
+
+    def _create_hgdna_reagents(self):
+        for count in (0, 5000):
+            # TODO this is not the correct concentration value.
+            conc = Concentration.make(count, 'x')
+            Reagent.make('hgDNA', '-', conc)
 
 
     def _create_organisms_and_strains(self):
@@ -74,34 +113,16 @@ class ReferenceExperiment():
         Arg.make('vanB')
 
     def _create_strains(self):
-
-        Strain.make('ATCC 15764', 
-            self._org('Kox'), None, 6684900)
-        Strain.make('ATCC 26189', 
-            self._org('Spo'), None, 12570000)
-        Strain.make('ATCC 700802', 
-            self._org('Efs'), self._arg('vanB'), 3220000)
-        Strain.make('ATCC BAA-1705', 
-            self._org('Kpn'), self._arg('KPC'), 5300000)
-        Strain.make('ATCC BAA-2317', 
-            self._org('Efm'), self._arg('vanA'), 2698130)
-        Strain.make('ATCC BAA-2355', 
-            self._org('Eco'), self._arg('vanA'), 4600000)
-        Strain.make('ATCC BAA-633', 
-            self._org('Pmi'), None, 4063000)
-
-    def _org(self, abbr):
-        return Organism.objects.get(abbreviation=abbr)
-
-    def _arg(self, name):
-        return Arg.objects.get(name=name)
-
-    def _gene(self, name):
-        return Gene.objects.get(name=name)
-
-    def _prim(self, name):
-        return Primer.objects.get(full_name=name)
-
+        for strain_name, org_name, arg_name, genome_len in (
+                ('ATCC 15764', 'Kox', None, 6684900),
+                ('ATCC 26189', 'Spo', None, 12570000),
+                ('ATCC 700802', 'Efs', 'vanB', 3220000),
+                ('ATCC BAA-1705', 'Kpn', 'KPC', 5300000),
+                ('ATCC BAA-2317', 'Efm', 'vanA', 2698130),
+                ('ATCC BAA-2355', 'Eco', 'vanA', 4600000),
+                ('ATCC BAA-633', 'Pmi', None, 4063000)):
+            arg = None if arg_name is None else self._arg(arg_name)
+            Strain.make(strain_name, self._org(org_name), arg, genome_len)
         
     def _create_genes_and_primers(self):
         self._create_genes()
@@ -298,27 +319,12 @@ class ReferenceExperiment():
 
 
     def _strains_rules_1(self):
-        # Same pattern repeated every 4 columns, same for all rows.
         data = (
             ('ATCC BAA-2355',('A', 'H', 1, 4)),
             ('ATCC 700802',('A', 'H', 4, 8)),
             ('ATCC 15764',('A', 'H', 8, 12),)
         )
         return self._rules_from_data('Strain', data)
-
-    def _strains_copies_rules_1(self):
-        # Blanket fill with 5's everwhere first
-        # Then, first two rows - filled with zeros.
-        # Then, larger numbers in small zones.
-        data = (
-            ('5', ('A', 'H', 1, 12)),
-            ('0', ('A', 'B', 1, 12)),
-            ('50', ('C', 'D', 9, 12)),
-            ('500', ('E', 'F', 9, 12)),
-            ('5000', ('G', 'H', 9, 12)),
-        )
-        return self._rules_from_data('Strain Count', data)
-
 
     def _hg_dna_rules_1(self):
         # Distribution in English.
@@ -375,6 +381,33 @@ class ReferenceExperiment():
             rules.append(AllocRule.make(self._tick(), 
                 payload_type, payload, zone))
         return rules
+
+    """
+    A few 'finder' methods.
+    """
+    def _conc_rat(self, denom, numerator, pref_units):
+        # Find a Concentration from a rational number (fraction)
+        string_value = Concentration.value_from_quotient(denom, numerator)
+        return Concentration.objects.get(
+            normalised_string_value=string_value, preferred_units=pref_units)
+
+    def _conc_str(self, normalised_string_value, pref_units):
+        # Find a Concentration from its normalised string value.
+        return Concentration.objects.get(
+            normalised_string_value=normalised_string_value, 
+            preferred_units=pref_units)
+
+    def _org(self, abbr):
+        return Organism.objects.get(abbreviation=abbr)
+
+    def _arg(self, name):
+        return Arg.objects.get(name=name)
+
+    def _gene(self, name):
+        return Gene.objects.get(name=name)
+
+    def _prim(self, name):
+        return Primer.objects.get(full_name=name)
 
 if __name__ == "__main__":
     ReferenceExperiment().create()

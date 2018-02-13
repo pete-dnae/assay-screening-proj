@@ -29,14 +29,24 @@ Work log and Plan for <Bottomup> change of emphasis
 *  Change AllocRule to have no BLOCKS or CONSECUTIVE property - and instead
    just be a plain rectangular region specification. E.g. "A-H 1-5"
 *  Refer to chambers by column letter and row number in API
-o  Pete code review Prasanna's changes
-    o  rule and rule interpreter
-    o  make reference experiment
-    o  plate models
-o  Do unit tests still work?
-o  Does reset_db still work?
-o  Does api still serve?
-o  Focus just on the pre-amp plate for the time being...
+*  Focus just on the pre-amp plate for the time being...
+*  Refactor the way Concentration is specified, and change all model make()
+   methods that take concentration parameters, to expect a Concentration
+   object.
+o  Change AllocRule to use a Reagent as the payload item
+    *  Change AllocRule model to suit
+    o  Get create reference experiment to work
+        o  Need to prepare all reagent objects in advance needed for rules
+            *  strains (folding the count into the concentration)
+            *  hgdna
+            o  pa primers
+            o  id primers
+        o  Provide a reagent finder similar to the other finders
+        o  Upgrade rules_from_data() to take a reagent object, or maybe
+           restructure this function to make it a bit clearer
+    o  Update AllocRule serializer
+    o  Fix up unit tests / reset_db / serving API
+o  Ditch strain count rule type - subsume into strain reagent
 o  Change the reference experiment to expand out primer kits, buffermix and
    mastermix and allocate these to wells explicitly with rules. (This makes
    the modelling of MasterMix and BufferMix redundant).

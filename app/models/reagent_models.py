@@ -15,6 +15,10 @@ class Concentration(models.Model):
     A concentration also has preferred display units to make the numbers easier
     for humans to read or enter. But internally the value held is
     by-defintion dimensionless.
+
+    We hold the value as a carefully formatted string, to make it more easily
+    hashable, and resilient to rounding differences when calculated in diverse
+    ways.
     """
 
     presentation_units_choices = mk_choices((
@@ -27,18 +31,29 @@ class Concentration(models.Model):
         'cp/ul',
         '%'))
 
-    value = models.FloatField()
+    # E.g. '1.235e+08'
+    # See normalised() method.
+    normalised_string_value = models.CharField(max_length=15)
     preferred_units = models.CharField(
             max_length=15, choices=presentation_units_choices )
 
     @classmethod
-    def make(cls, value, preferred_units):
+    def make(cls, numerical_value, preferred_units):
         return Concentration.objects.create(
-            value=value, preferred_units=preferred_units)
+            normalised_string_value=cls._normalised(numerical_value),
+            preferred_units=preferred_units)
 
     @classmethod
     def clone(cls, src):
-        return cls.make(src.value, src.preferred_units)
+        return cls.make(src.normalised_string_value, src.preferred_units)
+
+    @classmethod
+    def value_from_quotient(cls, denom, numerator):
+        return cls._normalised(numerator / denom)
+
+    @classmethod
+    def _normalised(cls, numerical_value):
+        return '%.3e' % numerical_value
 
 
 class Reagent(models.Model):
@@ -54,18 +69,7 @@ class Reagent(models.Model):
         Concentration, related_name='retgent', on_delete=models.PROTECT)
 
     @classmethod
-    def make(self, name, lot, stock, final, units):
-        concentration = Concentration.make(stock, final, units)
-        reagent = ConcreteReagent.objects.create(
-            name=name, lot=lot, concentration=concentration)
-        return reagent
-
-    @classmethod
-    def make_from_quotient(self, name, lot, stock, final, units):
-        """ Cludge until concentrations are remodelled properly.
-        """
-        conc_value = final / stock
-        concentration = Concentration.make(conc_value, units)
+    def make(self, name, lot, concentration):
         reagent = Reagent.objects.create(
             name=name, lot=lot, concentration=concentration)
         return reagent
