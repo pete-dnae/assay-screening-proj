@@ -40,9 +40,7 @@ class AllocRule(models.Model):
         'HgDNA',
         'PA Primers',
         'ID Primers',
-        'Strain',
-        'Strain Count',
-        'Reagent'))
+        'Strain'))
 
 
     # This field is used to force some collections of AllocRule(s) to maintain
@@ -134,7 +132,7 @@ class AllocRule(models.Model):
         """
         return('%s, %s,%s' % (
             self.payload_type,
-            payload.name,
+            self.payload.name,
             'Rows:%s-%s, Cols:%d-%d' % (
                 self.start_row_letter,
                 self.end_row_letter,

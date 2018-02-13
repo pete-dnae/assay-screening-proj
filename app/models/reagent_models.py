@@ -26,7 +26,7 @@ class Concentration(models.Model):
         'mM',
         'mg/ml',
         'mM each',
-        'microM each',
+        'microM',
         'ng/ul',
         'cp/ul',
         '%'))
@@ -66,14 +66,28 @@ class Reagent(models.Model):
     name = models.CharField(max_length=30) 
     lot = models.CharField(max_length=30)
     concentration = models.ForeignKey(
-        Concentration, related_name='retgent', on_delete=models.PROTECT)
+        Concentration, related_name='reagent', on_delete=models.PROTECT)
+    hash = models.CharField(unique=True,max_length=500,db_column='hash_name')
 
     @classmethod
-    def make(self, name, lot, concentration):
+    def make(cls, name, lot, concentration):
         reagent = Reagent.objects.create(
             name=name, lot=lot, concentration=concentration)
         return reagent
 
+    def __hash__(self):
+        return self.make_hash(self.name,self.concentration.normalised_string_value)
+
+    @staticmethod
+    def make_hash( reagent_name,conc_normalised_string):
+        return reagent_name+':'+conc_normalised_string
+
+    def save(self, *args, **kwargs):
+        """
+        We override model.save() in order to create hash value for a reagent to go into hash_name feild.
+        """
+        self.hash = self.__hash__()
+        super().save(*args, **kwargs)
 
 class Composition(models.Model):
     """
