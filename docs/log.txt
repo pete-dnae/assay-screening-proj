@@ -10,3 +10,5 @@ o  Change the contract for AllocRule - to drop the idea that later rules
    been covered by a rule set, and which have not. Treat two rules allocating
    something to the same cell as an error.
 o  Bring all docs up to date
+o  Seperate finders from making reference experiment
+

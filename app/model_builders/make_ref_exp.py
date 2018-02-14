@@ -181,7 +181,7 @@ class ReferenceExperiment():
         return Experiment.make(
             'reference_experiment_1',
             'PH',
-            [self._create_plate_1('plate_1')], 
+            [self._create_plate_1('plate_1'),self._create_plate_2('plate_1')],
             self._create_pa_cycling(),
             self._create_id_cycling(),
         )
@@ -241,6 +241,12 @@ class ReferenceExperiment():
     def _create_plate_1(self, experiment_name):
         return Plate.make(
             experiment_name + '_1',
+            self._make_allocation_1()
+        )
+
+    def _create_plate_2(self, experiment_name):
+        return Plate.make(
+            experiment_name + '_2',
             self._make_allocation_1()
         )
 

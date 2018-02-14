@@ -80,7 +80,7 @@ class Reagent(models.Model):
 
     @staticmethod
     def make_hash( reagent_name,conc_normalised_string):
-        return reagent_name+':'+conc_normalised_string
+        return hash(reagent_name+':'+conc_normalised_string)
 
     def save(self, *args, **kwargs):
         """

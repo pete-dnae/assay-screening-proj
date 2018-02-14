@@ -5,13 +5,13 @@ This module contains the closely allied classes: AllocRuleInterpreter and
 AllocTable.
 """
 
-class AllocTable():
+class AllocationResults():
     """
     A table-like data structure representing the grid of chambers on a 
     plate and for each cell, a list of what has been allocated to it.
     """
 
-    def __init__(self, n_rows, n_cols):
+    def __init__(self):
         """
         This object's structure intends to make it easy to render the 
         table in an HTML <Table> element, by minimicing the <TR><TD>
@@ -21,8 +21,7 @@ class AllocTable():
         Each row is an ordered sequence of cells.
         Each cell is a dictionary keyed on strings like 'Strain'.
 
-        The values against each of these keys is the string to display to
-        represent that thing in the cell..
+        The values against each of these keys is the list of reagent objects present in that cell
 
         Example for table row B, column 3: (zero based indices).
 
@@ -31,14 +30,10 @@ class AllocTable():
         The constructor creates the data structure ready for the specified
         number of rows and columns, but nothing yet in the cell dictionaries.
         """
-        self.rows = {}
-        for row_idx in range(n_rows):
-            row = []
-            row_alph = chr(65+row_idx)
-            self.rows[row_alph]=row
-            for col in range(n_cols):
-                row.append({})
+        self.rows = defaultdict(dict)
 
+    def add(self, row, col, reagent):
+        self.rows[row].setdefault(col, []).append(reagent)
 
 class AllocRuleInterpreter:
     """
@@ -60,25 +55,16 @@ class AllocRuleInterpreter:
     def interpret(self):
         # Treat there being zero rows as a special case, to avoid the
         # call to max() below receiving an empty sequence.
+        self._table = AllocationResults()
         if len(self._rules) == 0:
-            self._table = AllocTable(0, 0)
             return self._table.rows
         # Drop in to the general case.
-
-        # Work out how many rows and columns are implied by all the rules
-        # used - taken together. I.e. the size of the resultant table
-        # is calculated dynamically from the rules provided..
-        self._n_rows = \
-            1 + ord(max((r.end_row_letter for r in self._rules))) - ord('A')
-        self._n_cols = max((r.end_column for r in self._rules))
-
-        self._table = AllocTable(self._n_rows, self._n_cols)
 
         # Iterate to interpret each rule in turn. (Noting that later ones
         # overwrite earlier ones - by definition.
         for rule in self._rules:
             self._apply_rule_to_table(rule)
-        return(self._table.rows)
+        return(self._table)
 
     def _apply_rule_to_table(self, rule):
         """
@@ -110,4 +96,5 @@ class AllocRuleInterpreter:
         # Note this might be overwriting a previous value because later
         # rules overwrite the results from earlier rules, by definition.
         row_alph = chr(65 + row_index)
-        self._table.rows[row_alph][column_index][payload_type] = payload_item.name
+        self._table.add(row_alph,column_index,payload_item)
+

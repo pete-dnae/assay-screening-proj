@@ -1,6 +1,6 @@
 import unittest
 
-from premixer import Premixer
+from app.premixers.premixer import Premixer
 
 class PremixerTest(unittest.TestCase):
 
@@ -32,7 +32,7 @@ class PremixerTest(unittest.TestCase):
         # Followed by the one that targets fewer buckets.
         premix, target_buckets = pm[1]
         self.assertEqual(premix, set('C')) 
-        self.assertEqual(target_buckets, [0, 1]) 
+        self.assertEqual(target_buckets, [0, 1])
 
 
 if __name__ == '__main__':
