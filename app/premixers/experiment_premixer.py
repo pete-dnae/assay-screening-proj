@@ -12,12 +12,14 @@ class ExperimentPremixer:
     def extract_premixes(self):
         """
         Function flattens the allocation results object to a array of sets containing hash value of reagents used per
-        column in each  set
+        cell in each  set
         Premixer object is then created with the flat array and *find_premixes()* function is called to find premixes for
         the input array.
         """
+
         premixer = Premixer(self._buckets)
         premixer.find_premixes()
+
         return premixer.premixes
 
     # -----------------------------------------------------------------------
