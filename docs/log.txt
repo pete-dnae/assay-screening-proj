@@ -1,14 +1,37 @@
 Work log and Plan for <Bottomup> change of emphasis
 
 *  Fix up unit tests / reset_db / serving API
-o  See if the Premix class works. I.e. is cabable of deducing the premix 
+*  See if the Premix class works. I.e. is cabable of deducing the premix
    opportunities for this new setup just in terms of the sets of what to mix.
+*  Seperate finders from making reference experiment
 o  Now add the volume / concentration calculations.
+    o  Work out how we can present/render a Concentration to a human like this for example "10microg/ml" by
+       doing a multiplication/division - depending on which preferred units it carries.
+    o  Same as above, but in the context of a Reagent.
+    o  Can we upgrade the way we specify the concentrations in our reference experiment, so when you look at the code
+    o  Reach a perfect / definitive! understanding of what the concentrations mean and imply in
+       our reference XLS spreadsheet. For every type of reagent.
+    o  Correct our reference experiment generator to INPUT the correct FINAL concencentrations
+       that match perfectly what we learned in the bullet point above.
+    o  Own the maths that models how concentrations change when things are mixed.
+    o  Work out the conceptual model for the graph below, before we try to design the code.
+    o  Work out how we can encapsulate by assembling classes, the graph that represents
+       the Measure(s) represented by every chamber and every premix that gets instantiated
+       in a beaker. This should be capable of expressing how much (volume) of each measure should
+       be taken out, and put into a child Measure. It must also be capable of saying what bottles (reagents in measure)
+       to take of the shelf to make up the top-level measure/premixes, and how much (volume) in each case.
+    o  Propose an algorithm / process (on paper) of how we can build this model in a way that satisfies the
+       concentration pipeline, working bottom up until we get to reagents we have on the shefl.
+       you see Concentration(human_value=42, preferred_units='microL/banana')
+
+       
 o  Explore how to expose the bottom-up inference of premixes through the API.
 o  Change the contract for AllocRule - to drop the idea that later rules
    override earlier ones. Also provide info in the API about which cells have
    been covered by a rule set, and which have not. Treat two rules allocating
    something to the same cell as an error.
 o  Bring all docs up to date
-o  Seperate finders from making reference experiment
+
+----------------------------------------------------------------------------------------------------------
+
 
