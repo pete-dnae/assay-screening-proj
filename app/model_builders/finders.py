@@ -26,31 +26,31 @@ class Finders:
         return Concentration.objects.get(
             normalised_string_value=string_value, preferred_units=pref_units)
 
-
-    def _conc_str(self, normalised_string_value, pref_units):
+    @classmethod
+    def _conc_str(cls, normalised_string_value, pref_units):
         # Find a Concentration from its normalised string value.
         return Concentration.objects.get(
             normalised_string_value=normalised_string_value,
             preferred_units=pref_units)
 
-
-    def _org(self, abbr):
+    @classmethod
+    def _org(cls, abbr):
         return Organism.objects.get(abbreviation=abbr)
 
-
-    def _arg(self, name):
+    @classmethod
+    def _arg(cls, name):
         return Arg.objects.get(name=name)
 
-
-    def _gene(self, name):
+    @classmethod
+    def _gene(cls, name):
         return Gene.objects.get(name=name)
 
-
-    def _prim(self, name):
+    @classmethod
+    def _prim(cls, name):
         return Primer.objects.get(full_name=name)
 
-
-    def _find_id_primer_pair(self, fwd_name, rev_name):
+    @classmethod
+    def _find_id_primer_pair(cls, fwd_name, rev_name):
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
             reverse_primer__full_name=rev_name,
@@ -58,8 +58,8 @@ class Finders:
         )
         return primer_pair
 
-
-    def _find_pa_primer_pair(self, fwd_name, rev_name):
+    @classmethod
+    def _find_pa_primer_pair(cls, fwd_name, rev_name):
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
             reverse_primer__full_name=rev_name,
@@ -67,8 +67,8 @@ class Finders:
         )
         return primer_pair
 
-
-    def _find_primer_pair(self, fwd_name, rev_name,
+    @classmethod
+    def _find_primer_pair(cls, fwd_name, rev_name,
                           suitable_for_pa, suitable_for_id):
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
@@ -78,8 +78,8 @@ class Finders:
         )
         return primer_pair
 
-
-    def _reagent(self, reagent_hash):
+    @classmethod
+    def _reagent(cls, reagent_hash):
         """
         Example reagent_hash could be: 'ATCC 26189:5.000e+01'
         """

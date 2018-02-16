@@ -9,6 +9,8 @@ from app.models.strain_models import *
 from app.models.experiment_model import *
 from app.models.plate_models import *
 from .finders import Finders
+from app.model_builders.common_modules import CreateExperiment
+
 class ReferenceExperiment():
     """
     Creates all the database entities required to assemble an example,
@@ -17,7 +19,6 @@ class ReferenceExperiment():
 
     def __init__(self):
         self.experiment = None
-        self._next_count = 0 # To help generate incrementing numbers.
 
     def create(self):
         self._create_shared_entities() # Organisms, Stock reagents etc.
@@ -28,32 +29,13 @@ class ReferenceExperiment():
     # Private below.
     #-----------------------------------------------------------------------
 
-    def _tick(self):
-        self._next_count += 1
-        return self._next_count
-
     def _create_shared_entities(self):
-        self._create_concentrations()
+        exp=CreateExperiment()
+        exp._create_concentrations()
         self._create_organisms_and_strains()
         self._create_buffer_reagents()
         self._create_hgdna_reagents()
         self._create_genes_and_primers()
-
-    def _create_concentrations(self):
-        for denom, numerator, pref_units in (
-                (1, 1, 'X'),
-                (10, 0.13, 'X'),
-                (10, 0.2, 'mM'),
-                (10, 0.04, '%'),
-                (20, 1, 'mg/ml'),
-                (25, 2.06, 'mM'),
-                (50, 1.0, 'x'),
-                (50, 1.3, 'x'),
-                (100, 0.32, 'X'),
-                (100, 1, 'mM'),
-                (1000, 48, 'mM')):
-            Concentration.make(numerator / float(denom), pref_units)
-
 
     def _create_buffer_reagents(self):
         finder=Finders()
@@ -159,39 +141,13 @@ class ReferenceExperiment():
             Reagent.make(primer_name, '-', conc)
 
     def _create_experiment(self):
+        experiment = CreateExperiment()
         return Experiment.make(
             'reference_experiment_1',
             'PH',
             [self._create_plate_1('plate_1')],
-            self._create_pa_cycling(),
-            self._create_id_cycling(),
-        )
-
-
-    def _create_pa_cycling(self):
-        return CyclingPattern.make(
-            activation_time=120,
-            activation_temp=95,
-            num_cycles=20,
-            denature_time=10,
-            denature_temp=95,
-            anneal_time=10,
-            anneal_temp=62,
-            extend_temp=72,
-            extend_time=30
-        )
-
-    def _create_id_cycling(self):
-        return CyclingPattern.make(
-            activation_time=120,
-            activation_temp=95,
-            num_cycles=20,
-            denature_time=10,
-            denature_temp=95,
-            anneal_time=0,
-            anneal_temp=0,
-            extend_temp=62,
-            extend_time=25
+            experiment._create_pa_cycling(),
+            experiment._create_id_cycling(),
         )
 
     def _create_plate_1(self, experiment_name):
@@ -218,29 +174,32 @@ class ReferenceExperiment():
 
     def _strains_rules_1(self):
         finder = Finders()
+        experiment = CreateExperiment()
         data = (
             (finder._reagent(Reagent.make_hash('ATCC BAA-2355',Concentration.value_from_quotient(1, 5000))),('A', 'H', 1, 4)),
             (finder._reagent(Reagent.make_hash('ATCC 700802',Concentration.value_from_quotient(1, 50))),('A', 'H', 4, 8)),
             (finder._reagent(Reagent.make_hash('ATCC 15764',Concentration.value_from_quotient(1, 500))),('A', 'H', 8, 12),)
         )
-        return self._rules_from_data('Strain', data)
+        return experiment._rules_from_data('Strain', data)
 
     def _hg_dna_rules_1(self):
         # Distribution in English.
         # Blanket fill with 0 everywhere.
         # Then 3000 in a bottom left block.
         finder = Finders()
+        experiment = CreateExperiment()
         data = (
             (finder._reagent(Reagent.make_hash('hgDNA',Concentration.value_from_quotient(1, 0))), ('A', 'H', 1, 12)),
             (finder._reagent(Reagent.make_hash('hgDNA',Concentration.value_from_quotient(1, 5000))), ('F', 'H', 1, 8)),
         )
-        return self._rules_from_data('HgDNA', data)
+        return experiment._rules_from_data('HgDNA', data)
 
     def _pa_primers_rules_1(self):
         # Distribution in English.
         # Columns split into 3 groups, each with its own block allocation.
         # Uniform for all rows.
         finder = Finders()
+        experiment = CreateExperiment()
         data = (
             (finder._reagent(Reagent.make_hash('Eco63',Concentration.value_from_quotient(1, 0.4))),  ('A', 'H', 5, 5)),
             (finder._reagent(Reagent.make_hash('Eco60', Concentration.value_from_quotient(1, 0.4))), ('A', 'H', 5, 5)),
@@ -254,12 +213,13 @@ class ReferenceExperiment():
             (finder._reagent(Reagent.make_hash('Spo13', Concentration.value_from_quotient(1, 0.4))), ('A', 'H', 8, 8)),
 
         )
-        return self._rules_from_data('PA Primers', data)
+        return experiment._rules_from_data('PA Primers', data)
 
     def _id_primers_rules_1(self):
         # Distribution in English.
         # One block repeating every 4 columns, for all rows.
         finder = Finders()
+        experiment = CreateExperiment()
         data = (
             (finder._reagent(Reagent.make_hash('Eco64', Concentration.value_from_quotient(1, 0.4))), ('A', 'H', 1, 3)),
             (finder._reagent(Reagent.make_hash('Eco66', Concentration.value_from_quotient(1, 0.4))), ('A', 'H', 1, 3)),
@@ -270,15 +230,9 @@ class ReferenceExperiment():
             (finder._reagent(Reagent.make_hash('van04', Concentration.value_from_quotient(1, 0.4))), ('A', 'H', 9, 12)),
             (finder._reagent(Reagent.make_hash('van01', Concentration.value_from_quotient(1, 0.4))), ('A', 'H', 9, 12)),
         )
-        return self._rules_from_data('ID-Primers', data)
+        return experiment._rules_from_data('ID-Primers', data)
 
-    def _rules_from_data(self, payload_type, data):
-        rules = []
-        for rule in data:
-            payload, zone = rule
-            rules.append(AllocRule.make(self._tick(), 
-                payload_type, payload, zone))
-        return rules
+
 
 
 

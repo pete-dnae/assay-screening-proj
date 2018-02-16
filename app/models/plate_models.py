@@ -40,7 +40,8 @@ class AllocRule(models.Model):
         'HgDNA',
         'PA Primers',
         'ID Primers',
-        'Strain'))
+        'Strain',
+        'Reagent'))
 
 
     # This field is used to force some collections of AllocRule(s) to maintain

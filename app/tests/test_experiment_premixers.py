@@ -10,7 +10,7 @@ from app.models.reagent_models import Reagent
 from app.premixers.experiment_premixer import ExperimentPremixer
 from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 from app.rules_engine.alloc_rule_interpreter import AllocationResults
-from app.model_builders.make_ref_exp import ReferenceExperiment
+from app.model_builders.make_simple_experiment import SimpleExperiment
 
 class IdentifyPremixersTest(APITestCase):
     """
@@ -23,7 +23,8 @@ class IdentifyPremixersTest(APITestCase):
     """
 
     def setUp(self):
-        self.experiment = ReferenceExperiment().create()
+        self.experiment = SimpleExperiment().create()
+
 
     def test_new_experiment_endpoint(self):
         experiment=Experiment.objects.get(id=1)
@@ -38,8 +39,8 @@ class IdentifyPremixersTest(APITestCase):
         experiment_premixer = ExperimentPremixer(tabulated_result)
         premixes = experiment_premixer.extract_premixes()
         self.assertEqual(type(premixes), list)
-        element = premixes[0]
-        self.assertEqual(type(element), tuple)
-        self.assertTupleEqual(element,({'hgDNA:0.000e+00'},[i for i in range(0,192)]))
+        set,range = premixes[0]
+        self.assertEqual(type(list(set)[0]), Reagent)
+        self.assertEqual(list(set)[0].name,'DNA Free Water')
 
 
