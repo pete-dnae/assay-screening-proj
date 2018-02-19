@@ -13,10 +13,24 @@ from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 # comprehension but we cannot, because they comprise nested definitions, and
 # thus must appear in dependency order for the module to load.
 
+class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Concentration
+        fields = ('normalised_string_value','preferred_units')
+
+class ReagentSerializer(serializers.HyperlinkedModelSerializer):
+    concentration = ConcentrationSerializer(read_only=True)
+
+    class Meta:
+        model = Reagent
+        fields = ('name','concentration')
+
 class AllocRuleSerializer(serializers.HyperlinkedModelSerializer):
 
     display_string = serializers.CharField(read_only=True)
     id=serializers.ReadOnlyField()
+    payload = ReagentSerializer(read_only=True)
 
     class Meta:
         model = AllocRule
@@ -131,13 +145,6 @@ class PlateSerializer(serializers.HyperlinkedModelSerializer):
         return plate
 
 
-class ConcentrationSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Concentration
-        fields = ('__all__')
-
-
 class PrimerPairSerializer(serializers.HyperlinkedModelSerializer):
 
     display_name = serializers.SerializerMethodField()
@@ -205,12 +212,6 @@ class ListExperimentSerializer(serializers.ModelSerializer):
         exp.save()
         return exp
 
-
-class ReagentSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Reagent
-        fields = ('__all__')
 
 class CompositionSerializer(serializers.HyperlinkedModelSerializer):
 
