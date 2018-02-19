@@ -1,0 +1,95 @@
+Consider a Domain-Specific-Language to Specify Rules:
+
+First of all let us consider a single plate...
+
+      Titanium-Taq            1-12  A-H 0.02 x
+      (Eco)-ATCC-BAA-2355     1,5,9 A-H 2.00E+04 copies/ul
+      HgDna                   1-8   G-H 50 ng/foo
+      Ec_uidA_6.x_Eco63_Eco60 5-8   A-H 0.4 uM/bar
+
+The implied column headings are:
+
+    - Unique name
+    - Columns
+    - Rows
+    - Concentration value
+    - Concentration units
+
+You just start typing all the lines above into a *smart* text editor pane 
+in the GUI. Plus you can copy/paste just like any other editor.
+
+What does *smart* mean?
+
+    o  It knows what a properly-formed line looks like
+    o  Guides you as you type, on a keystroke-by-keystroke basis...
+    o  Auto-completion on the name field
+    o  Validates the columns as being one of these formats:
+            3
+            1-4
+            3,4,5
+    o  Validates the rows as being one of these formats:
+            A
+            A-D
+            A,B,C
+    o  Validates the concentration value as being a number
+    o  Auto-completes and validates the concentration units string
+    o  You can just enter one space between fields as you type...
+    o  ... and it auto-aligns the fields for you dynamically
+    o  It will use a mono-spaced font (like Courier) so that characters line up
+       vertically.
+
+Now let us consider multiple plates...
+
+Here we show the same rules fragment as above but in the context of rules for 
+multiple plates...
+
+
+    PLATE 1:1
+
+      Titanium-Taq            1-12  A-H 0.02 x
+      (Eco)-ATCC-BAA-2355     1,5,9 A-H 2.00E+04 copies/ul
+      HgDna                   1-8   G-H 50 ng/foo
+      Ec_uidA_6.x_Eco63_Eco60 5-8   A-H 0.4 uM/bar
+
+    PLATE 1:2
+
+      Transfer                1,5,9 A-H 0.02 dilution
+      Ec_uidA_x.2_Eco64_Eco66 1,5,9 A-H 2.00E+04 copies/ul
+
+    PLATE 2:1
+
+      Titanium-Taq            1-12  A-H 0.02 x
+      etc...
+
+We number each plate in the experiment with a two-part number.
+
+    <logical plate>:<physical plate>
+
+    In the example, the use of 1:1 and 1:2 tells the system that some of the 
+    fluid from 1:1 will be used (after it has undergone its process) 
+    to initialise 1:2. (It's not limited to two).
+
+    Note how the first rule for PLATE 1:2 uses the reserved name *Transfer*.
+    Note also how the concentration units for this one introduces a new
+    permitted units string *dilution*.
+
+
+Wider GUI Support
+
+    o  You see some kind of visual / graphical feedback of the grid layout
+       you are creating as you go. (For all plates?)
+    o  You have other tabs / links that let you curate what the legal unique
+       names are.
+
+Concentration Debate
+
+    We (in software) want to say that concentrations inside the system and
+    under the hood, are always defined as dimensionless, volumetric ratios
+    w.r.t. water. Have no notions of final or stock. And are defined regardless
+    of actual volume.  This includes HgDNA, strain counts etc. But of course we
+    can make it so that this not what humans ever see by letting the user
+    specify preferred units and entering / reading values only in these terms.
+    But it does mean that all of the choices we offer for preferred units MUST
+    BE mathematically equivalent to pure volumetric ratios w.r.t. water.
+
+    Is this possible / workable for the scientists?
