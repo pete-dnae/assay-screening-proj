@@ -1,37 +1,86 @@
 Work log and Plan for <Bottomup> change of emphasis
 
-*  Fix up unit tests / reset_db / serving API
-*  See if the Premix class works. I.e. is cabable of deducing the premix
-   opportunities for this new setup just in terms of the sets of what to mix.
-*  Seperate finders from making reference experiment
-o  Now add the volume / concentration calculations.
-    o  Work out how we can present/render a Concentration to a human like this for example "10microg/ml" by
-       doing a multiplication/division - depending on which preferred units it carries.
-    o  Same as above, but in the context of a Reagent.
-    o  Can we upgrade the way we specify the concentrations in our reference experiment, so when you look at the code
-    o  Reach a perfect / definitive! understanding of what the concentrations mean and imply in
-       our reference XLS spreadsheet. For every type of reagent.
-    o  Correct our reference experiment generator to INPUT the correct FINAL concencentrations
-       that match perfectly what we learned in the bullet point above.
-    o  Own the maths that models how concentrations change when things are mixed.
-    o  Work out the conceptual model for the graph below, before we try to design the code.
-    o  Work out how we can encapsulate by assembling classes, the graph that represents
-       the Measure(s) represented by every chamber and every premix that gets instantiated
-       in a beaker. This should be capable of expressing how much (volume) of each measure should
-       be taken out, and put into a child Measure. It must also be capable of saying what bottles (reagents in measure)
-       to take of the shelf to make up the top-level measure/premixes, and how much (volume) in each case.
-    o  Propose an algorithm / process (on paper) of how we can build this model in a way that satisfies the
-       concentration pipeline, working bottom up until we get to reagents we have on the shefl.
-       you see Concentration(human_value=42, preferred_units='microL/banana')
+o  Digression - can we define the rules with a text script?
+    *  Design a script language
+    *  Have this reviewed by Chris / iterate / improve it until ok, and it is
+       capable of coping with the more general cases too
+    o  See if we can express our reference experiment using this language
+       (a paper exercise)
+    o  Does it look ok / amenable?
+    o  What conceptual problems does this throw up / fix them
+    o  Formalise the specification for the language
+o  How to change the back end code that deals with rules to take this as input?
+    *  Make a design outline hypothesis (see bottom of this document)
+    o  First need to confront the unfinished concentration work
+        o  Add methods to Concentration that can convert between the normalised
+           string value, and the human friendly version.
+    o  Try to code all the model changes suggested at the bottom
+    o  Try to bring-up ReferenceExperiment.make() and get it to pass its unit
+       test.
+        o  Specify the rules using a single rules script
+        o  Get the model to build with this instead of what was there before.
+        o  Of course this won't *interpret* the script at this stage, so
+           we won't be exercising this code yet.
+    o  Create and unit-test the rules script parser
+    o  Update and unit test the ExperimentPremixer and AllocationResults
+    o  Are we done on this objective?
 
-       
-o  Explore how to expose the bottom-up inference of premixes through the API.
-o  Change the contract for AllocRule - to drop the idea that later rules
-   override earlier ones. Also provide info in the API about which cells have
-   been covered by a rule set, and which have not. Treat two rules allocating
-   something to the same cell as an error.
-o  Bring all docs up to date
+o  Revert to brining in concentration and volume calculations alongside the
+   premix discovery.
 
-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+Class Design Thinking
+-----------------------------------------------------------------------------
 
+o  The big picture
+    o  We have a new class RulesScript
+        o  Is-a Django model that has just a single field - the script's text.
+        o  This becomes the single source of truth for rules in an experiment,
+           which we serialize.
+        o  The experiment model has-a RulesScript instead of its plates field.
+    o  We have a new class RulesScriptInterpreter
+        o  Produces a Python list of AllocRule in response to being given
+           the rules script as one big string.
+        o  Much emphasis on error handling
+        o  Much emphasis on very careful and simple struture
+        o  Much emphasis on making it easy to replicate in Javascript
+    o  We retain many of the previous rules modelling classes and their
+       collaborators, but we never store these in the database. We keep these
+       to become our way of getting a handle on machine-readable representations
+       of rules that we can pass around. These they will be used only 
+       transiently in memory, and should cease to be Django models, and moved 
+       into a separate package.
 
+o  AllocRule
+    o  Retain AllocRule as our machine-readable definition of 
+       a rule. But with some tweaks.
+    o  The rank for ordering becomes redundant.
+    o  It no longer has a payload type
+    o  Replace the Reagent FK with a plain python attribute that points to a 
+       Reagent object.
+
+o  Reagent
+    o  No longer is-a Django model, and don't need in database.
+
+o  RuleList
+    o  We can ditch this class.
+    o  It collapses down to a Python list of AllocRule when we need one.
+
+o  AllocationInstructions
+    o  We can ditch this class.
+    o  Ok, so we loose supressed_columns, but lets forget about them for now.
+
+o  Plate
+    o  We can ditch this class.
+
+o  AllocationResults
+    o  Remains a nested dictionary keyed on row/columm.
+    o  But with a different leaf-value type. (this is done already)
+    o  No longer a dictionary keyed on strings like 'Strain'
+    o  But instead a list of Reagent objects.
+
+o  AllocRuleInterpreter 
+    o  Hopefully stays the same, bar the odd tweak?
+
+o  ExperimentPremixer
+    o  Think stays the same
