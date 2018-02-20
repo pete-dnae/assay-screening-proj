@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '@/assets/css/horsey.min.css';
 import 'font-awesome/css/font-awesome.css';
 import '@/assets/sass/app.scss';
 import 'animate.css';
