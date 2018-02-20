@@ -1,0 +1,101 @@
+Consider a Domain-Specific-Language to Specify Rules:
+
+First of all let us consider a single plate...
+
+      A Titanium-Taq            1-12  A-H 0.02 x
+      A (Eco)-ATCC-BAA-2355     1,5,9 A-H 2.00E+04 copies/ul
+      A HgDna                   1-8   G-H 50 ng/foo
+      A Ec_uidA_6.x_Eco63_Eco60 5-8   A-H 0.4 uM/bar
+
+The implied column headings are:
+
+    - Rule type (A:Allocate, or T:Transfer) # We'll come back to transfer.
+    - Unique name
+    - Columns
+    - Rows
+    - Concentration value
+    - Concentration units
+
+You just start typing all the lines above into a *smart* text editor pane 
+in the GUI. Plus you can copy/paste just like any other editor.
+
+What does *smart* mean?
+
+    o  It knows what a properly-formed line looks like
+    o  Guides you as you type, on a keystroke-by-keystroke basis...
+    o  Auto-completion suggestions on name field
+        - E.g. type Eco and see everthing that has 'Eco' in it.
+    o  Validates the columns as being one of these formats:
+            3
+            1-4
+            3,4,5
+    o  Validates the rows as being one of these formats:
+            A
+            A-D
+            A,B,C
+    o  Validates the concentration value as being a number
+    o  Auto-completes and validates the concentration units string
+    o  You can just enter one space between fields as you type...
+    o  ... and it auto-aligns the fields for you dynamically
+    o  It will use a mono-spaced font (like Courier) so that characters line up
+       vertically.
+    o  It "knows" which field you've got to on a line
+    o  It offers advice based on this at the bottom somewhere
+    o  It makes the text you've put in different colours to indicate when it's
+       understood that field, or not yet.
+
+Now let us consider multiple plates...
+
+Here we show the same rules fragment as above but in the context of rules for 
+multiple plates. The script specifies the allocation for all of the plates.
+
+
+    P1
+
+      A Titanium-Taq            1-12  A-H 0.02 x
+      A (Eco)-ATCC-BAA-2355     1,5,9 A-H 2.00E+04 copies/ul
+      A HgDna                   1-8   G-H 50 ng/foo
+      A Ec_uidA_6.x_Eco63_Eco60 5-8   A-H 0.4 uM/bar
+
+    P2
+
+      T P1                      1,5,9 A-H 0.02 dilution
+      A Ec_uidA_x.2_Eco64_Eco66 1,5,9 A-H 2.00E+04 copies/ul
+
+    P3
+
+      A Titanium-Taq            1-12  A-H 0.02 x
+      etc...
+
+We number each plate in the experiment as P1, P2, P3, ... etc.
+
+    Note how the rules for plate 2 introduces the other rule type 'T' - 
+    meaning transfer. Instead of a reagent name you specify the plate
+    the liquid should be taken from. This assumes the source chambers are the
+    same row/column as the destination row/column. 
+
+    Note also the units used on this concentration *dilution*
+
+
+
+Wider GUI Support
+
+    o  You see some kind of visual / graphical feedback of the grid layout
+       you are creating as you go. (For all plates?)
+    o  You'll have a way of choosing a reagent, and then checking and 
+       visualising where you've put it.
+    o  You have other tabs / links that let you curate what the legal unique
+       names are.
+
+Concentration Debate
+
+    We (in software) want to say that concentrations inside the system and
+    under the hood, are always defined as dimensionless, molecule-count ratios
+    w.r.t. water. Have no notions of final or stock. And are defined regardless
+    of actual volume.  This includes HgDNA, strain counts etc. But of course we
+    can make it so that this not what humans ever see by letting the user
+    specify preferred units and entering / reading values only in these terms.
+    But it does mean that all of the choices we offer for preferred units MUST
+    BE mathematically equivalent to pure molecule-count ratios w.r.t. water.
+
+    Is this possible / workable for the scientists?

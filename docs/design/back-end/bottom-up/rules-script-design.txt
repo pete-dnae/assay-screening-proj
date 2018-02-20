@@ -1,0 +1,7 @@
+o  We retain AllocRule as our machine-readable definition of a rule.
+o  And much of the other code that interacts with these - like the rules 
+   engine.
+o  But we treat the rules-script as the single source of truth in an experiment
+   for rules.
+
+
