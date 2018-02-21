@@ -25,7 +25,7 @@ class AllocationResults():
 
         Example for table row B, column 3: (zero based indices).
 
-            table[B][3]['PA-Primers'] = 'Efm_vanA_1.x_van05_van01'
+            table[B][3]['PA-Primers'] = [reagent,reagent,reagent]
 
         The constructor creates the data structure ready for the specified
         number of rows and columns, but nothing yet in the cell dictionaries.

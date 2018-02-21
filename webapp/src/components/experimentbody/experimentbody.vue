@@ -35,6 +35,14 @@
         <allocationholder></allocationholder>
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <scriptinput></scriptinput>
+      </div>
+      <div class="col">
+        
+      </div>
+  </div>
   </div>
 </template>
 <script src="./experimentbody.js"></script>

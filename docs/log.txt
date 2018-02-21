@@ -47,16 +47,16 @@ o  The big picture
     o  We retain many of the previous rules modelling classes and their
        collaborators, but we never store these in the database. We keep these
        to become our way of getting a handle on machine-readable representations
-       of rules that we can pass around. These they will be used only 
-       transiently in memory, and should cease to be Django models, and moved 
+       of rules that we can pass around. These they will be used only
+       transiently in memory, and should cease to be Django models, and moved
        into a separate package.
 
 o  AllocRule
-    o  Retain AllocRule as our machine-readable definition of 
+    o  Retain AllocRule as our machine-readable definition of
        a rule. But with some tweaks.
     o  The rank for ordering becomes redundant.
     o  It no longer has a payload type
-    o  Replace the Reagent FK with a plain python attribute that points to a 
+    o  Replace the Reagent FK with a plain python attribute that points to a
        Reagent object.
 
 o  Reagent
@@ -79,7 +79,7 @@ o  AllocationResults
     o  No longer a dictionary keyed on strings like 'Strain'
     o  But instead a list of Reagent objects.
 
-o  AllocRuleInterpreter 
+o  AllocRuleInterpreter
     o  Hopefully stays the same, bar the odd tweak?
 
 o  ExperimentPremixer
