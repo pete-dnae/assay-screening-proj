@@ -4,9 +4,9 @@ o  Digression - can we define the rules with a text script?
     *  Design a script language
     *  Have this reviewed by Chris / iterate / improve it until ok, and it is
        capable of coping with the more general cases too
-    o  See if we can express our reference experiment using this language
+    *  See if we can express our reference experiment using this language
        (a paper exercise)
-    o  Does it look ok / amenable?
+    *  Does it look ok / amenable?
     o  What conceptual problems does this throw up / fix them
     o  Formalise the specification for the language
 o  How to change the back end code that deals with rules to take this as input?
