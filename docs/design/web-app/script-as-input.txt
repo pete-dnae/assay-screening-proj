@@ -49,7 +49,7 @@ Now let us consider multiple plates...
 Here we show the same rules fragment as above but in the context of rules for 
 multiple plates. The script specifies the allocation for all of the plates.
 
-
+A Titanium-Taq 1-12 A-H 0.02 x
     P1
 
       A Titanium-Taq            1-12  A-H 0.02 x

@@ -1,8 +1,7 @@
 from collections import defaultdict
-
+import re
 """
-This module contains the closely allied classes: AllocRuleInterpreter and
-AllocTable.
+This module contains the closely allied classes: AllocRuleInterpreter,AllocTable and RuleParser.
 """
 
 class AllocationResults():
@@ -97,4 +96,5 @@ class AllocRuleInterpreter:
         # rules overwrite the results from earlier rules, by definition.
         row_alph = chr(65 + row_index)
         self._table.add(row_alph,column_index,payload_item)
+
 

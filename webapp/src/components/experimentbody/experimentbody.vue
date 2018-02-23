@@ -1,6 +1,6 @@
 <template>
   <div class="m-2 border">
-    <div class="row">
+    <!-- <div class="row">
       <div class="col d-flex justify-content-start">
         <ul class="nav nav-pills nav-fill">
           <li class="nav-item">
@@ -34,13 +34,13 @@
       <div class="col">
         <allocationholder></allocationholder>
       </div>
-    </div>
+    </div> -->
     <div class="row">
       <div class="col">
         <scriptinput></scriptinput>
       </div>
       <div class="col">
-        
+
       </div>
   </div>
   </div>

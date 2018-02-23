@@ -1,7 +1,7 @@
 from django.db import models
 
 from .odds_and_ends_models import CyclingPattern 
-from .plate_models import Plate
+from .rule_models import Plate
 
 class Experiment(models.Model):
     """

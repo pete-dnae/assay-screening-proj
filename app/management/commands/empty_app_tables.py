@@ -4,7 +4,7 @@ from app.models.experiment_model import *
 from app.models.reagent_models import *
 from app.models.primer_models import *
 from app.models.strain_models import *
-from app.models.plate_models import *
+from app.models.rule_models import *
 
 # This list has to be in dependency order.
 # If A refers to B with a foreign key, then the A must be deleted first.

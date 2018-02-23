@@ -20,7 +20,8 @@ export default {
       msg: 'Welcome',
       text: '',
       resultHtml: '',
-      content: '<p>example content</p>',
+      content: '',
+      units: ['mM', 'mg/ml', 'mM each', 'copies/ul', 'uM', 'ng/ul', 'x'],
       editorOption: {
         /* quill options */
       },
@@ -31,20 +32,25 @@ export default {
   },
   watch: {},
   methods: {
-    splitLines(text) {},
-    onEditorChange(event) {
-      const lines = splitLines('\n', event.text).filter(x => x);
-      let feedDict = {};
-      lines.forEach((x, i) => {
-        const { feedback, resultHtml } = validateRule(
-          ['Titanium-Taq'],
-          ['x'],
-          x,
-        );
-        feedDict[i] = feedback;
-        this.resultHtml = resultHtml.join('');
-      });
-      document.getElementById('result').innerHTML = this.resultHtml;
+    onEditorChange({ editor, html, text }) {
+      if (!this.content.includes('bla')) {
+        this.resultHtml = new Set();
+        const lines = splitLines('\n', text).filter(x => x);
+        lines.forEach((x, i) => {
+          const resultHtml = validateRule(
+            i,
+            ['Titanium-Taq', 'HgDna'],
+            this.units,
+            x,
+          );
+          this.resultHtml = new Set([...this.resultHtml, ...resultHtml]);
+        });
+        document.getElementById('result').innerHTML = Array.from(
+          this.resultHtml,
+        ).join('');
+      }
+
+      this.content = `${text} bla`;
     },
   },
   mounted() {
@@ -55,6 +61,7 @@ export default {
       ],
       lookup: 'key',
     });
+    debugger;
     this.tribute.attach(document.getElementsByClassName('ql-editor'));
   },
 };

@@ -4,8 +4,8 @@ from rest_framework import status
 
 
 from app.models.experiment_model import Experiment
-from app.models.plate_models import Plate
-from app.models.plate_models import AllocationInstructions
+from app.models.rule_models import Plate
+from app.models.rule_models import AllocationInstructions
 from app.models.reagent_models import Reagent
 from app.premixers.experiment_premixer import ExperimentPremixer
 from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter

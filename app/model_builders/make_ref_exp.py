@@ -7,7 +7,7 @@ from app.models.reagent_models import *
 from app.models.primer_models import *
 from app.models.strain_models import *
 from app.models.experiment_model import *
-from app.models.plate_models import *
+from app.models.rule_models import *
 from .finders import Finders
 from app.model_builders.common_modules import CreateExperiment
 

@@ -4,7 +4,7 @@ from .models.experiment_model import *
 from .models.reagent_models import *
 from .models.primer_models import *
 from .models.strain_models import *
-from .models.plate_models import *
+from .models.rule_models import *
 
 admin.site.register(Concentration)
 admin.site.register(Reagent)

@@ -1,32 +1,32 @@
 P1
 
-A DNA free Water            1-12    A-H 3.35
-A Titanium PCR Buffer       1-12    A-H 0.63 x
+A DNA-free-Water            1-12    A-H 3.35
+A Titanium-PCR-Buffer       1-12    A-H 0.63 x
 A KCl                       1-12    A-H 2.40 mM
 A MgCl2                     1-12    A-H 4.13 mM
 A BSA                       1-12    A-H 2.5 mg/ml
 A dNTPs                     1-12    A-H 1.00 mM each
-A Titanium Taq              1-12    A-H 1.00 x
+A Titanium-Taq              1-12    A-H 1.00 x
 A (Eco)-ATCC-BAA-2355       1,5,9   A-B   0 copies/ul
 A (Eco)-ATCC-BAA-2355       1,5     C-H   5 copies/ul
 A (Eco)-ATCC-BAA-2355       9       C-D   50 copies/ul
 A (Eco)-ATCC-BAA-2355       9       E-F   500 copies/ul
 A (Eco)-ATCC-BAA-2355       9       G-H   5000 copies/ul
-A (Efs vanB)-ATCC 700802    2,6,10  A-B   0 copies/ul
-A (Efs vanB)-ATCC 700802    2,6     C-H   5 copies/ul
-A (Efs vanB)-ATCC 700802    10      C-D   50 copies/ul
-A (Efs vanB)-ATCC 700802    10      E-F   500 copies/ul
-A (Efs vanB)-ATCC 700802    10      G-H   5000 copies/ul
-A (Efs vanB)-ATCC 700802    3,7,11  A-B   0 copies/ul
-A (Efs vanB)-ATCC 700802    3,7     C-H   5 copies/ul
-A (Efs vanB)-ATCC 700802    11      C-D   50 copies/ul
-A (Efs vanB)-ATCC 700802    11      E-F   500 copies/ul
-A (Efs vanB)-ATCC 700802    11      G-H   5000 copies/ul
-A (Kox)-ATCC 15764          4,8,12  A-B   0 copies/ul
-A (Kox)-ATCC 15764          4,8     C-H   5 copies/ul
-A (Kox)-ATCC 15764          12      C-D   50 copies/ul
-A (Kox)-ATCC 15764          12      E-F   500 copies/ul
-A (Kox)-ATCC 15764          12      G-H   5000 copies/ul
+A (Efs-vanB)-ATCC-700802    2,6,10  A-B   0 copies/ul
+A (Efs-vanB)-ATCC-700802    2,6     C-H   5 copies/ul
+A (Efs-vanB)-ATCC-700802    10      C-D   50 copies/ul
+A (Efs-vanB)-ATCC-700802    10      E-F   500 copies/ul
+A (Efs-vanB)-ATCC-700802    10      G-H   5000 copies/ul
+A (Efs-vanB)-ATCC-700802    3,7,11  A-B   0 copies/ul
+A (Efs-vanB)-ATCC-700802    3,7     C-H   5 copies/ul
+A (Efs-vanB)-ATCC-700802    11      C-D   50 copies/ul
+A (Efs-vanB)-ATCC-700802    11      E-F   500 copies/ul
+A (Efs-vanB)-ATCC-700802    11      G-H   5000 copies/ul
+A (Kox)-ATCC-15764          4,8,12  A-B   0 copies/ul
+A (Kox)-ATCC-15764          4,8     C-H   5 copies/ul
+A (Kox)-ATCC-15764          12      C-D   50 copies/ul
+A (Kox)-ATCC-15764          12      E-F   500 copies/ul
+A (Kox)-ATCC-15764          12      G-H   5000 copies/ul
 A Ec_uidA_6.x_Eco63_Eco60   1-4     A-H   0.4 uM
 A Efs_cpn60_1.x_Efs04_Efs01 1-4     A-H   0.4 uM
 A Efs_vanB_1.x_van10_van06  1-4     A-H   0.4 uM

@@ -1,14 +1,12 @@
 <template>
   <div>
-  <!-- <textarea class="panel panel-default text-justify" style="width:500px;height:400px">
-
-  </textarea> -->
   <quill-editor :content="content"
                 :options="editorOption"
                 @change="onEditorChange($event)">
   </quill-editor>
-  <div id="result">
+  <div id="result" class="container-fluid pre-scrollable">
   </div>
+  <button @click="showHelp">help</button>
 </div>
 </template>
 <script src="./scriptinput.js"></script>

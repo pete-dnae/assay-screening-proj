@@ -5,7 +5,7 @@ from .models.experiment_model import *
 from .models.reagent_models import *
 from .models.primer_models import *
 from .models.strain_models import *
-from .models.plate_models import *
+from .models.rule_models import *
 
 from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 
