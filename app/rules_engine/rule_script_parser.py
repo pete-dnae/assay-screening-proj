@@ -15,7 +15,7 @@ class RuleScriptParser:
         self._available_reagents = reagents
         self._available_units = units
         self._script = script
-        self._parsed_plates = []
+        self._known_plates = []
         self._current_plate_no = None
         self._version = None
         self.result = defaultdict(dict)
@@ -36,13 +36,13 @@ class RuleScriptParser:
             line = line.strip()
             fields = self._extract_fields(line)
             field_type = fields[0]
-            if field_type == 'P':
+            if line.startswith('P'):
                 self._parse_plate_line(line, lnum)
             self._assert_plate_is_known(lnum)
             if field_type == 'A' or field_type =='T':
                 self._parse_rule_line(fields, lnum)
             else:
-                ParseError('Invalid rule type')
+                ParseError('Line %d :Invalid rule type'%lnum)
         return self.result
     #-----------------------------------------------------------------------
     # Private below.
@@ -53,12 +53,14 @@ class RuleScriptParser:
     _LETTER_RANGE = re.compile('^[A-Z]-[A-Z]$')
     _LETTER_COMMA = re.compile('^(?!,)(,?[A-Z])+$')
     _LETTER_SINGLE = re.compile(r'^[A-Z]$')
-    _PLATE_RULE = re.compile("^P \d+$")
+    _PLATE_RULE = re.compile("^P\d+$")
 
     def _parse_plate_line(self,line,lnum):
         assert self._matches_one_of([self._PLATE_RULE],line,lnum),"Incorrect Plate Rule Pattern %d"%lnum
-        field_type,plate_no=line.split()
+        field_type,plate_no=line
         self._current_plate_no = plate_no
+        assert (plate_no not in self._known_plates), "Duplicate Plate rule %d"%lnum
+        self._known_plates.append(line)
 
     def _parse_rule_line(self, fields, lnum):
         """
@@ -70,12 +72,12 @@ class RuleScriptParser:
             if fields[1] in self._available_reagents:
                 pass
             else:
-                raise ParseError('Invalid reagent')
-        elif fields[0]=='P':
-            if fields[1] in self._available_units:
+                raise ParseError('Line %d : Invalid reagent'%lnum)
+        elif fields[0]=='T':
+            if fields[1] in self._known_plates:
                 pass
             else:
-                raise ParseError('Invalid reagent')
+                raise ParseError('Line %d : Invalid reagent'%lnum)
         field_indices = range(2,6)
         field_interpreter = (self._interpret_col_range,
                              self._interpret_row_range, self._interpret_conc, self._interpret_unit)
@@ -108,7 +110,7 @@ class RuleScriptParser:
         for re in list_of_regex:
             if re.match(string):
                 return True
-        return ParseError('Line %d : Not a valid row/col range '%lnum)
+        raise ParseError('Line %d : Not a valid row/col range '%lnum)
 
     def _interpret_col_range(self, string,lnum):
         return self._matches_one_of([self._DIGIT_SINGLE, self._DIGIT_RANGE, self._DIGIT_COMMA], string,lnum)

@@ -23,10 +23,10 @@ class PremixerTest(unittest.TestCase):
                             'Pm_zapA_1.x_Pmi01_Pmi05',
                             'Spo_gp_1.x_Spo09_Spo13',
                             'HgDna']
-        self.units = ['mM', 'mg/ml', 'mMeach', 'copies/ul', 'uM', 'ng/ul', 'x']
+        self.units = ['mM', 'mg/ml', 'mMeach', 'copies/ul', 'uM', 'ng/ul', 'x','dil']
 
         self.script = "V 1 \n" \
-                      "P 1 \n" \
+                      "P1 \n" \
                       "A DNA-free-Water            1-12    A-H 3.35 x \n" \
                       "A Titanium-PCR-Buffer       1-12    A-H 0.63 x \n" \
                       "A KCl                       1-12    A-H 2.40 mM \n" \
@@ -68,9 +68,16 @@ class PremixerTest(unittest.TestCase):
                       "A Efm_vanA_1.x_van05_van01  8       A-H   0.4 uM \n" \
                       "A HgDna                     1-12    A-E   0 ng/ul \n" \
                       "A HgDna                     9-12    F-H   0 ng/ul \n" \
-                      "A HgDna                     1-8     E-H   3000 ng/ul"
+                      "A HgDna                     1-8     E-H   3000 ng/ul \n" \
+                      "P2 \n" \
+                      "T P1 1-12 A-H 20 dil"
 
     def test_simple_case(self):
         script_parser = RuleScriptParser(self.reagents,self.units,self.script)
-        rules = script_parser.parse()
+        try:
+            rules = script_parser.parse()
+            self.assertEquals(len(rules['1']),42)
+        except ParseError as Err:
+            print(Err)
+
 
