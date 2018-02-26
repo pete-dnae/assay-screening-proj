@@ -1,5 +1,6 @@
 import unittest
 from app.rules_engine.rule_script_parser import *
+from app.reagents import *
 class PremixerTest(unittest.TestCase):
 
 
@@ -77,6 +78,7 @@ class PremixerTest(unittest.TestCase):
         try:
             rules = script_parser.parse()
             self.assertEquals(len(rules['1']),42)
+            self.assertEquals(list(rules.keys()),['1','2'])
         except ParseError as Err:
             print(Err)
 

@@ -212,8 +212,8 @@ class Plate(models.Model):
     AllocationInstruction object that defines the reagents allocated to each of
     its chambers.
     """
-    name = models.CharField(max_length=20) 
-    allocation_instructions = models.ForeignKey(AllocationInstructions, 
+    name = models.CharField(max_length=20)
+    allocation_instructions = models.ForeignKey(AllocationInstructions,
         related_name='plate', on_delete=models.PROTECT)
 
     @classmethod
@@ -229,3 +229,18 @@ class Plate(models.Model):
             src.name + '_1', # Increment name
             AllocationInstructions.clone(src.allocation_instructions) # New
         )
+
+class RuleScript(models.Model):
+    """
+    Represents instructions given by users in plain text . Text stored here are properly validated,
+    So that they can later be parsed into allocrule object .
+    """
+    script = models.CharField(max_length=2000)
+
+    @classmethod
+    def make(cls,script):
+        return RuleScript.objects.create(script = script)
+
+    @classmethod
+    def clone(cls,src):
+        return cls.make(src.script)
