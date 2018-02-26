@@ -16,7 +16,7 @@ class ExperimentPremixer:
         Premixer object is then created with the flat array and *find_premixes()* function is called to find premixes for
         the input array.
         """
-
+        # We can use a generic premixer utility
         premixer = Premixer(self._buckets)
         premixer.find_premixes()
 

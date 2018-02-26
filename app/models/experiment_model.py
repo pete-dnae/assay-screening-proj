@@ -1,7 +1,7 @@
 from django.db import models
 
 from .odds_and_ends_models import CyclingPattern 
-from .rule_models import Plate
+
 
 class Experiment(models.Model):
     """
@@ -15,7 +15,7 @@ class Experiment(models.Model):
     """
     experiment_name = models.CharField(max_length=80) 
     designer_name = models.CharField(max_length=80) 
-    plates = models.ManyToManyField(Plate)
+    # plates = models.ManyToManyField(Plate)
     pa_cycling = models.ForeignKey(CyclingPattern, 
         related_name='experiment_pa_cycling', on_delete=models.PROTECT)
     id_cycling = models.ForeignKey(CyclingPattern, 
@@ -40,7 +40,7 @@ class Experiment(models.Model):
         return cls.make(
             src.experiment_name, # Plain copy
             src.designer_name, # Plain copy
-            [Plate.clone(plate) for plate in src.plates.all()], # New
+            # [Plate.clone(plate) for plate in src.plates.all()], # New
             CyclingPattern.clone(src.pa_cycling), # New
             CyclingPattern.clone(src.id_cycling) # New
         )

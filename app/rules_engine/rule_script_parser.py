@@ -83,9 +83,11 @@ class RuleScriptParser:
                 validator(fields, lnum)
             else:
                 validator(fields[field_idx], lnum)
-
-        self.result[self._current_plate_no][lnum] = AllocRule(Reagent(fields[1],float(fields[4]),fields[5])
+        if fields[0]=='A':
+            self.result[self._current_plate_no][lnum] = AllocRule(Reagent(fields[1],float(fields[4]),fields[5])
                                                               ,fields[3],fields[2])
+        elif fields[0]=='T':
+            self.result[self._current_plate_no][lnum] = TransferRule(fields[1],fields[3],fields[2],float(fields[4]))
 
     def _validate_reagent(self, fields, lnum):
         """

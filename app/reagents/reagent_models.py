@@ -51,6 +51,9 @@ class Reagent:
     def __hash__(self):
         return self.make_hash(self.name, self.concentration.normalised_string_value)
 
+    def __str__(self):
+        return self.name +" "+ self.concentration.normalised_string_value +" "+self.concentration.preferred_units
+
     @staticmethod
     def make_hash( reagent_name,conc_normalised_string):
         return hash(reagent_name+':'+conc_normalised_string)

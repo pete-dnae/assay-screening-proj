@@ -58,41 +58,42 @@ o  The big picture
        transiently in memory, and should cease to be Django models, and moved
        into a separate package.
 
-o  SourceRowCol
-    o  plate number
-    o  row
-    o  column
+*  SourceRowCol
+    *  plate number
+    *  row
+    *  column
 
-o  PlacementInstructions
-    o  A new class to contain the rows/columns/conc part of our old friend
+*  PlacementInstructions
+    *  A new class to contain the rows/columns/conc part of our old friend
        AllocRule
 
-o  AllocRule
-    o  Has a Reagent reference
-    o  Has-A PlacementInstructions
-    o  The rank for ordering becomes redundant.
-    o  It no longer has a payload type
-    o  Replace the Reagent FK with a plain python attribute that points to a
+*  AllocRule
+    *  Has a Reagent reference
+    *  Has-A PlacementInstructions
+    *  The rank for ordering becomes redundant.
+    *  It no longer has a payload type
+    *  Replace the Reagent FK with a plain python attribute that points to a
        Reagent object.
 
 
 o  TransferRule
-    o  Has-A SourceRowCol
-    o  Has-A PlacementInstructions
+    *  Has-A SourceRowCol
+    *  Has-A PlacementInstructions
+    o  Has-A dilution
 
-o  Reagent
-    o  No longer is-a Django model, and don't need in database.
+*  Reagent
+    *  No longer is-a Django model, and don't need in database.
 
-o  RuleList
-    o  We can ditch this class.
-    o  It collapses down to a Python list of AllocRule when we need one.
+*  RuleList
+    *  We can ditch this class.
+    *  It collapses down to a Python list of AllocRule when we need one.
 
-o  AllocationInstructions
-    o  We can ditch this class.
-    o  Ok, so we loose supressed_columns, but lets forget about them for now.
+*  AllocationInstructions
+    *  We can ditch this class.
+    *  Ok, so we loose supressed_columns, but lets forget about them for now.
 
-o  Plate
-    o  We can ditch this class.
+*  Plate
+    *  We can ditch this class.
 
 o  AllocationResults
     o  Remains a nested dictionary keyed on row/columm.

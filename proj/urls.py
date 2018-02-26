@@ -29,8 +29,8 @@ urlpatterns = [
     # Contrary to the documentation, it seems that we must set the name kwarg
     # explicitly to enable reverse-url lookups to work - when they are required
     # by HyperlinkedModelSerializer nested serializer fields.
-    re_path(r'^api/rulelist-detail/(?P<pk>[0-9]+)/$', 
-        RuleListDetail.as_view(), name='rulelist-detail'),
+    # re_path(r'^api/rulelist-detail/(?P<pk>[0-9]+)/$',
+    #     RuleListDetail.as_view(), name='rulelist-detail'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 
@@ -38,8 +38,6 @@ urlpatterns = format_suffix_patterns(urlpatterns)
 router = routers.DefaultRouter()
 
 router.register(r'api/experiments', ExperimentViewSet)
-router.register(r'api/concentrations', ConcentrationViewSet)
-router.register(r'api/reagents', ReagentViewSet)
 router.register(r'api/compositions', CompositionViewSet)
 router.register(r'api/measures', MeasureViewSet)
 router.register(r'api/genes', GeneViewSet)
@@ -49,9 +47,6 @@ router.register(r'api/primerpairs', PrimerPairViewSet)
 router.register(r'api/args', ArgViewSet)
 router.register(r'api/strains', StrainViewSet)
 router.register(r'api/cyclingpatterns', CyclingPatternViewSet)
-router.register(r'api/allocrules', AllocRuleViewSet)
-router.register(r'api/allocationinstructions', AllocationInstructionsViewSet)
-router.register(r'api/plates', PlateViewSet)
 router.register(r'api/experiments', ExperimentViewSet)
 
 urlpatterns += router.urls

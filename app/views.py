@@ -40,20 +40,12 @@ class ExperimentViewSet(MultiSerializerViewSet):
     serializers = {
         'default': None,
         'list': ListExperimentSerializer,
-        'retrieve': DetailExperimentSerializer,
+        # 'retrieve': DetailExperimentSerializer,
         'create': ListExperimentSerializer,
     }
     http_method_names = ['get', 'post', 'head', 'options']
 
-class ConcentrationViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = Concentration.objects.all()
-    serializer_class = ConcentrationSerializer
 
-class ReagentViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = Reagent.objects.all()
-    serializer_class = ReagentSerializer
 
 class CompositionViewSet(viewsets.ReadOnlyModelViewSet):
     __doc__ = _DO_NOT_USE
@@ -100,67 +92,67 @@ class CyclingPatternViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CyclingPattern.objects.all()
     serializer_class = CyclingPatternSerializer
 
-class RuleListDetail(
-        mixins.RetrieveModelMixin,
-        mixins.UpdateModelMixin,
-        generics.GenericAPIView):
-    """
-    A Rule List is an ordered sequence of Alloc Rule(s), i.e. 
-    allocation rules.
-
-    You can replace the incumbent sequence with a new one using a *PUT* request,
-    for which the payload should be a list of the replacement Alloc Rule
-    *id(s)*. Like this:
-
-        { "new_rules": [1, 2, 3] }
-
-    """
-    queryset = RuleList.objects.all()
-    serializer_class = RuleListSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-        
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-
-class AllocRuleViewSet(viewsets.ModelViewSet):
-    """
-    PATCH:
-    Partial / selective update of a stored rule. Typically the user edited a
-    rule.
-
-    POST:
-    Creates a completely new rule.
-    Typically the user wants to add a new rule to a Rule List, so the client 
-    is creating a new instance in readiness to do that.
-    All fields are required except for id, url and display_string..
-    """
-
-    # Prefix the doc string with the doc string from the model class. (DRY)
-    __doc__ = '\n'.join((AllocRule.__doc__, __doc__))
-
-    queryset = AllocRule.objects.all()
-    serializer_class = AllocRuleSerializer
-    http_method_names = ['get', 'patch', 'post', 'head', 'options']
-
-class AllocationInstructionsViewSet(viewsets.ReadOnlyModelViewSet):
-    __doc__ = _DO_NOT_USE
-    queryset = AllocationInstructions.objects.all()
-    serializer_class = AllocationInstructionsSerializer
-
-class PlateViewSet(viewsets.ModelViewSet):
-    """
-    POST:
-    Creates a completely new Plate by cloning the one you specify in the
-    payload like this:
-
-        { "plate_to_copy": 1 }
-
-    The new plate will be associated with the same parent Experiment as the
-    one from which it is copied.
-    """
-    queryset = Plate.objects.all()
-    serializer_class = PlateSerializer
-    http_method_names = ['get', 'post', 'head', 'options']
+# class RuleListDetail(
+#         mixins.RetrieveModelMixin,
+#         mixins.UpdateModelMixin,
+#         generics.GenericAPIView):
+#     """
+#     A Rule List is an ordered sequence of Alloc Rule(s), i.e.
+#     allocation rules.
+#
+#     You can replace the incumbent sequence with a new one using a *PUT* request,
+#     for which the payload should be a list of the replacement Alloc Rule
+#     *id(s)*. Like this:
+#
+#         { "new_rules": [1, 2, 3] }
+#
+#     """
+#     queryset = RuleList.objects.all()
+#     serializer_class = RuleListSerializer
+#
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
+#
+#     def put(self, request, *args, **kwargs):
+#         return self.update(request, *args, **kwargs)
+#
+#
+# class AllocRuleViewSet(viewsets.ModelViewSet):
+#     """
+#     PATCH:
+#     Partial / selective update of a stored rule. Typically the user edited a
+#     rule.
+#
+#     POST:
+#     Creates a completely new rule.
+#     Typically the user wants to add a new rule to a Rule List, so the client
+#     is creating a new instance in readiness to do that.
+#     All fields are required except for id, url and display_string..
+#     """
+#
+#     # Prefix the doc string with the doc string from the model class. (DRY)
+#     __doc__ = '\n'.join((AllocRule.__doc__, __doc__))
+#
+#     queryset = AllocRule.objects.all()
+#     serializer_class = AllocRuleSerializer
+#     http_method_names = ['get', 'patch', 'post', 'head', 'options']
+#
+# class AllocationInstructionsViewSet(viewsets.ReadOnlyModelViewSet):
+#     __doc__ = _DO_NOT_USE
+#     queryset = AllocationInstructions.objects.all()
+#     serializer_class = AllocationInstructionsSerializer
+#
+# class PlateViewSet(viewsets.ModelViewSet):
+#     """
+#     POST:
+#     Creates a completely new Plate by cloning the one you specify in the
+#     payload like this:
+#
+#         { "plate_to_copy": 1 }
+#
+#     The new plate will be associated with the same parent Experiment as the
+#     one from which it is copied.
+#     """
+#     queryset = Plate.objects.all()
+#     serializer_class = PlateSerializer
+#     http_method_names = ['get', 'post', 'head', 'options']

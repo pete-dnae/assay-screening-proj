@@ -1,6 +1,8 @@
 import unittest
 from app.rules_engine.rule_script_parser import *
 from app.reagents import *
+from app.premixers.experiment_premixer import *
+from app.rules_engine.alloc_rule_interpreter import *
 class PremixerTest(unittest.TestCase):
 
 
@@ -70,13 +72,26 @@ class PremixerTest(unittest.TestCase):
                       "A HgDna                     1-12    A-E   0 ng/ul \n" \
                       "A HgDna                     9-12    F-H   0 ng/ul \n" \
                       "A HgDna                     1-8     E-H   3000 ng/ul \n" \
-                      # "P2 \n" \
-                      # "T P1 1-12 A-H 20 dil"
+                      "P2 \n" \
+                      "T P1 1-12 A-H 20 dil"
 
     def test_simple_case(self):
         script_parser = RuleScriptParser(self.reagents,self.units,self.script)
         try:
             rules = script_parser.parse()
+            tabulated_result =[]
+            for i,plate_rules in rules.items():
+                plate_interpret = AllocRuleInterpreter(plate_rules)
+                interpreted_results = plate_interpret.interpret()
+                tabulated_result.append(interpreted_results)
+            experiment_premixer = ExperimentPremixer(tabulated_result)
+            premixes = experiment_premixer.extract_premixes()
+            for premix_tuple in premixes:
+                premix_list,row_col = premix_tuple
+                for premix in premix_list:
+                    print(premix)
+                print('\n')
+                print('\n')
             self.assertEquals(len(rules['1']),42)
             self.assertEquals(list(rules.keys()),['1','2'])
         except ParseError as Err:

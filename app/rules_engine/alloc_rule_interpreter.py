@@ -18,7 +18,6 @@ class AllocationResults():
 
         The table comprises an dictionary of rows.
         Each row is an ordered sequence of cells.
-        Each cell is a dictionary keyed on strings like 'Strain'.
 
         The values against each of these keys is the list of reagent objects present in that cell
 
@@ -47,8 +46,6 @@ class AllocRuleInterpreter:
 
     def __init__(self, rules):
         self._rules = rules
-        self._n_rows = None
-        self._n_cols = None
         self._table = None
 
     def interpret(self):
@@ -61,7 +58,7 @@ class AllocRuleInterpreter:
 
         # Iterate to interpret each rule in turn. (Noting that later ones
         # overwrite earlier ones - by definition.
-        for rule in self._rules:
+        for i,rule in self._rules.items():
             self._apply_rule_to_table(rule)
         return(self._table)
 
@@ -69,7 +66,7 @@ class AllocRuleInterpreter:
         """
         Apply the given AllocRule to the AllocTable under construction.
         """
-        row_indices_range = rule.enumerate_applicable_rows()
+        row_indices_range = rule.placement_instructions.enumerate_applicable_rows()
         for row_index in row_indices_range:
             self._apply_rule_to_row(rule, row_index)
 
@@ -85,12 +82,12 @@ class AllocRuleInterpreter:
         Takes the item available in *payload_item* and fills them in a 
         given range.
         """
-        for column_index in rule.enumerate_column_indices():
+        for column_index in rule.placement_instructions.enumerate_column_indices():
             self._set_item_in_table(
-                row_index, column_index, rule.payload_type,
+                row_index, column_index,
                 payload_item)
 
-    def _set_item_in_table(self, row_index, column_index, payload_type,
+    def _set_item_in_table(self, row_index, column_index,
             payload_item):
         # Note this might be overwriting a previous value because later
         # rules overwrite the results from earlier rules, by definition.
