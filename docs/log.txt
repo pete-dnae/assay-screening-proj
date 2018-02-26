@@ -11,22 +11,29 @@ o  Digression - can we define the rules with a text script?
     *  Formalise the specification for the language
 o  How to change the back end code that deals with rules to take this as input?
     *  Make a design outline hypothesis (see bottom of this document)
-    o  First need to confront the unfinished concentration work
-        o  Add methods to Concentration that can convert between the normalised
-           string value, and the human friendly version.
-    o  Try to code all the model changes suggested at the bottom
-    o  Try to bring-up ReferenceExperiment.make() and get it to pass its unit
-       test.
-        o  Specify the rules using a single rules script
-        o  Get the model to build with this instead of what was there before.
-        o  Of course this won't *interpret* the script at this stage, so
-           we won't be exercising this code yet.
-    o  Create and unit-test the rules script parser
+    *  Try to code all the model changes suggested at the bottom
+    *  Create and unit-test the BE rules script parser
     o  Update and unit test the ExperimentPremixer and AllocationResults
-    o  Are we done on this objective?
+        o  Create new classes as per review 26th Feb
+        o  Do it
+        o  Evolve a unit test that:
+            o  creates a simple experiment with a simple rules script
+            o  interprets the rules script to make alloc instructions
+            o  uses the experiment premixer to discover premixes
+            o  does a few smoke-test checks on the resultant premixes
+        o  Now fix everything to do with concentrations
+            o  Upgrade conc class
+            o  Unit test teh converters in isolation
+    o  Design (with Pete) how conc calcs will work in congjunction with the
+       premix tree, and with the plate well volume.
+    o  Add in this code and logic alongside or as part of the experiment
+       premixer.
+        o  Test this with unit tests, including repairing or augmenting the 
+           old ones above to check for correct volume/conc calcs.,
 
-o  Revert to brining in concentration and volume calculations alongside the
-   premix discovery.
+    o  Fix up the big create reference experiment to work the new way
+    o  Take a breath
+    o  Now think about front end and serialization
 
 -----------------------------------------------------------------------------
 Class Design Thinking
@@ -51,13 +58,27 @@ o  The big picture
        transiently in memory, and should cease to be Django models, and moved
        into a separate package.
 
+o  SourceRowCol
+    o  plate number
+    o  row
+    o  column
+
+o  PlacementInstructions
+    o  A new class to contain the rows/columns/conc part of our old friend
+       AllocRule
+
 o  AllocRule
-    o  Retain AllocRule as our machine-readable definition of
-       a rule. But with some tweaks.
+    o  Has a Reagent reference
+    o  Has-A PlacementInstructions
     o  The rank for ordering becomes redundant.
     o  It no longer has a payload type
     o  Replace the Reagent FK with a plain python attribute that points to a
        Reagent object.
+
+
+o  TransferRule
+    o  Has-A SourceRowCol
+    o  Has-A PlacementInstructions
 
 o  Reagent
     o  No longer is-a Django model, and don't need in database.
