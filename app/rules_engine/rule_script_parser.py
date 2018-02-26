@@ -1,6 +1,7 @@
 import re
 from collections import defaultdict
-
+from app.rules_engine.alloc_rule import *
+from app.reagents.reagent_models import *
 
 class ParseError(Exception):
     pass
@@ -36,7 +37,6 @@ class RuleScriptParser:
                 continue
             if self._ignore_line(line):
                 continue
-            self.result[self._current_plate_no][lnum]={}
             line = line.strip()
 
             if line.startswith('P'):
@@ -76,30 +76,29 @@ class RuleScriptParser:
             raise ParseError('Must be exactly 6 fields (line number %d' % lnum)
 
         field_indices = range(1, 6)
-        field_interpreter = (self._interpret_reagent, self._interpret_col_range,
-                           self._interpret_row_range, self._interpret_conc, self._interpret_unit)
-        for field_idx, validator in zip(field_indices, field_interpreter):
+        field_validator = (self._validate_reagent, self._validate_col_range,
+                           self._validate_row_range, self._validate_conc, self._validate_unit)
+        for field_idx, validator in zip(field_indices, field_validator):
             if field_idx == 1:
                 validator(fields, lnum)
             else:
                 validator(fields[field_idx], lnum)
 
-        # self.result[self._current_plate_no][lnum] = fields
+        self.result[self._current_plate_no][lnum] = AllocRule(Reagent(fields[1],float(fields[4]),fields[5])
+                                                              ,fields[3],fields[2])
 
-    def _interpret_reagent(self, fields, lnum):
+    def _validate_reagent(self, fields, lnum):
         """
         Validates reagents in a identified rule , validation differs for A rule and T rule
         """
         if fields[0] == 'A':
             if fields[1] in self._available_reagents:
-                self.result[self._current_plate_no][lnum].setdefault('rule_type',fields[0])
-                self.result[self._current_plate_no][lnum].setdefault('reagent', fields[1])
+                pass
             else:
                 raise ParseError('Line %d : Invalid reagent' % lnum)
         elif fields[0] == 'T':
             if fields[1] in self._known_plates:
-                self.result[self._current_plate_no][lnum].setdefault('rule_type', fields[0])
-                self.result[self._current_plate_no][lnum].setdefault('reagent', fields[1])
+                pass
             else:
                 raise ParseError('Line %d : Invalid reagent' % lnum)
 
@@ -128,28 +127,26 @@ class RuleScriptParser:
                 return True
         raise ParseError('Line %d : Not a valid row/col range ' % lnum)
 
-    def _interpret_col_range(self, string, lnum):
-        if self._matches_one_of([self._DIGIT_SINGLE, self._DIGIT_RANGE, self._DIGIT_COMMA], string, lnum):
-                self.result[self._current_plate_no][lnum].setdefault('col_range', string)
+    def _validate_col_range(self, string, lnum):
+       return self._matches_one_of([self._DIGIT_SINGLE, self._DIGIT_RANGE, self._DIGIT_COMMA], string, lnum)
 
 
+    def _validate_row_range(self, string, lnum):
+        return self._matches_one_of([self._LETTER_SINGLE, self._LETTER_RANGE, self._LETTER_COMMA], string, lnum)
 
-    def _interpret_row_range(self, string, lnum):
-        if self._matches_one_of([self._LETTER_SINGLE, self._LETTER_RANGE, self._LETTER_COMMA], string, lnum):
-            self.result[self._current_plate_no][lnum].setdefault('row_range', string)
 
-    def _interpret_conc(self, value, lnum):
+    def _validate_conc(self, value, lnum):
         try:
             val = float(value)
             if val >= 0:
-                self.result[self._current_plate_no][lnum].setdefault('conc', value)
+                pass
             else:
-                return False
+                return ParseError('Line %d : Concentration not a positive float' % lnum)
         except ValueError:
             return ParseError('Line %d : Concentration not a float' % lnum)
 
-    def _interpret_unit(self, value, lnum):
+    def _validate_unit(self, value, lnum):
         if value in self._available_units:
-            self.result[self._current_plate_no][lnum].setdefault('unit', value)
+            pass
         else:
             return ParseError('Line %d : Given unit is not a part of recognised units' % lnum)

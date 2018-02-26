@@ -20,16 +20,8 @@ class Concentration:
     ways.
     """
     def __init__(self,conc,units):
-        self.presentation_units_choices = mk_choices((
-            'X',
-            'mM',
-            'mg/ml',
-            'mM each',
-            'microM',
-            'ng/ul',
-            'cp/ul',
-            '%'))
-        # E.g. '1.235e+08'
+
+        # normalised string E.g. '1.235e+08'
         # See normalised() method.
         self.normalised_string_value = self._normalised(conc)
         self.numerical_value = conc

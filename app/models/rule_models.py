@@ -22,7 +22,7 @@ class AllocRule(models.Model):
     strains, HgDNA* (and similar) to a rectangular region of an imaginary table.
     The type of thing being repeated is specified in the *payload_type* field,
     and must be one of the following:
-        
+
         Dilution Factor
         HgDNA
         PA Primers
@@ -30,7 +30,7 @@ class AllocRule(models.Model):
         Strain
         Strain Count
 
-    
+
     The target region of the table is defined in terms of row and column
     ranges.
     """
@@ -50,7 +50,7 @@ class AllocRule(models.Model):
     # containers.
     rank_for_ordering = models.PositiveIntegerField(default=1)
     payload_type = models.CharField(max_length=15, choices=payload_choices)
-    payload = models.ForeignKey(Reagent, 
+    payload = models.ForeignKey(Reagent,
         related_name='allocrule', on_delete=models.PROTECT)
     letter = RegexValidator(re.compile(r'[A-Z]'), 'Enter a capital letter.')
     start_row_letter = models.CharField(max_length=1, validators=[letter,])
@@ -107,7 +107,7 @@ class AllocRule(models.Model):
             src.payload_type, # Plain copy
             src.payload, # Shared reuse
             ( # Plain copy
-                src.start_row_letter, 
+                src.start_row_letter,
                 src.end_row_letter,
                 src.start_column,
                 src.end_column

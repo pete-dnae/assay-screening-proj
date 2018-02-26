@@ -10,8 +10,7 @@ from .odds_and_ends_models import mk_choices
 class Concentration(models.Model):
     """
     A utility class to encapsulate one particular concentration value, defined
-    as a floating point, volumetric ratio of some unspecified / arbitrary liquid,
-    w.r.t. water.
+    as a floating point, volumetric ratio w.r.t. water.
 
     A concentration also has preferred display units to make the numbers easier
     for humans to read or enter. But internally the value held is

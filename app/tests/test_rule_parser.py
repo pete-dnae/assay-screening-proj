@@ -70,8 +70,8 @@ class PremixerTest(unittest.TestCase):
                       "A HgDna                     1-12    A-E   0 ng/ul \n" \
                       "A HgDna                     9-12    F-H   0 ng/ul \n" \
                       "A HgDna                     1-8     E-H   3000 ng/ul \n" \
-                      "P2 \n" \
-                      "T P1 1-12 A-H 20 dil"
+                      # "P2 \n" \
+                      # "T P1 1-12 A-H 20 dil"
 
     def test_simple_case(self):
         script_parser = RuleScriptParser(self.reagents,self.units,self.script)
