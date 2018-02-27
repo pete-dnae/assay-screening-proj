@@ -86,12 +86,7 @@ class PremixerTest(unittest.TestCase):
                 tabulated_result.append(interpreted_results)
             experiment_premixer = ExperimentPremixer(tabulated_result)
             premixes = experiment_premixer.extract_premixes()
-            for premix_tuple in premixes:
-                premix_list,row_col = premix_tuple
-                for premix in premix_list:
-                    print(premix)
-                print('\n')
-                print('\n')
+
             self.assertEquals(len(rules['1']),42)
             self.assertEquals(list(rules.keys()),['1','2'])
         except ParseError as Err:

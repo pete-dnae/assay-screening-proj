@@ -8,7 +8,7 @@ from app.models.strain_models import *
 from app.models.experiment_model import *
 from app.models.rule_models import *
 from app.model_builders.finders import Finders
-from app.model_builders.common_modules import CreateExperiment
+from app.model_builders.common_modules import CommonModules
 
 class SimpleExperiment():
     """
@@ -17,6 +17,7 @@ class SimpleExperiment():
 
     def __init__(self):
         self.experiment = None
+
 
     def create(self):
         CreateExperiment()._create_concentrations()
@@ -38,31 +39,21 @@ class SimpleExperiment():
 
 
     def __create_rules(self):
-        finder = Finders()
-        experiment = CreateExperiment()
-        data = (((finder._reagent(Reagent.make_hash('Eco64', Concentration.value_from_quotient(1, 0.4))),
-                  ('A', 'A', 1, 2)),
-                 (finder._reagent(Reagent.make_hash('Eco63', Concentration.value_from_quotient(1, 0.4))),
-                  ('A', 'A', 1, 2)),
-                 (finder._reagent(Reagent.make_hash('DNA Free Water', Concentration.value_from_quotient(1, 1))),
-                  ('A', 'B', 1, 2)),
-                 ))
-        return experiment._rules_from_data('Reagent', data)
+        cm = CommonModules()
+        data = "V 1 \n" \
+              "P1 \n" \
+              "A DNA-free-Water            1-12    A-H 3.35 x \n" \
+              "A Titanium-PCR-Buffer       1-12    A-H 0.63 x \n"
+        return cm._rules_from_data(data)
 
     def __assemble_experiment(self):
-        experiment = CreateExperiment()
+        cm = CommonModules()
         return Experiment.make(
             'reference_experiment_1',
             'PH',
-            [Plate.make(
-                'reference_experiment_1' + '_1',
-                AllocationInstructions.make(
-                    RuleList.make(self.__create_rules()),
-                    '4, 8, 12'
-                )
-            )],
-            experiment._create_pa_cycling(),
-            experiment._create_id_cycling(),
+            ,
+               cm._create_pa_cycling(),
+               cm._create_id_cycling(),
         )
 
 

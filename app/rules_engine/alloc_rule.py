@@ -70,6 +70,7 @@ class AllocRule:
             self.payload.concentration.preferred_units,
         ))
 
+
 class TransferRule:
 
     def __init__(self,plate_no,row_range,col_range,dil):

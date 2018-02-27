@@ -1,16 +1,30 @@
 
-from app.models.reagent_models import *
-from app.models.primer_models import *
-from app.models.strain_models import *
 from app.models.experiment_model import *
-from app.models.rule_models import *
-from .finders import Finders
+from app.rules_engine.alloc_rule import *
 
-
-class CreateExperiment:
+class CommonModules:
 
     def __init__(self):
-        pass
+        self.reagents = ['DNA-free-Water',
+                         'Titanium-PCR-Buffer',
+                         'KCl',
+                         'MgCl2',
+                         'BSA',
+                         'dNTPs',
+                         'Titanium-Taq',
+                         '(Eco)-ATCC-BAA-2355',
+                         '(Efs-vanB)-ATCC-700802',
+                         '(Kox)-ATCC-15764',
+                         'Ec_uidA_6.x_Eco63_Eco60',
+                         'Efs_cpn60_1.x_Efs04_Efs01',
+                         'Efs_vanB_1.x_van10_van06',
+                         'Efm_vanA_1.x_van05_van01',
+                         'Ko_pehX_1.x_Kox05_Kox02',
+                         'Kp_khe_2.x_Kpn13_Kpn01',
+                         'Pm_zapA_1.x_Pmi01_Pmi05',
+                         'Spo_gp_1.x_Spo09_Spo13',
+                         'HgDna']
+        self.units = ['mM', 'mg/ml', 'mMeach', 'copies/ul', 'uM', 'ng/ul', 'x', 'dil']
 
     @classmethod
     def _create_pa_cycling(cls):
@@ -58,11 +72,10 @@ class CreateExperiment:
             Concentration.make(numerator / float(denom), pref_units)
 
     @classmethod
-    def _rules_from_data(cls, payload_type, data):
+    def _rules_from_data(cls,data):
         rules = []
         for i,rule in enumerate(data):
             payload, zone = rule
-            rules.append(AllocRule.make(i,
-                payload_type, payload, zone))
+            rules.append(AllocRule)
         return rules
 
