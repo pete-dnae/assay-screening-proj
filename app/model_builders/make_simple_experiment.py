@@ -17,13 +17,13 @@ class SimpleExperiment():
 
     def __init__(self):
         self.experiment = None
-
+        self.script = "V 1 \n" \
+                          "P1 \n" \
+                          "A DNA-free-Water            1-12    A-H 3.35 x \n" \
+                          "A Titanium-PCR-Buffer       1-12    A-H 0.63 x \n"
 
     def create(self):
-        CreateExperiment()._create_concentrations()
-        self.__create_reagents()
         self.experiment = self.__assemble_experiment()
-
         return self.experiment
 
     #-----------------------------------------------------------------------
@@ -31,29 +31,20 @@ class SimpleExperiment():
     #-----------------------------------------------------------------------
 
 
-    def __create_reagents(self):
-        finder = Finders()
-        Reagent.make('DNA Free Water', '22884100', finder._conc_rat(1, 1, 'X'))
-        for  primer_name in (('Eco63'),('Eco64'),('Eco60'),('Eco66')):
-            Reagent.make(primer_name, '-', finder._conc_rat(1, 0.4, 'microM'))
 
-
-    def __create_rules(self):
-        cm = CommonModules()
-        data = "V 1 \n" \
-              "P1 \n" \
-              "A DNA-free-Water            1-12    A-H 3.35 x \n" \
-              "A Titanium-PCR-Buffer       1-12    A-H 0.63 x \n"
-        return cm._rules_from_data(data)
 
     def __assemble_experiment(self):
         cm = CommonModules()
+        cm.validate_rules(self.script)
+
         return Experiment.make(
             'reference_experiment_1',
             'PH',
-            ,
-               cm._create_pa_cycling(),
-               cm._create_id_cycling(),
+            RuleScript.make(
+                self.script
+            ),
+               cm.create_pa_cycling(),
+               cm.create_id_cycling(),
         )
 
 

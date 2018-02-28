@@ -27,6 +27,7 @@ class Premixer:
 
         # Accumulates results as 2-tuples: (premix, targeted_buckets)
         self.premixes = []
+        self.buffer_mix = None
 
     def find_premixes(self):
         """
@@ -44,6 +45,20 @@ class Premixer:
             self.premixes.append((premix, target_buckets))
             # Housekeeping before next iteration.
             self._remove_premixed_items_from_buckets(premix, target_buckets)
+
+    def find_premix_opportunities(self):
+        counter = Counter()
+        for bucket in self._buckets:
+            counter[frozenset(bucket)]+=1
+        most_common=counter.most_common()
+        self.premixes = [set(reagents) for reagents,count in most_common if count>2]
+
+    def find_buffermix(self):
+        res = set(self._all_items)
+        for bucket in self._buckets:
+            res.intersection_update(bucket)
+        self.buffer_mix = res
+
 
    #-----------------------------------------------------------------------
    # Private below

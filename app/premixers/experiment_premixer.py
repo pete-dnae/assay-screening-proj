@@ -1,6 +1,7 @@
 from collections import Counter
 from pdb import set_trace as st
 from .premixer import Premixer
+from collections import Counter
 
 class ExperimentPremixer:
 
@@ -8,6 +9,7 @@ class ExperimentPremixer:
 
         self._allocation_results=allocResults
         self._buckets = self._flatten_results(self._allocation_results)
+        self.premixer_results = None
 
     def extract_premixes(self):
         """
@@ -18,9 +20,11 @@ class ExperimentPremixer:
         """
         # We can use a generic premixer utility
         premixer = Premixer(self._buckets)
-        premixer.find_premixes()
+        premixer.find_premix_opportunities()
+        premixer.find_buffermix()
+        self.premixer_results = premixer.premixes
+        return self.premixer_results
 
-        return premixer.premixes
 
     # -----------------------------------------------------------------------
     # Private below
@@ -38,4 +42,7 @@ class ExperimentPremixer:
                 for colkey,column in row.items():
                     flat_array.append(set(column))
         return flat_array
+
+
+
 

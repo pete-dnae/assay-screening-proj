@@ -1,20 +1,23 @@
 from app.reagents.reagent_models import *
+
+
 class SourceRowCol:
     """
     Contains the attributes of source ie plate number , row, column in case of transfer rule.
     """
 
-    def __init__(self,plate_no,row,col):
-
+    def __init__(self, plate_no, row, col):
         self.plate_no = plate_no
         self.row = row
         self.column = col
+
 
 class PlacementInstructions:
     """
     Contain row ,col part of alloc rule
     """
-    def __init__(self,row,col):
+
+    def __init__(self, row, col):
         self.row_range = row
         self.col_range = col
 
@@ -24,7 +27,7 @@ class PlacementInstructions:
             end = ord(self.row_range[-1]) - ord('A')
             return [i for i in range(start, end + 1)]
         else:
-            return self.row_range.split(',')
+            return [ord(i) - ord('A') for i in self.row_range.split(',')]
 
     def number_of_columns(self):
         return len(self.enumerate_column_indices())
@@ -37,6 +40,7 @@ class PlacementInstructions:
         else:
             return [int(i) for i in self.col_range.split(',')]
 
+
 class AllocRule:
     """
     *Alloc Rule* is short for "Allocation Rule".
@@ -46,15 +50,12 @@ class AllocRule:
     Has a Placement Instructions object which represents the target
     region of the table is defined in terms of row and column ranges.
     """
-    def __init__(self,payload,row_range,col_range):
 
-        #payload is a reagent reference
+    def __init__(self, payload, row_range, col_range):
+        # payload is a reagent reference
         self.payload = payload
-        self.placement_instructions = PlacementInstructions(row_range,col_range)
+        self.placement_instructions = PlacementInstructions(row_range, col_range)
 
-
-
-    # todo consider moving this into __str or __repr
     def __str__(self):
         """
         E.g.
@@ -72,16 +73,24 @@ class AllocRule:
 
 
 class TransferRule:
+    """
+    Transfer rule represents reagents that needs to be transfered from a source plate to current plate .
+    Has a reference to SourceRowCol along with a Reference to Placement Instructions and Reagents
+    Its assumed that the source and target cells will be the same
+    Contains a dilution field specifying the dilution factor to take into account while placement instructions is
+    carried out
+    """
 
-    def __init__(self,plate_no,row_range,col_range,dil):
-        self.source_row_col = SourceRowCol(plate_no,row_range,col_range)
-        self.placement_instructions = PlacementInstructions(row_range,col_range)
+    def __init__(self, plate_no, row_range, col_range, dil):
+        self.source_row_col = SourceRowCol(plate_no, row_range, col_range)
+        self.placement_instructions = PlacementInstructions(row_range, col_range)
         self.dilution = dil
-        self.payload = Reagent(self._make_reagent_name(),1,'x')
-
+        self.payload = Reagent(self._make_reagent_name(), 1, 'x')
 
     def _make_reagent_name(self):
-        return "Transfer from %s ,Row: %s,Col :%s"%(self.source_row_col.plate_no,self.source_row_col.row,self.source_row_col.column)
+        return "Transfer from %s ,Row: %s,Col :%s" % \
+               (self.source_row_col.plate_no, self.source_row_col.row, self.source_row_col.column)
+
     def __str__(self):
         """
         E.g.

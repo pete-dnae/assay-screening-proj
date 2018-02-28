@@ -67,3 +67,22 @@ class Measure(models.Model):
             src.address,
             src.volume_in_ml,
         )
+
+class ConcreteReagent(models.Model):
+    """
+    One of several types of reagent we acknowledge in the system. In this case
+    one that is bought-in and is physically sitting in some bottle somewhere.
+    Hence it has its own concentration.
+    """
+    name = models.CharField(max_length=30) # Names are not unique!
+    lot = models.CharField(max_length=30)
+    concentration = models.FloatField()
+    unit = models.CharField(max_length=30)
+
+    @classmethod
+    def make(self, name, lot, stock, final, units):
+        return ConcreteReagent.objects.create(
+            name=name, lot=lot, concentration=final/stock ,unit=units)
+
+    def __str__(self):
+        return self.name

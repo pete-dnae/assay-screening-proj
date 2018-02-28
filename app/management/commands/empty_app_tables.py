@@ -13,12 +13,6 @@ _APP_MODEL_CLASSES = (
     Experiment,
     
     CyclingPattern,
-
-    Plate,
-    AllocationInstructions,
-    RuleList,
-    AllocRule,
-
     PrimerPair,
     Primer,
 
@@ -29,8 +23,7 @@ _APP_MODEL_CLASSES = (
 
     Measure,
     Composition,
-    Reagent,
-    Concentration,
+    RuleScript,
 )
 
 class EmptyAppTables():

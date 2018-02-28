@@ -97,7 +97,7 @@ class PrimerPair(models.Model):
             src.suitable_for_id # Plain copy
         )
 
-    def display_name(self):
+    def __str__(self):
         """
         E.g. Efm_vanA_1.x_van05_van01
         """

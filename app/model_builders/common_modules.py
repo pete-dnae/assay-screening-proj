@@ -1,7 +1,7 @@
 
 from app.models.experiment_model import *
 from app.rules_engine.alloc_rule import *
-
+from app.rules_engine.rule_script_parser import *
 class CommonModules:
 
     def __init__(self):
@@ -24,10 +24,10 @@ class CommonModules:
                          'Pm_zapA_1.x_Pmi01_Pmi05',
                          'Spo_gp_1.x_Spo09_Spo13',
                          'HgDna']
-        self.units = ['mM', 'mg/ml', 'mMeach', 'copies/ul', 'uM', 'ng/ul', 'x', 'dil']
+        self.units = ['mM', 'mg/ml', 'mMeach', 'copies', 'uM', 'ng', 'x', 'dil']
 
     @classmethod
-    def _create_pa_cycling(cls):
+    def create_pa_cycling(cls):
         return CyclingPattern.make(
             activation_time=120,
             activation_temp=95,
@@ -41,7 +41,7 @@ class CommonModules:
         )
 
     @classmethod
-    def _create_id_cycling(cls):
+    def create_id_cycling(cls):
         return CyclingPattern.make(
             activation_time=120,
             activation_temp=95,
@@ -54,28 +54,8 @@ class CommonModules:
             extend_time=25
         )
 
-    @classmethod
-    def _create_concentrations(cls):
-        for denom, numerator, pref_units in (
-                (1,0.4, 'microM'),
-                (1, 1, 'X'),
-                (10, 0.13, 'X'),
-                (10, 0.2, 'mM'),
-                (10, 0.04, '%'),
-                (20, 1, 'mg/ml'),
-                (25, 2.06, 'mM'),
-                (50, 1.0, 'x'),
-                (50, 1.3, 'x'),
-                (100, 0.32, 'X'),
-                (100, 1, 'mM'),
-                (1000, 48, 'mM')):
-            Concentration.make(numerator / float(denom), pref_units)
 
-    @classmethod
-    def _rules_from_data(cls,data):
-        rules = []
-        for i,rule in enumerate(data):
-            payload, zone = rule
-            rules.append(AllocRule)
-        return rules
+    def validate_rules(self,data):
+         return RuleScriptParser(self.reagents,self.units,data)
+
 

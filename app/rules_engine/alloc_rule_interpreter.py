@@ -91,6 +91,7 @@ class AllocRuleInterpreter:
             payload_item):
         # Note this might be overwriting a previous value because later
         # rules overwrite the results from earlier rules, by definition.
+
         row_alph = chr(65 + row_index)
         self._table.add(row_alph,column_index,payload_item)
 
