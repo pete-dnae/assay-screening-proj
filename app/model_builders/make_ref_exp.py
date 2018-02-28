@@ -31,12 +31,11 @@ class ReferenceExperiment():
     def _sample_rule_script(self):
         return "V 1 \n" \
                "P1 \n" \
-               "A DNA-free-Water            1-12    A-H 3.35 x \n" \
-               "A Titanium-PCR-Buffer       1-12    A-H 0.63 x \n" \
-               "A KCl                       1-12    A-H 2.40 mM \n" \
-               "A MgCl2                     1-12    A-H 4.13 mM \n" \
-               "A BSA                       1-12    A-H 2.5 mg/ml \n" \
-               "A dNTPs                     1-12    A-H 1.00 mMeach \n" \
+               "A Titanium-PCR-Buffer       1-12    A-H 0.125 x \n" \
+               "A KCl                       1-12    A-H 48.00 mM \n" \
+               "A MgCl2                     1-12    A-H 2.06 mM \n" \
+               "A BSA                       1-12    A-H 1.00 mg/ml \n" \
+               "A dNTPs                     1-12    A-H 0.20 mMeach \n" \
                "A Titanium-Taq              1-12    A-H 1.00 x \n" \
                "A (Eco)-ATCC-BAA-2355       1,5,9   A-B   0 copies \n" \
                "A (Eco)-ATCC-BAA-2355       1,5     C-H   5 copies \n" \

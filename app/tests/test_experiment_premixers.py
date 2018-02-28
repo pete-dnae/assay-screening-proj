@@ -36,9 +36,7 @@ class IdentifyPremixersTest(APITestCase):
             alloc_rule_lst.append(interpreted_allocation)
         experiment_premixer = ExperimentPremixer(alloc_rule_lst)
         # premixes = experiment_premixer.extract_premixes()
-        premixes = experiment_premixer._find_premixes()
-        buffer_mix = experiment_premixer._find_buffermix()
-        print(premixes)
+        experiment_premixer.extract_premixes()
 
 
 
