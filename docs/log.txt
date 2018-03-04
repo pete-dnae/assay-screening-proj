@@ -14,7 +14,7 @@ o  How to change the back end code that deals with rules to take this as input?
     *  Try to code all the model changes suggested at the bottom
     *  Create and unit-test the BE rules script parser
     o  Update and unit test the ExperimentPremixer and AllocationResults
-        o  Create new classes as per review 26th Feb
+        *  Create new classes as per review 26th Feb
         o  Do it
         o  Evolve a unit test that:
             o  creates a simple experiment with a simple rules script
