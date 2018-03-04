@@ -1,14 +1,29 @@
 import _ from 'lodash';
+
+export const getIndexOf = (text, itm) => {
+  const index = itm ? text.indexOf(itm) : text.length;
+  return index;
+};
+
+export const getLengthOf = itm => {
+  const index = itm ? itm.length : 1;
+  return index;
+};
+
 export const splitLine = text => text.split(/\s+/);
-export const makeFeedback = (pass, startIndex, index, end, msg) => ({
+export const makeFeedback = (pass, startIndex, index, end, msg, action) => ({
   pass,
   index: index + startIndex,
   length: end,
   msg,
+  action,
 });
 export const checkVersion = (text, version, startIndex) => {
   if (!text.toLowerCase().startsWith('v')) {
-    return makeFeedback(false, startIndex, 0, 1, 'Invalid version rule');
+    return makeFeedback(false, startIndex, 0, 1, 'Invalid version rule', [
+      'color',
+      'red',
+    ]);
   }
   const fields = splitLine(text);
   if (fields.length !== 2) {
@@ -18,6 +33,7 @@ export const checkVersion = (text, version, startIndex) => {
       1,
       text.length,
       'Invalid version rule length',
+      ['color', 'red'],
     );
   }
   if (fields[1] != version) {
@@ -27,10 +43,14 @@ export const checkVersion = (text, version, startIndex) => {
       1,
       text.length,
       'script version does not match with parser version',
+      ['color', 'red'],
     );
   }
 
-  return makeFeedback(true, startIndex, 0, text.length, 'Valid version rule');
+  return makeFeedback(true, startIndex, 0, text.length, 'Valid version rule', [
+    'color',
+    'green',
+  ]);
 };
 export const validatePlate = (text, existingPlates, startIndex) => {
   if (!text.match(/^P\d+$/)) {
@@ -40,6 +60,7 @@ export const validatePlate = (text, existingPlates, startIndex) => {
       0,
       text.length,
       'Invalid Plate Rule',
+      ['color', 'red'],
     );
   }
 
@@ -51,9 +72,13 @@ export const validatePlate = (text, existingPlates, startIndex) => {
       1,
       text.length,
       'Plate Already Exists',
+      ['color', 'red'],
     );
   }
-  return makeFeedback(true, startIndex, 0, text.length, 'Valid Plate Rule');
+  return makeFeedback(true, startIndex, 0, text.length, 'Valid Plate Rule', [
+    'color',
+    'green',
+  ]);
 };
 
 export const validateRule = (
@@ -72,6 +97,7 @@ export const validateRule = (
       0,
       text.length,
       'unexpected number of elements',
+      ['color', 'red'],
     );
   }
   if (fields[0] === 'A') {
@@ -79,9 +105,10 @@ export const validateRule = (
       return makeFeedback(
         false,
         lineStartIndex,
-        text.indexOf(fields[1]),
-        fields[1] ? fields[1].length : 0,
+        getIndexOf(text, fields[1]),
+        getLengthOf(fields[1]),
         'Not a recogonised reagent',
+        ['color', 'red'],
       );
     }
   } else if (fields[0] === 'T') {
@@ -89,9 +116,10 @@ export const validateRule = (
       return makeFeedback(
         false,
         lineStartIndex,
-        text.indexOf(fields[1]),
-        fields[1] ? fields[1].length : 0,
+        getIndexOf(text, fields[1]),
+        getLengthOf(fields[1]),
         'Not a recogonised plate',
+        ['color', 'red'],
       );
     }
   }
@@ -107,9 +135,10 @@ export const validateRule = (
     return makeFeedback(
       false,
       lineStartIndex,
-      text.indexOf(fields[2]),
-      fields[2] ? fields[2].length : 0,
+      getIndexOf(text, fields[2]),
+      getLengthOf(fields[2]),
       'Not a valid col range',
+      ['color', 'red'],
     );
   }
 
@@ -124,9 +153,10 @@ export const validateRule = (
     return makeFeedback(
       false,
       lineStartIndex,
-      text.indexOf(fields[3]),
-      fields[3] ? fields[3].length : 0,
+      getIndexOf(text, fields[3]),
+      getLengthOf(fields[3]),
       'Not a valid col range',
+      ['color', 'red'],
     );
   }
 
@@ -134,9 +164,10 @@ export const validateRule = (
     return makeFeedback(
       false,
       lineStartIndex,
-      text.indexOf(fields[4]),
-      fields[4] ? fields[4].length : 0,
+      getIndexOf(text, fields[4]),
+      getLengthOf(fields[4]),
       'Invalid number',
+      ['color', 'red'],
     );
   }
 
@@ -144,12 +175,53 @@ export const validateRule = (
     return makeFeedback(
       false,
       lineStartIndex,
-      text.indexOf(fields[5]),
-      fields[5] ? fields[5].length : 0,
+      getIndexOf(text, fields[5]),
+      getLengthOf(fields[5]),
       'Invalid units',
+      ['color', 'red'],
     );
   }
-  return makeFeedback(true, lineStartIndex, 0, text.length, 'Valid rule');
+  return makeFeedback(true, lineStartIndex, 0, text.length, 'Valid rule', [
+    'color',
+    'green',
+  ]);
 };
 export const validateComment = (text, startIndex) =>
-  makeFeedback(true, startIndex, startIndex, text.length, 'valid comment');
+  makeFeedback(true, startIndex, 0, text.length, 'valid comment', [
+    'italic',
+    'true',
+  ]);
+export const getFeedback = (line, args) => {
+  const { lineNum, startIndex, version, parsedPlates, reagents, units } = args;
+  let result;
+  switch (true) {
+    case lineNum === 1:
+      result = checkVersion(line, version, startIndex);
+
+      break;
+    case line.startsWith('P'):
+      result = validatePlate(line, parsedPlates, startIndex);
+
+      break;
+    case line.startsWith('A') || line.startsWith('T'):
+      result = validateRule(line, reagents, units, parsedPlates, startIndex);
+
+      break;
+    case line.startsWith('#'):
+      result = validateComment(line, startIndex);
+      break;
+    default:
+  }
+  return result;
+};
+
+export const validateText = (text, args) => {
+  let startIndex = 0;
+  const feedBackCollector = [];
+  text.split('\n').forEach((line, i) => {
+    const lineNum = i + 1;
+    feedBackCollector.push(getFeedback(line, { ...args, lineNum, startIndex }));
+    startIndex += line.length + 1;
+  });
+  return feedBackCollector.filter(x => x);
+};

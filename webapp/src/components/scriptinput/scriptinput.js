@@ -3,13 +3,9 @@ import Quill from 'quill';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
+
 import { mapGetters, mapActions } from 'vuex';
-import {
-  checkVersion,
-  validatePlate,
-  validateRule,
-  validateComment,
-} from '@/models/editor';
+import { validateText } from '@/models/editor';
 
 export default {
   name: 'ScriptInputComponent',
@@ -36,47 +32,29 @@ export default {
     onEditorChange([delta, oldDelta, source]) {
       if (source === 'user') {
         const text = this.editor.getText();
-        let startIndex = 0;
-        let feedBackCollector = [];
-        text.split('\n').forEach((line, i) => {
-          const lineNum = i + 1;
-          switch (true) {
-            case lineNum === 1:
-              feedBackCollector.push(
-                checkVersion(line, this.version, startIndex),
-              );
-              break;
-            case line.startsWith('P'):
-              feedBackCollector.push(
-                validatePlate(line, this.parsedPlates, startIndex),
-              );
-              break;
-            case line.startsWith('A') || line.startsWith('T'):
-              feedBackCollector.push(
-                validateRule(
-                  line,
-                  this.reagents,
-                  this.units,
-                  this.parsedPlates,
-                  startIndex,
-                ),
-              );
-              break;
-            case line.startsWith('#'):
-              feedBackCollector.push(validateComment(line, startIndex));
-              break;
-            default:
-          }
-
-          this.setFeedback(feedBackCollector);
-          startIndex += line.length + 1;
-        });
-
+        this.setFeedback(
+          validateText(text, {
+            version: this.version,
+            parsedPlates: this.parsedPlates,
+            reagents: this.reagents,
+            units: this.units,
+          }),
+        );
         this.validTextObjects.forEach(range => {
-          this.editor.formatText(range.index, range.length, 'color', 'green');
+          this.editor.formatText(
+            range.index,
+            range.length,
+            range.action[0],
+            range.action[1],
+          );
         });
         this.invalidTextObjects.forEach(range => {
-          this.editor.formatText(range.index, range.length, 'color', 'red');
+          this.editor.formatText(
+            range.index,
+            range.length,
+            range.action[0],
+            range.action[1],
+          );
         });
       }
     },
