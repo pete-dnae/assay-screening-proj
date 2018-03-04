@@ -7,7 +7,7 @@ from app.models.primer_models import *
 from app.models.strain_models import *
 from app.models.experiment_model import *
 from app.models.rule_models import *
-
+from app.models.reagent_models import *
 """
    A few 'finder' methods.
    """
@@ -19,38 +19,27 @@ class Finders:
     def __init__(self):
         pass
 
-    @classmethod
-    def _conc_rat(cls, denom, numerator, pref_units):
-        # Find a Concentration from a rational number (fraction)
-        string_value = Concentration.value_from_quotient(denom, numerator)
-        return Concentration.objects.get(
-            normalised_string_value=string_value, preferred_units=pref_units)
+
+
 
     @classmethod
-    def _conc_str(cls, normalised_string_value, pref_units):
-        # Find a Concentration from its normalised string value.
-        return Concentration.objects.get(
-            normalised_string_value=normalised_string_value,
-            preferred_units=pref_units)
-
-    @classmethod
-    def _org(cls, abbr):
+    def org(cls, abbr):
         return Organism.objects.get(abbreviation=abbr)
 
     @classmethod
-    def _arg(cls, name):
+    def arg(cls, name):
         return Arg.objects.get(name=name)
 
     @classmethod
-    def _gene(cls, name):
+    def gene(cls, name):
         return Gene.objects.get(name=name)
 
     @classmethod
-    def _prim(cls, name):
+    def prim(cls, name):
         return Primer.objects.get(full_name=name)
 
     @classmethod
-    def _find_id_primer_pair(cls, fwd_name, rev_name):
+    def find_id_primer_pair(cls, fwd_name, rev_name):
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
             reverse_primer__full_name=rev_name,
@@ -59,7 +48,7 @@ class Finders:
         return primer_pair
 
     @classmethod
-    def _find_pa_primer_pair(cls, fwd_name, rev_name):
+    def find_pa_primer_pair(cls, fwd_name, rev_name):
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
             reverse_primer__full_name=rev_name,
@@ -68,7 +57,7 @@ class Finders:
         return primer_pair
 
     @classmethod
-    def _find_primer_pair(cls, fwd_name, rev_name,
+    def find_primer_pair(cls, fwd_name, rev_name,
                           suitable_for_pa, suitable_for_id):
         primer_pair = PrimerPair.objects.get(
             forward_primer__full_name=fwd_name,
@@ -77,10 +66,11 @@ class Finders:
             suitable_for_id=suitable_for_id,
         )
         return primer_pair
-
     @classmethod
-    def _reagent(cls, reagent_hash):
-        """
-        Example reagent_hash could be: 'ATCC 26189:5.000e+01'
-        """
-        return Reagent.objects.get(hash=reagent_hash)
+    def find_all_reagents(cls):
+        possible_reagent_containers = (PrimerPair,ConcreteReagent,Strain)
+        result =[]
+        for reagent_container in possible_reagent_containers:
+            for object in reagent_container.objects.all():
+                result.append(object.__str__())
+        return result

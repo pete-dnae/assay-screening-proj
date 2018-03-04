@@ -39,11 +39,9 @@ class Strain(models.Model):
         return Strain.objects.create(name=name, organism=organism, 
             arg=arg, genome_size=genome_size)
 
-    def display_name(self):
-        buf = self.organism.abbreviation
-        if self.arg:
-            buf = '_'.join((buf, self.arg.name))
-        return buf
+    def __str__(self):
+        #Example (Eco)-ATCC-BAA-2355
+        return "(%s)-%s"%(self.organism.abbreviation,self.name)
 
 
 class StrainKit(models.Model):
