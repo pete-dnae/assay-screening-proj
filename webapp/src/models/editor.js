@@ -1,16 +1,13 @@
-import _ from 'lodash';
-
 export const getIndexOf = (text, itm) => {
   const index = itm ? text.indexOf(itm) : text.length;
   return index;
 };
 
-export const getLengthOf = itm => {
+export const getLengthOf = (itm) => {
   const index = itm ? itm.length : 1;
   return index;
 };
 
-export const splitLine = text => text.split(/\s+/);
 export const makeFeedback = (pass, startIndex, index, end, msg, action) => ({
   pass,
   index: index + startIndex,
@@ -18,6 +15,18 @@ export const makeFeedback = (pass, startIndex, index, end, msg, action) => ({
   msg,
   action,
 });
+
+export const InvalidRuleResponse = (startIndex, text) =>
+  makeFeedback(
+    false,
+    startIndex,
+    getIndexOf(text, text),
+    getLengthOf(text),
+    'Invalid Rule',
+    ['color', 'red'],
+  );
+export const splitLine = (text) => text.split(/\s+/);
+
 export const checkVersion = (text, version, startIndex) => {
   if (!text.toLowerCase().startsWith('v')) {
     return makeFeedback(false, startIndex, 0, 1, 'Invalid version rule', [
@@ -101,7 +110,7 @@ export const validateRule = (
     );
   }
   if (fields[0] === 'A') {
-    if (!fields[1] || reagents.indexOf(fields[1]) === -1) {
+    if (fields[1] && reagents.indexOf(fields[1]) === -1) {
       return makeFeedback(
         false,
         lineStartIndex,
@@ -112,7 +121,7 @@ export const validateRule = (
       );
     }
   } else if (fields[0] === 'T') {
-    if (!fields[1] || existingPlates.indexOf(fields[1]) === -1) {
+    if (fields[1] && existingPlates.indexOf(fields[1]) === -1) {
       return makeFeedback(
         false,
         lineStartIndex,
@@ -125,7 +134,7 @@ export const validateRule = (
   }
 
   if (
-    !fields[2] ||
+    fields[2] &&
     !(
       fields[2].match(/^\d+-\d+$/) ||
       fields[2].match(/^\d+$/) ||
@@ -143,7 +152,7 @@ export const validateRule = (
   }
 
   if (
-    !fields[3] ||
+    fields[3] &&
     !(
       fields[3].match(/^[A-Z]-[A-Z]$/) ||
       fields[3].match(/^(?!,)(,?[A-Z])+$/) ||
@@ -160,7 +169,7 @@ export const validateRule = (
     );
   }
 
-  if (!fields[4] || !isFinite(fields[4])) {
+  if (fields[4] && !isFinite(fields[4])) {
     return makeFeedback(
       false,
       lineStartIndex,
@@ -171,7 +180,7 @@ export const validateRule = (
     );
   }
 
-  if (!fields[5] || units.indexOf(fields[5]) === -1) {
+  if (fields[5] && units.indexOf(fields[5]) === -1) {
     return makeFeedback(
       false,
       lineStartIndex,
@@ -211,6 +220,7 @@ export const getFeedback = (line, args) => {
       result = validateComment(line, startIndex);
       break;
     default:
+      result = InvalidRuleResponse(startIndex, line);
   }
   return result;
 };
@@ -218,10 +228,12 @@ export const getFeedback = (line, args) => {
 export const validateText = (text, args) => {
   let startIndex = 0;
   const feedBackCollector = [];
-  text.split('\n').forEach((line, i) => {
+  const lines = text.split('\n');
+
+  lines.forEach((line, i) => {
     const lineNum = i + 1;
     feedBackCollector.push(getFeedback(line, { ...args, lineNum, startIndex }));
     startIndex += line.length + 1;
   });
-  return feedBackCollector.filter(x => x);
+  return feedBackCollector.filter((x) => x);
 };

@@ -60,9 +60,6 @@ const mutations = {
   [types.SET_CURRENT_PLATE](state, value) {
     state.currentPlate = value;
   },
-  [types.SET_PARSED_PLATES](state, value) {
-    state.parsedPlates = value;
-  },
   [types.SET_VALID_OBJECTS](state, data) {
     state.validTextObjects = data;
   },
