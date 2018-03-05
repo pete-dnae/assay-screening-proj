@@ -15,6 +15,7 @@ export default {
     return {
       msg: 'Welcome',
       suggestions: null,
+      show: false,
       tooltiptext: {
         visibility: 'visible',
         'max-height': '300px',
@@ -79,13 +80,29 @@ export default {
     },
     alterToolTip(text) {
       const bounds = this.editor.getBounds(this.editor.getSelection().index);
-      this.tooltiptext = getToolTipPosition(this.tooltiptext, bounds);
+      const parentBound = document
+        .getElementsByClassName('ql-editor')[0]
+        .getBoundingClientRect();
+      this.tooltiptext = getToolTipPosition(
+        this.tooltiptext,
+        bounds,
+        parentBound,
+      );
       const strings = splitLine(text);
       strings.pop();
       const currentString = strings.pop();
       this.suggestions = this.reagents.filter(
         (x) => x.indexOf(currentString) > -1,
       );
+    },
+    handleAutoCompleteClick(text) {
+      this.editor.focus();
+      this.editor.insertText(this.editor.getSelection().index, text, {
+        color: 'black',
+      });
+    },
+    highlightError(err) {
+      this.editor.setSelection(err.index, err.length);
     },
   },
   mounted() {

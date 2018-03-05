@@ -1,3 +1,4 @@
+import _ from 'lodash';
 export const getIndexOf = (text, itm) => {
   const index = itm ? text.indexOf(itm) : text.length;
   return index;
@@ -206,18 +207,18 @@ export const getFeedback = (line, args) => {
   switch (true) {
     case lineNum === 1:
       result = checkVersion(line, version, startIndex);
-
       break;
     case line.startsWith('P'):
       result = validatePlate(line, parsedPlates, startIndex);
-
       break;
     case line.startsWith('A') || line.startsWith('T'):
       result = validateRule(line, reagents, units, parsedPlates, startIndex);
-
       break;
     case line.startsWith('#'):
       result = validateComment(line, startIndex);
+      break;
+    case _.isEmpty(line):
+      //  do absolutely nothig just sit there
       break;
     default:
       result = InvalidRuleResponse(startIndex, line);

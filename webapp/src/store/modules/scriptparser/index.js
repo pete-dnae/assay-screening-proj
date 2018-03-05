@@ -49,11 +49,10 @@ export const state = {
 
 const actions = {
   setFeedback({ commit }, data) {
-    const pos = data.filter(x => x.pass);
-    const neg = data.filter(x => !x.pass);
+    const pos = data.filter((x) => x.pass);
+    const neg = data.filter((x) => !x.pass);
     commit(types.SET_VALID_OBJECTS, pos);
     commit(types.SET_INVALID_OBJECTS, neg);
-    commit(types.SET_ERROR_MESSAGES, neg);
   },
 };
 const mutations = {
@@ -65,9 +64,6 @@ const mutations = {
   },
   [types.SET_INVALID_OBJECTS](state, data) {
     state.invalidTextObjects = data;
-  },
-  [types.SET_ERROR_MESSAGES](state, data) {
-    state.errorMessages = _.map(data, x => x.msg);
   },
   [types.SET_PARSED_PLATE](state, value) {
     state.parsedPlates.push(value);
