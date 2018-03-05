@@ -1,6 +1,6 @@
 import _ from 'lodash';
 export const getIndexOf = (text, itm) => {
-  const index = itm ? text.indexOf(itm) : text.length;
+  const index = itm ? text.lastIndexOf(itm) : text.length;
   return index;
 };
 
@@ -198,8 +198,8 @@ export const validateRule = (
 };
 export const validateComment = (text, startIndex) =>
   makeFeedback(true, startIndex, 0, text.length, 'valid comment', [
-    'italic',
-    'true',
+    'color',
+    'blue',
   ]);
 export const getFeedback = (line, args) => {
   const { lineNum, startIndex, version, parsedPlates, reagents, units } = args;

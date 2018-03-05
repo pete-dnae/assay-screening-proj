@@ -6,9 +6,9 @@
     <div class="col" id="editor">
 
     </div>
-    <span v-bind:style="tooltiptext">
+    <span v-bind:style="tooltiptext" v-show="showToolTip">
     <ul>
-    <li v-for = "text in suggestions" @click="handleAutoCompleteClick(text)">
+    <li v-for = "text in suggestions" @click="handleAutoCompleteClick(text);">
       {{text}}
     </li>
   </ul>
