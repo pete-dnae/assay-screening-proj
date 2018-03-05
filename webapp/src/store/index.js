@@ -5,6 +5,7 @@ import experiment from './modules/experiment/index';
 import plate from './modules/plate/index';
 import rule from './modules/rule/index';
 import ui from './modules/ui/index';
+import scriptparser from './modules/scriptparser/index';
 
 Vue.use(Vuex);
 
@@ -17,5 +18,6 @@ export default new Vuex.Store({
     plate,
     rule,
     ui,
+    scriptparser,
   },
 });

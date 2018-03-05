@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export const zoomIn = event => {
+export const zoomIn = (event) => {
   const element = document.getElementById('overlay');
 
   element.style.display = 'inline-block';
@@ -18,7 +18,7 @@ export const zoomOut = () => {
 
 export const getNewIndex = (arg, items) => {
   const newIndex =
-    items.length !== 0 ? _.maxBy(items, x => x[arg])[arg] + 1 : 0;
+    items.length !== 0 ? _.maxBy(items, (x) => x[arg])[arg] + 1 : 0;
   return newIndex;
 };
 
@@ -98,7 +98,7 @@ export const genCharArray = (start, end) => {
   const result = [];
   const i = start.charCodeAt(0);
   const j = end.charCodeAt(0) + 1;
-  _.range(i, j).forEach(x => {
+  _.range(i, j).forEach((x) => {
     result.push(String.fromCharCode(x));
   });
   return result;

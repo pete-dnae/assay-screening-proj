@@ -1,67 +1,95 @@
+import Quill from 'quill';
 import _ from 'lodash';
-import horsey from 'horsey';
 // require styles
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
-import 'tributejs/dist/tribute.css';
-import { splitLines, validateRule } from '@/models/editor';
-import Tribute from 'tributejs';
 
-import { quillEditor } from 'vue-quill-editor';
+import { mapGetters, mapActions } from 'vuex';
+import { validateText, splitLine } from '@/models/editor';
+import { getToolTipPosition } from '@/models/tooltip';
 
 export default {
   name: 'ScriptInputComponent',
-  components: {
-    quillEditor,
-  },
   data() {
     return {
       msg: 'Welcome',
-      text: '',
-      resultHtml: '',
-      content: '',
-      units: ['mM', 'mg/ml', 'mM each', 'copies/ul', 'uM', 'ng/ul', 'x'],
-      editorOption: {
-        /* quill options */
+      suggestions: null,
+      tooltiptext: {
+        visibility: 'visible',
+        'max-height': '300px',
+        'max-width': '500px',
+        'text-align': 'center',
+        'border-radius': '6px',
+        padding: '5px 0',
+
+        /* Position the tooltip */
+        position: 'absolute',
+        'z-index': 99999,
       },
     };
   },
-  props: {
-    options: Array,
+  computed: {
+    ...mapGetters({
+      options: 'getQuillOptions',
+      version: 'getVersion',
+      validTextObjects: 'getValidTextObjects',
+      invalidTextObjects: 'getInValidTextObjects',
+      errorMessages: 'getErrorMessages',
+      parsedPlates: 'getparsedPlates',
+      reagents: 'getreagents',
+      units: 'getunits',
+    }),
   },
   watch: {},
   methods: {
-    onEditorChange({ editor, html, text }) {
-      if (!this.content.includes('bla')) {
-        this.resultHtml = new Set();
-        const lines = splitLines('\n', text).filter(x => x);
-        lines.forEach((x, i) => {
-          const resultHtml = validateRule(
-            i,
-            ['Titanium-Taq', 'HgDna'],
-            this.units,
-            x,
-          );
-          this.resultHtml = new Set([...this.resultHtml, ...resultHtml]);
-        });
-        document.getElementById('result').innerHTML = Array.from(
-          this.resultHtml,
-        ).join('');
+    ...mapActions(['setFeedback']),
+    onEditorChange([delta, oldDelta, source]) {
+      if (source === 'user') {
+        const text = this.editor.getText();
+        this.alterToolTip(text);
+        this.setFeedback(
+          validateText(text, {
+            version: this.version,
+            parsedPlates: this.parsedPlates,
+            reagents: this.reagents,
+            units: this.units,
+          }),
+        );
+        this.paintText();
       }
-
-      this.content = `${text} bla`;
+    },
+    paintText() {
+      this.validTextObjects.forEach((range) => {
+        this.editor.formatText(
+          range.index,
+          range.length,
+          range.action[0],
+          range.action[1],
+        );
+      });
+      this.invalidTextObjects.forEach((range) => {
+        this.editor.formatText(
+          range.index,
+          range.length,
+          range.action[0],
+          range.action[1],
+        );
+      });
+    },
+    alterToolTip(text) {
+      const bounds = this.editor.getBounds(this.editor.getSelection().index);
+      this.tooltiptext = getToolTipPosition(this.tooltiptext, bounds);
+      const strings = splitLine(text);
+      strings.pop();
+      const currentString = strings.pop();
+      this.suggestions = this.reagents.filter(
+        (x) => x.indexOf(currentString) > -1,
+      );
     },
   },
   mounted() {
-    this.tribute = new Tribute({
-      values: [
-        { key: 'Titanium-Taq', value: 'Titanium-Taq' },
-        { key: 'MgCl2', value: 'MgCl2' },
-      ],
-      lookup: 'key',
-    });
-    debugger;
-    this.tribute.attach(document.getElementsByClassName('ql-editor'));
+    this.editor = new Quill('#editor', this.options);
+    this.editor.on('text-change', (...args) => this.onEditorChange(args));
   },
 };
