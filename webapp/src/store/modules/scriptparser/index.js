@@ -37,17 +37,11 @@ export const state = {
   savedScript: null,
   quillOptions: {
     debug: 'warn',
-    styles: {
-      body: {
-        'font-family': 'Arial, sans-serif',
-        'font-size': '50px',
-      },
-    },
     modules: {
       toolbar: [
-        [{ header: [1, 2, false] }],
         ['bold', 'italic', 'underline'],
         ['image', 'code-block'],
+        [{ size: ['small', false, 'large', 'huge'] }],
       ],
     },
 
