@@ -12,7 +12,7 @@ class NestedPremixer:
     example mix P is used as a constituent in mix Q, which is used as
     a constituent in mix R. And so on.
 
-    It captures the resultant mixture graph using NestedGraphNode(s).
+    It captures the resultant mixture graph using NestedMixGraphNode(s).
 
     """
 
@@ -33,7 +33,7 @@ class NestedPremixer:
             The ED premix is used in 012345
             The ABC premix is used in 012345678
         So there is an opportunity to premix these two to go into 012345
-        instead of them both separately. Which saves 3 transfer operations.
+        Which saves 3 transfer operations.
 
         For this example, the full set of nested premixes this class will
         produce is:
@@ -44,10 +44,23 @@ class NestedPremixer:
         """
         self.graph_nodes = self._transform_flat_premixes_into_graph(
             flat_premixes)
+
+    def build_nested_mixes(self):
+        print('XXXXX at start dump is \n%s' % self.dump())
         while True:
             succeeded = self._find_next_nesting_opportunity()
             if succeeded is False:
                 return # Finished
+
+    def dump(self):
+        """
+        Provides a text representation of the graph held in self.graph_nodes.
+        """
+        lines = []
+        for node in self.graph_nodes:
+            lines.append(node.dump())
+        return '\n'.join(lines)
+            
 
 
     #----------------------------------------------------------------------
@@ -61,50 +74,63 @@ class NestedPremixer:
         """
         res = []
         for items, buckets in flat_premixes:
-            node = NestedMixGraphNode()
-            node.individual_items = set(items) # Take a copy
+            upstream_nodes = set()
+            node = NestedMixGraphNode(items, upstream_nodes)
             node.targeted_buckets = set(buckets) # Take a copy
             res.append(node)
         return res
 
     def _find_next_nesting_opportunity(self):
         # There is a nesting opportunity, when we can find amongst our 
-        # existing mixes a pair such that the buckets targeted by by one
-        # is a superset of the buckets targeted by the other.
-        source_and_sink = self._find_source_and_sink()
-        if source_and_sink is None:
+        # existing mixes a pair such that the targets of one
+        # is a superset of the targets of the other.
+        superset, subset = self._find_nestable_pair()
+        if superset is None:
             return False
-        self._bring_new_node_into_being_and_do_housekeeping(source_and_sink)
+        self._bring_new_node_into_being_and_do_housekeeping(superset, subset)
         return True
 
-    def _find_source_and_sink(self):
-        # Find a source and sink node, such that the places targeted by
-        # the source are supersets of those targeted by the sink.
-        for source in self.graph_nodes:
-            for sink in self.graph_nodes:
-                if source == sink:
+    def _find_nestable_pair(self):
+        # Find a pair of mixture nodes that still have live targets, and 
+        # such that the places targeted by one are a superset of those 
+        # targeted by the other.
+        for super in self.graph_nodes:
+            for sub in self.graph_nodes:
+                if super == sub: # Can't pair self with self.
                     continue
-                if source.targets_are_superset_of(sink):
-                    return source, sink
+                if super.targets_are_superset_of(sub):
+                    return super, sub
+        return None, None
 
-    def _bring_new_node_into_being_and_do_housekeeping(self, source_and_sink):
+    def _bring_new_node_into_being_and_do_housekeeping(
+            self, superset_node, subset_node):
         """
         Consider 
-            source = ABC
-            sink = ED
+            superset_node = ABC
+            subset_node = ED
 
-        We create a new mix consuming both the source and the sink mixes.
-        We now instead of dispensing the sink mixture to its target places, we
-        dispense the newly created mix to those places instead.
-        We must also tell the source mix to stop dispensing to the places
-        targeted by the sink mix.
+        We create a new mix node consuming both the paired nodes as upstream 
+        nodes and adopting the targets of subset_node.
+
+        We must tell both the superset node and the subset node that they
+        should no longer target the targets that the subset node had because
+        these will now be covered by the new node.
+
+        And we must tell the superset_node about its new downstream mix.
         """
-        new_node = NestedMixGraphNode()
-        source, sink = source_and_sink
-        new_node.upstream_mixture_nodes = set((source, sink))
-        new_node.copy_targets_from(sink)
+        print('XXXX going to combine %d and %d for latters targets' % (superset_node.name, subset_node.name))
+        own_items = set()
+        upstream = set((superset_node, subset_node)) 
+        new_node = NestedMixGraphNode(own_items, upstream)
+        new_node.adopt_targets_from(subset_node)
+
         self.graph_nodes.append(new_node)
 
-        sink.remove_all_targets()
+        superset_node.remove_targets_that_this_has(subset_node)
+        subset_node.remove_targets_that_this_has(subset_node)
 
-        source.remove_targets_that_this_has(sink)
+        superset_node.add_downstream_node(new_node)
+        subset_node.add_downstream_node(new_node)
+            
+        print('XXXXX new node added, now dump is \n%s' % self.dump())
+        st()

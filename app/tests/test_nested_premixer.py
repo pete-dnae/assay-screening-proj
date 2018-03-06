@@ -19,6 +19,8 @@ class NestedPremixerTest(unittest.TestCase):
             ({'F', 'G'}, [6, 7, 8])
         )
         mixer = NestedPremixer(premixes)
+        mixer.build_nested_mixes()
+        print(mixer.dump())
         self.assertTrue(True)
 
 
