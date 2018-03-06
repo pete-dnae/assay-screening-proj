@@ -46,6 +46,7 @@ class NestedPremixer:
             flat_premixes)
 
     def build_nested_mixes(self):
+        print('XXXXX at start dump is \n%s' % self.dump())
         while True:
             succeeded = self._find_next_nesting_opportunity()
             if succeeded is False:
@@ -73,16 +74,16 @@ class NestedPremixer:
         """
         res = []
         for items, buckets in flat_premixes:
-            node = NestedMixGraphNode()
-            node.individual_items = set(items) # Take a copy
+            upstream_nodes = set()
+            node = NestedMixGraphNode(items, upstream_nodes)
             node.targeted_buckets = set(buckets) # Take a copy
             res.append(node)
         return res
 
     def _find_next_nesting_opportunity(self):
         # There is a nesting opportunity, when we can find amongst our 
-        # existing mixes a pair such that the buckets targeted by by one
-        # is a superset of the buckets targeted by the other.
+        # existing mixes a pair such that the targets of one
+        # is a superset of the targets of the other.
         superset, subset = self._find_nestable_pair()
         if superset is None:
             return False
@@ -90,11 +91,12 @@ class NestedPremixer:
         return True
 
     def _find_nestable_pair(self):
-        # Find a pair of mixture nodes such that the places targeted by
-        # one are a superset of those targeted by the other.
+        # Find a pair of mixture nodes that still have live targets, and 
+        # such that the places targeted by one are a superset of those 
+        # targeted by the other.
         for super in self.graph_nodes:
             for sub in self.graph_nodes:
-                if super == sub:
+                if super == sub: # Can't pair self with self.
                     continue
                 if super.targets_are_superset_of(sub):
                     return super, sub
@@ -109,19 +111,26 @@ class NestedPremixer:
 
         We create a new mix node consuming both the paired nodes as upstream 
         nodes and adopting the targets of subset_node.
-        We can then delete the subset_node as it has fallen out of use.
-        And we must tell the superset_node to no longer target the targets
-        which subset_node had, since these will now be covered from the new
-        node.
+
+        We must tell both the superset node and the subset node that they
+        should no longer target the targets that the subset node had because
+        these will now be covered by the new node.
+
+        And we must tell the superset_node about its new downstream mix.
         """
-        new_node = NestedMixGraphNode()
-        new_node.upstream_mixture_nodes = set((superset_node, subset_node)) 
+        print('XXXX going to combine %d and %d for latters targets' % (superset_node.name, subset_node.name))
+        own_items = set()
+        upstream = set((superset_node, subset_node)) 
+        new_node = NestedMixGraphNode(own_items, upstream)
         new_node.adopt_targets_from(subset_node)
 
         self.graph_nodes.append(new_node)
 
         superset_node.remove_targets_that_this_has(subset_node)
-        if superset_node.has_no_targets():
-            self.graph_nodes.remove(superset_node)
+        subset_node.remove_targets_that_this_has(subset_node)
+
+        superset_node.add_downstream_node(new_node)
+        subset_node.add_downstream_node(new_node)
             
-        self.graph_nodes.remove(subset_node)
+        print('XXXXX new node added, now dump is \n%s' % self.dump())
+        st()
