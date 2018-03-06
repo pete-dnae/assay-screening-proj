@@ -40,22 +40,28 @@ export default {
       parsedPlates: 'getparsedPlates',
       reagents: 'getreagents',
       units: 'getunits',
+      currentPlate: 'getCurrentPlate',
     }),
   },
   watch: {},
   methods: {
-    ...mapActions(['setFeedback']),
+    ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
     onEditorChange([delta, oldDelta, source]) {
       if (source === 'user') {
         const text = this.editor.getText();
         this.alterToolTip(text);
         this.setFeedback(
-          validateText(text, {
-            version: this.version,
-            parsedPlates: this.parsedPlates,
-            reagents: this.reagents,
-            units: this.units,
-          }),
+          validateText(
+            text,
+            {
+              version: this.version,
+              parsedPlates: this.parsedPlates,
+              reagents: this.reagents,
+              units: this.units,
+              currentPlate: this.currentPlate,
+            },
+            this,
+          ),
         );
         this.paintText();
       }
@@ -79,7 +85,7 @@ export default {
       });
     },
     alterToolTip(text) {
-      const cursorIndex = this.editor.getSelection().index;
+      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
       const cursorLocation = this.editor.getBounds(cursorIndex);
       const parentBound = document
         .getElementsByClassName('ql-editor')[0]
@@ -89,14 +95,13 @@ export default {
         cursorLocation,
         parentBound,
       );
-      const textTillCursor = text.slice(0, cursorIndex);
-      const currentStringStart = textTillCursor.lastIndexOf(' ');
+
       const currentString = text.slice(currentStringStart, cursorIndex);
 
       this.suggestions = this.reagents.filter(
         (x) => x.indexOf(currentString.trim()) > -1,
       );
-      if (this.suggestions.length < 5 && this.suggestions.length > 1) {
+      if (this.suggestions.length < 5 && this.suggestions.length >= 1) {
         this.showToolTip = true;
       } else {
         this.showToolTip = false;
@@ -104,13 +109,28 @@ export default {
     },
     handleAutoCompleteClick(text) {
       this.editor.focus();
-      this.editor.insertText(this.editor.getSelection().index, text, {
+      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
+      this.editor.insertText(cursorIndex, text, {
         color: 'black',
       });
+      this.editor.deleteText(
+        currentStringStart,
+        cursorIndex - currentStringStart,
+      );
+
       this.showToolTip = false;
     },
     highlightError(err) {
       this.editor.setSelection(err.index, err.length);
+    },
+    hideSuggestion() {
+      this.showToolTip = false;
+    },
+    getCurrentStringRange() {
+      const cursorIndex = this.editor.getSelection().index;
+      const textTillCursor = this.editor.getText().slice(0, cursorIndex);
+      const currentStringStart = textTillCursor.lastIndexOf(' ');
+      return { currentStringStart, cursorIndex };
     },
   },
   mounted() {

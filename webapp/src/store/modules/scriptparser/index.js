@@ -3,6 +3,8 @@ import _ from 'lodash';
 import * as types from './mutation-types';
 import * as api from '@/models/api';
 import experiment from '@/assets/json/response.json';
+import { makeFeedback } from '@/models/editor';
+
 export const state = {
   reagents: [
     'DNA-free-Water',
@@ -35,6 +37,12 @@ export const state = {
   savedScript: null,
   quillOptions: {
     debug: 'warn',
+    styles: {
+      body: {
+        'font-family': 'Arial, sans-serif',
+        'font-size': '50px',
+      },
+    },
     modules: {
       toolbar: [
         [{ header: [1, 2, false] }],
@@ -56,7 +64,7 @@ const actions = {
   },
 };
 const mutations = {
-  [types.SET_CURRENT_PLATE](state, value) {
+  [types.SET_CURRENT_PLATE_FROM_SCRIPT](state, value) {
     state.currentPlate = value;
   },
   [types.SET_VALID_OBJECTS](state, data) {
@@ -93,6 +101,9 @@ const getters = {
   },
   getunits(state, getters, rootState) {
     return state.units;
+  },
+  getCurrentPlate(state, getters, rootState) {
+    return state.currentPlate;
   },
 };
 
