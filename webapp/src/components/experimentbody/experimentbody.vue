@@ -1,5 +1,5 @@
 <template>
-  <div class="m-2 border">
+  <div class="m-2">
     <!-- <div class="row">
       <div class="col d-flex justify-content-start">
         <ul class="nav nav-pills nav-fill">
@@ -35,14 +35,7 @@
         <allocationholder></allocationholder>
       </div>
     </div> -->
-    <div class="row">
-      <div class="col">
-        <scriptinput></scriptinput>
-      </div>
-      <div class="col">
-
-      </div>
-  </div>
+    <scriptinput></scriptinput>
   </div>
 </template>
 <script src="./experimentbody.js"></script>

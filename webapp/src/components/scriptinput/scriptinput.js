@@ -15,6 +15,7 @@ export default {
     return {
       msg: 'Welcome',
       suggestions: null,
+      showToolTip: false,
       tooltiptext: {
         visibility: 'visible',
         'max-height': '300px',
@@ -39,22 +40,28 @@ export default {
       parsedPlates: 'getparsedPlates',
       reagents: 'getreagents',
       units: 'getunits',
+      currentPlate: 'getCurrentPlate',
     }),
   },
   watch: {},
   methods: {
-    ...mapActions(['setFeedback']),
+    ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
     onEditorChange([delta, oldDelta, source]) {
       if (source === 'user') {
         const text = this.editor.getText();
         this.alterToolTip(text);
         this.setFeedback(
-          validateText(text, {
-            version: this.version,
-            parsedPlates: this.parsedPlates,
-            reagents: this.reagents,
-            units: this.units,
-          }),
+          validateText(
+            text,
+            {
+              version: this.version,
+              parsedPlates: this.parsedPlates,
+              reagents: this.reagents,
+              units: this.units,
+              currentPlate: this.currentPlate,
+            },
+            this,
+          ),
         );
         this.paintText();
       }
@@ -78,14 +85,52 @@ export default {
       });
     },
     alterToolTip(text) {
-      const bounds = this.editor.getBounds(this.editor.getSelection().index);
-      this.tooltiptext = getToolTipPosition(this.tooltiptext, bounds);
-      const strings = splitLine(text);
-      strings.pop();
-      const currentString = strings.pop();
-      this.suggestions = this.reagents.filter(
-        (x) => x.indexOf(currentString) > -1,
+      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
+      const cursorLocation = this.editor.getBounds(cursorIndex);
+      const parentBound = document
+        .getElementsByClassName('ql-editor')[0]
+        .getBoundingClientRect();
+      this.tooltiptext = getToolTipPosition(
+        this.tooltiptext,
+        cursorLocation,
+        parentBound,
       );
+
+      const currentString = text.slice(currentStringStart, cursorIndex);
+
+      this.suggestions = this.reagents.filter(
+        (x) => x.indexOf(currentString.trim()) > -1,
+      );
+      if (this.suggestions.length < 5 && this.suggestions.length >= 1) {
+        this.showToolTip = true;
+      } else {
+        this.showToolTip = false;
+      }
+    },
+    handleAutoCompleteClick(text) {
+      this.editor.focus();
+      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
+      this.editor.insertText(cursorIndex, text, {
+        color: 'black',
+      });
+      this.editor.deleteText(
+        currentStringStart,
+        cursorIndex - currentStringStart,
+      );
+
+      this.showToolTip = false;
+    },
+    highlightError(err) {
+      this.editor.setSelection(err.index, err.length);
+    },
+    hideSuggestion() {
+      this.showToolTip = false;
+    },
+    getCurrentStringRange() {
+      const cursorIndex = this.editor.getSelection().index;
+      const textTillCursor = this.editor.getText().slice(0, cursorIndex);
+      const currentStringStart = textTillCursor.lastIndexOf(' ');
+      return { currentStringStart, cursorIndex };
     },
   },
   mounted() {

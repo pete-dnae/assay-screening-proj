@@ -16,11 +16,11 @@ export const zoomOut = () => {
   element.style.display = 'none';
 };
 
-export const getNewIndex = (arg, items) => {
-  const newIndex =
-    items.length !== 0 ? _.maxBy(items, (x) => x[arg])[arg] + 1 : 0;
-  return newIndex;
-};
+// export const getNewIndex = (arg, items) => {
+//   const newIndex =
+//     items.length !== 0 ? _.maxBy(items, (x) => x[arg])[arg] + 1 : 0;
+//   return newIndex;
+// };
 
 export const prepareResultsTable = (allocationResults, currentSelection) => {
   let tableBody = '<table class="table">';

@@ -1,5 +1,7 @@
+import _ from 'lodash';
+
 export const getIndexOf = (text, itm) => {
-  const index = itm ? text.indexOf(itm) : text.length;
+  const index = itm ? text.lastIndexOf(itm) : text.length;
   return index;
 };
 
@@ -25,8 +27,9 @@ export const InvalidRuleResponse = (startIndex, text) =>
     'Invalid Rule',
     ['color', 'red'],
   );
+/*eslint-disable */
 export const splitLine = (text) => text.split(/\s+/);
-
+/*eslint-enable */
 export const checkVersion = (text, version, startIndex) => {
   if (!text.toLowerCase().startsWith('v')) {
     return makeFeedback(false, startIndex, 0, 1, 'Invalid version rule', [
@@ -45,7 +48,7 @@ export const checkVersion = (text, version, startIndex) => {
       ['color', 'red'],
     );
   }
-  if (fields[1] != version) {
+  if (fields[1] !== String(version)) {
     return makeFeedback(
       false,
       startIndex,
@@ -61,7 +64,7 @@ export const checkVersion = (text, version, startIndex) => {
     'green',
   ]);
 };
-export const validatePlate = (text, existingPlates, startIndex) => {
+export const validatePlate = (text, existingPlates, startIndex, self) => {
   if (!text.match(/^P\d+$/)) {
     return makeFeedback(
       false,
@@ -84,6 +87,8 @@ export const validatePlate = (text, existingPlates, startIndex) => {
       ['color', 'red'],
     );
   }
+  self.$store.commit('SET_CURRENT_PLATE_FROM_SCRIPT', text);
+  self.$store.commit('SET_PARSED_PLATE', text);
   return makeFeedback(true, startIndex, 0, text.length, 'Valid Plate Rule', [
     'color',
     'green',
@@ -96,9 +101,19 @@ export const validateRule = (
   units,
   existingPlates,
   lineStartIndex,
+  currentPlate,
 ) => {
   const fields = splitLine(text);
-
+  if (!currentPlate) {
+    return makeFeedback(
+      false,
+      lineStartIndex,
+      0,
+      text.length,
+      'Please Specify a Plate',
+      ['color', 'red'],
+    );
+  }
   if (fields.length > 6) {
     return makeFeedback(
       false,
@@ -190,6 +205,16 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
+  if (fields.length < 6) {
+    return makeFeedback(
+      true,
+      lineStartIndex,
+      0,
+      text.length,
+      'Rule Incomplete',
+      ['color', 'orange'],
+    );
+  }
   return makeFeedback(true, lineStartIndex, 0, text.length, 'Valid rule', [
     'color',
     'green',
@@ -197,27 +222,44 @@ export const validateRule = (
 };
 export const validateComment = (text, startIndex) =>
   makeFeedback(true, startIndex, 0, text.length, 'valid comment', [
-    'italic',
-    'true',
+    'color',
+    'blue',
   ]);
-export const getFeedback = (line, args) => {
-  const { lineNum, startIndex, version, parsedPlates, reagents, units } = args;
+export const getFeedback = (line, args, self) => {
+  const {
+    lineNum,
+    startIndex,
+    version,
+    parsedPlates,
+    reagents,
+    units,
+    currentPlate,
+  } = args;
+
   let result;
   switch (true) {
     case lineNum === 1:
       result = checkVersion(line, version, startIndex);
-
       break;
     case line.startsWith('P'):
-      result = validatePlate(line, parsedPlates, startIndex);
-
+      result = validatePlate(line, parsedPlates, startIndex, self);
       break;
     case line.startsWith('A') || line.startsWith('T'):
-      result = validateRule(line, reagents, units, parsedPlates, startIndex);
-
+      result = validateRule(
+        line,
+        reagents,
+        units,
+        parsedPlates,
+        startIndex,
+        currentPlate,
+        self,
+      );
       break;
     case line.startsWith('#'):
       result = validateComment(line, startIndex);
+      break;
+    case _.isEmpty(line):
+      //  do absolutely nothig just sit there
       break;
     default:
       result = InvalidRuleResponse(startIndex, line);
@@ -225,15 +267,18 @@ export const getFeedback = (line, args) => {
   return result;
 };
 
-export const validateText = (text, args) => {
+export const validateText = (text, args, self) => {
   let startIndex = 0;
   const feedBackCollector = [];
   const lines = text.split('\n');
-
   lines.forEach((line, i) => {
     const lineNum = i + 1;
-    feedBackCollector.push(getFeedback(line, { ...args, lineNum, startIndex }));
+    feedBackCollector.push(
+      getFeedback(line, { ...args, lineNum, startIndex }, self),
+    );
     startIndex += line.length + 1;
   });
+  /*eslint-disable */
   return feedBackCollector.filter((x) => x);
+  /*eslint-enable */
 };

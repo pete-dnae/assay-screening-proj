@@ -1,27 +1,35 @@
-<template>
-  <div >
-  <div class="col" id="editor">
 
+
+<template>
+
+<div>
+  <div class="row">
+  <div class="col-5">
+    <div  id="editor"></div>
   </div>
-  <div v-bind:style="tooltiptext">
+
+    <div id="result" class="col-5 list-group pre-scrollable">
+        <div class="list-group-item list-group-item-action" @mouseover="highlightError(err)"  v-for="err in invalidTextObjects">{{err.msg}}</div>
+    </div>
+    <span v-bind:style="tooltiptext" v-show="showToolTip">
     <ul>
-    <li v-for = "text in suggestions" >
+    <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
+    @click.middle="hideSuggestion()">
       {{text}}
     </li>
-  </ul>
-  </div>
-  <div  id="result" class="col container-fluid pre-scrollable">
-    <div v-for="err in errorMessages">{{err}}</div>
-  </div>
-
+    </ul>
+    </span>
+</div>
 </div>
 </template>
+
 <script src="./scriptinput.js"></script>
 <style scoped>
  ul {
   margin: 0;
   margin-top: 2px;
   padding: 0;
+  width: 300px;
   list-style: none;
   background: #efefef; }
  li {
