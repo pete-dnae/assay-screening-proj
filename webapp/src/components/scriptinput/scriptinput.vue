@@ -6,6 +6,7 @@
     <div class="row">
         <div class="col-5">
             <div id="editor"></div>
+
         </div>
         <div class="col -5">
           <div >
@@ -24,6 +25,7 @@
     </div>
     <div class="row mt-5">
       <div class="col-md-5">
+        <button @click="handleFormat()">Format</button>
       </div>
     <div id="result" class="col mt-5 list-group pre-scrollable">
         <div class="list-group-item list-group-item-action" @mouseover="highlightError(err)" v-for="err in invalidTextObjects">{{err.msg}}</div>
@@ -49,4 +51,7 @@
     background: #ddd; }
    li span {
     font-weight: bold; }
+    p {
+      font-weight: bold;
+    }
 </style>

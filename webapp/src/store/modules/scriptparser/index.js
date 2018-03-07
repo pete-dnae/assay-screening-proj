@@ -41,6 +41,7 @@ export const state = {
       toolbar: [
         ['bold', 'italic', 'underline'],
         ['image', 'code-block'],
+        [{ font: ['monospace'] }],
         [{ size: ['small', false, 'large', 'huge'] }],
       ],
     },

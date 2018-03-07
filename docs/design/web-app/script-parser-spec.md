@@ -19,7 +19,7 @@ P 2
 T P 1                     1,5,9 A-H 0.02 dilution
 A Ec_uidA_x.2_Eco64_Eco66 1,5,9 A-H 2.00E+04 copies/ul
 
-P3
+P 3
 
 A Titanium-Taq            1-12  A-H 0.02 x
 etc...
@@ -37,8 +37,6 @@ Lines will be processed in the order they appear in the input.
 Lines comprising only whitespace, or which start with a hash '#' are ignored.
 
 The following parsing process applies to lines that get this far.
-
-Trailing whitespace is removed.
 
 Fields are extracted by splitting the line on whitespace.
 
@@ -99,8 +97,7 @@ Example
 
 It is an error if field[1] is not the letter 'P' concatenated with an integer.
 
-It is an error if the integer in field[1] does not match one of the previously
-encountered plate numbers. (See parsing rules for 'P').
+
 
 The parsing of the remaining fields is identical to that for 'A' rules - and
 the code should be resused to ensure consistency.
@@ -119,9 +116,9 @@ It is an error if additional fields are present.
 E.g.
     V 1
 
-It is an error if field[1] cannot be parsed as an integer (not a float).
+It is an error if field[1] cannot be parsed as a number.
 
-It is an error if the extracted integer does not match the hard-coded version
+It is an error if the extracted number does not match the hard-coded version
 of the parser's source code.
 
 ## Stateful Parsing
@@ -134,7 +131,17 @@ checking.
 It is an error if the first (non-blank / non-comment) line is not a version 
 line.
 
+### Version
 It is an error if more than one version line is encountered.
+
+### Plates
+
+It is an error if a plate statement cites a plate number that is the
+ most recently encountered plate number.
+
+It is an error if a plate statement cites a plate number that does not
+match one of the previously
+encountered plate numbers. (See parsing rules for 'P').
 
 It is an error if a plate line introduces a plate number that has been used by
 a previous plate line.
