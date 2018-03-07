@@ -45,7 +45,13 @@ export default {
       currentPlate: 'getCurrentPlate',
     }),
   },
-  watch: {},
+  watch: {
+    showToolTip() {
+      if (this.showToolTip === false) {
+        this.index = 0;
+      }
+    },
+  },
   methods: {
     ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
     onEditorChange([delta, oldDelta, source]) {
@@ -112,7 +118,7 @@ export default {
     },
     handleAutoCompleteClick(text) {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
-      this.editor.insertText(cursorIndex, text, {
+      this.editor.insertText(cursorIndex, ` ${text}`, {
         color: 'black',
       });
       this.editor.deleteText(
