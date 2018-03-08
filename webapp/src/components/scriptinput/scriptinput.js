@@ -5,8 +5,9 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 
+import { formatText } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
-import { validateText, splitLine } from '@/models/editor';
+import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
 
 export default {
@@ -16,6 +17,7 @@ export default {
       msg: 'Welcome',
       suggestions: null,
       showToolTip: false,
+      index: 0,
       tooltiptext: {
         visibility: 'visible',
         'max-height': '300px',
@@ -43,7 +45,13 @@ export default {
       currentPlate: 'getCurrentPlate',
     }),
   },
-  watch: {},
+  watch: {
+    showToolTip() {
+      if (this.showToolTip === false) {
+        this.index = 0;
+      }
+    },
+  },
   methods: {
     ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
     onEditorChange([delta, oldDelta, source]) {
@@ -63,6 +71,7 @@ export default {
             this,
           ),
         );
+
         this.paintText();
       }
     },
@@ -108,9 +117,8 @@ export default {
       }
     },
     handleAutoCompleteClick(text) {
-      this.editor.focus();
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
-      this.editor.insertText(cursorIndex, text, {
+      this.editor.insertText(cursorIndex, ` ${text}`, {
         color: 'black',
       });
       this.editor.deleteText(
@@ -127,14 +135,33 @@ export default {
       this.showToolTip = false;
     },
     getCurrentStringRange() {
+      this.editor.focus();
       const cursorIndex = this.editor.getSelection().index;
       const textTillCursor = this.editor.getText().slice(0, cursorIndex);
       const currentStringStart = textTillCursor.lastIndexOf(' ');
       return { currentStringStart, cursorIndex };
     },
+    handleFormat() {
+      this.editor.setText(formatText(this.editor.getText()));
+    },
+    handleTab(range) {
+      console.log(this.suggestions);
+      this.handleAutoCompleteClick(this.suggestions[this.index]);
+      this.index += 1;
+    },
   },
   mounted() {
+    const Delta = Quill.import('delta');
+    const Font = Quill.import('formats/font');
+    Font.whitelist = ['monospace'];
+    Quill.register(Font, true);
     this.editor = new Quill('#editor', this.options);
     this.editor.on('text-change', (...args) => this.onEditorChange(args));
+    this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+      return new Delta().insert(node.data);
+    });
+    this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, (range) =>
+      this.handleTab(range),
+    );
   },
 };

@@ -65,7 +65,7 @@ export const checkVersion = (text, version, startIndex) => {
   ]);
 };
 export const validatePlate = (text, existingPlates, startIndex, self) => {
-  if (!text.match(/^P\d+$/)) {
+  if (!text.match(/^P \d+$/)) {
     return makeFeedback(
       false,
       startIndex,
@@ -76,18 +76,19 @@ export const validatePlate = (text, existingPlates, startIndex, self) => {
     );
   }
 
-  const plateNumber = text.match(/\d+$/g).join();
-  if (existingPlates.indexOf(plateNumber) > -1) {
-    return makeFeedback(
-      false,
-      startIndex,
-      1,
-      text.length,
-      'Plate Already Exists',
-      ['color', 'red'],
-    );
-  }
-  self.$store.commit('SET_CURRENT_PLATE_FROM_SCRIPT', text);
+  // const plateNumber = text.match(/^P \d+$/g).join();
+  //
+  // if (existingPlates.indexOf(plateNumber.trim()) > -1) {
+  //   return makeFeedback(
+  //     false,
+  //     startIndex,
+  //     1,
+  //     text.length,
+  //     'Plate Already Exists',
+  //     ['color', 'red'],
+  //   );
+  // }
+  self.$store.commit('SET_CURRENT_PLATE_FROM_SCRIPT', text.trim());
   self.$store.commit('SET_PARSED_PLATE', text);
   return makeFeedback(true, startIndex, 0, text.length, 'Valid Plate Rule', [
     'color',
@@ -136,6 +137,16 @@ export const validateRule = (
       );
     }
   } else if (fields[0] === 'T') {
+    if (fields[1] === currentPlate) {
+      return makeFeedback(
+        false,
+        lineStartIndex,
+        getIndexOf(text, fields[1]),
+        getLengthOf(fields[1]),
+        'Transfer Rule points to current plate',
+        ['color', 'red'],
+      );
+    }
     if (fields[1] && existingPlates.indexOf(fields[1]) === -1) {
       return makeFeedback(
         false,
