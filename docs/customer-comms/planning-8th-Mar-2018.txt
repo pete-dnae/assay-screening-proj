@@ -1,0 +1,146 @@
+Scope Planning for Assay Screening (ASC) Software
+18th March 2018
+Pete, Chris, Prasanna and Nicky
+
+# The Question We Considered
+
+Can we deploy something based on the rules-script GUI we demonstrated
+yesterday, that, when used in conjunction with the existing spreadhseets, and
+software processes - makes a worthwhile difference to Nicky and/or Chris?
+
+The short answer is yes. What follows describes what we agreed.
+
+# Components of the *existing* system
+
+An experiment design spreadsheet exists to:
+- Capture the designers reagent allocation decisions
+- Capture some additional information to help humans run the experiment (like
+  premixtures)
+- This spreadsheet is *read* by BOTH *humans* and Chris' upload software.
+
+Chris' upload software:
+- Reads "what went into wells* from the design spreadsheet (in full detail).
+- Reads results data produced by qPCR (flourescence-based) machine
+- Combines and links the above two data and uploads it to our qPCR database.
+- Later, when LabChip data (like Gels's) is available, Chris' software 
+  also cross-links this to what is in our qPCR database, and uploads it 
+  into our LabChip database. This requires an additional mapping file between
+  qPCR machine wells and LabChip wells.
+
+# The new component
+
+- The new component (what was demonstrated) is a WebGui and backend 
+  server/database), that lets you type in an allocation rules script and store 
+  these on a per-experiment basis in a dedicated database.
+- This becomes the new single source of truth for the upload pipeline *instead*
+  of the design spreadsheet. The plan is for the upload pipeline to be
+  modified to get the info about "what went into wells" from the new database.
+  Consequently the upload process will no longer have *anything* to do with the
+  design spreadsheet.
+- The design spreadsheet is retained in use - for humans.
+- But the chamber allocation tabs will no longer be present in their current
+  form, nor will the user be required to enter all the allocation data. Instead
+  the web gui will provide suitable images that can be simply cut and pasted
+  into placeholders in the spreadsheet. (as colour-keyed images). 
+
+# Minimum features required in the web gui and database
+
+These are the must-have features to make the use-cases above work.
+
+First we list them. Later we explain more about them:
+
+1. Provide visual feedback on what rules are doing per type of reagent
+2. Offer images to c&p - per-plate / per-type
+3. Save/Load/Search experiment rules scripts
+4. Feature to let user add allowed reagent names
+5. Feature to help user add a new reagent to db at time of typing it in
+6. More flexible transfer rules
+7. Deal with coupon to plate transfer
+
+# New Feature Explanations
+
+## Provide visual feedback on what rules are doing per type
+
+User needs some way of being comforted visually that the rules are doing what 
+she intended. Probably, you highlight either one rule or a group of rules, and 
+see on a grid which cells are targeted.
+
+## Offer images to c&p - per-plate / per-type
+
+Possibly one single, big image - one for each plate, almost identical, to 
+what the spreadsheet table looks like now. Or if preferred a set of images,
+split down by type. E.g. primers, or template or hgDNA etc.
+
+Nb. This might double up as the solution for the previous bullet point.
+
+## Save/Load/Search experiment rules scripts
+Self explanatory.
+
+## Feature to let user add reagent names
+
+We agreed that the user would tack the lot number where appropriate on the end
+of a reagent name. The system would view two different lots as two completely
+independent reagents.
+
+When you type in the start of a known reagent name the system currently 
+either guides you through either an auto-completion process, or tells you that
+there aren't any reagents known that start with what you've type so far.
+
+We want a new feature, that makes it a convenient and integral part of this 
+process, for the user to signal to the system that what they typed so far
+should be adopted henceforth as an allowed reagent name. This might be a button
+you can click, or maybe a convention like if you end the reagent name with "!"
+it is taken to mean "adopt me" - but without the "!" of course.
+
+## More flexible transfer rules
+
+At the moment our transfer rules let you specify the destination cells as a
+either a single cell, a list of cells or a block/range of cells. But it says
+nothing about the source cells; these are taken to be a 1:1 mapping from the
+destination cells.
+
+Nicky needs more flexibility than this.
+So we will add to the transfer rule syntax, a way of specifying the source
+cells separately. It follows that some
+combinations of source and destination cells become fundamentally incompatible,
+which the system will check and inforce.
+
+## Deal with coupon to plate transfer
+
+Nicky needs additionally, to be able to transfer from coupons to plates. But a
+coupon does not have wells in rows/columns. But we realised that each coupon
+can be treated as a plate, with just a single well called A1.
+
+We can make the rules script more intelligible to the user in terms of plates
+vs coupons etc by changing the syntax for specifying a plate.
+
+At present to introduce a plate and identify it as plate 3, you say:
+    
+    P 3
+
+We will change this to use names instead of numbers as the identifiers.
+The user can put in whatever names suits their needs.
+
+    P Coupon2
+    P Plate1
+    P Bathtub
+    etc.
+
+The system will take no interest in the names chosen.
+All it cares is that when you put in a transfer rule - you cite as name it's
+heard of:
+
+    P Coupon2
+    A ...
+    A ...
+
+    P Plate4
+    A ...
+    T Coupon2 ... # Must use *source* names you introduced earlier.
+
+## Bonus features
+
+Mark a reagent to be marked as no longer available and thus illegal. For
+example a single-use blood sample.
+
+A way to remove a reagent from the database when you put it in by mistake.
