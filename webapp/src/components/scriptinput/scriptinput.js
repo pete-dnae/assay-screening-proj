@@ -72,10 +72,10 @@ export default {
             x.color,
           );
         });
-        // this.editor.removeFormat(
-        //   this.error.startIndex + this.error.length,
-        //   textLength,
-        // );
+        this.editor.removeFormat(
+          this.error.startIndex + this.error.length,
+          textLength,
+        );
       }
     },
     alterToolTip() {
