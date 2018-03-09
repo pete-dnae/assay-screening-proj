@@ -1,6 +1,15 @@
 o  Work Plan - Back End from 8th March 2018
 
 o  Update parser to deal with new rules script spec
+    *  Code roughly right
+    o  Finish with TDD
+        *  Have we a test already? - yes but too coupled with other stuff
+        o  Write isolated parser test from scratch
+            o  test tiny example
+                o  design scope
+                    o  derive from languagespec
+            o  how deal with ! mandate?
+            o  tests for all parse errors
 o  Update rules interpreter to match
 o  Pare down the database and models to only the essentials needed and 
    anticipated

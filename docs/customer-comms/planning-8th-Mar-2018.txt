@@ -78,9 +78,14 @@ Self explanatory.
 
 ## Feature to let user add reagent names
 
-We agreed that the user would tack the lot number where appropriate on the end
-of a reagent name. The system would view two different lots as two completely
-independent reagents.
+<change>
+We agreed that for the vast majority of reagents, we don't attempt to capture lot
+numbers in the script rules. Blood samples represent a sort of special case,
+because their identity is, for all intents and purposes, their lot number.
+When the user wants to cite a blood sample as a reagent, they simply choose a
+name for that reagent that incorporates the lot number. For example
+'blood-123' The system itself is oblivious to this.
+<endchange>
 
 When you type in the start of a known reagent name the system currently 
 either guides you through either an auto-completion process, or tells you that

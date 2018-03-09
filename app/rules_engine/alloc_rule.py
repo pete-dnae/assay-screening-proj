@@ -51,10 +51,12 @@ class AllocRule:
     region of the table is defined in terms of row and column ranges.
     """
 
-    def __init__(self, payload, row_range, col_range):
-        # payload is a reagent reference
-        self.payload = payload
-        self.placement_instructions = PlacementInstructions(row_range, col_range)
+    def __init__(self, reagent, cols, rows, conc, units):
+        self.reagent = reagent
+        self.cols = cols
+        self.rows = rows
+        self.conc = conc
+        self.units = units
 
     def __str__(self):
         """
