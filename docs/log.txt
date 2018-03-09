@@ -1,120 +1,25 @@
-Work log and Plan for <Bottomup> change of emphasis
+o  Work Plan - Back End from 8th March 2018
 
-o  Digression - can we define the rules with a text script?
-    *  Design a script language
-    *  Have this reviewed by Chris / iterate / improve it until ok, and it is
-       capable of coping with the more general cases too
-    *  See if we can express our reference experiment using this language
-       (a paper exercise)
-    *  Does it look ok / amenable?
-    *  What conceptual problems does this throw up / fix them
-    *  Formalise the specification for the language
-o  How to change the back end code that deals with rules to take this as input?
-    *  Make a design outline hypothesis (see bottom of this document)
-    *  Try to code all the model changes suggested at the bottom
-    *  Create and unit-test the BE rules script parser
-    o  Update and unit test the ExperimentPremixer and AllocationResults
-        *  Create new classes as per review 26th Feb
-        o  Do it
-        o  Evolve a unit test that:
-            o  creates a simple experiment with a simple rules script
-            o  interprets the rules script to make alloc instructions
-            o  uses the experiment premixer to discover premixes
-            o  does a few smoke-test checks on the resultant premixes
-        o  Now fix everything to do with concentrations
-            o  Upgrade conc class
-            o  Unit test teh converters in isolation
-    o  Design (with Pete) how conc calcs will work in congjunction with the
-       premix tree, and with the plate well volume.
-    o  Add in this code and logic alongside or as part of the experiment
-       premixer.
-        o  Test this with unit tests, including repairing or augmenting the 
-           old ones above to check for correct volume/conc calcs.,
-
-    o  Fix up the big create reference experiment to work the new way
-    o  Take a breath
-    o  Now think about front end and serialization
-
------------------------------------------------------------------------------
-Class Design Thinking
------------------------------------------------------------------------------
-
-o  The big picture
-    o  We have a new class RulesScript
-        o  Is-a Django model that has just a single field - the script's text.
-        o  This becomes the single source of truth for rules in an experiment,
-           which we serialize.
-        o  The experiment model has-a RulesScript instead of its plates field.
-    o  We have a new class RulesScriptInterpreter
-        o  Produces a Python list of AllocRule in response to being given
-           the rules script as one big string.
-        o  Much emphasis on error handling
-        o  Much emphasis on very careful and simple struture
-        o  Much emphasis on making it easy to replicate in Javascript
-    o  We retain many of the previous rules modelling classes and their
-       collaborators, but we never store these in the database. We keep these
-       to become our way of getting a handle on machine-readable representations
-       of rules that we can pass around. These they will be used only
-       transiently in memory, and should cease to be Django models, and moved
-       into a separate package.
-
-*  SourceRowCol
-    *  plate number
-    *  row
-    *  column
-
-*  PlacementInstructions
-    *  A new class to contain the rows/columns/conc part of our old friend
-       AllocRule
-
-*  AllocRule
-    *  Has a Reagent reference
-    *  Has-A PlacementInstructions
-    *  The rank for ordering becomes redundant.
-    *  It no longer has a payload type
-    *  Replace the Reagent FK with a plain python attribute that points to a
-       Reagent object.
-
-
-o  TransferRule
-    *  Has-A SourceRowCol
-    *  Has-A PlacementInstructions
-    o  Has-A dilution
-
-*  Reagent
-    *  No longer is-a Django model, and don't need in database.
-
-*  RuleList
-    *  We can ditch this class.
-    *  It collapses down to a Python list of AllocRule when we need one.
-
-*  AllocationInstructions
-    *  We can ditch this class.
-    *  Ok, so we loose supressed_columns, but lets forget about them for now.
-
-*  Plate
-    *  We can ditch this class.
-
-*  AllocationResults
-    *  Remains a nested dictionary keyed on row/columm.
-    *  But with a different leaf-value type. (this is done already)
-    *  No longer a dictionary keyed on strings like 'Strain'
-    *  But instead a list of Reagent objects.
-
-*  AllocRuleInterpreter
-    *  Hopefully stays the same, bar the odd tweak?
-
-*  ExperimentPremixer
-    *  Think stays the same
-
-
-Suggestions:
-
-Have atleast 3 plates
-Plates 1 and 2 will be PA and ID parts of same plate
-Plate 3 will be a new one
-use monospace font
-provide help for users
-
-
-
+o  Update parser to deal with new rules script spec
+o  Update rules interpreter to match
+o  Pare down the database and models to only the essentials needed and 
+   anticipated
+    o  I think this means
+        o  Experiment
+        o  Known reagents
+o  Replace make reference experiment with new one using script
+o  Replace make simple experiment similarly
+o  Cut down views, serializer, end points to minimum required
+    o  List all experiments whose name includes XXX
+    o  Get an experiment - including rules script field
+    o  Get the allowed names for reagents grouped into their types
+    o  Get the allowed units strings
+    o  Post a new reagent name with its type
+    o  Put a new rules script to an experiment
+    o  Get the allocation results for an experiment - for a specified reagent
+       type
+o  Get rid of redundant unit tests, fix up those that remain, and add any
+   required.
+o  Get rid of all out of data documentation
+o  Plan and prepare for deployment
+o  Deploy
