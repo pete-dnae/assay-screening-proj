@@ -45,6 +45,7 @@ export const state = {
   validTextObjects: [],
   invalidTextObjects: [],
   errorMessages: [],
+  suggestions: [],
   savedScript: null,
   quillOptions: {
     debug: 'warn',
@@ -62,12 +63,12 @@ export const state = {
 };
 
 const actions = {
-  setFeedback({ commit }, data) {
-    const pos = data.filter((x) => x.pass);
-    const neg = data.filter((x) => !x.pass);
-    commit(types.SET_VALID_OBJECTS, pos);
-    commit(types.SET_INVALID_OBJECTS, neg);
-  },
+  // setFeedback({ commit }, data) {
+  //   const pos = data.filter((x) => x.pass);
+  //   const neg = data.filter((x) => !x.pass);
+  //   commit(types.SET_VALID_OBJECTS, pos);
+  //   commit(types.SET_INVALID_OBJECTS, neg);
+  // },
 };
 const mutations = {
   [types.SET_CURRENT_PLATE_FROM_SCRIPT](state, value) {
@@ -81,6 +82,12 @@ const mutations = {
   },
   [types.SET_PARSED_PLATE](state, value) {
     state.parsedPlates.push(value);
+  },
+  [types.SET_SUGGESTIONS](state, value) {
+    state.suggestions = value;
+  },
+  [types.CLEAR_SUGGESTIONS](state) {
+    state.suggestions = [];
   },
 };
 const getters = {
@@ -110,6 +117,9 @@ const getters = {
   },
   getCurrentPlate(state, getters, rootState) {
     return state.currentPlate;
+  },
+  getSuggestions(state, getters, rootState) {
+    return state.suggestions;
   },
 };
 

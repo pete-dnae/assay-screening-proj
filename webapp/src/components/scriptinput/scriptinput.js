@@ -15,7 +15,6 @@ export default {
   data() {
     return {
       msg: 'Welcome',
-      suggestions: null,
       showToolTip: false,
       index: 0,
       tooltiptext: {
@@ -43,6 +42,7 @@ export default {
       reagents: 'getreagents',
       units: 'getunits',
       currentPlate: 'getCurrentPlate',
+      suggestions: 'getSuggestions',
     }),
   },
   watch: {
@@ -58,32 +58,28 @@ export default {
       if (source === 'user') {
         const text = this.editor.getText();
         this.alterToolTip(text);
-        this.setFeedback(
-          validateText(
-            text,
-            {
-              version: this.version,
-              parsedPlates: this.parsedPlates,
-              reagents: this.reagents,
-              units: this.units,
-              currentPlate: this.currentPlate,
-            },
-            this,
-          ),
-        );
+
+        validateText(text, {
+          version: this.version,
+          parsedPlates: this.parsedPlates,
+          reagents: this.reagents,
+          units: this.units,
+          currentPlate: this.currentPlate,
+        });
 
         this.paintText();
       }
     },
     paintText() {
-      this.validTextObjects.forEach((range) => {
-        this.editor.formatText(
-          range.index,
-          range.length,
-          range.action[0],
-          range.action[1],
-        );
-      });
+      // this.validTextObjects.forEach((range) => {
+      //   this.editor.formatText(
+      //     range.index,
+      //     range.length,
+      //     range.action[0],
+      //     range.action[1],
+      //   );
+      // });
+      this.editor.formatText(0, this.editor.getText().length, 'color', 'green');
       this.invalidTextObjects.forEach((range) => {
         this.editor.formatText(
           range.index,
@@ -93,8 +89,9 @@ export default {
         );
       });
     },
-    alterToolTip(text) {
-      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
+    alterToolTip() {
+      this.editor.focus();
+      const cursorIndex = this.editor.getSelection().index;
       const cursorLocation = this.editor.getBounds(cursorIndex);
       const parentBound = document
         .getElementsByClassName('ql-editor')[0]
@@ -104,13 +101,11 @@ export default {
         cursorLocation,
         parentBound,
       );
-
-      const currentString = text.slice(currentStringStart, cursorIndex);
-
-      this.suggestions = this.reagents.filter(
-        (x) => x.indexOf(currentString.trim()) > -1,
-      );
-      if (this.suggestions.length < 5 && this.suggestions.length >= 1) {
+      if (
+        this.suggestions &&
+        this.suggestions.length < 5 &&
+        this.suggestions.length >= 1
+      ) {
         this.showToolTip = true;
       } else {
         this.showToolTip = false;
@@ -126,13 +121,13 @@ export default {
         cursorIndex - currentStringStart,
       );
 
-      this.showToolTip = false;
+      this.$store.commit('CLEAR_SUGGESTIONS');
     },
     highlightError(err) {
       this.editor.setSelection(err.index, err.length);
     },
     hideSuggestion() {
-      this.showToolTip = false;
+      this.$store.commit('CLEAR_SUGGESTIONS');
     },
     getCurrentStringRange() {
       this.editor.focus();
@@ -145,9 +140,9 @@ export default {
       this.editor.setText(formatText(this.editor.getText()));
     },
     handleTab(range) {
-      console.log(this.suggestions);
       this.handleAutoCompleteClick(this.suggestions[this.index]);
       this.index += 1;
+      this.index = this.suggestions[this.index] ? this.index : 0;
     },
   },
   mounted() {
@@ -157,9 +152,9 @@ export default {
     Quill.register(Font, true);
     this.editor = new Quill('#editor', this.options);
     this.editor.on('text-change', (...args) => this.onEditorChange(args));
-    this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
-      return new Delta().insert(node.data);
-    });
+    // this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+    //   return new Delta().insert(node.data);
+    // });
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, (range) =>
       this.handleTab(range),
     );

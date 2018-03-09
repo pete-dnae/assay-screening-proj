@@ -38,9 +38,9 @@ li span {
 
         </div>
         <div class="col-5">
-            <h5 class="mt-3 text-left"><strong>Some Examples of rules</strong></h5>
-            <div class="row ml-3 jumbotron jumbotron-fluid">
-                <div class="container text-left" style="font-family:monospace;">
+            <div class="row ml-3 ">
+                <div class="container col text-left jumbotron jumbotron-fluid" style="font-family:monospace;">
+                  <h5 class="text-left"><strong>Some Examples of rules</strong></h5>
                     <h6><strong>Version rule </strong></h6>
                     <div class="ml-3">
                         <span class="d-block">V 1</span>
@@ -66,6 +66,16 @@ li span {
                         <span class="d-block"># Hey there am a comment </span>
                     </div>
                 </div>
+                <div class="col-5 text-left pre-scrollable" v-show="suggestions.length >5">
+                  <h5 class="mt-3 "><strong>Suggestions :</strong></h5>
+                  <h5 class="mt-3 "><strong>Currently retreiving 5+ suggestions</strong></h5>
+                  <ul>
+                  <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
+                  @click.middle="hideSuggestion()">
+                    {{text}}
+                  </li>
+                </ul>
+                </div>
             </div>
             <h5 class="mt-3 text-left"><strong>Feedbacks :</strong></h5>
             <div class="row ml-3 mt-3 h-50 border border-warning">
@@ -74,8 +84,7 @@ li span {
                 </div>
             </div>
         </div>
-
-        <span v-bind:style="tooltiptext" v-show="showToolTip">
+        <span v-bind:style="tooltiptext" v-show="suggestions.length <5 && suggestions.length >1">
     <ul>
     <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
     @click.middle="hideSuggestion()">

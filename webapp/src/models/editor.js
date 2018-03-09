@@ -1,5 +1,5 @@
 import _ from 'lodash';
-
+import store from '@/store';
 export const getIndexOf = (text, itm) => {
   const index = itm ? text.lastIndexOf(itm) : text.length;
   return index;
@@ -64,8 +64,8 @@ export const checkVersion = (text, version, startIndex) => {
     'green',
   ]);
 };
-export const validatePlate = (text, existingPlates, startIndex, self) => {
-  if (!text.match(/^P \d+$/)) {
+export const validatePlate = (text, existingPlates, startIndex) => {
+  if (!text.replace(/ /g, '').match(/^P\d+$/)) {
     return makeFeedback(
       false,
       startIndex,
@@ -76,35 +76,27 @@ export const validatePlate = (text, existingPlates, startIndex, self) => {
     );
   }
 
-  // const plateNumber = text.match(/^P \d+$/g).join();
-  //
-  // if (existingPlates.indexOf(plateNumber.trim()) > -1) {
-  //   return makeFeedback(
-  //     false,
-  //     startIndex,
-  //     1,
-  //     text.length,
-  //     'Plate Already Exists',
-  //     ['color', 'red'],
-  //   );
-  // }
-  self.$store.commit('SET_CURRENT_PLATE_FROM_SCRIPT', text.trim());
-  self.$store.commit('SET_PARSED_PLATE', text);
+  const plateNumber = text.match(/^P \d+$/g).join();
+
+  if (existingPlates.indexOf(plateNumber.trim()) > -1) {
+    return makeFeedback(
+      false,
+      startIndex,
+      1,
+      text.length,
+      'Plate Already Exists',
+      ['color', 'red'],
+    );
+  }
+
+  store.commit('SET_CURRENT_PLATE_FROM_SCRIPT', text.replace(/ /g, ''));
+  store.commit('SET_PARSED_PLATE', text.replace(/ /g, ''));
   return makeFeedback(true, startIndex, 0, text.length, 'Valid Plate Rule', [
     'color',
     'green',
   ]);
 };
-
-export const validateRule = (
-  text,
-  reagents,
-  units,
-  existingPlates,
-  lineStartIndex,
-  currentPlate,
-) => {
-  const fields = splitLine(text);
+export const checkPlate = (currentPlate, lineStartIndex, text) => {
   if (!currentPlate) {
     return makeFeedback(
       false,
@@ -115,6 +107,10 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
+  return null;
+};
+export const checkFields = (lineStartIndex, text) => {
+  const fields = splitLine(text);
   if (fields.length > 6) {
     return makeFeedback(
       false,
@@ -125,40 +121,70 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
-  if (fields[0] === 'A') {
-    if (fields[1] && reagents.indexOf(fields[1]) === -1) {
-      return makeFeedback(
-        false,
-        lineStartIndex,
-        getIndexOf(text, fields[1]),
-        getLengthOf(fields[1]),
-        'Not a recogonised reagent',
-        ['color', 'red'],
-      );
-    }
-  } else if (fields[0] === 'T') {
-    if (fields[1] === currentPlate) {
-      return makeFeedback(
-        false,
-        lineStartIndex,
-        getIndexOf(text, fields[1]),
-        getLengthOf(fields[1]),
-        'Transfer Rule points to current plate',
-        ['color', 'red'],
-      );
-    }
-    if (fields[1] && existingPlates.indexOf(fields[1]) === -1) {
-      return makeFeedback(
-        false,
-        lineStartIndex,
-        getIndexOf(text, fields[1]),
-        getLengthOf(fields[1]),
-        'Not a recogonised plate',
-        ['color', 'red'],
-      );
-    }
+  if (fields.length < 6) {
+    return makeFeedback(
+      true,
+      lineStartIndex,
+      0,
+      text.length,
+      'Rule Incomplete',
+      ['color', 'orange'],
+    );
   }
 
+  return null;
+};
+export const checkAllocationReagent = (
+  lineStartIndex,
+  reagents,
+  fields,
+  text,
+) => {
+  if (fields[1] && reagents.indexOf(fields[1]) === -1) {
+    const suggestions = reagents.filter((x) => x.indexOf(fields[1]) > -1);
+    store.commit('SET_SUGGESTIONS', suggestions);
+    return makeFeedback(
+      false,
+      lineStartIndex,
+      getIndexOf(text, fields[1]),
+      getLengthOf(fields[1]),
+      'Not a recogonised reagent',
+      ['color', 'red'],
+    );
+  }
+
+  return null;
+};
+export const checkTransferReagent = (
+  lineStartIndex,
+  plates,
+  currentPlate,
+  fields,
+  text,
+) => {
+  if (fields[1] && plates.indexOf(fields[1]) === -1) {
+    return makeFeedback(
+      false,
+      lineStartIndex,
+      getIndexOf(text, fields[1]),
+      getLengthOf(fields[1]),
+      'Not a recogonised plate',
+      ['color', 'red'],
+    );
+  }
+  if (fields[1] === currentPlate) {
+    return makeFeedback(
+      false,
+      lineStartIndex,
+      getIndexOf(text, fields[1]),
+      getLengthOf(fields[1]),
+      'Transfer Rule points to current plate',
+      ['color', 'red'],
+    );
+  }
+  return null;
+};
+export const checkColRange = (lineStartIndex, fields, text) => {
   if (
     fields[2] &&
     !(
@@ -176,7 +202,9 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
-
+  return null;
+};
+export const checkRowRange = (lineStartIndex, fields, text) => {
   if (
     fields[3] &&
     !(
@@ -194,7 +222,9 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
-
+  return null;
+};
+export const checkConcentration = (lineStartIndex, fields, text) => {
   if (fields[4] && !isFinite(fields[4])) {
     return makeFeedback(
       false,
@@ -205,8 +235,12 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
-
+  return null;
+};
+export const checkUnits = (lineStartIndex, units, fields, text) => {
   if (fields[5] && units.indexOf(fields[5]) === -1) {
+    const suggestions = units.filter((x) => x.indexOf(fields[5]) > -1);
+    store.commit('SET_SUGGESTIONS', suggestions);
     return makeFeedback(
       false,
       lineStartIndex,
@@ -216,29 +250,60 @@ export const validateRule = (
       ['color', 'red'],
     );
   }
-  if (fields.length < 6) {
-    return makeFeedback(
-      true,
-      lineStartIndex,
-      0,
-      text.length,
-      'Rule Incomplete',
-      ['color', 'orange'],
-    );
+  return null;
+};
+export const accumulateFeedBacks = (lineStartIndex, feedback, text) => {
+  if (_.isEmpty(feedback.filter((x) => x))) {
+    return makeFeedback(true, lineStartIndex, 0, text.length, 'Valid Rule', [
+      'color',
+      'green',
+    ]);
   }
-  return makeFeedback(true, lineStartIndex, 0, text.length, 'Valid rule', [
-    'color',
-    'green',
-  ]);
+  return feedback;
+};
+export const validateRule = (
+  text,
+  reagents,
+  units,
+  existingPlates,
+  lineStartIndex,
+  currentPlate,
+) => {
+  const fields = splitLine(text);
+  const ruleFeedBacks = [];
+  ruleFeedBacks.push(checkPlate(currentPlate, lineStartIndex, text));
+  ruleFeedBacks.push(checkFields(lineStartIndex, text));
+  if (fields[0] === 'A') {
+    ruleFeedBacks.push(
+      checkAllocationReagent(lineStartIndex, reagents, fields, text),
+    );
+  } else if (fields[0] === 'T') {
+    ruleFeedBacks.push(
+      checkTransferReagent(
+        lineStartIndex,
+        existingPlates,
+        currentPlate,
+        fields,
+        text,
+      ),
+    );
+  } else {
+    return InvalidRuleResponse(lineStartIndex, fields, text);
+  }
+  ruleFeedBacks.push(checkColRange(lineStartIndex, fields, text));
+  ruleFeedBacks.push(checkRowRange(lineStartIndex, fields, text));
+  ruleFeedBacks.push(checkConcentration(lineStartIndex, fields, text));
+  ruleFeedBacks.push(checkUnits(lineStartIndex, units, fields, text));
+
+  return accumulateFeedBacks(lineStartIndex, ruleFeedBacks, text);
 };
 export const validateComment = (text, startIndex) =>
   makeFeedback(true, startIndex, 0, text.length, 'valid comment', [
     'color',
     'blue',
   ]);
-export const getFeedback = (line, args, self) => {
+export const getFeedback = (line, args) => {
   const {
-    lineNum,
     startIndex,
     version,
     parsedPlates,
@@ -248,14 +313,15 @@ export const getFeedback = (line, args, self) => {
   } = args;
 
   let result;
+
   switch (true) {
-    case lineNum === 1:
+    case line.startsWith('V'):
       result = checkVersion(line, version, startIndex);
       break;
     case line.startsWith('P'):
-      result = validatePlate(line, parsedPlates, startIndex, self);
+      result = validatePlate(line, parsedPlates, startIndex);
       break;
-    case line.startsWith('A') || line.startsWith('T'):
+    case line[0] === 'A' || line[0] === 'T':
       result = validateRule(
         line,
         reagents,
@@ -263,7 +329,6 @@ export const getFeedback = (line, args, self) => {
         parsedPlates,
         startIndex,
         currentPlate,
-        self,
       );
       break;
     case line.startsWith('#'):
@@ -278,18 +343,34 @@ export const getFeedback = (line, args, self) => {
   return result;
 };
 
-export const validateText = (text, args, self) => {
+export const validateText = (text, args) => {
   let startIndex = 0;
-  const feedBackCollector = [];
+  let feedBackCollector = [];
   const lines = text.split('\n');
-  lines.forEach((line, i) => {
-    const lineNum = i + 1;
-    feedBackCollector.push(
-      getFeedback(line, { ...args, lineNum, startIndex }, self),
-    );
+
+  _.transform(lines, (acc, line) => {
+    feedBackCollector = feedBackCollector
+      .concat(getFeedback(line, { ...args, startIndex }))
+      .filter((x) => x);
+
+    if (!_.isEmpty(feedBackCollector.filter((x) => !x.pass))) {
+      const pos = feedBackCollector.filter((x) => x.pass);
+      const neg = feedBackCollector.filter((x) => !x.pass);
+      store.commit('SET_VALID_OBJECTS', pos);
+      store.commit('SET_INVALID_OBJECTS', neg);
+      return false;
+    }
     startIndex += line.length + 1;
+    return true;
   });
+
   /*eslint-disable */
-  return feedBackCollector.filter((x) => x);
+  feedBackCollector = feedBackCollector.filter((x) => x);
+  const pos = feedBackCollector.filter((x) => x.pass);
+  const neg = feedBackCollector.filter((x) => !x.pass);
+  store.commit('SET_VALID_OBJECTS', pos);
+  store.commit('SET_INVALID_OBJECTS', neg);
+
+  // return feedBackCollector.filter((x) => x);
   /*eslint-enable */
 };
