@@ -42,9 +42,7 @@ export const state = {
   currentPlate: null,
   parsedPlates: [],
   version: 1,
-  validTextObjects: [],
-  invalidTextObjects: [],
-  errorMessages: [],
+  error: null,
   suggestions: [],
   savedScript: null,
   quillOptions: {
@@ -62,23 +60,12 @@ export const state = {
   },
 };
 
-const actions = {
-  // setFeedback({ commit }, data) {
-  //   const pos = data.filter((x) => x.pass);
-  //   const neg = data.filter((x) => !x.pass);
-  //   commit(types.SET_VALID_OBJECTS, pos);
-  //   commit(types.SET_INVALID_OBJECTS, neg);
-  // },
-};
 const mutations = {
   [types.SET_CURRENT_PLATE_FROM_SCRIPT](state, value) {
     state.currentPlate = value;
   },
-  [types.SET_VALID_OBJECTS](state, data) {
-    state.validTextObjects = data;
-  },
-  [types.SET_INVALID_OBJECTS](state, data) {
-    state.invalidTextObjects = data;
+  [types.LOG_ERROR](state, data) {
+    state.error = data;
   },
   [types.SET_PARSED_PLATE](state, value) {
     state.parsedPlates.push(value);
@@ -89,6 +76,9 @@ const mutations = {
   [types.CLEAR_SUGGESTIONS](state) {
     state.suggestions = [];
   },
+  [types.CLEAR_PARSED_PLATE](state) {
+    state.parsedPlates = [];
+  },
 };
 const getters = {
   getQuillOptions(state, getters, rootState) {
@@ -97,22 +87,16 @@ const getters = {
   getVersion(state, getters, rootState) {
     return state.version;
   },
-  getValidTextObjects(state, getters, rootState) {
-    return state.validTextObjects;
+  getError(state, getters, rootState) {
+    return state.error;
   },
-  getInValidTextObjects(state, getters, rootState) {
-    return state.invalidTextObjects;
-  },
-  getErrorMessages(state, getters, rootState) {
-    return state.errorMessages;
-  },
-  getparsedPlates(state, getters, rootState) {
+  getParsedPlates(state, getters, rootState) {
     return state.parsedPlates;
   },
-  getreagents(state, getters, rootState) {
+  getReagents(state, getters, rootState) {
     return state.reagents;
   },
-  getunits(state, getters, rootState) {
+  getUnits(state, getters, rootState) {
     return state.units;
   },
   getCurrentPlate(state, getters, rootState) {
@@ -125,7 +109,6 @@ const getters = {
 
 export default {
   state,
-  actions,
   mutations,
   getters,
 };

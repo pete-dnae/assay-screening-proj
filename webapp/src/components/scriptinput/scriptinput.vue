@@ -34,7 +34,7 @@ li span {
 <div>
     <div class="row">
         <div class="col-5">
-            <div id="editor"></div>
+            <div id="editor" @keyup="EditorChange"></div>
 
         </div>
         <div class="col-5">
@@ -79,8 +79,8 @@ li span {
             </div>
             <h5 class="mt-3 text-left"><strong>Feedbacks :</strong></h5>
             <div class="row ml-3 mt-3 h-50 border border-warning">
-                <div id="result" class="list-group w-100 pre-scrollable">
-                    <div class="list-group-item list-group-item-action" @mouseover="highlightError(err)" v-for="err in invalidTextObjects">{{err.msg}}</div>
+                <div id="result" class="list-group w-100 pre-scrollable" v-if="error">
+                    {{error.err}}
                 </div>
             </div>
         </div>

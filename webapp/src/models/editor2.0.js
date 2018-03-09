@@ -1,55 +1,218 @@
-export const splitLine = (text) => text.split(/\s+/);
+import store from '@/store';
 
-export const parseVersion = (args, fields, text) => {
-  const { startIndex, version } = args;
-  if (fields[1] !== version) {
-    const err = {
-      startIndex,
-      endIndex: text.length,
-      action: [{ color: 'red' }],
-      err: `Parser version mismatch expected ${version} `,
+export const splitLine = (text) => {
+  const re = /\S+/g;
+  const fields = [];
+  let match;
+  while ((match = re.exec(text))) {
+    fields.push(match);
+  }
+  return fields;
+};
+export const fieldIndexRange = (lineStart, field) => {
+  const startIndex = lineStart + field.index;
+  const length = field[0].length;
+  return { startIndex, length };
+};
+export const validateVersion = (startIndex, fields, text) => {
+  let err = { startIndex, length: text.length, action: [{ color: 'red' }] };
+
+  if (!fields[1]) {
+    err = {
+      ...err,
+      err: 'No version number',
+    };
+    throw err;
+  }
+  //eslint-disable-next-line
+  if (fields[1][0] != store.getters.getVersion) {
+    err = {
+      ...err,
+      err: `Parser version mismatch expected ${store.getters.getVersion} `,
     };
     throw err;
   }
 };
-export const parseRule = (args, fields, text) => {
-  const { startIndex, reagents, units } = args;
-  let err ={
-    startIndex,
-    action: [{ color: 'red' }],
-  }
-  if (fields[0] === 'A') {
-  } else if (fields[0]==='T') {
-  }else{
-    throw
+
+export const validateRowRange = (startIndex, fields) => {
+  if (
+    fields[2] &&
+    !(
+      fields[2][0].match(/^\d+-\d+$/) ||
+      fields[2][0].match(/^\d+$/) ||
+      fields[2][0].match(/^(?!,)(,?[0-9]+)+$/)
+    )
+  ) {
+    const err = {
+      ...fieldIndexRange(startIndex, fields[2]),
+      err: 'Not a valid row range',
+      action: [{ color: 'red' }],
+    };
+    throw err;
   }
 };
-export const doYourThing = (line, args) => {
+export const validateColRange = (startIndex, fields) => {
+  if (
+    fields[3] &&
+    !(
+      fields[3][0].match(/^[A-Z]-[A-Z]$/) ||
+      fields[3][0].match(/^(?!,)(,?[A-Z])+$/) ||
+      fields[3][0].match(/^[A-Z]$/)
+    )
+  ) {
+    const err = {
+      ...fieldIndexRange(startIndex, fields[3]),
+      err: 'Not a valid col range',
+      action: [{ color: 'red' }],
+    };
+    throw err;
+  }
+};
+export const validateConcentration = (startIndex, fields) => {
+  if (fields[4] && !isFinite(fields[4][0])) {
+    const err = {
+      ...fieldIndexRange(startIndex, fields[4]),
+      err: 'Not a valid concentration',
+      action: [{ color: 'red' }],
+    };
+    throw err;
+  }
+};
+export const validateFields = (startIndex, fields, text) => {
+  if (fields.length !== 6) {
+    const err = {
+      startIndex,
+      length: text.length,
+      err: `There should be 6 fields but found ${fields.length} : ${fields.join(
+        ',',
+      )}`,
+      action: [{ color: 'orange' }],
+    };
+    throw err;
+  }
+};
+
+export const validateUnits = (startIndex, fields) => {
+  if (fields[5] && store.getters.getUnits.indexOf(fields[5][0]) === -1) {
+    const err = {
+      ...fieldIndexRange(startIndex, fields[5]),
+      err: 'Not a valid unit',
+      action: [{ color: 'red' }],
+    };
+    throw err;
+  }
+};
+export const validateRule = (startIndex, fields, text) => {
+  if (fields[0][0] === 'A') {
+    if (fields[1]) {
+      let err = {
+        ...fieldIndexRange(startIndex, fields[1]),
+        action: [{ color: 'red' }],
+      };
+      const suggestions = store.getters.getReagents.filter(
+        (x) => x.indexOf(fields[1]) > -1,
+      );
+      store.commit('SET_SUGGESTIONS', suggestions);
+      if (_.isEmpty(suggestions)) {
+        err = { ...err, err: 'Reagent name doesnt match' };
+        throw err;
+      } else if (suggestions.length > 5) {
+        err = {
+          ...err,
+          err: `There are currently ${suggestions.length} matches `,
+        };
+
+        throw err;
+      }
+    }
+    validateColRange(startIndex, fields);
+    validateRowRange(startIndex, fields);
+    validateConcentration(startIndex, fields);
+    validateUnits(startIndex, fields);
+    validateFields(startIndex, fields, text);
+  } else if (fields[0][0] === 'T') {
+    if (fields[1]) {
+      let err = {
+        ...fieldIndexRange(startIndex, fields[1]),
+        action: [{ color: 'red' }],
+      };
+      if (store.getters.getParsedPlates.indexOf(fields[1][0]) === -1) {
+        err = { ...err, err: 'Not a recogonised plate' };
+        throw err;
+      }
+      if (store.getters.getCurrentPlate === fields[1][0]) {
+        err = { ...err, err: 'Cannot transfer from current plate' };
+        throw err;
+      }
+    }
+    validateColRange(startIndex, fields);
+    validateRowRange(startIndex, fields);
+    validateConcentration(startIndex, fields);
+    validateUnits(startIndex, fields);
+    validateFields(startIndex, fields, text);
+  }
+};
+export const validatePlate = (startIndex, fields, text) => {
+  let err = { startIndex, length: text.length, action: [{ color: 'red' }] };
+  if (fields.length !== 2) {
+    err = {
+      ...err,
+      err: `Unexpected number of fields (${fields.join(',')}) in plate rule`,
+    };
+    throw err;
+  }
+  if (fields[1] && fields[1][0] === store.getters.getParsedPlates) {
+    err = {
+      ...err,
+      err: `plate name ${fields[2]} is already parsed`,
+    };
+    throw err;
+  }
+  store.commit('SET_CURRENT_PLATE_FROM_SCRIPT', fields[1][0]);
+  store.commit('SET_PARSED_PLATE', fields[1][0]);
+};
+export const handleRuleCases = (line, startIndex) => {
   // const { startIndex, version, reagents, units } = args;
   const fields = splitLine(line);
+  const err = {
+    startIndex,
+    length: line.length,
+    err: 'Not a valid rule / comment , what are you ?',
+    action: [{ color: 'red' }],
+  };
+
   switch (true) {
-    case fields[0] === 'V':
-      break;
-    case fields[0] === 'P':
-      break;
-    case fields[0] === 'A' || fields[0] === 'T':
-      break;
-    case fields[0] === '#':
-      break;
     case _.isEmpty(line):
       //  do absolutely nothig just sit there
       break;
+    case fields[0][0] === 'V':
+      validateVersion(startIndex, fields, line);
+      break;
+    case fields[0][0] === 'P':
+      validatePlate(startIndex, fields, line);
+      break;
+    case fields[0][0] === 'A' || fields[0][0] === 'T':
+      validateRule(startIndex, fields, line);
+      break;
+    case fields[0][0] === '#':
+      break;
     default:
+      throw err;
   }
 };
-export const validateText = (text, args) => {
-  let startIndex = 0;
 
-  const lines = text.split('\n');
+export const validateText = (text) => {
+  try {
+    let startIndex = 0;
+    store.commit('CLEAR_PARSED_PLATE');
+    const lines = text.split('\n');
 
-  lines.forEach(lines, (line, i) => {
-    doYourThing(line, { ...args, startIndex });
+    lines.forEach((line, i) => {
+      handleRuleCases(line, startIndex);
 
-    startIndex += line.length + 1;
-  });
+      startIndex += line.length + 1;
+    });
+  } catch (e) {
+    store.commit('LOG_ERROR', e);
+  }
 };

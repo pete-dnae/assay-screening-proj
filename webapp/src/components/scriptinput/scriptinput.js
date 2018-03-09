@@ -7,8 +7,9 @@ import 'quill/dist/quill.bubble.css';
 
 import { formatText } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
-import { validateText } from '@/models/editor';
+// import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
+import { validateText } from '@/models/editor2.0';
 
 export default {
   name: 'ScriptInputComponent',
@@ -35,9 +36,7 @@ export default {
     ...mapGetters({
       options: 'getQuillOptions',
       version: 'getVersion',
-      validTextObjects: 'getValidTextObjects',
-      invalidTextObjects: 'getInValidTextObjects',
-      errorMessages: 'getErrorMessages',
+      error: 'getError',
       parsedPlates: 'getparsedPlates',
       reagents: 'getreagents',
       units: 'getunits',
@@ -54,40 +53,30 @@ export default {
   },
   methods: {
     ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
-    onEditorChange([delta, oldDelta, source]) {
-      if (source === 'user') {
-        const text = this.editor.getText();
-        this.alterToolTip(text);
-
-        validateText(text, {
-          version: this.version,
-          parsedPlates: this.parsedPlates,
-          reagents: this.reagents,
-          units: this.units,
-          currentPlate: this.currentPlate,
-        });
-
-        this.paintText();
-      }
+    EditorChange() {
+      const text = this.editor.getText();
+      this.alterToolTip(text);
+      this.$store.commit('LOG_ERROR', null);
+      validateText(text);
+      this.paintText();
     },
     paintText() {
-      // this.validTextObjects.forEach((range) => {
-      //   this.editor.formatText(
-      //     range.index,
-      //     range.length,
-      //     range.action[0],
-      //     range.action[1],
-      //   );
-      // });
-      this.editor.formatText(0, this.editor.getText().length, 'color', 'green');
-      this.invalidTextObjects.forEach((range) => {
-        this.editor.formatText(
-          range.index,
-          range.length,
-          range.action[0],
-          range.action[1],
-        );
-      });
+      const textLength = this.editor.getText().length;
+      this.editor.formatText(0, textLength, 'color', 'green');
+      if (this.error) {
+        this.error.action.forEach((x, i) => {
+          this.editor.formatText(
+            this.error.startIndex,
+            this.error.length,
+            'color',
+            x.color,
+          );
+        });
+        // this.editor.removeFormat(
+        //   this.error.startIndex + this.error.length,
+        //   textLength,
+        // );
+      }
     },
     alterToolTip() {
       this.editor.focus();
@@ -151,7 +140,7 @@ export default {
     Font.whitelist = ['monospace'];
     Quill.register(Font, true);
     this.editor = new Quill('#editor', this.options);
-    this.editor.on('text-change', (...args) => this.onEditorChange(args));
+    // this.editor.on('text-change', (...args) => this.onEditorChange(args));
     // this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
     //   return new Delta().insert(node.data);
     // });
