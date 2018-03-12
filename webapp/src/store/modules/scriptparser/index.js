@@ -42,6 +42,7 @@ export const state = {
   currentPlate: null,
   parsedPlates: [],
   version: 1,
+  validScript: null,
   error: null,
   suggestions: [],
   savedScript: null,
@@ -67,6 +68,9 @@ const mutations = {
   [types.LOG_ERROR](state, data) {
     state.error = data;
   },
+  [types.CLEAR_ERROR](state) {
+    state.error = null;
+  },
   [types.SET_PARSED_PLATE](state, value) {
     state.parsedPlates.push(value);
   },
@@ -78,6 +82,9 @@ const mutations = {
   },
   [types.CLEAR_PARSED_PLATE](state) {
     state.parsedPlates = [];
+  },
+  [types.SET_VALID_SCRIPT](state, data) {
+    state.savedScript = data;
   },
 };
 const getters = {

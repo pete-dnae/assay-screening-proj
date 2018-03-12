@@ -5,7 +5,7 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 
-import { formatText } from '@/models/visualizer';
+import { formatText, paintTable } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
 // import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
@@ -18,6 +18,9 @@ export default {
       msg: 'Welcome',
       showToolTip: false,
       index: 0,
+      image: null,
+      rowCount: 8,
+      colCount: 12,
       tooltiptext: {
         visibility: 'visible',
         'max-height': '300px',
@@ -56,7 +59,7 @@ export default {
     EditorChange() {
       const text = this.editor.getText();
       this.alterToolTip(text);
-      this.$store.commit('LOG_ERROR', null);
+      this.$store.commit('CLEAR_ERROR', null);
       validateText(text);
       this.paintText();
     },
@@ -112,8 +115,8 @@ export default {
 
       this.$store.commit('CLEAR_SUGGESTIONS');
     },
-    highlightError(err) {
-      this.editor.setSelection(err.index, err.length);
+    highlightError() {
+      this.editor.setSelection(this.error.startIndex, this.error.length);
     },
     hideSuggestion() {
       this.$store.commit('CLEAR_SUGGESTIONS');
@@ -133,6 +136,17 @@ export default {
       this.index += 1;
       this.index = this.suggestions[this.index] ? this.index : 0;
     },
+    handleSelection(range, oldRange, source) {
+      if (range && range.length > 1) {
+        const text = this.editor.getText(range.index, range.length);
+        this.image = paintTable(
+          window.webkitURL,
+          { rows: this.rowCount, cols: this.colCount },
+          range.index,
+          text,
+        );
+      }
+    },
   },
   mounted() {
     const Delta = Quill.import('delta');
@@ -140,12 +154,14 @@ export default {
     Font.whitelist = ['monospace'];
     Quill.register(Font, true);
     this.editor = new Quill('#editor', this.options);
-    // this.editor.on('text-change', (...args) => this.onEditorChange(args));
-    // this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
-    //   return new Delta().insert(node.data);
-    // });
+    this.editor.on('selection-change', (range, oldRange, source) =>
+      this.handleSelection(range, oldRange, source),
+    );
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, (range) =>
       this.handleTab(range),
     );
+    this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+      return new Delta().insert(node.data);
+    });
   },
 };

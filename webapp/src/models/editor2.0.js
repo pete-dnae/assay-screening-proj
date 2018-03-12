@@ -103,6 +103,15 @@ export const validateUnits = (startIndex, fields) => {
   }
 };
 export const validateRule = (startIndex, fields, text) => {
+  if (_.isEmpty(store.getters.getCurrentPlate)) {
+    const err = {
+      startIndex,
+      length: text.length,
+      action: [{ color: 'red' }],
+      err: 'No current Plate',
+    };
+    throw err;
+  }
   if (fields[0][0] === 'A') {
     if (fields[1]) {
       let err = {
@@ -161,7 +170,7 @@ export const validatePlate = (startIndex, fields, text) => {
     };
     throw err;
   }
-  if (fields[1] && fields[1][0] === store.getters.getParsedPlates) {
+  if (fields[1] && store.getters.getParsedPlates.indexOf(fields[1][0]) > -1) {
     err = {
       ...err,
       err: `plate name ${fields[2]} is already parsed`,
@@ -202,17 +211,19 @@ export const handleRuleCases = (line, startIndex) => {
 };
 
 export const validateText = (text) => {
-  try {
-    let startIndex = 0;
-    store.commit('CLEAR_PARSED_PLATE');
-    const lines = text.split('\n');
+  let startIndex = 0;
 
-    lines.forEach((line, i) => {
+  store.commit('CLEAR_PARSED_PLATE');
+  const lines = text.split('\n');
+  try {
+    lines.forEach((line) => {
       handleRuleCases(line, startIndex);
 
       startIndex += line.length + 1;
     });
+    store.commit('SET_VALID_SCRIPT', text);
   } catch (e) {
     store.commit('LOG_ERROR', e);
+    store.commit('SET_VALID_SCRIPT', text.substr(0, startIndex));
   }
 };
