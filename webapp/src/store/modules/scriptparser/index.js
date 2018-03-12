@@ -49,12 +49,7 @@ export const state = {
   quillOptions: {
     debug: 'warn',
     modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline'],
-        ['image', 'code-block'],
-        [{ font: ['monospace'] }],
-        [{ size: ['small', false, 'large', 'huge'] }],
-      ],
+      toolbar: '#toolbar',
     },
 
     theme: 'snow',

@@ -66,6 +66,7 @@ export default {
     paintText() {
       const textLength = this.editor.getText().length;
       this.editor.formatText(0, textLength, 'color', 'green');
+      this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
         this.error.action.forEach((x, i) => {
           this.editor.formatText(
@@ -75,9 +76,11 @@ export default {
             x.color,
           );
         });
-        this.editor.removeFormat(
+        this.editor.formatText(
           this.error.startIndex + this.error.length,
           textLength,
+          'color',
+          'black',
         );
       }
     },
@@ -128,8 +131,10 @@ export default {
       const currentStringStart = textTillCursor.lastIndexOf(' ');
       return { currentStringStart, cursorIndex };
     },
-    handleFormat() {
-      this.editor.setText(formatText(this.editor.getText()));
+    async handleFormat() {
+      const formattedText = formatText(this.editor.getText());
+      await this.editor.setText(formattedText);
+      this.EditorChange();
     },
     handleTab(range) {
       this.handleAutoCompleteClick(this.suggestions[this.index]);
@@ -161,7 +166,7 @@ export default {
       this.handleTab(range),
     );
     this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
-      return new Delta().insert(node.data);
+      return new Delta().insert(node.data, { font: 'monospace' });
     });
   },
 };

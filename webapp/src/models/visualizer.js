@@ -71,32 +71,39 @@ export const makeSVG = (DOMURL, html) => {
 };
 
 export const paintTable = (DOMURL, tableSpec, startIndex, text) => {
-  let tableBody = '<table class="table">';
-  let rows = [];
-  let cols = [];
+  let tableBody = {};
   text.split('\n').forEach((line) => {
     const fields = splitLine(line);
     validateRule(startIndex, fields, text);
-    rows = rows.concat(getRowList(fields[3][0]));
-    cols = cols.concat(getColList(fields[2][0]));
-  });
-  console.log(rows, cols);
-  rows = new Set(rows);
-  cols = new Set(cols);
-
-  _.range(tableSpec.rows).forEach((row, i) => {
-    tableBody += '<tr style="height:100px">';
-    _.range(1, tableSpec.cols + 1).forEach((col, j) => {
-      if (rows.has(i) && cols.has(j)) {
-        tableBody +=
-          '<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.2)">';
-      } else {
-        tableBody += '<td style="width:250px;border: 1px solid black">';
-      }
-      tableBody += '</td>';
+    const rows = getRowList(fields[3][0]);
+    const cols = getColList(fields[2][0]);
+    _.range(tableSpec.rows).forEach((row, i) => {
+      tableBody[i] = tableBody[i] ? tableBody[i] : [];
+      _.range(1, tableSpec.cols + 1).forEach((col, j) => {
+        if (rows.indexOf(i) !== -1 && cols.indexOf(j) !== -1) {
+          tableBody[i][j] =
+            '<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.2)"></td>';
+        } else {
+          tableBody[i][j] = tableBody[i][j] ? tableBody[i][j] : null;
+        }
+      });
     });
-    tableBody += '</tr>';
   });
+
+  tableBody = _.reduce(
+    tableBody,
+    (acc, row) => {
+      let mapFill = row.map((x) => {
+        if (!x) {
+          return '<td style="width:250px;border: 1px solid black"></td>';
+        }
+        return x;
+      });
+      acc += `<tr style="height:100px">${mapFill.join('')}</tr>`;
+      return acc;
+    },
+    '<table>',
+  );
   tableBody += '</table>';
   return makeSVG(DOMURL, tableBody);
 };
