@@ -34,13 +34,13 @@ li span {
 <div>
     <div class="row">
         <div class="col-5">
-            <div id="editor"></div>
+            <div id="editor" @keyup="EditorChange"></div>
 
         </div>
         <div class="col-5">
-            <h5 class="mt-3 text-left"><strong>Some Examples of rules</strong></h5>
-            <div class="row ml-3 jumbotron jumbotron-fluid">
-                <div class="container text-left" style="font-family:monospace;">
+            <div class="row mt-3">
+                <div class="container col text-left" style="font-family:monospace;">
+                  <h5 class="text-left"><strong>Some Examples of rules</strong></h5>
                     <h6><strong>Version rule </strong></h6>
                     <div class="ml-3">
                         <span class="d-block">V 1</span>
@@ -66,16 +66,43 @@ li span {
                         <span class="d-block"># Hey there am a comment </span>
                     </div>
                 </div>
-            </div>
-            <h5 class="mt-3 text-left"><strong>Feedbacks :</strong></h5>
-            <div class="row ml-3 mt-3 h-50 border border-warning">
-                <div id="result" class="list-group w-100 pre-scrollable">
-                    <div class="list-group-item list-group-item-action" @mouseover="highlightError(err)" v-for="err in invalidTextObjects">{{err.msg}}</div>
+                <div class="col  text-left">
+                    <h5 class="text-left"><strong>Plate Visualization</strong></h5>
+                  <small class="form-text text-muted">Change defaults if its a bigger plate</small>
+                  <div class="row">
+                  <div class="col form-group">
+                   <label >Row Count</label>
+                   <input type="number" class="form-control" v-model="rowCount"  placeholder="Enter Row count">
+                 </div>
+                 <div class="col form-group">
+                  <label >Column Count</label>
+                  <input type="number" class="form-control" v-model="colCount"  placeholder="Enter Col count">
+                </div>
+              </div>
+              <strong>User Selection</strong>
+              <img :src="image" id="imgZoom" class="mt-3"style="max-width: 100%;height: auto;">
                 </div>
             </div>
-        </div>
+            <h5 class="mt-3 text-left"><strong>Feedbacks :</strong></h5>
+            <div class="row ml-3 mt-3  border border-warning">
 
-        <span v-bind:style="tooltiptext" v-show="showToolTip">
+                <div id="result" class="list-group w-100" v-if="error" @mouseover="highlightError()">
+                    {{error.err}}
+                </div>
+
+            </div>
+            <div class="row text-left " v-show="suggestions.length >5">
+              <h5 class="mt-3 w-100"><strong>Suggestions :</strong></h5>
+              <h5><strong>Currently retreiving 5+ suggestions</strong></h5>
+              <div class="list-group w-100 pre-scrollable">
+              <button class="list-group-item list-group-item-action" v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
+              @click.middle="hideSuggestion()">
+                {{text}}
+              </button>
+            </div>
+            </div>
+        </div>
+        <span v-bind:style="tooltiptext" v-show="suggestions.length <5 && suggestions.length >1">
     <ul>
     <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
     @click.middle="hideSuggestion()">

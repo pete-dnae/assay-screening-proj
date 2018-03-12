@@ -5,19 +5,22 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 
-import { formatText } from '@/models/visualizer';
+import { formatText, paintTable } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
-import { validateText } from '@/models/editor';
+// import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
+import { validateText } from '@/models/editor2.0';
 
 export default {
   name: 'ScriptInputComponent',
   data() {
     return {
       msg: 'Welcome',
-      suggestions: null,
       showToolTip: false,
       index: 0,
+      image: null,
+      rowCount: 8,
+      colCount: 12,
       tooltiptext: {
         visibility: 'visible',
         'max-height': '300px',
@@ -36,13 +39,12 @@ export default {
     ...mapGetters({
       options: 'getQuillOptions',
       version: 'getVersion',
-      validTextObjects: 'getValidTextObjects',
-      invalidTextObjects: 'getInValidTextObjects',
-      errorMessages: 'getErrorMessages',
+      error: 'getError',
       parsedPlates: 'getparsedPlates',
       reagents: 'getreagents',
       units: 'getunits',
       currentPlate: 'getCurrentPlate',
+      suggestions: 'getSuggestions',
     }),
   },
   watch: {
@@ -54,47 +56,34 @@ export default {
   },
   methods: {
     ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
-    onEditorChange([delta, oldDelta, source]) {
-      if (source === 'user') {
-        const text = this.editor.getText();
-        this.alterToolTip(text);
-        this.setFeedback(
-          validateText(
-            text,
-            {
-              version: this.version,
-              parsedPlates: this.parsedPlates,
-              reagents: this.reagents,
-              units: this.units,
-              currentPlate: this.currentPlate,
-            },
-            this,
-          ),
-        );
-
-        this.paintText();
-      }
+    EditorChange() {
+      const text = this.editor.getText();
+      this.alterToolTip(text);
+      this.$store.commit('CLEAR_ERROR', null);
+      validateText(text);
+      this.paintText();
     },
     paintText() {
-      this.validTextObjects.forEach((range) => {
-        this.editor.formatText(
-          range.index,
-          range.length,
-          range.action[0],
-          range.action[1],
+      const textLength = this.editor.getText().length;
+      this.editor.formatText(0, textLength, 'color', 'green');
+      if (this.error) {
+        this.error.action.forEach((x, i) => {
+          this.editor.formatText(
+            this.error.startIndex,
+            this.error.length,
+            'color',
+            x.color,
+          );
+        });
+        this.editor.removeFormat(
+          this.error.startIndex + this.error.length,
+          textLength,
         );
-      });
-      this.invalidTextObjects.forEach((range) => {
-        this.editor.formatText(
-          range.index,
-          range.length,
-          range.action[0],
-          range.action[1],
-        );
-      });
+      }
     },
-    alterToolTip(text) {
-      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
+    alterToolTip() {
+      this.editor.focus();
+      const cursorIndex = this.editor.getSelection().index;
       const cursorLocation = this.editor.getBounds(cursorIndex);
       const parentBound = document
         .getElementsByClassName('ql-editor')[0]
@@ -104,13 +93,11 @@ export default {
         cursorLocation,
         parentBound,
       );
-
-      const currentString = text.slice(currentStringStart, cursorIndex);
-
-      this.suggestions = this.reagents.filter(
-        (x) => x.indexOf(currentString.trim()) > -1,
-      );
-      if (this.suggestions.length < 5 && this.suggestions.length >= 1) {
+      if (
+        this.suggestions &&
+        this.suggestions.length < 5 &&
+        this.suggestions.length >= 1
+      ) {
         this.showToolTip = true;
       } else {
         this.showToolTip = false;
@@ -126,13 +113,13 @@ export default {
         cursorIndex - currentStringStart,
       );
 
-      this.showToolTip = false;
+      this.$store.commit('CLEAR_SUGGESTIONS');
     },
-    highlightError(err) {
-      this.editor.setSelection(err.index, err.length);
+    highlightError() {
+      this.editor.setSelection(this.error.startIndex, this.error.length);
     },
     hideSuggestion() {
-      this.showToolTip = false;
+      this.$store.commit('CLEAR_SUGGESTIONS');
     },
     getCurrentStringRange() {
       this.editor.focus();
@@ -145,9 +132,20 @@ export default {
       this.editor.setText(formatText(this.editor.getText()));
     },
     handleTab(range) {
-      console.log(this.suggestions);
       this.handleAutoCompleteClick(this.suggestions[this.index]);
       this.index += 1;
+      this.index = this.suggestions[this.index] ? this.index : 0;
+    },
+    handleSelection(range, oldRange, source) {
+      if (range && range.length > 1) {
+        const text = this.editor.getText(range.index, range.length);
+        this.image = paintTable(
+          window.webkitURL,
+          { rows: this.rowCount, cols: this.colCount },
+          range.index,
+          text,
+        );
+      }
     },
   },
   mounted() {
@@ -156,12 +154,14 @@ export default {
     Font.whitelist = ['monospace'];
     Quill.register(Font, true);
     this.editor = new Quill('#editor', this.options);
-    this.editor.on('text-change', (...args) => this.onEditorChange(args));
-    this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
-      return new Delta().insert(node.data);
-    });
+    this.editor.on('selection-change', (range, oldRange, source) =>
+      this.handleSelection(range, oldRange, source),
+    );
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, (range) =>
       this.handleTab(range),
     );
+    this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+      return new Delta().insert(node.data);
+    });
   },
 };
