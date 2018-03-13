@@ -1,6 +1,20 @@
 o  Work Plan - Back End from 8th March 2018
 
 o  Update parser to deal with new rules script spec
+    *  Code roughly right
+    o  Finish with TDD
+        *  Have we a test already? - yes but too coupled with other stuff
+        o  Write isolated parser test from scratch
+            o  test tiny example
+                *  design scope
+                *  include all row/col variants for both col and row
+                o  delegate assessment of compatib to transfer rule
+                    *  Create RowColIntersectinos and give it shape deduction
+                       responsibility.
+                    o  tdd up compatibility logic in TransferRule
+                o  regression up script parser
+                o  resume tiny example test of rules parser
+            o  come back to ! mandate?
 o  Update rules interpreter to match
 o  Pare down the database and models to only the essentials needed and 
    anticipated

@@ -1,95 +1,46 @@
 import unittest
-from app.rules_engine.rule_script_parser import *
-from app.reagents import *
-from app.premixers.experiment_premixer import *
-from app.rules_engine.alloc_rule_interpreter import *
-class PremixerTest(unittest.TestCase):
+from pdb import set_trace as st
 
+from app.rules_engine.rule_script_parser import RuleScriptParser
+from app.rules_engine.rule_script_parser import ParseError
+
+class RuleScriptParserTest(unittest.TestCase):
 
     def setUp(self):
-        self.reagents = ['DNA-free-Water',
-                            'Titanium-PCR-Buffer',
-                            'KCl',
-                            'MgCl2',
-                            'BSA',
-                            'dNTPs',
-                            'Titanium-Taq',
-                            '(Eco)-ATCC-BAA-2355',
-                            '(Efs-vanB)-ATCC-700802',
-                            '(Kox)-ATCC-15764',
-                            'Ec_uidA_6.x_Eco63_Eco60',
-                            'Efs_cpn60_1.x_Efs04_Efs01',
-                            'Efs_vanB_1.x_van10_van06',
-                            'Efm_vanA_1.x_van05_van01',
-                            'Ko_pehX_1.x_Kox05_Kox02',
-                            'Kp_khe_2.x_Kpn13_Kpn01',
-                            'Pm_zapA_1.x_Pmi01_Pmi05',
-                            'Spo_gp_1.x_Spo09_Spo13',
-                            'HgDna']
-        self.units = ['mM', 'mg/ml', 'mMeach', 'copies/ul', 'uM', 'ng/ul', 'x','dil']
+        pass
 
-        self.script = "V 1 \n" \
-                      "P1 \n" \
-                      "A DNA-free-Water            1-12    A-H 3.35 x \n" \
-                      "A Titanium-PCR-Buffer       1-12    A-H 0.63 x \n" \
-                      "A KCl                       1-12    A-H 2.40 mM \n" \
-                      "A MgCl2                     1-12    A-H 4.13 mM \n" \
-                      "A BSA                       1-12    A-H 2.5 mg/ml \n" \
-                      "A dNTPs                     1-12    A-H 1.00 mMeach \n" \
-                      "A Titanium-Taq              1-12    A-H 1.00 x \n" \
-                      "A (Eco)-ATCC-BAA-2355       1,5,9   A-B   0 copies/ul \n" \
-                      "A (Eco)-ATCC-BAA-2355       1,5     C-H   5 copies/ul \n" \
-                      "A (Eco)-ATCC-BAA-2355       9       C-D   50 copies/ul \n" \
-                      "A (Eco)-ATCC-BAA-2355       9       E-F   500 copies/ul \n" \
-                      "A (Eco)-ATCC-BAA-2355       9       G-H   5000 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    2,6,10  A-B   0 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    2,6     C-H   5 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    10      C-D   50 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    10      E-F   500 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    10      G-H   5000 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    3,7,11  A-B   0 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    3,7     C-H   5 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    11      C-D   50 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    11      E-F   500 copies/ul \n" \
-                      "A (Efs-vanB)-ATCC-700802    11      G-H   5000 copies/ul \n" \
-                      "A (Kox)-ATCC-15764          4,8,12  A-B   0 copies/ul \n" \
-                      "A (Kox)-ATCC-15764          4,8     C-H   5 copies/ul \n" \
-                      "A (Kox)-ATCC-15764          12      C-D   50 copies/ul \n" \
-                      "A (Kox)-ATCC-15764          12      E-F   500 copies/ul \n" \
-                      "A (Kox)-ATCC-15764          12      G-H   5000 copies/ul \n" \
-                      "A Ec_uidA_6.x_Eco63_Eco60   1-4     A-H   0.4 uM \n" \
-                      "A Efs_cpn60_1.x_Efs04_Efs01 1-4     A-H   0.4 uM \n" \
-                      "A Efs_vanB_1.x_van10_van06  1-4     A-H   0.4 uM \n" \
-                      "A Efm_vanA_1.x_van05_van01  1-4     A-H   0.4 uM \n" \
-                      "A Ko_pehX_1.x_Kox05_Kox02   1-4     A-H   0.4 uM \n" \
-                      "A Kp_khe_2.x_Kpn13_Kpn01    1-4     A-H   0.4 uM \n" \
-                      "A Pm_zapA_1.x_Pmi01_Pmi05   1-4     A-H   0.4 uM \n" \
-                      "A Spo_gp_1.x_Spo09_Spo13    1-4     A-H   0.4 uM \n" \
-                      "A Ec_uidA_6.x_Eco63_Eco60   5       A-H   0.4 uM \n" \
-                      "A Efs_cpn60_1.x_Efs04_Efs01 6       A-H   0.4 uM \n" \
-                      "A Efs_vanB_1.x_van10_van06  7       A-H   0.4 uM \n" \
-                      "A Efm_vanA_1.x_van05_van01  8       A-H   0.4 uM \n" \
-                      "A HgDna                     1-12    A-E   0 ng/ul \n" \
-                      "A HgDna                     9-12    F-H   0 ng/ul \n" \
-                      "A HgDna                     1-8     E-H   3000 ng/ul \n" \
-                      "P2 \n" \
-                      "T P1 1-12 A-H 20 dil"
+    def test_example_from_language_spec(self):
 
-    def test_simple_case(self):
-        script_parser = RuleScriptParser(self.reagents,self.units,self.script)
-        try:
-            rules = script_parser.parse()
-            tabulated_result =[]
-            for i,plate_rules in rules.items():
-                plate_interpret = AllocRuleInterpreter(plate_rules)
-                interpreted_results = plate_interpret.interpret()
-                tabulated_result.append(interpreted_results)
-            experiment_premixer = ExperimentPremixer(tabulated_result)
-            premixes = experiment_premixer.extract_premixes()
+        script = RuleScriptParserTest.trim_left(
+        """ V ver-1
+            P Plate1
+            A Titanium-Taq              1-12  A-H 0.02 M/uL
+            A (Eco)-ATCC-BAA-2355       1,5,9 B   1.16 x
+            A (Eco)-ATCC-BAA-9999       2     C,D 1.16 x
 
-            self.assertEquals(len(rules['1']),42)
-            self.assertEquals(list(rules.keys()),['1','2'])
-        except ParseError as Err:
-            print(Err)
+            # This is a comment
+            P Plate42
+            T Plate1 1 B                1-12  A-H   20 dilution
+        """)
+        reagents = (
+            'Titanium-Taq',
+            '(Eco)-ATCC-BAA-2355',
+            '(Eco)-ATCC-BAA-2355')
+        units = ('M/uL', 'x', 'dilution')
+        parser = RuleScriptParser(reagents, units, script)
+        rules = parser.parse()
 
+        results = parser.results
+        self.assertEqual(len(results), 9999)
+
+    @classmethod
+    def trim_left(cls, multiline_string):
+        """
+        Take a big string likely produced from a triple quoted string
+        constant, and return a modified version, from which the leading spaces
+        at the start of each line has been removed.
+        """
+        lines = multiline_string.split('\n')
+        lines = (l.strip() for l in lines)
+        return '\n'.join(lines)
 
