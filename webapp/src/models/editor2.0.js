@@ -182,6 +182,7 @@ export const validatePlate = (startIndex, fields, text) => {
 };
 export const handleRuleCases = (line, startIndex) => {
   // const { startIndex, version, reagents, units } = args;
+
   const fields = splitLine(line);
   const err = {
     startIndex,
