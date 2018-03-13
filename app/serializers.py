@@ -7,7 +7,6 @@ from .models.primer_models import *
 from .models.strain_models import *
 from .models.rule_models import *
 
-from app.rules_engine.alloc_rule_interpreter import AllocRuleInterpreter
 
 # It would be nicer to group these class definitions in a way that aided
 # comprehension but we cannot, because they comprise nested definitions, and

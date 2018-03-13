@@ -1,4 +1,4 @@
-o  Work Plan - Back End from 8th March 2018
+*  Work Plan - Back End from 8th March 2018
 
 o  Update parser to deal with new rules script spec
     *  Code roughly right
@@ -11,8 +11,13 @@ o  Update parser to deal with new rules script spec
                 o  delegate assessment of compatib to transfer rule
                     *  Create RowColIntersectinos and give it shape deduction
                        responsibility.
-                    o  tdd up compatibility logic in TransferRule
+                    *  tdd up compatibility logic in TransferRule
                 o  regression up script parser
+                    o  need to convert letters to indices at some point
+                        *  first add error check
+                        *  now change contract to return indices
+                        o  begin adding assertions for rules produced
+                            o  transfer rule row/col wrong
                 o  resume tiny example test of rules parser
             o  come back to ! mandate?
 o  Update rules interpreter to match
