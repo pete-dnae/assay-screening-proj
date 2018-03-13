@@ -50,7 +50,7 @@ export const getColList = (cols) => {
   if (rangeCharIndex > -1) {
     return _.range(
       parseInt(cols.substr(0, rangeCharIndex), 0) - 1,
-      parseInt(cols.substr(rangeCharIndex + 1, cols.length), 0) + 1,
+      parseInt(cols.substr(rangeCharIndex + 1, cols.length), 0),
     );
   }
   return cols.split(',').map((x) => parseInt(x, 0) - 1);
