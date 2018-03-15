@@ -8,7 +8,14 @@ from app.rules_engine.transfer_rule import IncompatibleTransferError
 from app.rules_engine.row_col_intersections import RowColIntersections
 
 class ParseError(Exception):
-    pass
+
+    def __init__(self, message, line_number):
+        super().__init__(message)
+        self._line_number = line_number
+
+    def __str__(self):
+        return super().__str__() + (', at line: %d' % self._line_number)
+
 
 
 class RuleScriptParser:
@@ -289,11 +296,9 @@ class RuleScriptParser:
 
     def _err(self, message):
         """
-        Raises ParseError, having added line number information to the message
-        provided.
+        Raises ParseError, having furnished line number.
         """
-        message += ', at line number %d' % self._lnum
-        raise ParseError(message)
+        raise ParseError(message, self._lnum)
 
 
 _INT_RANGE_RE =re.compile(r'(\d+)-(\d+)$')

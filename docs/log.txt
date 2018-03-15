@@ -1,10 +1,16 @@
 *  Work Plan - Back End from 8th March 2018
 *  Update parser to deal with new rules script spec
-o  Make the parser emit machine readable error messages
-    o  What will be needed by front end?
-    o  Desgign code
-    o  Code and test it
+*  Make the parser emit machine readable error messages
 o  Update rules interpreter to match
+    *  Have a gander to see what is needed - only have skeleton
+    *  What does test look like? (isn't one)
+    *  Get test rules interpreter going with runs to completion test
+    *  Implement and test interpreter for AllocRules
+        *  Need conc and units to be included
+        *  Make test for Plate1[1]2] for two reagents
+    o  Get rules interpreter to do something real with transfer rules
+        o  What must a transfer in AllocationResults say?
+        o  Where should mapping of source/dest shapes go?
 o  Pare down the database and models to only the essentials needed and 
    anticipated
     o  I think this means
@@ -29,3 +35,10 @@ o  Get rid of redundant unit tests, fix up those that remain, and add any
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
 o  Deploy
+
+---------------------------------------------------------------------------
+# What parse data needed by front end?
+---------------------------------------------------------------------------
+Boolean good or not
+Human readable message FE can show directly
+Line number of error
