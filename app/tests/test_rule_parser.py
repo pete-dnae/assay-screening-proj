@@ -31,14 +31,39 @@ class RuleScriptParserTest(unittest.TestCase):
         parser.parse()
         results = parser.results
 
+        # Start with the second plate results
+
         plate, rules = results.popitem()
 
         self.assertEqual(plate, 'Plate42')
         self.assertEqual(len(rules), 1)
+
+        # This checks all the fields of a transfer rule, including
+        # two of the row/col spec formats.
         rule = rules[0]
-        self.assertEqual(rule._source_plate, 'Plate1')
-        self.assertEqual(rule._s_cells.cols, [2])
-        self.assertEqual(rule._s_cells.rows, [1])
+        self.assertEqual(rule.source_plate, 'Plate1')
+        self.assertEqual(rule.s_cells.rows, [1])
+        self.assertEqual(rule.s_cells.cols, [2])
+        self.assertEqual(rule.d_cells.rows, [1,2,3,4,5,6,7,8,9,10,11,12])
+        self.assertEqual(rule.d_cells.cols, [1,2,3,4,5,6,7,8])
+        self.assertEqual(rule.conc, 20)
+        self.assertEqual(rule.dilution_factor, 'dilution')
+
+        # Move on to the second plate
+
+        plate, rules = results.popitem()
+
+        self.assertEqual(plate, 'Plate1')
+        self.assertEqual(len(rules), 3)
+
+        # This checks all the fields of an alloc rule, including
+        # the remainder of the row/col specs.
+        rule = rules[1]
+        self.assertEqual(rule.reagent_name, '(Eco)-ATCC-BAA-2355')
+        self.assertEqual(rule.cells.rows, [1,5,9])
+        self.assertEqual(rule.cells.cols, [2,])
+        self.assertEqual(rule.conc, 1.16)
+        self.assertEqual(rule.units, 'x')
 
     @classmethod
     def trim_left(cls, multiline_string):

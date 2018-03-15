@@ -4,6 +4,7 @@ from pdb import set_trace as st
 
 from app.rules_engine.alloc_rule import AllocRule
 from app.rules_engine.transfer_rule import TransferRule
+from app.rules_engine.transfer_rule import IncompatibleTransferError
 from app.rules_engine.row_col_intersections import RowColIntersections
 
 class ParseError(Exception):
@@ -103,8 +104,8 @@ class RuleScriptParser:
         conc_units = units
         self._assert_units_are_known(units)
 
-        return AllocRule(reagent, RowColIntersections(cols, rows), 
-                conc, units)
+        return AllocRule(reagent, RowColIntersections(rows, cols), 
+                conc_value, units)
 
     def _parse_T_line(self, fields):
         """
@@ -128,8 +129,8 @@ class RuleScriptParser:
         # row/columns are incompatible shapes.
         try:
             t_rule = TransferRule(s_plate, 
-                RowColIntersections(s_cols, s_rows), 
-                RowColIntersections(d_cols, d_rows), conc, units)
+                RowColIntersections(s_rows, s_cols), 
+                RowColIntersections(d_rows, d_cols), conc_value, units)
         except IncompatibleTransferError:
             self._err('Shape of source rows/columns is incompatible with ' + \
                     'that of destination')
@@ -142,10 +143,12 @@ class RuleScriptParser:
         for.
         """
         if len(lines) == 0:
-            self._err('No lines present in input', lnum=0)
+            self._err('No lines present in input')
         first_field, all_fields = self._extract_fields(lines[0])
         if first_field != 'V':
             self._err('First line must start with V for version.')
+        if len(all_fields) != 2:
+            self._err('Too few fields in version line')
         version_string = all_fields[1]
         if version_string  != RuleScriptParser.VERSION:
             self._err('Your version <%s> not supported with this parser' %  \

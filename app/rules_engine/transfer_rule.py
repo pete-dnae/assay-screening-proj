@@ -24,11 +24,11 @@ class TransferRule:
         combinations.  The constructor will raise an IncompatibleTransferError
         when the combination is incompatible.
         """
-        self._source_plate = source_plate
-        self._s_cells = source_cells
-        self._d_cells = dest_cells
-        self._conc = conc
-        self._dilution_factor = dilution_factor
+        self.source_plate = source_plate
+        self.s_cells = source_cells
+        self.d_cells = dest_cells
+        self.conc = conc
+        self.dilution_factor = dilution_factor
         if not self._compatible():
             raise IncompatibleTransferError()
 
@@ -44,9 +44,9 @@ class TransferRule:
         """
 
         s_shape, s_width, s_height = RowColIntersections(
-                self._s_cells.rows, self._s_cells.cols).shape()
+                self.s_cells.rows, self.s_cells.cols).shape()
         d_shape, d_width, d_height = RowColIntersections(
-                self._d_cells.rows, self._d_cells.cols).shape()
+                self.d_cells.rows, self.d_cells.cols).shape()
 
         # Single source can be tranferred to any shape destination.
         if s_shape == RowColIntersections.SINGLE:
