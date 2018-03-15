@@ -27,6 +27,27 @@ li span {
     font-size: 18px;
     height: 1200px;
 }
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  /* margin-top: -10px;
+  margin-left: -10px; */
+  border-radius: 50%;
+  border: 1px solid #f6f;
+  border-top-color: #0e0;
+  border-right-color: #0dd;
+  border-bottom-color: #f90;
+  animation: spinner .6s linear infinite;
+}
 
 </style>
 
@@ -34,18 +55,20 @@ li span {
 
 <div>
     <div class="row">
-        <div id="editorwindow" class="col-5">
+        <div id="editorwindow" class="col-5 h-100">
           <div class="quill-wrapper">
             <div id="toolbar" class="toolbar ql-toolbar ql-snow">
                 <span class="ql-formats">
+                <div v-show="!showSpinner">
                   <button @click="handleFormat()" class="fa fa-align-justify"></button>
                   <label>Format</label>
+                </div>
+                  <span v-show="showSpinner" class="spinner "> <i class="fa fa-floppy-o">saving</i></span>
                 </span>
-
             </div>
-          </div>
-            <div id="editor" @keyup="EditorChange"></div>
 
+          </div>
+          <div id="editor" class="" @keyup="editorChange"></div>
         </div>
         <div class="col-5">
             <div class="row mt-3">
@@ -111,8 +134,8 @@ li span {
                 </div>
             </div>
         </div>
-        <span v-bind:style="tooltiptext" v-show="suggestions.length <5 && suggestions.length >1">
-    <ul>
+        <span v-bind:style="tooltiptext" v-show="showSuggestionToolTip">
+    <ul v-if="showSuggestionList">
     <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
     @click.middle="hideSuggestion()">
       {{text}}
@@ -120,6 +143,9 @@ li span {
     </ul>
     </span>
     </div>
+    <modal v-model="show" id="modal" @ok="handleReagentAdd" @keyup="handleReagentAdd">
+        Do you want to save "{{newReagent}}" to the database
+    </modal>
     </div>
 
 </template>

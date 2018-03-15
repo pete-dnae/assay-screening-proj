@@ -44,8 +44,15 @@ export const state = {
   version: 1,
   validScript: null,
   error: null,
+  versionStatisfied: false,
   suggestions: [],
   savedScript: null,
+  ruleScript: {
+    data: [],
+    isPosting: false,
+    posted: false,
+    didInvalidate: false,
+  },
   quillOptions: {
     debug: 'warn',
     modules: {
@@ -55,8 +62,17 @@ export const state = {
     theme: 'snow',
   },
 };
-
+const actions = {
+  saveToDb({ commit }) {
+    commit(types.POST_RULE_SCRIPT);
+  },
+};
 const mutations = {
+  [types.POST_RULE_SCRIPT](state) {
+    state.ruleScript.isPosting = true;
+    state.ruleScript.posted = false;
+    state.ruleScript.didInvalidate = false;
+  },
   [types.SET_CURRENT_PLATE_FROM_SCRIPT](state, value) {
     state.currentPlate = value;
   },
@@ -81,8 +97,17 @@ const mutations = {
   [types.SET_VALID_SCRIPT](state, data) {
     state.savedScript = data;
   },
+  [types.SET_VERSION_VERIFIED](state, value) {
+    state.versionStatisfied = value;
+  },
+  [types.ADD_REAGENT](state, value) {
+    state.reagents.push(value);
+  },
 };
 const getters = {
+  getVersionVerified(state, getters, rootState) {
+    return state.versionStatisfied;
+  },
   getQuillOptions(state, getters, rootState) {
     return state.quillOptions;
   },
@@ -107,10 +132,14 @@ const getters = {
   getSuggestions(state, getters, rootState) {
     return state.suggestions;
   },
+  getRuleIsScriptSaving(state, getters, rootState) {
+    return state.ruleScript.isPosting;
+  },
 };
 
 export default {
   state,
+  actions,
   mutations,
   getters,
 };

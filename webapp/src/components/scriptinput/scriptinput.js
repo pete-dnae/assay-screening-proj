@@ -4,23 +4,30 @@ import _ from 'lodash';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
-
+import { modal } from 'vue-strap';
 import { formatText, paintTable } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
 // import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
-import { validateText } from '@/models/editor2.0';
+import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
 
 export default {
   name: 'ScriptInputComponent',
+  components: {
+    modal,
+  },
   data() {
     return {
       msg: 'Welcome',
+      show: false,
       showToolTip: false,
       index: 0,
+      newReagent: null,
       image: null,
       rowCount: 8,
       colCount: 12,
+      showSuggestionList: false,
+      showSuggestionToolTip: false,
       tooltiptext: {
         visibility: 'visible',
         'max-height': '300px',
@@ -41,10 +48,11 @@ export default {
       version: 'getVersion',
       error: 'getError',
       parsedPlates: 'getparsedPlates',
-      reagents: 'getreagents',
-      units: 'getunits',
+      reagents: 'getReagents',
+      units: 'getUnits',
       currentPlate: 'getCurrentPlate',
       suggestions: 'getSuggestions',
+      showSpinner: 'getRuleIsScriptSaving',
     }),
   },
   watch: {
@@ -56,12 +64,22 @@ export default {
   },
   methods: {
     ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
-    EditorChange() {
-      const text = this.editor.getText();
-      this.alterToolTip(text);
-      this.$store.commit('CLEAR_ERROR', null);
-      validateText(text);
-      this.paintText();
+    editorChange(event) {
+      const cursorIndex = this.editor.getSelection().index;
+      const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
+      if (fields[1] && fields[0][0] === 'A') {
+        if (this.reagents.indexOf(fields[1][0]) === -1) {
+          const suggestions = this.reagents.filter(
+            (x) => x.indexOf(fields[1][0]) !== -1,
+          );
+          this.$store.commit('SET_SUGGESTIONS', suggestions);
+          this.alterToolTip(cursorIndex);
+          this.showSuggestionList = suggestions.length > 5;
+          this.showSuggestionToolTip = suggestions.length < 5;
+        }
+      }
+      hesitationTimer.cancel();
+      hesitationTimer(this.editor.getText());
     },
     paintText() {
       const textLength = this.editor.getText().length;
@@ -84,9 +102,7 @@ export default {
         );
       }
     },
-    alterToolTip() {
-      this.editor.focus();
-      const cursorIndex = this.editor.getSelection().index;
+    alterToolTip(cursorIndex) {
       const cursorLocation = this.editor.getBounds(cursorIndex);
       const parentBound = document
         .getElementsByClassName('ql-editor')[0]
@@ -96,15 +112,15 @@ export default {
         cursorLocation,
         parentBound,
       );
-      if (
-        this.suggestions &&
-        this.suggestions.length < 5 &&
-        this.suggestions.length >= 1
-      ) {
-        this.showToolTip = true;
-      } else {
-        this.showToolTip = false;
-      }
+    },
+    handleExcludeReagent(range) {
+      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
+      this.newReagent = this.editor
+        .getText()
+        .substr(currentStringStart, cursorIndex)
+        .replace('!', '');
+      this.show = true;
+      document.getElementById('modal').focus();
     },
     handleAutoCompleteClick(text) {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
@@ -115,14 +131,13 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
-
-      this.$store.commit('CLEAR_SUGGESTIONS');
     },
     highlightError() {
       this.editor.setSelection(this.error.startIndex, this.error.length);
     },
     hideSuggestion() {
-      this.$store.commit('CLEAR_SUGGESTIONS');
+      this.showSuggestionList = false;
+      this.showSuggestionToolTip = false;
     },
     getCurrentStringRange() {
       this.editor.focus();
@@ -140,6 +155,11 @@ export default {
       this.handleAutoCompleteClick(this.suggestions[this.index]);
       this.index += 1;
       this.index = this.suggestions[this.index] ? this.index : 0;
+      this.showSuggestionToolTip = false;
+    },
+    handleReagentAdd() {
+      this.$store.commit('ADD_REAGENT', this.newReagent);
+      this.show = false;
     },
     handleSelection(range, oldRange, source) {
       if (range && range.length > 1) {
@@ -165,8 +185,12 @@ export default {
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, (range) =>
       this.handleTab(range),
     );
+    this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, (range) =>
+      this.handleExcludeReagent(range),
+    );
     this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
       return new Delta().insert(node.data, { font: 'monospace' });
     });
+    this.editor.focus();
   },
 };
