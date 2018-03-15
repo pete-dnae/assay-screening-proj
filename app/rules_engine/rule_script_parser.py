@@ -137,7 +137,7 @@ class RuleScriptParser:
         try:
             t_rule = TransferRule(s_plate, 
                 RowColIntersections(s_rows, s_cols), 
-                RowColIntersections(d_rows, d_cols), conc_value, units)
+                RowColIntersections(d_rows, d_cols), conc_value)
         except IncompatibleTransferError:
             self._err('Shape of source rows/columns is incompatible with ' + \
                     'that of destination')

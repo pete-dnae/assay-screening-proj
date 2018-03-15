@@ -13,34 +13,56 @@ class TransferRuleTest(unittest.TestCase):
         # and dest cells without raising an exception.
 
         # Single -> Anything
-        TransferRule(
+        t = TransferRule(
             'src_plate', 
             RowColIntersections((1,), (1,)),
             RowColIntersections((1,2,3), (4,5,6)),
             20, 'dilution')
+        # Check random sample of dest->source mappings produced. Should all be 
+        # mappings back to source cell (1,1) in this case.
+        m = t.mapping
+        self.assertEqual(m[2][6], (1, 1))
 
         # Single row segment (4 cells), into rect spanning multiple rows, 
         # of width 4.
-        TransferRule(
+        t = TransferRule(
             'src_plate', 
             RowColIntersections((1,), (1,2,3,4)),
             RowColIntersections((1,2,3), (4,5,6,7)),
             20, 'dilution')
+        # TLHC of destination rect should map back to start of source strip.
+        # TRHC of destination rect should map back to end of source strip.
+        # BRHC of destination rect should map back to end of source strip.
+        m = t.mapping
+        self.assertEqual(m[1][4], (1, 1))
+        self.assertEqual(m[1][7], (1, 4))
+        self.assertEqual(m[3][7], (1, 4))
 
         # Single column segment (4 cells), into rect spanning multiple cols, 
         # of height 4.
-        TransferRule(
+        t = TransferRule(
             'src_plate', 
             RowColIntersections((1,2,3,4), (1,)),
             RowColIntersections((1,2,3,4), (4,5,6)),
             20, 'dilution')
+        m = t.mapping
+        # TLHC of destination rect should map back to start of source strip.
+        # TRHC of destination rect should map back to start of source strip.
+        # BRHC of destination rect should map back to end of source strip.
+        m = t.mapping
+        self.assertEqual(m[1][4], (1, 1))
+        self.assertEqual(m[1][6], (1, 1))
+        self.assertEqual(m[4][6], (4, 1))
 
         # Big rectangle 3 x 4 into another the same size.
-        TransferRule(
+        t = TransferRule(
             'src_plate', 
             RowColIntersections((1,2,3,), (4,5,6)),
             RowColIntersections((2,3,4), (5,6,7)),
             20, 'dilution')
+        m = t.mapping
+        # Arbitrary sample in the middle somewhere
+        self.assertEqual(m[3][6], (2, 5))
 
     def test_incompatible_combinations(self):
 

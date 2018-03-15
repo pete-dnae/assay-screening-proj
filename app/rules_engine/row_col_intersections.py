@@ -24,6 +24,14 @@ class RowColIntersections():
                 res.append((row, col))
         return res
 
+    def minimums(self):
+        """
+        Returns the minimum row number followed by the minimum
+        column number.
+        """
+        # Take advantage of them being sorted already.
+        return ((self.rows[0], self.cols[0]))
+
     def shape(self):
         """
         Returns one of SINGLE, RECT, AMORPHOUS. Followed by width and height.

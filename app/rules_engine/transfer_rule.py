@@ -1,3 +1,5 @@
+from pdb import set_trace as st
+
 from app.rules_engine.row_col_intersections import RowColIntersections
 
 class IncompatibleTransferError(Exception):
@@ -25,11 +27,15 @@ class TransferRule:
 
     After successful construction you can access a mapping for which source
     cells provides the source for any given destination cell in self.mapping.
+
+    self.mapping works like this: using (d) for destination and (s) for source.
+
+            self.mapping[d_row][d_col] = (s_row, s_col)
     """
 
 
-    def __init__(self, source_plate, source_cells, dest_cells, 
-            conc, dilution_factor):
+    def __init__(self, source_plate, source_cells, 
+            dest_cells, dilution_factor):
         """
         Provide the source and destination cells using one RowColIntersections
         object respectively. The constructor will raise an 
@@ -38,11 +44,7 @@ class TransferRule:
         self.source_plate = source_plate
         self.s_cells = source_cells
         self.d_cells = dest_cells
-        self.conc = conc
         self.dilution_factor = dilution_factor
-        # self.mapping works like this: using (d) for destination and (s)
-        # for source.
-        #   self.mapping[d_row][d_col] = (s_row, s_col)
         self.mapping = {}
         self._populate_mapping() # Can raise IncompatibleTransferError
 
@@ -117,22 +119,43 @@ class TransferRule:
     def _populate_as_row_seg_to_rect(self, s_cells, d_cells):
         """
         Populate self.mapping in the prior knowledge that the source cells 
-        is a horizontal strip, and the destination cells form a rectangle of
-        the same width.
+        comprise a horizontal strip, and the destination cells form a 
+        rectangle of the same width.
         """
-        s_shape, s_width, s_height = s_cells.shape()
-        d_shape, d_width, d_height = d_cells.shape()
-
-        # Capture which row the source strip is, and its col range.
-        s_row, s_first_col = s_cells.all_cells()[0]
-        _, s_last_col = s_cells.all_cells()[-1]
-
+        s_min_row, s_min_col = s_cells.minimums()
+        d_min_row, d_min_col = d_cells.minimums()
         # Populate the mapping for all the destination cells
         for d_row, d_col in d_cells.all_cells():
             columns = self.mapping.setdefault(d_row, {})
-            columns[d_col] = (s_row, d_col - s_first_col)
+            columns[d_col] = (s_min_row, s_min_col + d_col - d_min_col)
 
+    def _populate_as_col_seg_to_rect(self, s_cells, d_cells):
+        """
+        Populate self.mapping in the prior knowledge that the source cells 
+        comprise a vertical strip, and the destination cells form a 
+        rectangle of the same height.
+        """
+        s_min_row, s_min_col = s_cells.minimums()
+        d_min_row, d_min_col = d_cells.minimums()
+        # Populate the mapping for all the destination cells
+        for d_row, d_col in d_cells.all_cells():
+            columns = self.mapping.setdefault(d_row, {})
+            columns[d_col] = (s_min_row + d_row - d_min_row, s_min_col)
+            
 
+    def _populate_as_rect_to_rect(self, s_cells, d_cells):
+        """
+        Populate self.mapping in the prior knowledge that the source cells 
+        is a full rect, and the destination cells form a rectangle of
+        exactly the same shape..
+        """
+        # Populate the mapping for all the destination cells
+        s_min_row, s_min_col = s_cells.minimums()
+        d_min_row, d_min_col = d_cells.minimums()
+        for d_row, d_col in d_cells.all_cells():
+            columns = self.mapping.setdefault(d_row, {})
+            columns[d_col] = (s_min_row + d_row - d_min_row, 
+                    s_min_col + d_col - d_min_col)
 
 
 

@@ -38,7 +38,7 @@ class RuleInterpreterTest(unittest.TestCase):
         # the test should fail.
         alloc_table = interpreter.interpret()
 
-        # Smoke test for contents
+        # Sample the output where created with AllocRule(s)
         contents = alloc_table.data['Plate1'][1][2]
 
         reagent, conc, units = contents[0]
@@ -50,6 +50,15 @@ class RuleInterpreterTest(unittest.TestCase):
         self.assertEqual(reagent, '(Eco)-ATCC-BAA-2355')
         self.assertEqual(conc, 1.16)
         self.assertEqual(units, 'x')
+
+        # Sample the output where created with TransferRule(s)
+        contents = alloc_table.data['Plate42'][2][3]
+
+        reagent, conc, units = contents[0]
+        self.assertEqual(reagent, 'Transfer Plate42:Row-1:Col-2')
+        self.assertEqual(conc, 20.0)
+        self.assertEqual(units, 'dilution')
+
 
 def _trim_left(multiline_string):
     """
