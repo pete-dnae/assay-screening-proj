@@ -1,3 +1,5 @@
+/* eslint-disable */
+// enable eslint again if you are using this file
 import _ from 'lodash';
 import store from '@/store';
 export const getIndexOf = (text, itm) => {

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { splitLine, validateRule } from '@/models/editor2.0';
 // stuff about painting tables goes here
 export const formatText = (text) => {
-  var finalText = '';
+  let finalText = '';
   const lines = text.split('\n');
   const wordPositions = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [] };
   lines.forEach((x) => {
@@ -17,7 +17,8 @@ export const formatText = (text) => {
     wordPositions,
     (acc, x, i) => {
       if (!_.isEmpty(x)) {
-        let longWord = _.maxBy(x, (a) => a.length);
+        //eslint-disable-next-line
+        const longWord = _.maxBy(x, (a) => a.length);
 
         acc[i] = longWord.length;
       }
@@ -40,9 +41,11 @@ export const formatText = (text) => {
 export const getRowList = (rows) => {
   if (rows.indexOf('-') > -1) {
     return _.range(rows[0].charCodeAt(0), rows[2].charCodeAt(0) + 1).map(
+      //eslint-disable-next-line
       (x) => x - 65,
     );
   }
+  //eslint-disable-next-line
   return rows.split(',').map((x) => x.charCodeAt(0) - 65);
 };
 export const getColList = (cols) => {
@@ -53,6 +56,7 @@ export const getColList = (cols) => {
       parseInt(cols.substr(rangeCharIndex + 1, cols.length), 0),
     );
   }
+  //eslint-disable-next-line
   return cols.split(',').map((x) => parseInt(x, 0) - 1);
 };
 
@@ -74,31 +78,33 @@ export const paintTable = (DOMURL, tableSpec, startIndex, text) => {
   let tableBody = {};
   text.split('\n').forEach((line) => {
     const fields = splitLine(line);
-    validateRule(startIndex, fields, text);
-    const rows = getRowList(fields[3][0]);
-    const cols = getColList(fields[2][0]);
-    _.range(tableSpec.rows).forEach((row, i) => {
-      tableBody[i] = tableBody[i] ? tableBody[i] : [];
-      _.range(1, tableSpec.cols + 1).forEach((col, j) => {
-        if (rows.indexOf(i) !== -1 && cols.indexOf(j) !== -1) {
-          tableBody[i][j] =
-            '<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.2)"></td>';
-        } else {
-          tableBody[i][j] = tableBody[i][j] ? tableBody[i][j] : null;
-        }
+    if (fields[3] && fields[2]) {
+      const rows = getRowList(fields[3][0]);
+      const cols = getColList(fields[2][0]);
+      _.range(tableSpec.rows).forEach((row, i) => {
+        tableBody[i] = tableBody[i] ? tableBody[i] : [];
+        _.range(1, tableSpec.cols + 1).forEach((col, j) => {
+          if (rows.indexOf(i) !== -1 && cols.indexOf(j) !== -1) {
+            tableBody[i][j] =
+              '<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.2)"></td>';
+          } else {
+            tableBody[i][j] = tableBody[i][j] ? tableBody[i][j] : null;
+          }
+        });
       });
-    });
+    }
   });
 
   tableBody = _.reduce(
     tableBody,
     (acc, row) => {
-      let mapFill = row.map((x) => {
+      const mapFill = row.map((x) => {
         if (!x) {
           return '<td style="width:250px;border: 1px solid black"></td>';
         }
         return x;
       });
+      //eslint-disable-next-line
       acc += `<tr style="height:100px">${mapFill.join('')}</tr>`;
       return acc;
     },

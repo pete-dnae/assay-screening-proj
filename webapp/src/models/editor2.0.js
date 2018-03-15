@@ -1,14 +1,36 @@
 import store from '@/store';
+import _ from 'lodash';
 
+export const contactApi = () => {
+  store.dispatch('saveToDb');
+};
 export const splitLine = (text) => {
   const re = /\S+/g;
   const fields = [];
   let match;
+  //eslint-disable-next-line
   while ((match = re.exec(text))) {
     fields.push(match);
   }
   return fields;
 };
+export const removeAdditionalNewLine = (currentText) =>
+  currentText.slice(0, -1);
+
+export const getCurrentLineFields = (currentText, cursorPosition) => {
+  const currentLineStart = removeAdditionalNewLine(currentText)
+    .substr(0, cursorPosition)
+    .lastIndexOf('\n');
+
+  const currentLine = currentText.substr(
+    currentLineStart === -1 ? 0 : currentLineStart,
+    cursorPosition,
+  );
+  return splitLine(currentLine);
+};
+
+export const hesitationTimer = _.debounce(contactApi, 1000);
+
 export const fieldIndexRange = (lineStart, field) => {
   const startIndex = lineStart + field.index;
   const length = field[0].length;
@@ -32,6 +54,7 @@ export const validateVersion = (startIndex, fields, text) => {
     };
     throw err;
   }
+  store.commit('SET_VERSION_VERIFIED', true);
 };
 
 export const validateRowRange = (startIndex, fields) => {
@@ -112,26 +135,30 @@ export const validateRule = (startIndex, fields, text) => {
     };
     throw err;
   }
-  if (fields[0][0] === 'A') {
+  if (fields[0] && fields[0][0] === 'A') {
     if (fields[1]) {
       let err = {
         ...fieldIndexRange(startIndex, fields[1]),
         action: [{ color: 'red' }],
       };
-      const suggestions = store.getters.getReagents.filter(
-        (x) => x.indexOf(fields[1]) > -1,
-      );
-      store.commit('SET_SUGGESTIONS', suggestions);
-      if (_.isEmpty(suggestions)) {
-        err = { ...err, err: 'Reagent name doesnt match' };
-        throw err;
-      } else if (suggestions.length > 5) {
-        err = {
-          ...err,
-          err: `There are currently ${suggestions.length} matches `,
-        };
+      if (store.getters.getReagents.indexOf(fields[1][0]) === -1) {
+        const suggestions = store.getters.getReagents.filter(
+          //eslint-disable-next-line
+          (x) => x.indexOf(fields[1][0]) > -1,
+        );
 
-        throw err;
+        store.commit('SET_SUGGESTIONS', suggestions);
+        if (_.isEmpty(suggestions)) {
+          err = { ...err, err: 'Reagent name doesnt match' };
+          throw err;
+        } else if (suggestions.length > 1) {
+          err = {
+            ...err,
+            err: `There are currently ${suggestions.length} matches `,
+          };
+
+          throw err;
+        }
       }
     }
     validateColRange(startIndex, fields);
@@ -139,7 +166,7 @@ export const validateRule = (startIndex, fields, text) => {
     validateConcentration(startIndex, fields);
     validateUnits(startIndex, fields);
     validateFields(startIndex, fields, text);
-  } else if (fields[0][0] === 'T') {
+  } else if (fields[0] && fields[0][0] === 'T') {
     if (fields[1]) {
       let err = {
         ...fieldIndexRange(startIndex, fields[1]),
@@ -159,9 +186,25 @@ export const validateRule = (startIndex, fields, text) => {
     validateConcentration(startIndex, fields);
     validateUnits(startIndex, fields);
     validateFields(startIndex, fields, text);
+  } else {
+    const err = {
+      startIndex,
+      length: text.length,
+      err: 'first field not present',
+    };
+    throw err;
   }
 };
 export const validatePlate = (startIndex, fields, text) => {
+  if (!store.getters.getVersionVerified) {
+    const err = {
+      startIndex,
+      length: text.length,
+      action: [{ color: 'red' }],
+      err: 'Version not verified',
+    };
+    throw err;
+  }
   let err = { startIndex, length: text.length, action: [{ color: 'red' }] };
   if (fields.length !== 2) {
     err = {
