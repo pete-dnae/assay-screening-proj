@@ -25,13 +25,20 @@ class RuleScriptParserTest(unittest.TestCase):
         reagents = (
             'Titanium-Taq',
             '(Eco)-ATCC-BAA-2355',
-            '(Eco)-ATCC-BAA-2355')
+            '(Eco)-ATCC-BAA-9999')
         units = ('M/uL', 'x', 'dilution')
         parser = RuleScriptParser(reagents, units, script)
-        rules = parser.parse()
-
+        parser.parse()
         results = parser.results
-        self.assertEqual(len(results), 9999)
+
+        plate, rules = results.popitem()
+
+        self.assertEqual(plate, 'Plate42')
+        self.assertEqual(len(rules), 1)
+        rule = rules[0]
+        self.assertEqual(rule._source_plate, 'Plate1')
+        self.assertEqual(rule._s_cells.cols, [2])
+        self.assertEqual(rule._s_cells.rows, [1])
 
     @classmethod
     def trim_left(cls, multiline_string):

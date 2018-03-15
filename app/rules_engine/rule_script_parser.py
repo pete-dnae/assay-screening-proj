@@ -3,13 +3,10 @@ import re
 from pdb import set_trace as st
 
 from app.rules_engine.alloc_rule import AllocRule
-from app.rules_engine.alloc_rule import TransferRule
+from app.rules_engine.transfer_rule import TransferRule
+from app.rules_engine.row_col_intersections import RowColIntersections
 
 class ParseError(Exception):
-    """
-    An Exception that exists only to provide a specific type for the client 
-    to try/catch. Offers nothing more than the standard <Exception>.
-    """
     pass
 
 
@@ -67,7 +64,6 @@ class RuleScriptParser:
                 self.results[self._cur_plate].append(trans_rule)
             else:
                 self._err('Invalid rule type')
-        return results
 
     # -----------------------------------------------------------------------
     # Private below.
@@ -106,7 +102,9 @@ class RuleScriptParser:
         conc_value = self._parse_conc_value(conc)
         conc_units = units
         self._assert_units_are_known(units)
-        return AllocRule(reagent, cols, rows, conc, units)
+
+        return AllocRule(reagent, RowColIntersections(cols, rows), 
+                conc, units)
 
     def _parse_T_line(self, fields):
         """
@@ -126,9 +124,15 @@ class RuleScriptParser:
         conc_value = self._parse_conc_value(conc)
         conc_units = units
         self._assert_units_is_dilution(conc_units)
-        t_rule = TransferRule(
-            s_plate, s_cols, s_rows, d_cols, d_rows, conc, units)
-        self._assert_compatibility_of_source_with_dest(t_rule)
+        # The TransferRule raises exceptions if the source and destination
+        # row/columns are incompatible shapes.
+        try:
+            t_rule = TransferRule(s_plate, 
+                RowColIntersections(s_cols, s_rows), 
+                RowColIntersections(d_cols, d_rows), conc, units)
+        except IncompatibleTransferError:
+            self._err('Shape of source rows/columns is incompatible with ' + \
+                    'that of destination')
         return t_rule
 
     def _assert_version_in_first_line(self, lines):
@@ -234,7 +238,9 @@ class RuleScriptParser:
         """
         Interprets (with error handling) strings like these.
             'A-F' or 'A,B,C', or 'C'
-        Returns a flat list of what they represent. (As strings).
+        Returns a flat list of the letters that they represent - BUT NOT as
+        letters; instead the letters are converted to integers starting with
+        1 for 'A'.
         """
         # Range?
         m = _LETTER_RANGE_RE.match(cols_spec)
@@ -245,11 +251,13 @@ class RuleScriptParser:
         # Discrete list?
         elif ',' in cols_spec:
             as_list = cols_spec.split(',')
+            self._assert_letters(as_list, cols_spec)
 
         # Must now be single value
         else:
             as_list = cols_spec,
-        return as_list
+            self._assert_letters(as_list, cols_spec)
+        return [1 + ord(c) - ord('A') for c in as_list]
 
     def _parse_conc_value(self, conc):
         """
@@ -270,6 +278,12 @@ class RuleScriptParser:
             self._err('No fields to split')
         return fields[0], fields
 
+
+    def _assert_letters(self, seq, source_string):
+        for item in seq:
+            if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                self._err('Only letters allowed: <%s>' % source_string)
+
     def _err(self, message):
         """
         Raises ParseError, having added line number information to the message
@@ -277,11 +291,6 @@ class RuleScriptParser:
         """
         message += ', at line number %d' % self._lnum
         raise ParseError(message)
-
-    def _assert_compatibility_of_source_with_dest(self, transfer_rule):
-        if transfer_rule.source_and_destination_are_compatible(rows, columns):
-            return
-        self._err('Source rows and columns are incompatible with destination')
 
 
 _INT_RANGE_RE =re.compile(r'(\d+)-(\d+)$')

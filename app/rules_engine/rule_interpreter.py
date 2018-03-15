@@ -21,6 +21,7 @@ class AllocationResults():
     def add(self, row, col, reagent_name):
         self.rows[row].setdefault(col, []).append(reagent)
 
+
 class AllocRuleInterpreter:
     """
     This class owns the business logic that knows how to interpret a sequence

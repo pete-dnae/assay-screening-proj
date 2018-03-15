@@ -1,3 +1,8 @@
+from app.rules_engine.row_col_intersections import RowColIntersections
+
+class IncompatibleTransferError(Exception):
+    pass
+
 class TransferRule:
     """
     A transfer rule specifies rows and columns on an upstream *source* plate,
@@ -9,7 +14,8 @@ class TransferRule:
     """
 
 
-    def __init__(self, source_cells, dest_cells, conc, dilution_factor):
+    def __init__(self, source_plate, source_cells, dest_cells, 
+            conc, dilution_factor):
         """
         Provide the source and destination cells using one RowColIntersections
         object respectively.
@@ -18,6 +24,7 @@ class TransferRule:
         combinations.  The constructor will raise an IncompatibleTransferError
         when the combination is incompatible.
         """
+        self._source_plate = source_plate
         self._s_cells = source_cells
         self._d_cells = dest_cells
         self._conc = conc
@@ -30,25 +37,25 @@ class TransferRule:
     # Private below.
     #-----------------------------------------------------------------------
 
-    def _compatible(cls, rule):
+    def _compatible(self):
         """
         This class is only willing to accept some source->dest shape 
         combinations. This method reports if they are compatible.
         """
 
         s_shape, s_width, s_height = RowColIntersections(
-                rule.s_rows, rule.s_cols).shape()
+                self._s_cells.rows, self._s_cells.cols).shape()
         d_shape, d_width, d_height = RowColIntersections(
-                rule.d_rows, rule.d_cols).shape()
+                self._d_cells.rows, self._d_cells.cols).shape()
 
         # Single source can be tranferred to any shape destination.
         if s_shape == RowColIntersections.SINGLE:
             return True
 
         # Otherwise we required that BOTH the source and dest are rectangles.
-        if s_shape != RowColIntersections.RECT):
+        if s_shape != RowColIntersections.RECT:
             return False
-        if d_shape != RowColIntersections.RECT):
+        if d_shape != RowColIntersections.RECT:
             return False
 
         # From here on, we can depend on both source and dest being contiguous
