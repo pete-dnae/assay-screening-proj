@@ -10,6 +10,15 @@ o  Update rules interpreter to match
         *  Make test for Plate1[1]2] for two reagents
     o  Get rules interpreter to do something real with transfer rules
         o  What must a transfer in AllocationResults say?
+            *  from Plate1 2,3 at dilution 20
+            o  need help from transfer rule itself to answer for each dest
+               cell, what the source cell is
+                o  tdd up this first
+                    o  capture and store a copy-mapper inside TransferRule
+
+                    
+                    
+               
         o  Where should mapping of source/dest shapes go?
 o  Pare down the database and models to only the essentials needed and 
    anticipated
