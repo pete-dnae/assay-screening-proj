@@ -2,15 +2,21 @@
 *  Update parser to deal with new rules script spec
 *  Make the parser emit machine readable error messages
 *  Update rules interpreter to match
-o  Pare down the database and models to only the essentials needed and 
+*  Pare down the database and models to only the minimum needed and 
    anticipated
     *  Work out carefully what is needed and new wanted and list
     *  Ditch those to drop as rough pass
     *  Fix up experiment and rulesscript classes
-
-o  Upgrade utility scripts like db reset
+*  Upgrade utility scripts like db reset
+    *  app/management/commands
+    *  empty_app_tables
+    *  pop_with_ref
+    *  pop with simple (ditch)
+    *  reset db
+    *  reset db simple
 o  Replace make reference experiment with new one using script
-o  Replace make simple experiment similarly
+    *  Code make ref exp as wanted
+    o  Now ditch no longer modules in this directory
 o  Cut down views, serializer, end points to minimum required and make them
     o  List all experiments whose name includes XXX
     o  Get an experiment - leaving rules script only as link
@@ -22,6 +28,7 @@ o  Cut down views, serializer, end points to minimum required and make them
        type or is this part of general get alloc payload?
 o  Get rid of redundant unit tests, fix up those that remain, and add any
    required.
+o  Bring in reagent groups
 o  Bring in pools in every respect
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation

@@ -9,6 +9,8 @@ class Experiment(models.Model):
     Contains an experiment name and an allocation rules script.
     """
     experiment_name = models.CharField(max_length=80) 
+    # We use a foreign key for the rules script text to make sure that we can
+    # offer CRUD operations on a RulesScript independently.
     rules_script = models.ForeignKey(
         RulesScript, related_name='experiment_rule_script', 
         on_delete=models.PROTECT)
