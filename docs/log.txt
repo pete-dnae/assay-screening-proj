@@ -4,30 +4,45 @@
 *  Update rules interpreter to match
 o  Pare down the database and models to only the essentials needed and 
    anticipated
-    o  I think this means
-        o  Experiment
-        o  Known reagents
-        o  Mapping of reagents to categores
-        o  Binding of reagent_conc to pool names
+    *  Work out carefully what is needed and new wanted and list
+    o  Ditch those to drop as rough pass
+    o  Fix up experiment and rulesscript classes short of accepting replacement
+       rules
+
 o  Replace make reference experiment with new one using script
 o  Replace make simple experiment similarly
 o  Cut down views, serializer, end points to minimum required and make them
     o  List all experiments whose name includes XXX
-    o  Get an experiment - including rules script field
+    o  Get an experiment - leaving rules script only as link
     o  Get the allowed names for reagents grouped into their types
     o  Get the allowed units strings
     o  Accept a modified rules script and feedback parsed info and alloc
     o  Post a new reagent name with its type
     o  Get the allocation results for an experiment - for a specified reagent
-       type
-    o  Data query needed for Chris' script
+       type or is this part of general get alloc payload?
 o  Get rid of redundant unit tests, fix up those that remain, and add any
    required.
+o  Bring in pools in every respect
+o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
 o  Deploy
 
 ---------------------------------------------------------------------------
-Scratch
+Which models still required?
 ---------------------------------------------------------------------------
-Plate1:Row-3:Col-8 Dilution 20
+New
+    Reagent names and/in categories 
+    Pool names and contents (reagent name with conc)
+    Explose Rules collection separately to avoid overhead of having to get exp.
+
+Preserve
+    Experiment // has-a FK to a RulesScript
+    rule_models.py // rename to RulesScript
+
+Drop
+    odds and ends module
+    old_reagents module
+    primer_models module
+    reagents module
+    strain models module
