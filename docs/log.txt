@@ -5,10 +5,10 @@
 o  Pare down the database and models to only the essentials needed and 
    anticipated
     *  Work out carefully what is needed and new wanted and list
-    o  Ditch those to drop as rough pass
-    o  Fix up experiment and rulesscript classes short of accepting replacement
-       rules
+    *  Ditch those to drop as rough pass
+    *  Fix up experiment and rulesscript classes
 
+o  Upgrade utility scripts like db reset
 o  Replace make reference experiment with new one using script
 o  Replace make simple experiment similarly
 o  Cut down views, serializer, end points to minimum required and make them
