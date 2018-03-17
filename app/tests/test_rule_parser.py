@@ -3,6 +3,7 @@ from pdb import set_trace as st
 
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
+from app.model_builders.reference_rules_script import REFERENCE_RULES_SCRIPT
 
 class RuleScriptParserTest(unittest.TestCase):
 
@@ -11,23 +12,12 @@ class RuleScriptParserTest(unittest.TestCase):
 
     def test_example_from_language_spec(self):
 
-        script = RuleScriptParserTest.trim_left(
-        """ V ver-1
-            P Plate1
-            A Titanium-Taq              1-12  A-H 0.02 M/uL
-            A (Eco)-ATCC-BAA-2355       1,5,9 B   1.16 x
-            A (Eco)-ATCC-BAA-9999       2     C,D 1.16 x
-
-            # This is a comment
-            P Plate42
-            T Plate1 1 B                1-12  A-H   20 dilution
-        """)
         reagents = (
             'Titanium-Taq',
             '(Eco)-ATCC-BAA-2355',
             '(Eco)-ATCC-BAA-9999')
         units = ('M/uL', 'x', 'dilution')
-        parser = RuleScriptParser(reagents, units, script)
+        parser = RuleScriptParser(reagents, units, REFERENCE_RULES_SCRIPT)
         parser.parse()
         results = parser.results
 

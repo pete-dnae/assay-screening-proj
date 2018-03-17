@@ -38,15 +38,6 @@ urlpatterns = format_suffix_patterns(urlpatterns)
 router = routers.DefaultRouter()
 
 router.register(r'api/experiments', ExperimentViewSet)
-router.register(r'api/compositions', CompositionViewSet)
-router.register(r'api/measures', MeasureViewSet)
-router.register(r'api/genes', GeneViewSet)
-router.register(r'api/organisms', OrganismViewSet)
-router.register(r'api/primers', PrimerViewSet)
-router.register(r'api/primerpairs', PrimerPairViewSet)
-router.register(r'api/args', ArgViewSet)
-router.register(r'api/strains', StrainViewSet)
-router.register(r'api/cyclingpatterns', CyclingPatternViewSet)
-router.register(r'api/experiments', ExperimentViewSet)
+router.register(r'api/rule-scripts', RulesScriptViewSet)
 
 urlpatterns += router.urls

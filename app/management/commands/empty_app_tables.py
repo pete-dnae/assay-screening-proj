@@ -7,8 +7,8 @@ from app.models.rules_script_model import *
 # If A refers to B with a foreign key, then the A must be deleted first.
 
 _APP_MODEL_CLASSES = (
-    Experiment,
-    RulesScript,
+    ExperimentModel,
+    RulesScriptModel,
 )
 
 class EmptyAppTables():

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class RuleScript(models.Model):
+class RulesScriptModel(models.Model):
     """
     Little more than a big fat string. Holds the rules script as plan text.
     """
@@ -9,7 +9,7 @@ class RuleScript(models.Model):
 
     @classmethod
     def make(cls, text):
-        return RuleScript.objects.create(text = text)
+        return RulesScriptModel.objects.create(text = text)
 
     @classmethod
     def clone(cls,src):

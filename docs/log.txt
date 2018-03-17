@@ -14,21 +14,23 @@
     *  pop with simple (ditch)
     *  reset db
     *  reset db simple
-o  Replace make reference experiment with new one using script
+*  Replace make reference experiment with new one using script
     *  Code make ref exp as wanted
-    o  Now ditch no longer modules in this directory
+    *  Now ditch no longer modules in this directory
+*  Should be able to build database now and test reference experiment
 o  Cut down views, serializer, end points to minimum required and make them
-    o  List all experiments whose name includes XXX
-    o  Get an experiment - leaving rules script only as link
-    o  Get the allowed names for reagents grouped into their types
-    o  Get the allowed units strings
-    o  Accept a modified rules script and feedback parsed info and alloc
-    o  Post a new reagent name with its type
-    o  Get the allocation results for an experiment - for a specified reagent
-       type or is this part of general get alloc payload?
+    *  Check this list below from use cases
+    *  Get rid of no longer needed views, serializers and end points
+    o  Start working through those that remain and new ones needed
+    o  List all experiments
+    o  Get an experiment - providing rules script only as a link
+    o  CRUD on rulesscript(s) including machine readable parse errors and
+       results.
 o  Get rid of redundant unit tests, fix up those that remain, and add any
    required.
-o  Bring in reagent groups
+o  Bring in allowed reagent names and grouping and units
+o  New end point for selective results per type needed?
+o  Line number of script that requested each cell's allocation needed?
 o  Bring in pools in every respect
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
