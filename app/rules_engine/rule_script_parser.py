@@ -9,13 +9,17 @@ from app.rules_engine.row_col_intersections import RowColIntersections
 
 class ParseError(Exception):
 
-    def __init__(self, message, line_number):
+    def __init__(self, message, where_in_script):
+        """
+        The *where_in_script* parameter should be the index into the
+        entire script of the character the user should be directed to as the
+        location of the error. (To help GUI editors).
+        """
         super().__init__(message)
-        self._line_number = line_number
+        self._where_in_script = where_in_script
 
     def __str__(self):
-        return super().__str__() + (', at line: %d' % self._line_number)
-
+        return super().__str__() + (', at index: %d' % self._where_in_script)
 
 
 class RuleScriptParser:
@@ -28,59 +32,62 @@ class RuleScriptParser:
 
     def __init__(self, reagents, units, script):
         """
-        Inputs:
         Provide in *reagents* a sequence of allowed reagent names.
-        Similarly for *units*.
-        Provide in *script* the input text as one big string.
-
-        Outputs:
-        Populates self.results - an OrderedDict keyed on plate name.
-        The values are sequences of mixed AllocRule and TransferRule 
-        objects. 
+        Similarly for *units*.  Provide in *script* the input text as one big
+        string.  
         """
         self._available_reagents = reagents
         self._available_units = units
         self._script = script
         self._cur_plate = None
-        self._lnum = None
         self._version = None
+
+        self._parse_posn = _ParsePosn()
+        self._fields = None # Is-a _LineFields
+
         self.results = OrderedDict()
+
 
     def parse(self):
         """
-        If the input is legitimate, runs to completion and populates
-        self.results. Else raises ParseError.
+        If there are syntax errors, raises ParseError. Otherwise,
+        populates self.results - an OrderedDict keyed on plate name.  The
+        values are sequences of mixed AllocRule and TransferRule objects.
         """
         lines = self._script.splitlines()
-        self._lnum = 1
-        self._assert_version_in_first_line(lines)
 
-        for i, line in enumerate(lines):
-            self._lnum = i + 2
-            if self._comment_or_blank(line):
+        for line_index, line in enumerate(lines):
+            self._parse_posn.starting_new_line(line_index, line)
+            self._fields = _Fields(self.line.split())
+
+            if self._comment_or_blank_line():
                 continue
-            first_field, all_fields = self._extract_fields(line)
-            if first_field == 'V':
-                continue
-            if first_field == 'P':
-                self._register_plate(all_fields)
-            elif first_field == 'A':
-                alloc_rule = self._parse_A_line(all_fields)
+
+            # todo demand on line number 1 that is good version line
+            # then continue
+
+            # todo after that regard V as unknown line type
+
+            seeking = 'First Letter'
+            if self._fields.field(0, seeking) == 'P':
+                self._register_plate()
+            elif self._fields.field(0, seeking) == 'A':
+                alloc_rule = self._parse_alloc_line()
                 self.results[self._cur_plate].append(alloc_rule)
-            elif first_field == 'T':
-                trans_rule = self._parse_T_line(all_fields)
+            elif self._fields.field(0, seeking) == 'T':
+                trans_rule = self._parse_transfer_line()
                 self.results[self._cur_plate].append(trans_rule)
             else:
-                self._err('Invalid rule type')
+                self._err('Line must start with one of the letters A|T|P")
 
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
 
-    def _comment_or_blank(self, line):
-        if len(line.strip()) == 0:
+    def _comment_or_blank(self):
+        if len(self._parse_posn.line.strip()) == 0:
             return True
-        if line.startswith('#'):
+        if self._parse_posn.line.startswith('#'):
             return True
         return False
 
@@ -90,25 +97,30 @@ class RuleScriptParser:
         plate name as a key in the results data structure, and that this is 
         now the *current* plate.
         """
-        self._assert_there_are_n_fields(fields, 2)
-        plate_name = fields[1]
+        plate_name = self._fields.field(1, 'Plate name')
         self._assert_plate_is_new(plate_name)
         self.results[plate_name] = []
         self._cur_plate = plate_name
 
-    def _parse_A_line(self, fields):
+    def _parse_allocation_line(self):
         """
         Parses and validates an 'A' line, storing the results in the results
         in self.results.
         """
         self._assert_a_plate_is_defined()
-        self._assert_there_are_n_fields(fields, 6)
-        letter, reagent, rows, cols, conc, units = fields
+
+        reagent = self._fields.field(1, 'Reagent')
+        rows = self._fields.field(2, 'Rows specification')
+        cols = self._fields.field(3, 'Columns specification')
+        conc = self._fields.field(4, 'Concentration')
+        units = self._fields.field(5, 'Concentration units')
+
         self._assert_reagent_is_known(reagent)
         rows = self._parse_row_spec(rows)
         cols = self._parse_col_spec(cols)
         conc_value = self._parse_conc_value(conc)
         conc_units = units
+
         self._assert_units_are_known(units)
 
         return AllocRule(reagent, RowColIntersections(rows, cols), 
@@ -120,18 +132,25 @@ class RuleScriptParser:
         in self.results.
         """
         self._assert_a_plate_is_defined()
-        self._assert_a_plate_is_defined()
-        self._assert_there_are_n_fields(fields, 8)
         # s for source, d for destination
-        letter, s_plate, s_rows, s_cols, d_rows, d_cols, conc, units = fields
+
+        s_plate = self._fields.field(1, 'Source plate name')
+        s_rows = self._fields.field(2, 'Source rows')
+        s_cols = self._fields.field(3, 'Source columns')
+        conc = self._fields.field(4, 'Concentration')
+        units = self._fields.field(5, 'Concentration units')
+
         self._assert_plate_is_known(s_plate)
+
         s_rows = self._parse_row_spec(s_rows)
         s_cols = self._parse_col_spec(s_cols)
         d_rows = self._parse_row_spec(d_rows)
         d_cols = self._parse_col_spec(d_cols)
         conc_value = self._parse_conc_value(conc)
         conc_units = units
+
         self._assert_units_is_dilution(conc_units)
+
         # The TransferRule raises exceptions if the source and destination
         # row/columns are incompatible shapes.
         try:
@@ -140,33 +159,15 @@ class RuleScriptParser:
                 RowColIntersections(d_rows, d_cols), conc_value)
         except IncompatibleTransferError:
             self._err('Shape of source rows/columns is incompatible with ' + \
-                    'that of destination')
+                    'that of destination.')
         return t_rule
-
-    def _assert_version_in_first_line(self, lines):
-        """
-        Demands that the first line in the script is a version declaration, 
-        and that the version matches with the version this parser is written
-        for.
-        """
-        if len(lines) == 0:
-            self._err('No lines present in input')
-        first_field, all_fields = self._extract_fields(lines[0])
-        if first_field != 'V':
-            self._err('First line must start with V for version.')
-        if len(all_fields) != 2:
-            self._err('Too few fields in version line')
-        version_string = all_fields[1]
-        if version_string  != RuleScriptParser.VERSION:
-            self._err('Your version <%s> not supported with this parser' %  \
-                    version_string)
 
     def _assert_a_plate_is_defined(self):
         """
         Demands that a *current* plate is defined in the parser state.
         """
         if self._cur_plate is None:
-            self._err('No plate is defined yet')
+            self._err('You must define a plate before this.')
 
     def _assert_plate_is_new(self, plate_name):
         """
@@ -175,7 +176,7 @@ class RuleScriptParser:
         """
         known_plates = self.results.keys()
         if plate_name in known_plates:
-            self._err('Plate name been used before (%s)' % plate_name)
+            self._err('This plate name been used before.', plate_name)
 
     def _assert_plate_is_known(self, plate_name):
         """
@@ -184,15 +185,6 @@ class RuleScriptParser:
         """
         return plate_name in self.results.keys()
 
-    def _assert_there_are_n_fields(self, fields, n):
-        """
-        Demands that there the number of fields present is <n>.
-        """
-        found = len(fields)
-        if len(fields) != n:
-            self._err('Should be %d fields, not %d' % (n, found))
-
-
     def _assert_reagent_is_known(self, reagent):
         """
         Demands tha the reagent is one of the reagenets provided at
@@ -200,7 +192,7 @@ class RuleScriptParser:
         """
         if reagent in self._available_reagents:
             return
-        self._err('Unknown reagent <%s>' % reagent)
+        self._err('Unknown reagent', reagent)
 
     def _assert_units_are_known(self, units):
         """
@@ -209,7 +201,7 @@ class RuleScriptParser:
         """
         if units in self._available_units:
             return
-        self._err('Unknown units <%s>' % units)
+        self._err('Unknown units', units)
 
 
     def _assert_units_is_dilution(self, conc_units):
@@ -217,7 +209,7 @@ class RuleScriptParser:
         Demands that the units is 'dilution'
         """
         if conc_units != 'dilution':
-            self._err('Units for a transfer must be <dilution>')
+            self._err('Units for a transfer must be <dilution>', conc_units)
 
     def _parse_row_spec(self, rows_spec):
         """
@@ -241,7 +233,8 @@ class RuleScriptParser:
         try:
             as_list = [int(s) for s in as_list]
         except ValueError:
-            self._err('Problem with int() conversion in: <%s>' % rows_spec)
+            self._err('Struggling with a non-number in rows specification', 
+                    rows_spec)
         return as_list
 
     def _parse_col_spec(self, cols_spec):
@@ -276,30 +269,78 @@ class RuleScriptParser:
         try:
             return float(conc)
         except ValueError:
-            self._err('Problem with float() conversion in: <%s>' % conc)
-
-    def _extract_fields(self, line):
-        """
-        Separates the lines into fields and provides (as 2 returned values),
-        the first field, and then all-fields.
-        """
-        fields = line.split()
-        if len(fields) == 0:
-            self._err('No fields to split')
-        return fields[0], fields
-
+            self._err('Cannot convert concentration to a number', conc)
 
     def _assert_letters(self, seq, source_string):
+        """
+        Demand that all the strings provided in *seq* are capital letters.
+        """
         for item in seq:
             if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                self._err('Only letters allowed: <%s>' % source_string)
+                self._err('Only letters allowed in columns specification', 
+                        source_string)
 
-    def _err(self, message):
+    def _err(self, basic_message, culprit_string=None):
         """
-        Raises ParseError, having furnished line number.
+        Raises ParseError, having automatically added parsing position info.
+
+        The *culprit_string* parameter is optional. When you provide a non
+        empty one, this will be included in the error message, and it will also
+        be used to deduce whereabouts on the line the error occurs so this also
+        can be reported..
         """
-        raise ParseError(message, self._lnum)
+        # Add line number to the error message.
+        basic_message += (' Line %d.' % self._parse_posn.line_index + 1)
+
+        position_in_script = self._chars_in_script_preceding(
+                self._parse_posn.line_index)
+
+        # If *culprit_string* is given, we can add a character number too.
+        if culprit_string:
+            index_in_line = self._parse_posn.line.find(sub)
+            basic_message += ' Character %d.' % (index_in_line + 1)
+            position_in_script = position_in_script + index_in_line
+
+        raise ParseError(basic_message, position_in_script)
 
 
+class _ParsePosn():
+    """
+    Models how far through the script the parser has reached - mainly for
+    error reporting.
+    """
+
+    def __init__(self):
+        self.line_index = None # Zero based.
+        self.line = None # Line contents
+
+    def starting_new_line(self, line_index, line):
+        self.line_index = lnum
+        self.line = line
+
+
+class _LineFields():
+    """
+    Models the fields in a line.
+    """
+
+    def __init__(self, strings):
+        self.strings = strings
+
+    def field(self, field_index, name):
+        """
+        Provides the n'th field inside self._fields if there is one.
+        (Zero-based). Otherwise raises ParseError, including the name string 
+        passed in.
+        """
+        the_string = self._fields.strings.get(n, None)
+        if the_string is not None:
+            return the_string
+
+        self._err(
+            'Field number %d (%s) is missing' % \ 
+                    (field_num, name_of_field_for_error_report))
+
+_WORD_RE = re.compile(r'\S+')
 _INT_RANGE_RE =re.compile(r'(\d+)-(\d+)$')
 _LETTER_RANGE_RE =re.compile(r'([A-Z])-([A-Z])$')

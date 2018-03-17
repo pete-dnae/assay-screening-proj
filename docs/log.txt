@@ -24,6 +24,14 @@ o  Cut down views, serializer, end points to minimum required and make them
     o  Start working through those that remain and new ones needed
         *  Do all basic CRUD ops work for experiment and rulesScript? = yes
         o  Get parse results for a script
+            o  Upgrade error reporting to include index into whole text
+                *  Design how add to current implementation
+                *  Code it
+                o  Fix up the unit test for parser
+                    o  Get it to run without error
+                    o  Add test for linenumber, column and script posn
+                    o  Add scrutiny of each exception
+                o  Fix up the unit test for interpreter if changes
         o  Get allocation results for a script separate?
 o  Get rid of redundant unit tests, fix up those that remain, and add any
    required.
@@ -37,20 +45,14 @@ o  Plan and prepare for deployment
 o  Deploy
 
 ---------------------------------------------------------------------------
-Which models still required?
+Keep char index
 ---------------------------------------------------------------------------
-New
-    Reagent names and/in categories 
-    Pool names and contents (reagent name with conc)
-    Explose Rules collection separately to avoid overhead of having to get exp.
+What to serialize back to user:
 
-Preserve
-    Experiment // has-a FK to a RulesScript
-    rule_models.py // rename to RulesScript
+Human readable message like this:
 
-Drop
-    odds and ends module
-    old_reagents module
-    primer_models module
-    reagents module
-    strain models module
+    <Some detailed problem> at character 12 line 99.
+
+Machine readable index into script
+
+    index: 342
