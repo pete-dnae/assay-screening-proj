@@ -22,10 +22,9 @@ o  Cut down views, serializer, end points to minimum required and make them
     *  Check this list below from use cases
     *  Get rid of no longer needed views, serializers and end points
     o  Start working through those that remain and new ones needed
-    o  List all experiments
-    o  Get an experiment - providing rules script only as a link
-    o  CRUD on rulesscript(s) including machine readable parse errors and
-       results.
+        *  Do all basic CRUD ops work for experiment and rulesScript? = yes
+        o  Get parse results for a script
+        o  Get allocation results for a script separate?
 o  Get rid of redundant unit tests, fix up those that remain, and add any
    required.
 o  Bring in allowed reagent names and grouping and units
