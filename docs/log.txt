@@ -27,11 +27,11 @@ o  Cut down views, serializer, end points to minimum required and make them
             o  Upgrade error reporting to include index into whole text
                 *  Design how add to current implementation
                 *  Code it
-                o  Fix up the unit test for parser
+                *  Fix up the unit test for parser
                     *  Get it to run without error
                     *  Add test for linenumber, column and script posn in error
-                    o  Add scrutiny of each exception
-                    o  Add test that version comes first and is present
+                    *  Add scrutiny of each exception
+                    *  Add test that version comes first and is present
                 o  Fix up the unit test for interpreter if changes
         o  Get allocation results for a script separate?
 o  Get rid of redundant unit tests, fix up those that remain, and add any
