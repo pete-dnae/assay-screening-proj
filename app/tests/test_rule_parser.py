@@ -3,7 +3,7 @@ from pdb import set_trace as st
 
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
-from app.model_builders.reference_rules_script import REFERENCE_RULES_SCRIPT
+from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
 
 class RuleScriptParserTest(unittest.TestCase):
 
@@ -11,13 +11,7 @@ class RuleScriptParserTest(unittest.TestCase):
         pass
 
     def test_example_from_language_spec(self):
-
-        reagents = (
-            'Titanium-Taq',
-            '(Eco)-ATCC-BAA-2355',
-            '(Eco)-ATCC-BAA-9999')
-        units = ('M/uL', 'x', 'dilution')
-        parser = RuleScriptParser(reagents, units, REFERENCE_RULES_SCRIPT)
+        parser = RuleScriptParser(STD_REAGENTS, STD_UNITS, REFERENCE_SCRIPT)
         parser.parse()
         results = parser.results
 
@@ -36,10 +30,9 @@ class RuleScriptParserTest(unittest.TestCase):
         self.assertEqual(rule.s_cells.cols, [2])
         self.assertEqual(rule.d_cells.rows, [1,2,3,4,5,6,7,8,9,10,11,12])
         self.assertEqual(rule.d_cells.cols, [1,2,3,4,5,6,7,8])
-        self.assertEqual(rule.conc, 20)
-        self.assertEqual(rule.dilution_factor, 'dilution')
+        self.assertEqual(rule.dilution_factor, 20)
 
-        # Move on to the second plate
+        # Move back to the first plate
 
         plate, rules = results.popitem()
 
@@ -55,14 +48,31 @@ class RuleScriptParserTest(unittest.TestCase):
         self.assertEqual(rule.conc, 1.16)
         self.assertEqual(rule.units, 'x')
 
-    @classmethod
-    def trim_left(cls, multiline_string):
-        """
-        Take a big string likely produced from a triple quoted string
-        constant, and return a modified version, from which the leading spaces
-        at the start of each line has been removed.
-        """
-        lines = multiline_string.split('\n')
-        lines = (l.strip() for l in lines)
-        return '\n'.join(lines)
+    def test_error_wrong_letter_at_start_of_line(self):
+        modified_script = REFERENCE_SCRIPT.replace('A Titani', 'N Titani')
+        parser = RuleScriptParser(STD_REAGENTS, STD_UNITS, modified_script)
+        with self.assertRaises(ParseError) as cm:
+            parser.parse()
+        e = cm.exception
+        self.assertEqual(e.message,
+            'Line must start with one of the letters V|P|A|T. Line 3.')
+        self.assertEqual(e.where_in_script, 17)
 
+    def test_error_wrong_version(self):
+        modified_script = REFERENCE_SCRIPT.replace('ver-1', 'fibble')
+        parser = RuleScriptParser(STD_REAGENTS, STD_UNITS, modified_script)
+        with self.assertRaises(ParseError) as cm:
+            parser.parse()
+        e = cm.exception
+        self.assertEqual(e.message,
+            'Your script version is not recognized by this parser. ' + \
+            'Line 1. Character 3.')
+        self.assertEqual(e.where_in_script, 2)
+
+
+STD_REAGENTS = (
+            'Titanium-Taq',
+            '(Eco)-ATCC-BAA-2355',
+            '(Eco)-ATCC-BAA-9999')
+
+STD_UNITS = ('M/uL', 'x', 'dilution')

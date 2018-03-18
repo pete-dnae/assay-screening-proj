@@ -1,5 +1,5 @@
-REFERENCE_RULES_SCRIPT = """
-V ver-1
+REFERENCE_SCRIPT = \
+"""V ver-1
 P Plate1
 A Titanium-Taq              1-12  A-H 0.02 M/uL
 A (Eco)-ATCC-BAA-2355       1,5,9 B   1.16 x

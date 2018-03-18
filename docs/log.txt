@@ -28,9 +28,10 @@ o  Cut down views, serializer, end points to minimum required and make them
                 *  Design how add to current implementation
                 *  Code it
                 o  Fix up the unit test for parser
-                    o  Get it to run without error
-                    o  Add test for linenumber, column and script posn
+                    *  Get it to run without error
+                    *  Add test for linenumber, column and script posn in error
                     o  Add scrutiny of each exception
+                    o  Add test that version comes first and is present
                 o  Fix up the unit test for interpreter if changes
         o  Get allocation results for a script separate?
 o  Get rid of redundant unit tests, fix up those that remain, and add any
