@@ -3,6 +3,8 @@ This module contains the principal RuleScriptParser class, in addition to a
 dedicated ParseError exception class. Plus some private helper classes.
 """
 
+from pdb import set_trace as st
+
 from collections import OrderedDict
 import re
 
@@ -397,9 +399,6 @@ class ParseError(Exception):
         """
         self.message = message
         self.where_in_script = where_in_script
-
-    def __str__(self):
-        return message + (' At script position: %d' % self._where_in_script)
 
 
 _INT_RANGE_RE =re.compile(r'(\d+)-(\d+)$')

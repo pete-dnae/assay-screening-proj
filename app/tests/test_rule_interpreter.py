@@ -4,7 +4,7 @@ from pdb import set_trace as st
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
 from app.rules_engine.rule_interpreter import RuleInterpreter
-from app.model_builders.reference_rules_script import REFERENCE_RULES_SCRIPT
+from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
 
 class RuleInterpreterTest(unittest.TestCase):
 
@@ -17,7 +17,7 @@ class RuleInterpreterTest(unittest.TestCase):
             '(Eco)-ATCC-BAA-2355',
             '(Eco)-ATCC-BAA-9999')
         units = ('M/uL', 'x', 'dilution')
-        parser = RuleScriptParser(reagents, units, REFERENCE_RULES_SCRIPT)
+        parser = RuleScriptParser(reagents, units, REFERENCE_SCRIPT)
         parser.parse()
         machine_readable_rules = parser.results
 

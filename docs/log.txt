@@ -18,22 +18,16 @@
     *  Code make ref exp as wanted
     *  Now ditch no longer modules in this directory
 *  Should be able to build database now and test reference experiment
-o  Cut down views, serializer, end points to minimum required and make them
-    *  Check this list below from use cases
-    *  Get rid of no longer needed views, serializers and end points
-    o  Start working through those that remain and new ones needed
-        *  Do all basic CRUD ops work for experiment and rulesScript? = yes
-        o  Get parse results for a script
-            o  Upgrade error reporting to include index into whole text
-                *  Design how add to current implementation
-                *  Code it
-                *  Fix up the unit test for parser
-                    *  Get it to run without error
-                    *  Add test for linenumber, column and script posn in error
-                    *  Add scrutiny of each exception
-                    *  Add test that version comes first and is present
-                o  Fix up the unit test for interpreter if changes
-        o  Get allocation results for a script separate?
+o  New endpoint to get() parser response to script plain text
+    *  Design end point name and contract
+    o  Change mind - do as read only fields on rules script itself
+        *  Ditch dedicated end point
+        *  Try adding a SerializerMethodField read_only
+        o  Build the parse/interpret pipeline and return ParseError
+        o  Now add allocation results
+            *  Make and test parse and interpret class in rules engine
+
+
 o  Get rid of redundant unit tests, fix up those that remain, and add any
    required.
 o  Bring in allowed reagent names and grouping and units
@@ -46,14 +40,19 @@ o  Plan and prepare for deployment
 o  Deploy
 
 ---------------------------------------------------------------------------
-Keep char index
+Parse results
 ---------------------------------------------------------------------------
-What to serialize back to user:
 
-Human readable message like this:
+get rules-parse(script)
 
-    <Some detailed problem> at character 12 line 99.
+input
+    script as text
+output
+    {
+        'error': {
+        }
+        'wells': {
+        }
+    }
+    
 
-Machine readable index into script
-
-    index: 342

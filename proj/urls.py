@@ -25,12 +25,6 @@ from app.views import *
 # URL config for custom views.
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
-
-    # Contrary to the documentation, it seems that we must set the name kwarg
-    # explicitly to enable reverse-url lookups to work - when they are required
-    # by HyperlinkedModelSerializer nested serializer fields.
-    # re_path(r'^api/rulelist-detail/(?P<pk>[0-9]+)/$',
-    #     RuleListDetail.as_view(), name='rulelist-detail'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 
