@@ -1,31 +1,7 @@
-*  Work Plan - Back End from 8th March 2018
-*  Update parser to deal with new rules script spec
-*  Make the parser emit machine readable error messages
-*  Update rules interpreter to match
-*  Pare down the database and models to only the minimum needed and 
-   anticipated
-    *  Work out carefully what is needed and new wanted and list
-    *  Ditch those to drop as rough pass
-    *  Fix up experiment and rulesscript classes
-*  Upgrade utility scripts like db reset
-    *  app/management/commands
-    *  empty_app_tables
-    *  pop_with_ref
-    *  pop with simple (ditch)
-    *  reset db
-    *  reset db simple
-*  Replace make reference experiment with new one using script
-    *  Code make ref exp as wanted
-    *  Now ditch no longer modules in this directory
-*  Should be able to build database now and test reference experiment
-*  Add rules inerpretation to serialization of rules script
-
-
-o  Get rid of redundant unit tests, fix up those that remain, and add any
+o  Get rid of obsolete unit tests, fix up those that remain, and add any
    required.
-o  Bring in allowed reagent names and grouping and units
-o  New end point for selective results per type needed?
-o  Line number of script that requested each cell's allocation needed?
+o  Provide as is now to Prasanna
+o  Bring in CRUD for allowed reagent names and grouping and units
 o  Bring in pools in every respect
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
