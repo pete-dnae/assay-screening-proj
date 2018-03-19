@@ -18,14 +18,7 @@
     *  Code make ref exp as wanted
     *  Now ditch no longer modules in this directory
 *  Should be able to build database now and test reference experiment
-o  New endpoint to get() parser response to script plain text
-    *  Design end point name and contract
-    o  Change mind - do as read only fields on rules script itself
-        *  Ditch dedicated end point
-        *  Try adding a SerializerMethodField read_only
-        o  Build the parse/interpret pipeline and return ParseError
-        o  Now add allocation results
-            *  Make and test parse and interpret class in rules engine
+*  Add rules inerpretation to serialization of rules script
 
 
 o  Get rid of redundant unit tests, fix up those that remain, and add any
