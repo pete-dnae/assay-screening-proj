@@ -1,6 +1,8 @@
-o  Get rid of obsolete unit tests, fix up those that remain, and add any
+*  Provide as is now to Prasanna
+*  Get rid of obsolete unit tests, fix up those that remain, and add any
    required.
-o  Provide as is now to Prasanna
+    *  Fix up read only system test
+    *  Make a rules script write test with error reporting
 o  Bring in CRUD for allowed reagent names and grouping and units
 o  Bring in pools in every respect
 o  Provide endpoint that Chris' script needs

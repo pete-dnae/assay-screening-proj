@@ -1,9 +1,11 @@
+from pdb import set_trace as st
+
+
 from rest_framework.test import APIClient
 from rest_framework.test import APITestCase
 
 
 from app.model_builders.make_ref_exp import ReferenceExperiment
-from app.serializers import DetailExperimentSerializer
 
 class HighLevelSystemSmokeTest(APITestCase):
     """
@@ -26,25 +28,47 @@ class HighLevelSystemSmokeTest(APITestCase):
         experiment = ReferenceExperiment()
         experiment.create()
 
-    def test_experiment_endpoint(self):
+    def test_typical_read_only_use_case(self):
         """
-        If we can retreive the reference experiment from its API endpoint and
-        it passes even the slightest scrutiny, we have built a reference
-        database from the ground up, it shows the models are self-consistent to
-        a large degree, and that the ExperimentSerializer is bascically
-        working. This will have covered probably 80% of the code just in
-        itself.
+        We'll try to GET the reference experiment from its end point.
+        Look up its rules script URL and GET that.
+        Then inspect the interpreted rules that come back from the rules script
+        endpoint to check that they properly populate some arbitrarily chosen 
+        cell.
+        This will prove that:
+            o  we have built a reference database from the ground up
+            o  the models are self-consistent to a large degree
+            o  the rules script parser and interpreter sub system is working
+            o  the Experiment and RulesScript serialisers are working.
+            o  the url / view / serializer plumbing is set up right
         """
         client = APIClient()
-        response = client.get('/api/experiments/1/')
+        experiment_response = client.get('/api/experiments/1/')
+        rules_script_url = experiment_response.data['rules_script']
 
-        # Let's drill down to an arbitrarily chosen rule.
-        plate_1 = response.data['plates'][0]
-        alloc_instr = plate_1['allocation_instructions']
-        rule_list = alloc_instr['rule_list']
-        rules = rule_list['rules']
-        a_rule = rules[1]
-        display_string = a_rule['display_string']
+        rules_script_response = client.get(rules_script_url)
+        json = rules_script_response.data
+        interp_results = json['interpretation_results']
+        alloc = interp_results['allocation']
+        data = alloc['data']
+        plate = data['Plate1']
+        row = plate[1]
+        cell = row[2]
 
-        self.assertEqual(display_string, 
-            'Strain, ATCC 700802,Rows:A-H, Cols:4-8')
+        self.assertEqual(cell[0], ('Titanium-Taq', 0.02, 'M/uL'))
+        self.assertEqual(cell[1], (('(Eco)-ATCC-BAA-2355', 1.16, 'x')))
+
+    def test_put_rules_script_with_error_in_it(self):
+        """
+        We'll try to PUT to a rules script end point, with a script that has
+        a syntax error in it. This will show that the end point provides a
+        properly formed response that describes the syntax error.
+        """
+        client = APIClient()
+        post_data = {'text': 'I am a malformed rules script'}
+        resp = client.put('/api/rule-scripts/1/', post_data, format='json')
+
+        message = resp.data['interpretation_results']['parse_error']['message']
+
+        self.assertEqual(message, 
+            'Line must start with one of the letters V|P|A|T. Line 1.')

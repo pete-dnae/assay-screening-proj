@@ -58,11 +58,6 @@ class RuleScriptParser:
             if self._comment_or_blank_line():
                 continue
 
-            # todo demand on line number 1 that is good version line
-            # then continue
-
-            # todo after that regard V as unknown line type
-
             seeking = 'First Letter'
             if self._fields.field(0, seeking) == 'V':
                 self._register_version()
@@ -374,8 +369,8 @@ class _LineFields():
     def field(self, field_index, name):
         """
         Returns the n'th field inside self._fields if there is one.
-        (Zero-based). Otherwise raises ParseError, including the field name 
-        string passed in.
+        (Zero-based). Otherwise calls your error reporting callback with a
+        message including the field name string passed in.
         """
         # Too few fields present?
         if field_index >= len(self.strings):
