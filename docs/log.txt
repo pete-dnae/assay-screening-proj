@@ -1,8 +1,10 @@
 *  Provide as is now to Prasanna
 *  Get rid of obsolete unit tests, fix up those that remain, and add any
    required.
-    *  Fix up read only system test
-    *  Make a rules script write test with error reporting
+o  Overall gui design
+o  How correlate hightlighted bit of rules text to the cells and plates they 
+   affect
+o  The A...A index bug
 o  Bring in CRUD for allowed reagent names and grouping and units
 o  Bring in pools in every respect
 o  Provide endpoint that Chris' script needs
@@ -11,19 +13,10 @@ o  Plan and prepare for deployment
 o  Deploy
 
 ---------------------------------------------------------------------------
-Parse results
+Allowed reagents and groups
 ---------------------------------------------------------------------------
+Logical
+    in one sense want flat list of allowed reagents
 
-get rules-parse(script)
-
-input
-    script as text
-output
-    {
-        'error': {
-        }
-        'wells': {
-        }
-    }
-    
-
+    but system needs to know that that there are types, and which type
+    each reagent is
