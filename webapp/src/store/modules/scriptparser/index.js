@@ -41,8 +41,10 @@ export const state = {
   units: ['mM', 'mg/ml', 'mMeach', 'copies', 'uM', 'ng', 'x', 'dil', '%'],
   currentPlate: null,
   parsedPlates: [],
+  info: null,
   version: 1,
   validScript: null,
+  allocation: null,
   error: null,
   versionStatisfied: false,
   suggestions: [],
@@ -63,19 +65,47 @@ export const state = {
   },
 };
 const actions = {
-  saveToDb({ commit }) {
-    commit(types.POST_RULE_SCRIPT);
+  saveToDb({ commit }, { ruleScriptNo, text }) {
+    commit(types.REQUEST_POST_RULE_SCRIPT);
+    commit(types.SAVE_SCRIPT, text);
+    api
+      .postRuleSCript({ ruleScriptNo, text })
+      .then((res) => {
+        commit(types.POST_RULE_SCRIPT_SUCCESS, res);
+      })
+      .catch((e) => {
+        commit(types.POST_RULE_SCRIPT_FAILURE);
+      });
   },
 };
 const mutations = {
-  [types.POST_RULE_SCRIPT](state) {
+  [types.REQUEST_POST_RULE_SCRIPT](state) {
     state.ruleScript.isPosting = true;
     state.ruleScript.posted = false;
     state.ruleScript.didInvalidate = false;
   },
+  [types.POST_RULE_SCRIPT_SUCCESS](state, response) {
+    const { interpretation_results, text } = response.data;
+    const { allocation, parse_error } = interpretation_results;
+
+    state.error = parse_error;
+    state.allocation = allocation;
+    state.ruleScript.isPosting = false;
+    state.ruleScript.posted = true;
+    state.ruleScript.didInvalidate = false;
+  },
+  [types.POST_RULE_SCRIPT_FAILURE](state) {
+    state.ruleScript.isPosting = false;
+    state.ruleScript.posted = false;
+    state.ruleScript.didInvalidate = true;
+  },
   [types.SET_CURRENT_PLATE_FROM_SCRIPT](state, value) {
     state.currentPlate = value;
   },
+  [types.SAVE_SCRIPT](state, scriptText) {
+    state.validScript = scriptText;
+  },
+
   [types.LOG_ERROR](state, data) {
     state.error = data;
   },

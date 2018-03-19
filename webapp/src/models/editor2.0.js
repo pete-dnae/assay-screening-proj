@@ -1,8 +1,12 @@
 import store from '@/store';
 import _ from 'lodash';
 
-export const contactApi = () => {
-  store.dispatch('saveToDb');
+// Always call from wrt to components context
+export const postRuleScript = (text, ruleScriptNo) => {
+  store.dispatch('saveToDb', {
+    text,
+    ruleScriptNo,
+  });
 };
 export const splitLine = (text) => {
   const re = /\S+/g;
@@ -14,6 +18,7 @@ export const splitLine = (text) => {
   }
   return fields;
 };
+
 export const removeAdditionalNewLine = (currentText) =>
   currentText.slice(0, -1);
 
@@ -29,7 +34,7 @@ export const getCurrentLineFields = (currentText, cursorPosition) => {
   return splitLine(currentLine);
 };
 
-export const hesitationTimer = _.debounce(contactApi, 1000);
+export const hesitationTimer = _.debounce(postRuleScript, 1000);
 
 export const fieldIndexRange = (lineStart, field) => {
   const startIndex = lineStart + field.index;

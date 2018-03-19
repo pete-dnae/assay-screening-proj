@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { splitLine, validateRule } from '@/models/editor2.0';
+import { splitLine } from '@/models/editor2.0';
 // stuff about painting tables goes here
 export const formatText = (text) => {
   let finalText = '';

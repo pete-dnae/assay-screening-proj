@@ -24,9 +24,7 @@
 
 <script>
 import Vue from 'vue';
-import Menu from '@/components/menu/menu.vue';
 
-Vue.component('titlemenu', Menu);
 
 export default {
   name: 'app',
