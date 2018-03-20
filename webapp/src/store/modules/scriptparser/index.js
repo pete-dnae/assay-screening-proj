@@ -58,9 +58,8 @@ export const state = {
   quillOptions: {
     debug: 'warn',
     modules: {
-      toolbar: '#toolbar',
+      toolbar: false,
     },
-
     theme: 'snow',
   },
 };

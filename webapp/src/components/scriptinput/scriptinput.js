@@ -9,7 +9,12 @@ import { formatText, paintTable } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
 // import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
-import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
+import {
+  hesitationTimer,
+  startEndOfLine,
+  getChildIndex,
+  getCurrentLineFields,
+} from '@/models/editor2.0';
 
 export default {
   name: 'ScriptInputComponent',
@@ -91,22 +96,22 @@ export default {
       this.editor.formatText(0, textLength, 'color', 'green');
       this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
-        const lineEnd = text
-          .substr(this.error.where_in_script, textLength)
-          .indexOf('\n');
-        this.editor.formatText(
-          this.error.where_in_script,
-          lineEnd,
-          'color',
-          'black',
-        );
-
-        this.editor.formatText(
-          lineEnd + this.error.where_in_script,
-          textLength,
-          'color',
-          '#A9A9A9',
-        );
+        // const lineEnd = text
+        //   .substr(this.error.where_in_script, textLength)
+        //   .indexOf('\n');
+        // this.editor.formatText(
+        //   this.error.where_in_script,
+        //   lineEnd,
+        //   'color',
+        //   'black',
+        // );
+        //
+        // this.editor.formatText(
+        //   lineEnd + this.error.where_in_script,
+        //   textLength,
+        //   'color',
+        //   '#A9A9A9',
+        // );
       }
     },
     alterToolTip(cursorIndex) {
@@ -138,6 +143,19 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
+    },
+    handleMouseOver(event) {
+      const fromElement = event.fromElement;
+      if (fromElement.tagName === 'SPAN') {
+        const text = this.editor.getText();
+        const elem = fromElement.parentElement;
+        const lineNumber = getChildIndex(elem);
+        const [start, end] = startEndOfLine(lineNumber, text);
+        this.editor.formatText(0, text.length, 'color', 'green');
+        this.editor.formatText(start, end - start, 'color', 'blue');
+      }
+
+      // console.log(event.fromElement);
     },
     highlightError(index) {
       this.editor.setSelection(index, 0);
