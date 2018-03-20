@@ -55,7 +55,7 @@ class AllocationResults():
     This is used by RulesObjInterpreter to deliver its results.
     It's a data structure along these lines:
 
-        data[plate_name][row][col] = (item1, item2, ... item_n)
+       .plate_info[plate_name][row][col] = (item1, item2, ... item_n)
 
     Where an item looks like:
 
@@ -68,10 +68,10 @@ class AllocationResults():
     """
 
     def __init__(self):
-        self.data = OrderedDict()
+        self.plate_info = OrderedDict()
 
     def add(self, plate, row, col, reagent_name, conc, units):
-        rows = self.data.setdefault(plate, OrderedDict())
+        rows = self.plate_info.setdefault(plate, OrderedDict())
         cols = rows.setdefault(row, OrderedDict())
         reagents = cols.setdefault(col, [])
         reagents.append((reagent_name, conc, units))

@@ -6,9 +6,9 @@ o  How correlate hightlighted bit of rules text to the cells and plates they
    affect
     *  Design
     *  Change class/file names of existing entities first and regression up
-    o  Upgrade and tdd script parser
-    o  Upgrade and tdd  rule interpreter
-    o  Upgrade and tdd script_interpreter
+    *  Upgrade and tdd script parser
+    *  Upgrade and tdd  rule interpreter (no change needed)
+    *  Upgrade and tdd script_processor
     o  Fix up serialization and tdd
     o  Regression test
 o  The A...A index bug

@@ -19,7 +19,7 @@ class RuleInterpreterTest(unittest.TestCase):
         units = ('M/uL', 'x', 'dilution')
         parser = RuleScriptParser(reagents, units, REFERENCE_SCRIPT)
         parser.parse()
-        machine_readable_rules = parser.results
+        machine_readable_rules = parser.rule_objects
 
         interpreter = RulesObjInterpreter(machine_readable_rules)
         # If any exceptions are raised in the call below, then in this case,
@@ -27,7 +27,7 @@ class RuleInterpreterTest(unittest.TestCase):
         alloc_table = interpreter.interpret()
 
         # Sample the output where created with AllocRule(s)
-        contents = alloc_table.data['Plate1'][1][2]
+        contents = alloc_table.plate_info['Plate1'][1][2]
 
         reagent, conc, units = contents[0]
         self.assertEqual(reagent, 'Titanium-Taq')
@@ -40,7 +40,7 @@ class RuleInterpreterTest(unittest.TestCase):
         self.assertEqual(units, 'x')
 
         # Sample the output where created with TransferRule(s)
-        contents = alloc_table.data['Plate42'][2][3]
+        contents = alloc_table.plate_info['Plate42'][2][3]
 
         reagent, conc, units = contents[0]
         self.assertEqual(reagent, 'Transfer Plate42:Row-1:Col-2')
