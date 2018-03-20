@@ -1,11 +1,13 @@
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
-from app.rules_engine.rule_interpreter import RuleInterpreter
+from app.rules_engine.rule_obj_interpreter import RulesObjInterpreter
 
-class RulesScriptInterpreter:
+class RulesScriptProcessor:
     """
-    Parses, AND interprets a rules script. If there is a syntax error it
-    provides (ParseError, None). Otherwise (None, AllocTable).
+    Orchestrates first the parsing of a rules script by RuleScriptParser, then
+    the interpretation of the rule objects produced by RulesObjInterpreter.
+    If there is a syntax error it provides (ParseError, None). 
+    Otherwise (None, AllocationResults).
     """
 
     def __init__(self, rules_script, allowed_reagents, allowed_units):
@@ -22,7 +24,7 @@ class RulesScriptInterpreter:
         except ParseError as e:
             return (e, None)
 
-        interpreter = RuleInterpreter(machine_readable_rules)
+        interpreter = RulesObjInterpreter(machine_readable_rules)
         alloc_table = interpreter.interpret()
         return (None, alloc_table)
         

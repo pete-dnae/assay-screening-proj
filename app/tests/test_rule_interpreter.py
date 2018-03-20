@@ -3,7 +3,7 @@ from pdb import set_trace as st
 
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
-from app.rules_engine.rule_interpreter import RuleInterpreter
+from app.rules_engine.rule_obj_interpreter import RulesObjInterpreter
 from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
 
 class RuleInterpreterTest(unittest.TestCase):
@@ -21,7 +21,7 @@ class RuleInterpreterTest(unittest.TestCase):
         parser.parse()
         machine_readable_rules = parser.results
 
-        interpreter = RuleInterpreter(machine_readable_rules)
+        interpreter = RulesObjInterpreter(machine_readable_rules)
         # If any exceptions are raised in the call below, then in this case,
         # the test should fail.
         alloc_table = interpreter.interpret()

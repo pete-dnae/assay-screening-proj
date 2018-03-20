@@ -17,7 +17,7 @@ class TransferRuleTest(unittest.TestCase):
             'src_plate', 
             RowColIntersections((1,), (1,)),
             RowColIntersections((1,2,3), (4,5,6)),
-            20, 'dilution')
+            20)
         # Check random sample of dest->source mappings produced. Should all be 
         # mappings back to source cell (1,1) in this case.
         m = t.mapping
@@ -29,7 +29,7 @@ class TransferRuleTest(unittest.TestCase):
             'src_plate', 
             RowColIntersections((1,), (1,2,3,4)),
             RowColIntersections((1,2,3), (4,5,6,7)),
-            20, 'dilution')
+            20)
         # TLHC of destination rect should map back to start of source strip.
         # TRHC of destination rect should map back to end of source strip.
         # BRHC of destination rect should map back to end of source strip.
@@ -44,7 +44,7 @@ class TransferRuleTest(unittest.TestCase):
             'src_plate', 
             RowColIntersections((1,2,3,4), (1,)),
             RowColIntersections((1,2,3,4), (4,5,6)),
-            20, 'dilution')
+            20)
         m = t.mapping
         # TLHC of destination rect should map back to start of source strip.
         # TRHC of destination rect should map back to start of source strip.
@@ -59,7 +59,7 @@ class TransferRuleTest(unittest.TestCase):
             'src_plate', 
             RowColIntersections((1,2,3,), (4,5,6)),
             RowColIntersections((2,3,4), (5,6,7)),
-            20, 'dilution')
+            20)
         m = t.mapping
         # Arbitrary sample in the middle somewhere
         self.assertEqual(m[3][6], (2, 5))
@@ -74,35 +74,35 @@ class TransferRuleTest(unittest.TestCase):
             'src_plate', 
             RowColIntersections((1,3), (1,)),
             RowColIntersections((1,2), (3,4)),
-            20, 'dilution')
+            20)
 
         # Dest is not a rectangle but source is..
         self.assertRaises(IncompatibleTransferError, TransferRule,
             'src_plate', 
             RowColIntersections((1,2), (3,4)),
             RowColIntersections((1,3), (1,)),
-            20, 'dilution')
+            20)
 
         # Row segment of length 2 into rect of width 3.
         self.assertRaises(IncompatibleTransferError, TransferRule,
             'src_plate', 
             RowColIntersections((1,), (3,4)),
             RowColIntersections((1,2,3), (2,3,4)),
-            20, 'dilution')
+            20)
 
         # Col segment of height 2 into rect of height 3.
         self.assertRaises(IncompatibleTransferError, TransferRule,
             'src_plate', 
             RowColIntersections((1,2), (1,)),
             RowColIntersections((2,3,4), (4,5,6)),
-            20, 'dilution')
+            20)
 
         # Rect size 3 x 4 into rect sized 2 x 3
         self.assertRaises(IncompatibleTransferError, TransferRule,
             'src_plate', 
             RowColIntersections((1,2,3), (1,2,3,4)),
             RowColIntersections((2,3), (4,5,6)),
-            20, 'dilution')
+            20)
 
 
 if __name__ == '__main__':

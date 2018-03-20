@@ -1,7 +1,7 @@
 import unittest
 from pdb import set_trace as st
 
-from app.rules_engine.rule_script_interpreter import RulesScriptInterpreter
+from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.rules_engine.rule_script_parser import ParseError
 from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
 
@@ -16,7 +16,7 @@ class RuleScriptInterpreterTest(unittest.TestCase):
             '(Eco)-ATCC-BAA-2355',
             '(Eco)-ATCC-BAA-9999')
         units = ('M/uL', 'x', 'dilution')
-        interpreter = RulesScriptInterpreter(REFERENCE_SCRIPT, reagents, units)
+        interpreter = RulesScriptProcessor(REFERENCE_SCRIPT, reagents, units)
         parse_error, alloc_table = interpreter.parse_and_interpret()
         # Make sure no error is reported.
         self.assertIsNone(parse_error)
@@ -32,7 +32,7 @@ class RuleScriptInterpreterTest(unittest.TestCase):
             '(Eco)-ATCC-BAA-9999')
         units = ('M/uL', 'x', 'dilution')
         broken_script = REFERENCE_SCRIPT.replace('A (Eco', 'Q (Eco')
-        interpreter = RulesScriptInterpreter(broken_script, reagents, units)
+        interpreter = RulesScriptProcessor(broken_script, reagents, units)
         parse_error, alloc_table = interpreter.parse_and_interpret()
         self.assertEqual(parse_error.message,
                 'Line must start with one of the letters V|P|A|T. Line 4.')

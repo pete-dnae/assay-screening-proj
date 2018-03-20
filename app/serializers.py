@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
-from app.rules_engine.rule_script_interpreter import RulesScriptInterpreter
+from app.rules_engine.rule_script_processor import RulesScriptProcessor
 
 
 class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
@@ -35,7 +35,7 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
             '(Eco)-ATCC-BAA-9999')
         units = ('M/uL', 'x', 'dilution')
 
-        interpreter = RulesScriptInterpreter(
+        interpreter = RulesScriptProcessor(
                 rule_script.text, reagents, units)
         parse_error, alloc_table = interpreter.parse_and_interpret()
 

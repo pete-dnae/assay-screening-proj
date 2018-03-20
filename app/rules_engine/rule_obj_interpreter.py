@@ -5,12 +5,12 @@ from app.rules_engine.alloc_rule import AllocRule
 from app.rules_engine.transfer_rule import TransferRule
 
 
-class RuleInterpreter:
+class RulesObjInterpreter:
     """
     This class owns the business logic that knows how to interpret a sequence
     of heterogeneous AllocRule(s) and TransferRule(s).
 
-    It returns an AllocTable. (defined later in this module)
+    It returns an AllocResults. (defined later in this module)
     """
 
     def __init__(self, plates_with_rules):
@@ -52,7 +52,7 @@ class RuleInterpreter:
 
 class AllocationResults():
     """
-    This is used by AllocRuleInterpreter to deliver its results.
+    This is used by RulesObjInterpreter to deliver its results.
     It's a data structure along these lines:
 
         data[plate_name][row][col] = (item1, item2, ... item_n)

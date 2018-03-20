@@ -1,9 +1,16 @@
 *  Provide as is now to Prasanna
 *  Get rid of obsolete unit tests, fix up those that remain, and add any
    required.
-o  Overall gui design
+*  Overall gui design
 o  How correlate hightlighted bit of rules text to the cells and plates they 
    affect
+    *  Design
+    *  Change class/file names of existing entities first and regression up
+    o  Upgrade and tdd script parser
+    o  Upgrade and tdd  rule interpreter
+    o  Upgrade and tdd script_interpreter
+    o  Fix up serialization and tdd
+    o  Regression test
 o  The A...A index bug
 o  Bring in CRUD for allowed reagent names and grouping and units
 o  Bring in pools in every respect
@@ -13,10 +20,38 @@ o  Plan and prepare for deployment
 o  Deploy
 
 ---------------------------------------------------------------------------
-Allowed reagents and groups
+Data needed from BE when hover a rule line.
 ---------------------------------------------------------------------------
-Logical
-    in one sense want flat list of allowed reagents
+End need is to know which wells are target by that rule.
+Client can work out which line number it is.
+What data do we present already?
+Idea data shape:
+rule_to_cells[lnum] = [(1,2), (3,4), ...]
+---------------------------------------------------------------------------
+How pass this data through?
+---------------------------------------------------------------------------
+o  Parser
+    o  Change name of parser.results to parser.rule_objects.
+    o  Give parser a *line_number_for[rule_obj]* map.
 
-    but system needs to know that that there are types, and which type
-    each reagent is
+o  RuleInterpreter
+    o  Change name of .data to .plate_info
+    o  Add as we go .cells[rule_obj] = [(1,2), (3,4), ...]
+
+o  Bridge the two in rule_script_interpreter
+    o  Extend what we return to (ParserError, AllocTable, ScriptMapping)
+    o  Where script mapping works like:
+        mapping[script_lnum] = [(1,2), (3,4), ...]
+
+Have we provided the info needed for this use case?
+
+    o  We have the parser results and interpreter results to hand
+    o  For each rule object we consumed
+        o  lnum = parser_results.line_number_for[rule_object]
+        o  cells = rule_interp.cells[rule_obj]
+        o  self.mapping[lnum] = cells
+
+RulesScriptParser
+RulesScriptProcessor
+RulesObjInterpreter
+
