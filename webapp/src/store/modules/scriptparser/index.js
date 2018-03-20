@@ -68,14 +68,18 @@ const actions = {
   saveToDb({ commit }, { ruleScriptNo, text }) {
     commit(types.REQUEST_POST_RULE_SCRIPT);
     commit(types.SAVE_SCRIPT, text);
-    api
-      .postRuleSCript({ ruleScriptNo, text })
-      .then((res) => {
-        commit(types.POST_RULE_SCRIPT_SUCCESS, res);
-      })
-      .catch((e) => {
-        commit(types.POST_RULE_SCRIPT_FAILURE);
-      });
+    return new Promise(function(resolve, reject) {
+      api
+        .postRuleSCript({ ruleScriptNo, text })
+        .then((res) => {
+          commit(types.POST_RULE_SCRIPT_SUCCESS, res);
+          resolve('success');
+        })
+        .catch((e) => {
+          commit(types.POST_RULE_SCRIPT_FAILURE);
+          reject(e);
+        });
+    });
   },
 };
 const mutations = {

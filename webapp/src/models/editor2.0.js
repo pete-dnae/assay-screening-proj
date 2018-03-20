@@ -1,12 +1,13 @@
 import store from '@/store';
 import _ from 'lodash';
 
-// Always call from wrt to components context
-export const postRuleScript = (text, ruleScriptNo) => {
-  store.dispatch('saveToDb', {
-    text,
-    ruleScriptNo,
-  });
+export const postRuleScript = (text, ruleScriptNo, callBack) => {
+  store
+    .dispatch('saveToDb', {
+      text,
+      ruleScriptNo,
+    })
+    .then(() => callBack());
 };
 export const splitLine = (text) => {
   const re = /\S+/g;
