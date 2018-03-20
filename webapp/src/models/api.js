@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-const fetchRes = url =>
+const fetchRes = (url) =>
   axios.get(url).then(({ data }) => {
     const response = _.isEmpty(data) ? null : data;
     return response;
@@ -27,10 +27,15 @@ const patchRes = (url, data) =>
       'Content-Type': 'application/json',
     },
   });
-
-export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
+/*eslint-disable */
+export const getExperiment = (expNo) => fetchRes(`api/experiments/${expNo}/`);
+export const getPlate = (plateId) => fetchRes(`api/plates/${plateId}/`);
+export const getRuleScript = (ruleScriptNo) =>
+  fetchRes(`api/rule-scripts/${ruleScriptNo}/`);
+/*eslint-enable */
 export const getExperimentList = () => fetchRes('api/experiments/');
 export const updateAllocationRules = (url, data) => putRes(url, data);
 export const addAllocationRule = (url, data) => postRes(url, data);
 export const updateRule = (url, data) => patchRes(url, data);
-export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
+export const postRuleSCript = ({ ruleScriptNo, text }) =>
+  putRes(`api/rule-scripts/${ruleScriptNo}/`, { text });

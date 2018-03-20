@@ -63,8 +63,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['setFeedback', 'setRuleStart', 'setCurrentElement']),
-    editorChange(event) {
+    ...mapActions(['saveToDb']),
+    editorChange() {
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
       if (fields[1] && fields[0][0] === 'A') {
@@ -79,26 +79,33 @@ export default {
         }
       }
       hesitationTimer.cancel();
-      hesitationTimer(this.editor.getText());
+      hesitationTimer(
+        this.editor.getText(),
+        this.$route.params.ruleScript,
+        this.paintText,
+      );
     },
     paintText() {
-      const textLength = this.editor.getText().length;
+      const text = this.editor.getText();
+      const textLength = text.length;
       this.editor.formatText(0, textLength, 'color', 'green');
       this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
-        this.error.action.forEach((x, i) => {
-          this.editor.formatText(
-            this.error.startIndex,
-            this.error.length,
-            'color',
-            x.color,
-          );
-        });
+        const lineEnd = text
+          .substr(this.error.where_in_script, textLength)
+          .indexOf('\n');
         this.editor.formatText(
-          this.error.startIndex + this.error.length,
-          textLength,
+          this.error.where_in_script,
+          lineEnd,
           'color',
           'black',
+        );
+
+        this.editor.formatText(
+          lineEnd + this.error.where_in_script,
+          textLength,
+          'color',
+          '#A9A9A9',
         );
       }
     },
@@ -113,7 +120,7 @@ export default {
         parentBound,
       );
     },
-    handleExcludeReagent(range) {
+    handleExcludeReagent() {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
       this.newReagent = this.editor
         .getText()
@@ -132,8 +139,8 @@ export default {
         cursorIndex - currentStringStart,
       );
     },
-    highlightError() {
-      this.editor.setSelection(this.error.startIndex, this.error.length);
+    highlightError(index) {
+      this.editor.setSelection(index, 0);
     },
     hideSuggestion() {
       this.showSuggestionList = false;
@@ -151,7 +158,7 @@ export default {
       await this.editor.setText(formattedText);
       this.EditorChange();
     },
-    handleTab(range) {
+    handleTab() {
       this.handleAutoCompleteClick(this.suggestions[this.index]);
       this.index += 1;
       this.index = this.suggestions[this.index] ? this.index : 0;

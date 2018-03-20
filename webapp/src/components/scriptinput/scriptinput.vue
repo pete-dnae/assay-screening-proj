@@ -119,8 +119,8 @@ li span {
             <h5 class="mt-3 text-left"><strong>Feedbacks :</strong></h5>
             <div class="row ml-3 mt-3  border border-warning">
 
-                <div id="result" class="list-group w-100" v-if="error" @mouseover="highlightError()">
-                    {{error.err}}
+                <div id="result" class="list-group w-100" v-if="error" @mouseover="highlightError(error.where_in_script)">
+                    {{error.message}}
                 </div>
 
             </div>
