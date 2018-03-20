@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <!-- <experimentmenu></experimentmenu> -->
+    <experimentmenu></experimentmenu>
     <experimentbody></experimentbody>
   </div>
 </template>
