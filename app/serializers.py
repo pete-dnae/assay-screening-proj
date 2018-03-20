@@ -37,9 +37,15 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
         interpreter = RulesScriptProcessor(
                 rule_script.text, reagents, units)
-        parse_error, alloc_table = interpreter.parse_and_interpret()
+        parse_error, alloc_table, line_num_mapping = \
+                interpreter.parse_and_interpret()
 
+        err = None if not parse_error else parse_error.__dict__
+        table = None if not alloc_table else alloc_table.__dict__
+        lnums = None if not line_num_mapping else line_num_mapping
+        
         return {
-            'parse_error': None if not parse_error else parse_error.__dict__,
-            'allocation': None if not alloc_table else alloc_table.__dict__,
+            'parseError': err,
+            'table': table,
+            'lnums': lnums
         }

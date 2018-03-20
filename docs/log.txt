@@ -55,3 +55,5 @@ RulesScriptParser
 RulesScriptProcessor
 RulesObjInterpreter
 
+AllocationResults only has one attrib 'plate_info' which is an ordered dict.
+Guess may be serialized in key order, where keys are plate names
