@@ -39,7 +39,7 @@ Feedback during editing - syntax errors
 - Describe the first problem encountered in the script only.
 - Describe it with a comprehensive English message that includes the line
   number and position in the line of the problem
-- Highlight (conspicuously) where the error occurs inside the editor 
+- Show (conspicuously) where the error occurs inside the editor 
 
 Feedback during editing - effect of rules / results
 - Only available when there are no errors in the script - show some apology to
