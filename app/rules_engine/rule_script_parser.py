@@ -39,15 +39,19 @@ class RuleScriptParser:
         self._parse_posn = _ParsePosn() # Position reached in script.
         self._fields = None # The fields in the current line.
 
-        # self.results is an OrderedDict keyed on plate name. The
+        # self.rule_objects is an OrderedDict keyed on plate name. The
         # values are sequences of mixed AllocRule and TransferRule objects.
-        self.results = OrderedDict()
+        self.rule_objects = OrderedDict()
+
+        # self.line_number_mapping provides the the script line number
+        # provenance for each rule object in self.rule_objects.
+        self.line_number_mapping = {} 
 
 
     def parse(self):
         """
         If there are syntax errors, raises ParseError. Otherwise,
-        populates self.results.
+        populates self.rule_objects and self.line_number_mapping.
         """
         self._lines = self._script.splitlines()
 
@@ -65,10 +69,12 @@ class RuleScriptParser:
                 self._register_plate()
             elif self._fields.field(0, seeking) == 'A':
                 alloc_rule = self._parse_allocation_line()
-                self.results[self._cur_plate].append(alloc_rule)
+                self.rule_objects[self._cur_plate].append(alloc_rule)
+                self.line_number_mapping[alloc_rule] =  line_index + 1
             elif self._fields.field(0, seeking) == 'T':
                 trans_rule = self._parse_transfer_line()
-                self.results[self._cur_plate].append(trans_rule)
+                self.rule_objects[self._cur_plate].append(trans_rule)
+                self.line_number_mapping[trans_rule] =  line_index + 1
             else:
                 self._err('Line must start with one of the letters V|P|A|T.')
         if self._version is None:
@@ -111,13 +117,13 @@ class RuleScriptParser:
         """
         plate_name = self._fields.field(1, 'Plate name')
         self._assert_plate_is_new(plate_name)
-        self.results[plate_name] = []
+        self.rule_objects[plate_name] = []
         self._cur_plate = plate_name
 
     def _parse_allocation_line(self):
         """
         Parses and validates an 'A' line, storing the results in the results
-        in self.results.
+        in self.rule_objects.
         """
         self._assert_a_plate_is_defined()
 
@@ -141,7 +147,7 @@ class RuleScriptParser:
     def _parse_transfer_line(self):
         """
         Parses and validates a 'T' line, storing the results in the results
-        in self.results.
+        in self.rule_objects.
         """
         self._assert_a_plate_is_defined()
 
@@ -189,7 +195,7 @@ class RuleScriptParser:
         Demands that this plate name has not been declared earlier in the
         script.
         """
-        known_plates = self.results.keys()
+        known_plates = self.rule_objects.keys()
         if plate_name in known_plates:
             self._err('This plate name been used before.', plate_name)
 
@@ -198,7 +204,7 @@ class RuleScriptParser:
         Demands tha the plate name is one of those captured earlier from
         a plate declaration.
         """
-        return plate_name in self.results.keys()
+        return plate_name in self.rule_objects.keys()
 
     def _assert_reagent_is_known(self, reagent):
         """

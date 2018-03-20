@@ -17,11 +17,11 @@ class RuleScriptParserTest(unittest.TestCase):
         """
         parser = RuleScriptParser(STD_REAGENTS, STD_UNITS, REFERENCE_SCRIPT)
         parser.parse()
-        results = parser.results
+        rule_objects = parser.rule_objects
 
         # Start with the second plate results
 
-        plate, rules = results.popitem()
+        plate, rules = rule_objects.popitem()
 
         self.assertEqual(plate, 'Plate42')
         self.assertEqual(len(rules), 1)
@@ -38,7 +38,7 @@ class RuleScriptParserTest(unittest.TestCase):
 
         # Move back to the first plate
 
-        plate, rules = results.popitem()
+        plate, rules = rule_objects.popitem()
 
         self.assertEqual(plate, 'Plate1')
         self.assertEqual(len(rules), 3)
@@ -52,6 +52,11 @@ class RuleScriptParserTest(unittest.TestCase):
         self.assertEqual(rule.conc, 1.16)
         self.assertEqual(rule.units, 'x')
 
+        # Check a sample of the mapping back from parse objects to script
+        # line number provenance.
+        rule = rules[0]
+        lnum = parser.line_number_mapping[rule]
+        self.assertEqual(lnum, 3)
 
     #----------------------------------------------------------------------
     # Test the correct error handling for every error the parser can produce.
