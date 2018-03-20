@@ -2,15 +2,8 @@
 *  Get rid of obsolete unit tests, fix up those that remain, and add any
    required.
 *  Overall gui design
-o  How correlate hightlighted bit of rules text to the cells and plates they 
+*  How correlate hightlighted bit of rules text to the cells and plates they 
    affect
-    *  Design
-    *  Change class/file names of existing entities first and regression up
-    *  Upgrade and tdd script parser
-    *  Upgrade and tdd  rule interpreter (no change needed)
-    *  Upgrade and tdd script_processor
-    o  Fix up serialization and tdd
-    o  Regression test
 o  The A...A index bug
 o  Bring in CRUD for allowed reagent names and grouping and units
 o  Bring in pools in every respect

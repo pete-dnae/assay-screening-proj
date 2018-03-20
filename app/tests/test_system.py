@@ -48,7 +48,7 @@ class HighLevelSystemSmokeTest(APITestCase):
 
         rules_script_response = client.get(rules_script_url)
         json = rules_script_response.data
-        interp_results = json['interpretation_results']
+        interp_results = json['interpretationResults']
 
         # Inspect line number mapping part of response.
         lnums = interp_results['lnums']
@@ -77,7 +77,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         post_data = {'text': 'I am a malformed rules script'}
         resp = client.put('/api/rule-scripts/1/', post_data, format='json')
 
-        message = resp.data['interpretation_results']['parse_error']['message']
+        message = resp.data['interpretationResults']['parseError']['message']
 
         self.assertEqual(message, 
             'Line must start with one of the letters V|P|A|T. Line 1.')

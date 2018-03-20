@@ -17,17 +17,18 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
-    interpretation_results = serializers.SerializerMethodField(read_only=True)
+    # Camel-case to make it nice to consum as JSON.
+    interpretationResults = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = RulesScriptModel
         fields = (
            'url',
            'text',
-           'interpretation_results',
+           'interpretationResults',
         )
 
-    def get_interpretation_results(self, rule_script):
+    def get_interpretationResults(self, rule_script):
         # todo - get these from the database when they are available
         reagents = (
             'Titanium-Taq',
