@@ -150,8 +150,13 @@ export default {
         const elem = fromElement.parentElement;
         const lineNumber = getChildIndex(elem);
         const [start, end] = startEndOfLine(lineNumber, text);
-        this.editor.formatText(0, text.length, 'color', 'green');
-        this.editor.formatText(start, end - start, 'color', 'blue');
+        this.editor.formatText(0, text.length, 'text-shadow', false);
+        this.editor.formatText(
+          start,
+          end - start,
+          'text-shadow',
+          '2px 2px 4px #000000',
+        );
       }
 
       // console.log(event.fromElement);
@@ -200,6 +205,15 @@ export default {
   mounted() {
     const Delta = Quill.import('delta');
     const Font = Quill.import('formats/font');
+    const Parchment = Quill.import('parchment');
+    const LineStyle = new Parchment.Attributor.Style(
+      'textShadow',
+      'text-shadow',
+      {
+        scope: Parchment.Scope.INLINE,
+      },
+    );
+    Quill.register(LineStyle, true);
     Font.whitelist = ['monospace'];
     Quill.register(Font, true);
     this.editor = new Quill('#editor', this.options);

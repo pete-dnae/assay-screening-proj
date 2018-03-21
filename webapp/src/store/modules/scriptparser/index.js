@@ -89,7 +89,7 @@ const mutations = {
   },
   [types.POST_RULE_SCRIPT_SUCCESS](state, response) {
     const { interpretation_results, text } = response.data;
-    const { allocation, parse_error } = interpretation_results;
+    const { allocation, parse_error, allocation_map } = interpretation_results;
 
     state.error = parse_error;
     state.allocation = allocation;
