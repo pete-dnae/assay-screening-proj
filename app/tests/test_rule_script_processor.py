@@ -3,7 +3,7 @@ from pdb import set_trace as st
 
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.rules_engine.rule_script_parser import ParseError
-from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
+from app.model_builders.reference_data import REFERENCE_SCRIPT
 
 class RuleScriptProcessorTest(unittest.TestCase):
 

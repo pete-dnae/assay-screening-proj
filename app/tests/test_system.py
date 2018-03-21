@@ -48,15 +48,24 @@ class HighLevelSystemSmokeTest(APITestCase):
 
         rules_script_response = client.get(rules_script_url)
         json = rules_script_response.data
-        interp_results = json['interpretation_results']
-        alloc = interp_results['allocation']
-        data = alloc['data']
-        plate = data['Plate1']
-        row = plate[1]
-        cell = row[2]
+        interp_results = json['interpretationResults']
 
-        self.assertEqual(cell[0], ('Titanium-Taq', 0.02, 'M/uL'))
-        self.assertEqual(cell[1], (('(Eco)-ATCC-BAA-2355', 1.16, 'x')))
+        # Inspect line number mapping part of response.
+        lnums = interp_results['lnums']
+        line_4 = lnums[4]
+        self.assertEqual(line_4, [(1, 2), (5, 2), (9, 2)])
+
+        # Inspect error report part of response.
+        err = interp_results['parseError']
+        self.assertIsNone(err)
+
+        # Inspect table allocation part of response.
+        table = interp_results['table']
+        plate_info = table['plate_info']
+        plate_1 = plate_info['Plate1']
+        row = plate_1[1]
+        col = row[1]
+        self.assertEqual(col, [('Titanium-Taq', 0.02, 'M/uL')])
 
     def test_put_rules_script_with_error_in_it(self):
         """
@@ -68,7 +77,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         post_data = {'text': 'I am a malformed rules script'}
         resp = client.put('/api/rule-scripts/1/', post_data, format='json')
 
-        message = resp.data['interpretation_results']['parse_error']['message']
+        message = resp.data['interpretationResults']['parseError']['message']
 
         self.assertEqual(message, 
             'Line must start with one of the letters V|P|A|T. Line 1.')

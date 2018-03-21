@@ -1,7 +1,12 @@
 from rest_framework import serializers
 
+# Models
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
+from .models.reagent_name_model import ReagentNameModel
+from .models.units_model import UnitsModel
+
+# Serialization helpers.
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 
 
@@ -17,17 +22,18 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
-    interpretation_results = serializers.SerializerMethodField(read_only=True)
+    # Camel-case to make it nice to consum as JSON.
+    interpretationResults = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = RulesScriptModel
         fields = (
            'url',
            'text',
-           'interpretation_results',
+           'interpretationResults',
         )
 
-    def get_interpretation_results(self, rule_script):
+    def get_interpretationResults(self, rule_script):
         # todo - get these from the database when they are available
         reagents = (
             'Titanium-Taq',
@@ -37,10 +43,33 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
         interpreter = RulesScriptProcessor(
                 rule_script.text, reagents, units)
-        parse_error,alloc_table, allocation = interpreter.parse_and_interpret()
+        parse_error, alloc_table, line_num_mapping = \
+                interpreter.parse_and_interpret()
 
+        err = None if not parse_error else parse_error.__dict__
+        table = None if not alloc_table else alloc_table.__dict__
+        lnums = None if not line_num_mapping else line_num_mapping
+        
         return {
-            'parse_error': None if not parse_error else parse_error.__dict__,
-            'allocation': None if not alloc_table else alloc_table,
-            'allocation_map': None if not allocation else allocation,
+            'parseError': err,
+            'table': table,
+            'lnums': lnums
         }
+
+class ReagentNameSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReagentNameModel
+        fields = (
+           'url',
+           'name',
+        )
+
+class UnitsSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = UnitsModel
+        fields = (
+           'url',
+           'abbrev',
+        )
