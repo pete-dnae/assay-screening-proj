@@ -4,16 +4,17 @@
 *  Overall gui design
 *  How correlate hightlighted bit of rules text to the cells and plates they 
    affect
+o  Bring in CRUD for allowed reagent names and units
+    *  Bring in reagent names and units models right up to end points.
+       units.
+    *  Use the reagent names and units from the database in the script parser, 
+       rather than the currently hard coded ones
+    *  Regression test
+o  Deal with groupings now?
 o  The A...A index bug
     o  Suggest to Prasanna that we only report the line that is wrong, and
        that I can still provide an index - but it can be the first character in
        the offending line.
-o  Bring in CRUD for allowed reagent names and grouping and units
-    *  Bring in reagent names and units models right up to end points.
-       units.
-    o  Use the reagent names and units from the database in the script parser, 
-       rather than the currently hard coded ones
-    o  Regression test
 o  Think clone is obsolete
 o  Bring in pools in every respect
 o  Provide endpoint that Chris' script needs

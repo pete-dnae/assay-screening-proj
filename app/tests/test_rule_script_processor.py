@@ -25,8 +25,7 @@ class RuleScriptProcessorTest(unittest.TestCase):
 
         # Make sure AllocationResults is returned and seems well-formed.
         self.assertIsNotNone(alloc_table)
-        plates = alloc_table.plate_info.keys()
-        self.assertTrue('Plate1' in plates)
+        self.assertTrue('Plate1' in alloc_table.plate_info)
 
         # Make sure the line number to cells mapping looks ok.
         self.assertEqual(

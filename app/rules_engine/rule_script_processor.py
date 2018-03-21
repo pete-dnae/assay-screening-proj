@@ -1,4 +1,5 @@
 from collections import defaultdict
+from pdb import set_trace as st
 
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
@@ -34,7 +35,7 @@ class RulesScriptProcessor:
         alloc_table = interpreter.interpret()
         line_number_to_cells_mapping = \
             self._make_line_number_to_cells_mapping(parser)
-        return (None, alloc_table.plate_info, dict(line_number_to_cells_mapping))
+        return (None, alloc_table, dict(line_number_to_cells_mapping))
         
     def _make_line_number_to_cells_mapping(self, parser):
         """

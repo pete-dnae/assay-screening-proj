@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from pdb import set_trace as st
 
 # Models
 from .models.experiment_model import ExperimentModel
@@ -34,12 +35,8 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_interpretationResults(self, rule_script):
-        # todo - get these from the database when they are available
-        reagents = (
-            'Titanium-Taq',
-            '(Eco)-ATCC-BAA-2355',
-            '(Eco)-ATCC-BAA-9999')
-        units = ('M/uL', 'x', 'dilution')
+        reagents = [r.name for r  in ReagentNameModel.objects.all()]
+        units = [u.abbrev for u  in UnitsModel.objects.all()]
 
         interpreter = RulesScriptProcessor(
                 rule_script.text, reagents, units)
@@ -47,7 +44,7 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
                 interpreter.parse_and_interpret()
 
         err = None if not parse_error else parse_error.__dict__
-        table = None if not alloc_table else alloc_table.__dict__
+        table = None if not alloc_table else alloc_table.plate_info
         lnums = None if not line_num_mapping else line_num_mapping
         
         return {
