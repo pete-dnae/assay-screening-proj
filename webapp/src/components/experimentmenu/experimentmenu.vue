@@ -5,12 +5,7 @@
         <div class="form-group row">
             <label  class="col-form-label">Experiment</label>
             <div class="col-2">
-              <select v-model="selected" class="btn btn-secondary dropdown-toggle">
-                <option disabled value="">Please select one</option>
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-              </select>
+              <typeahead :data="USstate" placeholder="Experiment Name"></typeahead>
             </div>
             <div class="col-1 text-left">
               <a>copy</a>

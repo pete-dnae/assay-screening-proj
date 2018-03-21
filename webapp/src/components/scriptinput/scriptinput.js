@@ -1,5 +1,4 @@
 import Quill from 'quill';
-import _ from 'lodash';
 // require styles
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
@@ -7,6 +6,7 @@ import 'quill/dist/quill.bubble.css';
 import { modal } from 'vue-strap';
 import { formatText, paintTable } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
+
 // import { validateText } from '@/models/editor';
 import { getToolTipPosition } from '@/models/tooltip';
 import {
@@ -96,22 +96,21 @@ export default {
       this.editor.formatText(0, textLength, 'color', 'green');
       this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
-        // const lineEnd = text
-        //   .substr(this.error.where_in_script, textLength)
-        //   .indexOf('\n');
-        // this.editor.formatText(
-        //   this.error.where_in_script,
-        //   lineEnd,
-        //   'color',
-        //   'black',
-        // );
-        //
-        // this.editor.formatText(
-        //   lineEnd + this.error.where_in_script,
-        //   textLength,
-        //   'color',
-        //   '#A9A9A9',
-        // );
+        const lineEnd = text
+          .substr(this.error.where_in_script, textLength)
+          .indexOf('\n');
+        this.editor.formatText(
+          this.error.where_in_script,
+          lineEnd,
+          'color',
+          'black',
+        );
+        this.editor.formatText(
+          lineEnd + this.error.where_in_script,
+          textLength,
+          'color',
+          '#A9A9A9',
+        );
       }
     },
     alterToolTip(cursorIndex) {
@@ -186,7 +185,7 @@ export default {
       this.$store.commit('ADD_REAGENT', this.newReagent);
       this.show = false;
     },
-    handleSelection(range, oldRange, source) {
+    handleSelection(range) {
       if (range && range.length > 1) {
         const text = this.editor.getText(range.index, range.length);
         this.image = paintTable(
@@ -213,9 +212,10 @@ export default {
     this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, (range) =>
       this.handleExcludeReagent(range),
     );
-    this.editor.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
-      return new Delta().insert(node.data, { font: 'monospace' });
-    });
+    this.editor.clipboard.addMatcher(Node.TEXT_NODE, (node) =>
+      new Delta().insert(node.data, { font: 'monospace' }),
+    );
+
     this.editor.focus();
   },
 };
