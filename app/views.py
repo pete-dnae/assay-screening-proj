@@ -11,3 +11,11 @@ class ExperimentViewSet(viewsets.ModelViewSet):
 class RulesScriptViewSet(viewsets.ModelViewSet):
     queryset = RulesScriptModel.objects.all()
     serializer_class =  RulesScriptSerializer
+
+class ReagentNameViewSet(viewsets.ModelViewSet):
+    queryset = ReagentNameModel.objects.all()
+    serializer_class =  ReagentNameSerializer
+
+class UnitViewSet(viewsets.ModelViewSet):
+    queryset = UnitsModel.objects.all()
+    serializer_class =  UnitsSerializer

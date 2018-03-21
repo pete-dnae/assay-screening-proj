@@ -5,7 +5,11 @@ With one experiment and only its dependents.
 
 from app.models.experiment_model import ExperimentModel
 from app.models.rules_script_model import RulesScriptModel
-from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
+from app.models.reagent_name_model import ReagentNameModel
+from app.models.units_model import UnitsModel
+from app.model_builders.reference_data import REFERENCE_SCRIPT
+from app.model_builders.reference_data import REFERENCE_REAGENTS
+from app.model_builders.reference_data import REFERENCE_UNITS
 
 
 class ReferenceExperiment():
@@ -18,9 +22,15 @@ class ReferenceExperiment():
         self.experiment = None
 
     def create(self):
-        rules_script = RulesScriptModel.make( REFERENCE_SCRIPT)
+        rules_script = RulesScriptModel.make(REFERENCE_SCRIPT)
         self.experiment = ExperimentModel.make(
                 'Reference Experiment', rules_script)
+
+        for reagent in REFERENCE_REAGENTS:
+            ReagentNameModel.make(reagent)
+        for units in REFERENCE_UNITS:
+            UnitsModel.make(units)
+
         return self.experiment
 
     # -----------------------------------------------------------------------

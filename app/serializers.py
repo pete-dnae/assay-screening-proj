@@ -1,7 +1,12 @@
 from rest_framework import serializers
 
+# Models
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
+from .models.reagent_name_model import ReagentNameModel
+from .models.units_model import UnitsModel
+
+# Serialization helpers.
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 
 
@@ -50,3 +55,21 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
             'table': table,
             'lnums': lnums
         }
+
+class ReagentNameSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReagentNameModel
+        fields = (
+           'url',
+           'name',
+        )
+
+class UnitsSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = UnitsModel
+        fields = (
+           'url',
+           'abbrev',
+        )

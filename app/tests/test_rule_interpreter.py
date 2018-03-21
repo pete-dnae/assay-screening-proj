@@ -4,7 +4,10 @@ from pdb import set_trace as st
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
 from app.rules_engine.rule_obj_interpreter import RulesObjInterpreter
-from app.model_builders.reference_rules_script import REFERENCE_SCRIPT
+from app.model_builders.reference_data import REFERENCE_SCRIPT
+from app.model_builders.reference_data import REFERENCE_REAGENTS
+from app.model_builders.reference_data import REFERENCE_UNITS
+
 
 class RuleInterpreterTest(unittest.TestCase):
 
