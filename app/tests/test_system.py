@@ -61,8 +61,7 @@ class HighLevelSystemSmokeTest(APITestCase):
 
         # Inspect table allocation part of response.
         table = interp_results['table']
-        plate_info = table['plate_info']
-        plate_1 = plate_info['Plate1']
+        plate_1 = table['Plate1']
         row = plate_1[1]
         col = row[1]
         self.assertEqual(col, [('Titanium-Taq', 0.02, 'M/uL')])
