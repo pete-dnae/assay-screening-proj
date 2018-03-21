@@ -71,6 +71,7 @@ li span {
             <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
             <label>Type your rules here</label>
         </div>
+
         <div class="col-1">
             <span v-show="showSpinner" class="spinner "> <i class="fa fa-floppy-o">saving</i></span>
         </div>
@@ -86,10 +87,10 @@ li span {
         </div>
         <div class="col-5">
             <div class="row mt-3">
-                <div class="col  text-left">
+                <div class="col  text-left" id="tableGoesHere">
                     <h5 class="text-left"><strong>Plate Visualization</strong></h5>
-                    <strong>User Selection</strong>
-                    <img :src="image" id="imgZoom" class="mt-3" style="max-width: 100%;height: auto;">
+                    <strong class="d-block">User Selection</strong>
+                    <label class="mt-2" >Plate Name :{{currentPlate}}</label>
                 </div>
             </div>
             <div class="row text-left " v-show="showSuggestionList">

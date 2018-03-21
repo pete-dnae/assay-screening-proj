@@ -31,6 +31,7 @@ export default {
       image: null,
       rowCount: 8,
       colCount: 12,
+      currentPlate: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
       tooltiptext: {
@@ -52,10 +53,10 @@ export default {
       options: 'getQuillOptions',
       version: 'getVersion',
       error: 'getError',
-      parsedPlates: 'getparsedPlates',
       reagents: 'getReagents',
       units: 'getUnits',
-      currentPlate: 'getCurrentPlate',
+      tableBoundaries: 'getTableBoundaries',
+      allocationMapping: 'getAllocationMap',
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
     }),
@@ -148,14 +149,22 @@ export default {
       if (fromElement.tagName === 'SPAN') {
         const text = this.editor.getText();
         const elem = fromElement.parentElement;
-        const lineNumber = getChildIndex(elem);
+        const { lineNumber, plateName } = getChildIndex(elem);
         const [start, end] = startEndOfLine(lineNumber, text);
+        this.currentPlate = plateName;
         this.editor.formatText(0, text.length, 'text-shadow', false);
         this.editor.formatText(
           start,
           end - start,
           'text-shadow',
           '2px 2px 4px #000000',
+        );
+
+        console.log(
+          paintTable(
+            this.tableBoundaries,
+            this.allocationMapping[lineNumber + 1],
+          ),
         );
       }
 
@@ -193,12 +202,7 @@ export default {
     handleSelection(range) {
       if (range && range.length > 1) {
         const text = this.editor.getText(range.index, range.length);
-        this.image = paintTable(
-          window.webkitURL,
-          { rows: this.rowCount, cols: this.colCount },
-          range.index,
-          text,
-        );
+        // this.image = paintTable(range.index, text);
       }
     },
   },
@@ -214,8 +218,7 @@ export default {
       },
     );
     Quill.register(LineStyle, true);
-    Font.whitelist = ['monospace'];
-    Quill.register(Font, true);
+
     this.editor = new Quill('#editor', this.options);
     this.editor.on('selection-change', (range, oldRange, source) =>
       this.handleSelection(range, oldRange, source),

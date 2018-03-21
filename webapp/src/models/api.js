@@ -38,4 +38,4 @@ export const updateAllocationRules = (url, data) => putRes(url, data);
 export const addAllocationRule = (url, data) => postRes(url, data);
 export const updateRule = (url, data) => patchRes(url, data);
 export const postRuleSCript = ({ ruleScriptNo, text }) =>
-  putRes(`api/rule-scripts/${ruleScriptNo}/`, { text });
+  postRes(`api/rule-scripts/${ruleScriptNo}/`, { text });

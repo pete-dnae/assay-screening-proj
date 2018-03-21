@@ -45,10 +45,13 @@ export const state = {
   version: 1,
   validScript: null,
   allocation: null,
+  maxRow: null,
+  maxCol: null,
   error: null,
   versionStatisfied: false,
   suggestions: [],
   savedScript: null,
+  allocationMap: null,
   ruleScript: {
     data: [],
     isPosting: false,
@@ -88,11 +91,24 @@ const mutations = {
     state.ruleScript.didInvalidate = false;
   },
   [types.POST_RULE_SCRIPT_SUCCESS](state, response) {
-    const { interpretation_results, text } = response.data;
-    const { allocation, parse_error, allocation_map } = interpretation_results;
+    const {
+      interpretationResults: { lnums, parseError, table },
+      text,
+    } = response.data;
 
-    state.error = parse_error;
-    state.allocation = allocation;
+    const allCells = _.reduce(
+      lnums,
+      (acc, x, i) => {
+        acc = acc.concat(x);
+        return acc;
+      },
+      [],
+    );
+    state.maxRow = allCells.sort((a, b) => b[0] - a[0])[0][0];
+    state.maxCol = allCells.sort((a, b) => b[1] - a[1])[0][1];
+    state.error = parseError;
+    state.allocation = table;
+    state.allocationMap = lnums;
     state.ruleScript.isPosting = false;
     state.ruleScript.posted = true;
     state.ruleScript.didInvalidate = false;
@@ -167,6 +183,12 @@ const getters = {
   },
   getRuleIsScriptSaving(state, getters, rootState) {
     return state.ruleScript.isPosting;
+  },
+  getTableBoundaries(state, getters, rootState) {
+    return [state.maxRow, state.maxCol];
+  },
+  getAllocationMap(state, getters, rootState) {
+    return state.allocationMap;
   },
 };
 

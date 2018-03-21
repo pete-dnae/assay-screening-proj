@@ -15,7 +15,7 @@
 <div>
     <!-- <titlemenu></titlemenu> -->
     <div id="app">
-
+      <experimentmenu></experimentmenu>
         <router-view/>
     </div>
 </div>
@@ -23,10 +23,12 @@
 </template>
 
 <script>
+import experimentmenu from '@/components/experimentmenu/experimentmenu.vue';
 import Vue from 'vue';
 
 
 export default {
   name: 'app',
+  components:{experimentmenu}
 };
 </script>
