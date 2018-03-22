@@ -91,19 +91,18 @@ li span {
                     <h5 class="text-left"><strong>Plate Visualization</strong></h5>
                     <strong class="d-block">User Selection</strong>
                     <label class="mt-2" >Plate Name :{{currentPlate}}</label>
-                    <div id="tableGoesHere">
-                      <div v-for="row in tableBoundaries[0]" class="row">
-                        <div v-for="col in tableBoundaries[1]"
-                            class='col-xs-4'>
-                            <div class="text-primary" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
-                              {{row,col}}
+                    <table id="tableGoesHere" style="max-width:100%;height:auto" v-if="allocationMapping&&allocationMapping[highlightedLineNumber]">
+                      <tr v-for="row in tableBoundaries[0]">
+                        <td v-for="col in tableBoundaries[1]">
+                            <div class="bg-secondary border border-secondary  rounded p-3"  v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
+
                             </div>
-                            <div v-else>
-                              {{row,col}}
+                            <div class="bg-light border border-light rounded p-3"  v-else>
+
                             </div>
-                        </div>
-                      </div>
-                    </div>
+                        </td>
+                      </tr>
+                    </table>
                 </div>
             </div>
             <div class="row text-left " v-show="showSuggestionList">

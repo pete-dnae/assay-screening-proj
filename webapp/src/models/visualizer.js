@@ -80,16 +80,9 @@ export const makeSVG = (DOMURL, html) => {
   );
 };
 export const isItemInArray = (array, item) => {
-  if (array && item) {
-    for (let i = 0; i < array.length; i += 1) {
-      if (array[i][0] === item[0] && array[i][1] === item[1]) {
-        console.log(array[i]);
-        return true;
-      }
-      return false;
-    }
-  }
-  return false;
+  const arrayString = _.map(array, (x) => String(x));
+
+  return arrayString.includes(String(item));
 };
 export const dispatchClick = (elem, rowCol) => {
   const event = new CustomEvent('cellClick', { detail: rowCol });
