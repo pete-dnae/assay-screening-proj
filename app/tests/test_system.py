@@ -19,8 +19,8 @@ class HighLevelSystemSmokeTest(APITestCase):
         is created then destroyed before and after tests...
 
         This setUp step creates a reference experiment in the database, which
-        includes building a large number of dependent objects (like Primers for
-        example), recursively.
+        includes building a fair number of dependent objects (like Reagents for
+        example.
 
         Observe that this set up step alone excercices most of the model
         code.

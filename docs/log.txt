@@ -1,19 +1,4 @@
-*  Provide as is now to Prasanna
-*  Get rid of obsolete unit tests, fix up those that remain, and add any
-   required.
-*  Overall gui design
-*  How correlate hightlighted bit of rules text to the cells and plates they 
-   affect
-*  Bring in CRUD for allowed reagent names and units
-    *  Bring in reagent names and units models right up to end points.
-       units.
-    *  Use the reagent names and units from the database in the script parser, 
-       rather than the currently hard coded ones
-    *  Regression test
-o  Deal with groupings now?
-    *  Add table of categories with all CRUD endpoints, and test with 
-       browsable API
-    o  Add FK to a category as compulsory property of reagent
+*  Deal with reagent categories
 o  The A...A index bug
     o  Suggest to Prasanna that we only report the line that is wrong, and
        that I can still provide an index - but it can be the first character in
@@ -24,9 +9,14 @@ o  Front end backlog
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
+    o  Non debug django mode
+    o  No import of pdb
 o  Deploy
 
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
-from app.models.reagent_category_model import ReagentCategoryModel
-ReagentCategoryModel
+
+from app.models.reagent_model import ReagentModel
+ReagentModel
+
+from pdb import set_trace as st

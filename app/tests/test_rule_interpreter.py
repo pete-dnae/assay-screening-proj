@@ -4,8 +4,8 @@ from pdb import set_trace as st
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
 from app.rules_engine.rule_obj_interpreter import RulesObjInterpreter
+from app.model_builders.reference_data import REFERENCE_REAGENT_NAMES
 from app.model_builders.reference_data import REFERENCE_SCRIPT
-from app.model_builders.reference_data import REFERENCE_REAGENTS
 from app.model_builders.reference_data import REFERENCE_UNITS
 
 
@@ -15,12 +15,8 @@ class RuleInterpreterTest(unittest.TestCase):
         pass
 
     def test_example_from_language_spec(self):
-        reagents = (
-            'Titanium-Taq',
-            '(Eco)-ATCC-BAA-2355',
-            '(Eco)-ATCC-BAA-9999')
-        units = ('M/uL', 'x', 'dilution')
-        parser = RuleScriptParser(reagents, units, REFERENCE_SCRIPT)
+        parser = RuleScriptParser(  
+            REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
         parser.parse()
         machine_readable_rules = parser.rule_objects
 

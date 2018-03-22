@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 
 from app.models.experiment_model import *
 from app.models.rules_script_model import *
-from app.models.reagent_name_model import *
+from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import *
 from app.models.units_model import *
 
@@ -12,7 +12,7 @@ from app.models.units_model import *
 _APP_MODEL_CLASSES = (
     ExperimentModel,
     RulesScriptModel,
-    ReagentNameModel,
+    ReagentModel,
     ReagentCategoryModel,
     UnitsModel,
 )

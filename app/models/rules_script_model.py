@@ -10,7 +10,3 @@ class RulesScriptModel(models.Model):
     @classmethod
     def make(cls, text):
         return RulesScriptModel.objects.create(text = text)
-
-    @classmethod
-    def clone(cls,src):
-        return cls.make(src.text)

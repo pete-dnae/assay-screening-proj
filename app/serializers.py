@@ -4,7 +4,7 @@ from pdb import set_trace as st
 # Models
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
-from .models.reagent_name_model import ReagentNameModel
+from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import ReagentCategoryModel
 from .models.units_model import UnitsModel
 
@@ -36,7 +36,7 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_interpretationResults(self, rule_script):
-        reagents = [r.name for r  in ReagentNameModel.objects.all()]
+        reagents = [r.name for r  in ReagentModel.objects.all()]
         units = [u.abbrev for u  in UnitsModel.objects.all()]
 
         interpreter = RulesScriptProcessor(
@@ -54,13 +54,14 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
             'lnums': lnums
         }
 
-class ReagentNameSerializer(serializers.HyperlinkedModelSerializer):
+class ReagentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = ReagentNameModel
+        model = ReagentModel
         fields = (
            'url',
            'name',
+           'category',
         )
 
 class UnitsSerializer(serializers.HyperlinkedModelSerializer):
