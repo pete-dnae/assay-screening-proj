@@ -80,9 +80,13 @@ export const makeSVG = (DOMURL, html) => {
   );
 };
 export const isItemInArray = (array, item) => {
-  for (let i = 0; i < array.length; i += 1) {
-    if (array[i][0] === item[0] && array[i][1] === item[1]) {
-      return true;
+  if (array && item) {
+    for (let i = 0; i < array.length; i += 1) {
+      if (array[i][0] === item[0] && array[i][1] === item[1]) {
+        console.log(array[i]);
+        return true;
+      }
+      return false;
     }
   }
   return false;
@@ -97,10 +101,10 @@ export const paintTable = (tableBoundaries, allocationMapping) => {
   _.range(1, maxRow + 1).forEach((row, i) => {
     tableBody[i] = tableBody[i] ? tableBody[i] : [];
     _.range(1, maxCol + 1).forEach((col, j) => {
-      if (isItemInArray(allocationMapping, [row, col])) {
+      if (allocationMapping && isItemInArray(allocationMapping, [row, col])) {
         const td = document.createElement('td');
-        td.setAttribute('border', '1px solid black');
-        td.setAttribute('background', 'rgba(76, 175, 80, 0.2)');
+        td.setAttribute('style', 'border:1px solid black;');
+        td.setAttribute('style', 'background:rgba(76, 175, 80, 0.2);');
         td.addEventListener('click', dispatchClick(td, [row, col]));
         tableBody[i][j] = td;
       } else {
@@ -114,19 +118,19 @@ export const paintTable = (tableBoundaries, allocationMapping) => {
     (acc, row) => {
       const mapFill = row.map((x) => {
         if (!x) {
-          const tabled = document.createElement('td');
-          tabled.setAttribute('border', '1px solid black');
+          const td = document.createElement('td');
+          td.setAttribute('style', 'border:1px solid black;');
           return td;
         }
         return x;
       });
-      debugger;
+
       //eslint-disable-next-line
       acc.appendChild(
         mapFill.reduce((a, x, i) => {
           a.appendChild(x);
           return a;
-        }, document.createElement('table')),
+        }, document.createElement('tr')),
       );
       return acc;
     },

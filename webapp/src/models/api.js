@@ -30,12 +30,8 @@ const patchRes = (url, data) =>
 /*eslint-disable */
 export const getExperiment = (expNo) => fetchRes(`api/experiments/${expNo}/`);
 export const getPlate = (plateId) => fetchRes(`api/plates/${plateId}/`);
-export const getRuleScript = (ruleScriptNo) =>
-  fetchRes(`api/rule-scripts/${ruleScriptNo}/`);
+export const getRuleScript = (url) => fetchRes(`api/rule-scripts/1/`);
 /*eslint-enable */
 export const getExperimentList = () => fetchRes('api/experiments/');
-export const updateAllocationRules = (url, data) => putRes(url, data);
-export const addAllocationRule = (url, data) => postRes(url, data);
-export const updateRule = (url, data) => patchRes(url, data);
 export const postRuleSCript = ({ ruleScriptNo, text }) =>
   postRes(`api/rule-scripts/${ruleScriptNo}/`, { text });

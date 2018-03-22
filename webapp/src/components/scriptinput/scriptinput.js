@@ -4,7 +4,7 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import { modal } from 'vue-strap';
-import { formatText, paintTable } from '@/models/visualizer';
+import { formatText, paintTable, isItemInArray } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
 
 // import { validateText } from '@/models/editor';
@@ -28,10 +28,8 @@ export default {
       showToolTip: false,
       index: 0,
       newReagent: null,
-      image: null,
-      rowCount: 8,
-      colCount: 12,
       currentPlate: null,
+      highlightedLineNumber: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
       tooltiptext: {
@@ -51,7 +49,6 @@ export default {
   computed: {
     ...mapGetters({
       options: 'getQuillOptions',
-      version: 'getVersion',
       error: 'getError',
       reagents: 'getReagents',
       units: 'getUnits',
@@ -59,6 +56,7 @@ export default {
       allocationMapping: 'getAllocationMap',
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
+      ruleScript: 'getRuleScript',
     }),
   },
   watch: {
@@ -69,7 +67,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['saveToDb']),
+    ...mapActions(['saveToDb', 'fetchExperiment']),
+    isItemInArray,
     editorChange() {
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
@@ -146,12 +145,13 @@ export default {
     },
     handleMouseOver(event) {
       const fromElement = event.fromElement;
-      if (fromElement.tagName === 'SPAN') {
+      if (fromElement && fromElement.tagName === 'SPAN') {
         const text = this.editor.getText();
         const elem = fromElement.parentElement;
         const { lineNumber, plateName } = getChildIndex(elem);
         const [start, end] = startEndOfLine(lineNumber, text);
         this.currentPlate = plateName;
+        this.highlightedLineNumber = lineNumber;
         this.editor.formatText(0, text.length, 'text-shadow', false);
         this.editor.formatText(
           start,
@@ -159,12 +159,10 @@ export default {
           'text-shadow',
           '2px 2px 4px #000000',
         );
-
-        console.log(
-          paintTable(
-            this.tableBoundaries,
-            this.allocationMapping[lineNumber + 1],
-          ),
+        let div = document.getElementById('tableGoesHere');
+        div = paintTable(
+          this.tableBoundaries,
+          this.allocationMapping[lineNumber + 1],
         );
       }
 
@@ -187,7 +185,7 @@ export default {
     async handleFormat() {
       const formattedText = formatText(this.editor.getText());
       await this.editor.setText(formattedText);
-      this.EditorChange();
+      this.editorChange();
     },
     handleTab() {
       this.handleAutoCompleteClick(this.suggestions[this.index]);
@@ -232,6 +230,11 @@ export default {
     this.editor.clipboard.addMatcher(Node.TEXT_NODE, (node) =>
       new Delta().insert(node.data, { font: 'monospace' }),
     );
+
+    this.fetchExperiment(this.$route.params.exptNo).then(() => {
+      this.editor.setText(formatText(this.ruleScript));
+      this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
+    });
 
     this.editor.focus();
   },
