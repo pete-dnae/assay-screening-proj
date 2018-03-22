@@ -4,7 +4,7 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import { modal } from 'vue-strap';
-import { formatText, paintTable } from '@/models/visualizer';
+import { formatText, paintTable, isItemInArray } from '@/models/visualizer';
 import { mapGetters, mapActions } from 'vuex';
 
 // import { validateText } from '@/models/editor';
@@ -28,9 +28,8 @@ export default {
       showToolTip: false,
       index: 0,
       newReagent: null,
-      image: null,
-      rowCount: 8,
-      colCount: 12,
+      currentPlate: null,
+      highlightedLineNumber: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
       tooltiptext: {
@@ -50,14 +49,14 @@ export default {
   computed: {
     ...mapGetters({
       options: 'getQuillOptions',
-      version: 'getVersion',
       error: 'getError',
-      parsedPlates: 'getparsedPlates',
       reagents: 'getReagents',
       units: 'getUnits',
-      currentPlate: 'getCurrentPlate',
+      tableBoundaries: 'getTableBoundaries',
+      allocationMapping: 'getAllocationMap',
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
+      ruleScript: 'getRuleScript',
     }),
   },
   watch: {
@@ -68,7 +67,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['saveToDb']),
+    ...mapActions(['saveToDb', 'fetchExperiment']),
+    isItemInArray,
     editorChange() {
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
@@ -145,13 +145,25 @@ export default {
     },
     handleMouseOver(event) {
       const fromElement = event.fromElement;
-      if (fromElement.tagName === 'SPAN') {
+      if (fromElement && fromElement.tagName === 'SPAN') {
         const text = this.editor.getText();
         const elem = fromElement.parentElement;
-        const lineNumber = getChildIndex(elem);
+        const { lineNumber, plateName } = getChildIndex(elem);
         const [start, end] = startEndOfLine(lineNumber, text);
-        this.editor.formatText(0, text.length, 'color', 'green');
-        this.editor.formatText(start, end - start, 'color', 'blue');
+        this.currentPlate = plateName;
+        this.highlightedLineNumber = lineNumber;
+        this.editor.formatText(0, text.length, 'text-shadow', false);
+        this.editor.formatText(
+          start,
+          end - start,
+          'text-shadow',
+          '2px 2px 4px #000000',
+        );
+        let div = document.getElementById('tableGoesHere');
+        div = paintTable(
+          this.tableBoundaries,
+          this.allocationMapping[lineNumber + 1],
+        );
       }
 
       // console.log(event.fromElement);
@@ -173,7 +185,7 @@ export default {
     async handleFormat() {
       const formattedText = formatText(this.editor.getText());
       await this.editor.setText(formattedText);
-      this.EditorChange();
+      this.editorChange();
     },
     handleTab() {
       this.handleAutoCompleteClick(this.suggestions[this.index]);
@@ -188,20 +200,23 @@ export default {
     handleSelection(range) {
       if (range && range.length > 1) {
         const text = this.editor.getText(range.index, range.length);
-        this.image = paintTable(
-          window.webkitURL,
-          { rows: this.rowCount, cols: this.colCount },
-          range.index,
-          text,
-        );
+        // this.image = paintTable(range.index, text);
       }
     },
   },
   mounted() {
     const Delta = Quill.import('delta');
     const Font = Quill.import('formats/font');
-    Font.whitelist = ['monospace'];
-    Quill.register(Font, true);
+    const Parchment = Quill.import('parchment');
+    const LineStyle = new Parchment.Attributor.Style(
+      'textShadow',
+      'text-shadow',
+      {
+        scope: Parchment.Scope.INLINE,
+      },
+    );
+    Quill.register(LineStyle, true);
+
     this.editor = new Quill('#editor', this.options);
     this.editor.on('selection-change', (range, oldRange, source) =>
       this.handleSelection(range, oldRange, source),
@@ -215,6 +230,11 @@ export default {
     this.editor.clipboard.addMatcher(Node.TEXT_NODE, (node) =>
       new Delta().insert(node.data, { font: 'monospace' }),
     );
+
+    this.fetchExperiment(this.$route.params.exptNo).then(() => {
+      this.editor.setText(formatText(this.ruleScript));
+      this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
+    });
 
     this.editor.focus();
   },

@@ -21,17 +21,22 @@ export const splitLine = (text) => {
 };
 
 export const getChildIndex = (child) => {
-  if (child) {
-    const parent = child.parentNode;
-    const children = parent.children;
-    let i = children.length - 1;
-    for (; i >= 0; i--) {
-      if (child === children[i]) {
-        break;
-      }
+  const parent = child.parentNode;
+  const children = parent.children;
+  let plateName = null;
+  let lineNumber = 0;
+  for (; lineNumber <= children.length - 1; lineNumber += 1) {
+    const innerText = children[lineNumber].innerText;
+
+    if (child === children[lineNumber]) {
+      break;
     }
-    return i;
+
+    if (innerText.startsWith('P')) {
+      [, plateName] = innerText.split(/\s+/g);
+    }
   }
+  return { lineNumber, plateName };
 };
 
 export const startEndOfLine = (lineNumber, text) => {

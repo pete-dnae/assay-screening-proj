@@ -79,29 +79,38 @@ export const makeSVG = (DOMURL, html) => {
     }),
   );
 };
-
-export const paintTable = (DOMURL, tableSpec, startIndex, text) => {
-  let tableBody = {};
-  text.split('\n').forEach((line) => {
-    const fields = splitLine(line);
-    if (fields[3] && fields[2]) {
-      const rows = getRowList(fields[3][0]);
-      const cols = getColList(fields[2][0]);
-      _.range(1, rows[rows.length - 1] + 1).forEach((row, i) => {
-        tableBody[i] = tableBody[i] ? tableBody[i] : [];
-        _.range(1, cols[cols.length - 1] + 1).forEach((col, j) => {
-          if (rows.indexOf(row) !== -1 && cols.indexOf(col) !== -1) {
-            tableBody[i][
-              j
-            ] = `<td style="width:250px;border: 1px solid black;background: rgba(76, 175, 80, 0.2)">${String.fromCharCode(
-              row + 64,
-            )}-${col}</td>`;
-          } else {
-            tableBody[i][j] = tableBody[i][j] ? tableBody[i][j] : null;
-          }
-        });
-      });
+export const isItemInArray = (array, item) => {
+  if (array && item) {
+    for (let i = 0; i < array.length; i += 1) {
+      if (array[i][0] === item[0] && array[i][1] === item[1]) {
+        console.log(array[i]);
+        return true;
+      }
+      return false;
     }
+  }
+  return false;
+};
+export const dispatchClick = (elem, rowCol) => {
+  const event = new CustomEvent('cellClick', { detail: rowCol });
+  elem.dispatchEvent(event);
+};
+export const paintTable = (tableBoundaries, allocationMapping) => {
+  const [maxRow, maxCol] = tableBoundaries;
+  let tableBody = {};
+  _.range(1, maxRow + 1).forEach((row, i) => {
+    tableBody[i] = tableBody[i] ? tableBody[i] : [];
+    _.range(1, maxCol + 1).forEach((col, j) => {
+      if (allocationMapping && isItemInArray(allocationMapping, [row, col])) {
+        const td = document.createElement('td');
+        td.setAttribute('style', 'border:1px solid black;');
+        td.setAttribute('style', 'background:rgba(76, 175, 80, 0.2);');
+        td.addEventListener('click', dispatchClick(td, [row, col]));
+        tableBody[i][j] = td;
+      } else {
+        tableBody[i][j] = tableBody[i][j] ? tableBody[i][j] : null;
+      }
+    });
   });
 
   tableBody = _.reduce(
@@ -109,16 +118,25 @@ export const paintTable = (DOMURL, tableSpec, startIndex, text) => {
     (acc, row) => {
       const mapFill = row.map((x) => {
         if (!x) {
-          return '<td style="width:250px;border: 1px solid black"></td>';
+          const td = document.createElement('td');
+          td.setAttribute('style', 'border:1px solid black;');
+          return td;
         }
         return x;
       });
+
       //eslint-disable-next-line
-      acc += `<tr style="height:100px">${mapFill.join('')}</tr>`;
+      acc.appendChild(
+        mapFill.reduce((a, x, i) => {
+          a.appendChild(x);
+          return a;
+        }, document.createElement('tr')),
+      );
       return acc;
     },
-    '<table>',
+    document.createElement('table'),
   );
-  tableBody += '</table>';
-  return makeSVG(DOMURL, tableBody);
+  tableBody.setAttribute('max-width', '100%');
+  tableBody.setAttribute('height', 'auto');
+  return tableBody;
 };

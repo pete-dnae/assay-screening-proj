@@ -13,7 +13,7 @@ export default new Router({
     },
 
     {
-      path: '/:ruleScript',
+      path: '/:exptNo',
       name: 'experimenthome',
       component: experimenthome,
     },

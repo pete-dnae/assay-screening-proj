@@ -1,4 +1,4 @@
-import typeahead from '@/components/typeahead/Typeahead';
+import typeahead from '@/components/typeahead/Typeahead.vue';
 
 export default {
   name: 'ExperimentMenu',

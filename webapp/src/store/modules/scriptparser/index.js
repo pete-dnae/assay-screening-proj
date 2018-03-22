@@ -39,20 +39,28 @@ export const state = {
     'Spo_gp_x.1_Spo03_Spo05',
   ],
   units: ['mM', 'mg/ml', 'mMeach', 'copies', 'uM', 'ng', 'x', 'dil', '%'],
-  currentPlate: null,
-  parsedPlates: [],
-  info: null,
-  version: 1,
-  validScript: null,
   allocation: null,
+  maxRow: null,
+  maxCol: null,
   error: null,
-  versionStatisfied: false,
   suggestions: [],
   savedScript: null,
+  allocationMap: null,
   ruleScript: {
-    data: [],
+    data: {
+      interpretationResults: { lnums: null, parseError: null, table: null },
+      text: null,
+    },
     isPosting: false,
+    isRequesting: false,
+    received: false,
     posted: false,
+    didInvalidate: false,
+  },
+  experiment: {
+    data: null,
+    isRequesting: false,
+    received: false,
     didInvalidate: false,
   },
   quillOptions: {
@@ -71,11 +79,38 @@ const actions = {
       api
         .postRuleSCript({ ruleScriptNo, text })
         .then((res) => {
-          commit(types.POST_RULE_SCRIPT_SUCCESS, res);
+          commit(types.POST_RULE_SCRIPT_SUCCESS);
+          commit(types.LOAD_API_RESPONSE, res);
           resolve('success');
         })
         .catch((e) => {
           commit(types.POST_RULE_SCRIPT_FAILURE);
+          reject(e);
+        });
+    });
+  },
+  fetchExperiment({ commit }, expNo) {
+    commit(types.REQUEST_EXPERIMENT);
+    return new Promise(function(resolve, reject) {
+      api
+        .getExperiment(expNo)
+        .then((res) => {
+          commit(types.EXPERIMENT_SUCCESS, res);
+          api
+            .getRuleScript(res.rules_script)
+            .then((res) => {
+              commit(types.RULE_SCRIPT_SUCCESS);
+              commit(types.LOAD_API_RESPONSE, res);
+
+              resolve('success');
+            })
+            .catch((e) => {
+              commit(types.RULE_SCRIPT_FAILURE);
+              reject(e);
+            });
+        })
+        .catch((e) => {
+          commit(types.EXPERIMENT_FAILURE);
           reject(e);
         });
     });
@@ -87,71 +122,87 @@ const mutations = {
     state.ruleScript.posted = false;
     state.ruleScript.didInvalidate = false;
   },
-  [types.POST_RULE_SCRIPT_SUCCESS](state, response) {
-    const { interpretation_results, text } = response.data;
-    const { allocation, parse_error } = interpretation_results;
-
-    state.error = parse_error;
-    state.allocation = allocation;
+  [types.POST_RULE_SCRIPT_SUCCESS](state) {
     state.ruleScript.isPosting = false;
     state.ruleScript.posted = true;
     state.ruleScript.didInvalidate = false;
+  },
+  [types.LOAD_API_RESPONSE](state, response) {
+    state.ruleScript.data = response;
+    const {
+      interpretationResults: { lnums, parseError, table },
+      text,
+    } = response;
+
+    const allCells = _.reduce(
+      lnums,
+      (acc, x, i) => {
+        acc = acc.concat(x);
+        return acc;
+      },
+      [],
+    );
+    state.maxRow = allCells.sort((a, b) => b[0] - a[0])[0][0];
+    state.maxCol = allCells.sort((a, b) => b[1] - a[1])[0][1];
+    state.error = parseError;
+    state.allocation = table;
+    state.allocationMap = lnums;
   },
   [types.POST_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
     state.ruleScript.posted = false;
     state.ruleScript.didInvalidate = true;
   },
-  [types.SET_CURRENT_PLATE_FROM_SCRIPT](state, value) {
-    state.currentPlate = value;
+  [types.REQUEST_EXPERIMENT](state) {
+    state.experiment.isRequesting = true;
+    state.experiment.received = false;
+    state.experiment.didInvalidate = false;
+  },
+  [types.EXPERIMENT_SUCCESS](state, response) {
+    state.experiment.data = response;
+    state.experiment.isRequesting = false;
+    state.experiment.received = true;
+    state.experiment.didInvalidate = false;
+  },
+  [types.EXPERIMENT_FAILURE](state) {
+    state.experiment.isRequesting = false;
+    state.experiment.received = false;
+    state.experiment.didInvalidate = true;
+  },
+  [types.REQUEST_RULE_SCRIPT](state) {
+    state.ruleScript.isRequesting = true;
+    state.ruleScript.received = false;
+    state.ruleScript.didInvalidate = false;
+  },
+  [types.RULE_SCRIPT_SUCCESS](state) {
+    state.ruleScript.isRequesting = false;
+    state.ruleScript.received = true;
+    state.ruleScript.didInvalidate = false;
+  },
+  [types.RULE_SCRIPT_FAILURE](state) {
+    state.ruleScript.isRequesting = false;
+    state.ruleScript.received = false;
+    state.ruleScript.didInvalidate = true;
   },
   [types.SAVE_SCRIPT](state, scriptText) {
     state.validScript = scriptText;
   },
-
-  [types.LOG_ERROR](state, data) {
-    state.error = data;
-  },
-  [types.CLEAR_ERROR](state) {
-    state.error = null;
-  },
-  [types.SET_PARSED_PLATE](state, value) {
-    state.parsedPlates.push(value);
-  },
   [types.SET_SUGGESTIONS](state, value) {
     state.suggestions = value;
   },
-  [types.CLEAR_SUGGESTIONS](state) {
-    state.suggestions = [];
-  },
-  [types.CLEAR_PARSED_PLATE](state) {
-    state.parsedPlates = [];
-  },
   [types.SET_VALID_SCRIPT](state, data) {
     state.savedScript = data;
-  },
-  [types.SET_VERSION_VERIFIED](state, value) {
-    state.versionStatisfied = value;
   },
   [types.ADD_REAGENT](state, value) {
     state.reagents.push(value);
   },
 };
 const getters = {
-  getVersionVerified(state, getters, rootState) {
-    return state.versionStatisfied;
-  },
   getQuillOptions(state, getters, rootState) {
     return state.quillOptions;
   },
-  getVersion(state, getters, rootState) {
-    return state.version;
-  },
   getError(state, getters, rootState) {
     return state.error;
-  },
-  getParsedPlates(state, getters, rootState) {
-    return state.parsedPlates;
   },
   getReagents(state, getters, rootState) {
     return state.reagents;
@@ -159,14 +210,20 @@ const getters = {
   getUnits(state, getters, rootState) {
     return state.units;
   },
-  getCurrentPlate(state, getters, rootState) {
-    return state.currentPlate;
-  },
   getSuggestions(state, getters, rootState) {
     return state.suggestions;
   },
   getRuleIsScriptSaving(state, getters, rootState) {
     return state.ruleScript.isPosting;
+  },
+  getTableBoundaries(state, getters, rootState) {
+    return [state.maxRow, state.maxCol];
+  },
+  getAllocationMap(state, getters, rootState) {
+    return state.allocationMap;
+  },
+  getRuleScript(state, getters, rootState) {
+    return state.ruleScript.data.text;
   },
 };
 
