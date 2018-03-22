@@ -19,3 +19,7 @@ class ReagentNameViewSet(viewsets.ModelViewSet):
 class UnitViewSet(viewsets.ModelViewSet):
     queryset = UnitsModel.objects.all()
     serializer_class =  UnitsSerializer
+
+class ReagentCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ReagentCategoryModel.objects.all()
+    serializer_class =  ReagentCategorySerializer

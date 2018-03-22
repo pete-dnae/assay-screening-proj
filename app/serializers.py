@@ -5,6 +5,7 @@ from pdb import set_trace as st
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
 from .models.reagent_name_model import ReagentNameModel
+from app.models.reagent_category_model import ReagentCategoryModel
 from .models.units_model import UnitsModel
 
 # Serialization helpers.
@@ -69,4 +70,13 @@ class UnitsSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
            'url',
            'abbrev',
+        )
+
+class ReagentCategorySerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReagentCategoryModel
+        fields = (
+           'url',
+           'name',
         )

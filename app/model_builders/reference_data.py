@@ -28,3 +28,9 @@ REFERENCE_REAGENTS = (
             '(Eco)-ATCC-BAA-9999')
 
 REFERENCE_UNITS = ('M/uL', 'x', 'dilution')
+
+REFERENCE_REAGENT_CATEGORIES = (
+    'Primer',
+    'Strain',
+    'Buffer Ingredient',
+)

@@ -34,6 +34,7 @@ router = routers.DefaultRouter()
 router.register(r'api/experiments', ExperimentViewSet)
 router.register(r'api/rule-scripts', RulesScriptViewSet)
 router.register(r'api/reagent-names', ReagentNameViewSet)
+router.register(r'api/reagent-categories', ReagentCategoryViewSet)
 router.register(r'api/units', UnitViewSet)
 
 urlpatterns += router.urls
