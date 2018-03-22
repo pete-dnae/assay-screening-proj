@@ -151,7 +151,7 @@ export default {
         const { lineNumber, plateName } = getChildIndex(elem);
         const [start, end] = startEndOfLine(lineNumber, text);
         this.currentPlate = plateName;
-        this.highlightedLineNumber = lineNumber;
+        this.highlightedLineNumber = lineNumber + 1;
         this.editor.formatText(0, text.length, 'text-shadow', false);
         this.editor.formatText(
           start,
