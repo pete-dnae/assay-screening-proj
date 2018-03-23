@@ -5,6 +5,7 @@ import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import { modal } from 'vue-strap';
 import { formatText, paintTable, isItemInArray } from '@/models/visualizer';
+import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 // import { validateText } from '@/models/editor';
@@ -20,6 +21,7 @@ export default {
   name: 'ScriptInputComponent',
   components: {
     modal,
+    hovervisualizer,
   },
   data() {
     return {
