@@ -1,3 +1,5 @@
+from pdb import set_trace as st
+
 """
 Creates the minimum viable starter content for a virgin database.
 With one experiment and only its dependents.
@@ -5,10 +7,11 @@ With one experiment and only its dependents.
 
 from app.models.experiment_model import ExperimentModel
 from app.models.rules_script_model import RulesScriptModel
-from app.models.reagent_name_model import ReagentNameModel
+from app.models.reagent_model import ReagentModel
+from app.models.reagent_category_model import ReagentCategoryModel
 from app.models.units_model import UnitsModel
 from app.model_builders.reference_data import REFERENCE_SCRIPT
-from app.model_builders.reference_data import REFERENCE_REAGENTS
+from app.model_builders.reference_data import REFERENCE_REAGENTS_DATA
 from app.model_builders.reference_data import REFERENCE_UNITS
 
 
@@ -26,10 +29,15 @@ class ReferenceExperiment():
         self.experiment = ExperimentModel.make(
                 'Reference Experiment', rules_script)
 
-        for reagent in REFERENCE_REAGENTS:
-            ReagentNameModel.make(reagent)
         for units in REFERENCE_UNITS:
             UnitsModel.make(units)
+
+        cats = {} # categories cache
+        for reagent, cat_name in REFERENCE_REAGENTS_DATA:
+            cat = cats[cat_name] if cat_name in cats else \
+                    cats.setdefault(cat_name, 
+                    ReagentCategoryModel.make(cat_name))
+            ReagentModel.make(reagent, cat)
 
         return self.experiment
 

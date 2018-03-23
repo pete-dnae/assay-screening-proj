@@ -30,21 +30,23 @@ a unitifed single source of truth for all users. The user experience for
 scientists to use it is a Web App accessible from their browser.
 
 The app presents a model whereby some entities in the database are shared and
-represent universally used things. These will include things like the Organisms
-we are working with, Strains, bought-in reagents, and our ever-evolving
-standardised primers for example. The Web App will aid the scientists in
-managing and curating these shared resources.
+represent universally used things. These will include things like the Reagent
+names we are working with. Standardised groups of primers for example. The Web
+App will aid the scientists in managing and curating these shared resources.
 
 The other side to the database is that it contains Experiments. Scientists can
 create and then design experiments in the Web App, which get saved in the
-database. An experiment design will for example declare which primers are going
-to be used in that experiment and similar, and then will go on to define a set
-of allocation rules that reflect the scientists strategy. As you would expect
-the scientist will be able to see the plate layouts visually in the App - but
-unlike today's spreadsheets, these allocations will be automatically generated
-on the fly from the allocation rules the scientist has put in, and consequently
-become very much easier to change and iterate on, and immune from spreadsheet
-thinking and typing errors.
+database. An experiment design is centered around what we call a *Rules
+Script*. This is a mini-program in a very simple domain specific language. It's
+little more than a series of *plate* declarations, interspersed with lines of
+text that say "I want to put this *reagent* and this *concentration* into these
+cells". You can specify the cells singly, in blocks or in sets. You can also
+put in similar lines that describe the *transfer* of some liquid from a well on
+plate into some well(s) on another.
+
+The Web App provides an editor for this script, and shows alongside the
+resultant allocation that the user is defining with the rules script, by way of
+feedback.
 
 We anticipate the app being extended fairly continuously to cover things like
 automating the programming of lab robots. And helping to keep track of such
@@ -52,13 +54,12 @@ things as reagent batch numbers.
 
 # Computing Architecture Overview
 
-What you see is a Web App that shows you visually, the experiments avaiable, the
-details of each of them, the various primers, organisms, etc that are registered
-in the system. And then offers various forms and screens and so on to let you
-create new experiments, and edit them etc. This Web App is a modern Javascript
-application that runs in your browser. It follows the _Single Page Application_
-architecture. And uses the _Vue.js_ web framework, with the Vuex extension to
-manage application state. Plus the _Bootstrap_ CSS library.
+What you see is a Web App that shows you visually, the experiments avaiable,
+and the details of each of them.  It offers various forms and screens and so on
+to let you create new experiments, and edit them etc. This Web App is a modern
+Javascript application that runs in your browser. It follows the _Single Page
+Application_ architecture. And uses the _Vue.js_ web framework, with the Vuex
+extension to manage application state. Plus the _Bootstrap_ CSS library.
 
 Most of the logic and intelligence for the application resides in a back-end web
 service running in the Cloud. The Web App has a conversation with the back-end
@@ -88,11 +89,26 @@ _PostgreSQL_ provided as part of Heroku's PAAS.
 Create root directory of your choice, that we'll call <foo>.
 
     cd foo
-    # activate your virtual env
     git clone https://github.com/pete-dnae/assay-screening-proj .
+    # activate your virtual env
     pip install -r requirements.txt
 
-Quick test so far...
+Run the unit tests
+
+    # These work automatically on a transient, in-memory database. They are not
+    # dependent on you having initialised a database, and won't touch your real
+    # database even if you have one set up.
+
+    cd foo
+
+    # To run all the unit tests
+    python manage.py test
+
+    # To run a particular unit test.
+    python manage.py test app.tests.test_xxx # no .py extension
+
+
+Smoke test the server will serve
 
     python manage.py runserver # just to see if python env is viable.
     # then quit the server
@@ -114,6 +130,9 @@ its deep tree of dependencies do this:
 
     Nb. Under the hood this uses a custome python manage.py script, which can be
     found (as required) in foo/app/management/commands.
+
+    See also the scripts in the commands directory, for some more
+    finely-grained maintenance automation.
 
 Run the server to test the REST API
 

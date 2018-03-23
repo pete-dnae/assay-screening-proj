@@ -22,9 +22,12 @@ which character position within the script the problem lies at.
 """
 REFERENCE_SCRIPT = xxxx
 
-REFERENCE_REAGENTS = (
-            'Titanium-Taq',
-            '(Eco)-ATCC-BAA-2355',
-            '(Eco)-ATCC-BAA-9999')
+REFERENCE_REAGENTS_DATA = (
+            ('Titanium-Taq', 'Buffer Ingredient'),
+            ('(Eco)-ATCC-BAA-2355', 'Strain'),
+            ('(Eco)-ATCC-BAA-9999', 'Strain'),
+)
+
+REFERENCE_REAGENT_NAMES = [name for name, category in REFERENCE_REAGENTS_DATA]
 
 REFERENCE_UNITS = ('M/uL', 'x', 'dilution')
