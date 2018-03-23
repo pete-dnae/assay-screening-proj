@@ -29,6 +29,8 @@ export default {
       index: 0,
       newReagent: null,
       currentPlate: null,
+      currentRow: null,
+      currentCol: null,
       highlightedLineNumber: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
@@ -57,6 +59,7 @@ export default {
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
       ruleScript: 'getRuleScript',
+      allocationData: 'getAllocationData',
     }),
   },
   watch: {
@@ -86,9 +89,12 @@ export default {
       hesitationTimer.cancel();
       hesitationTimer(
         this.editor.getText(),
-        this.$route.params.ruleScript,
+        this.$route.params.exptNo,
         this.paintText,
       );
+    },
+    handleShowCellContents([row, col]) {
+      [this.currentRow, this.currentCol] = [row, col];
     },
     paintText() {
       const text = this.editor.getText();

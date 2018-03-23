@@ -114,7 +114,6 @@ export default {
     },
   },
   created() {
-    console.log('hello');
     this.update = delayer(
       () => {
         if (!this.val) {

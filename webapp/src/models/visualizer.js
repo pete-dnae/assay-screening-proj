@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { splitLine } from '@/models/editor2.0';
+
 // stuff about painting tables goes here
 export const formatText = (text) => {
   let finalText = '';
@@ -45,11 +45,14 @@ export const getRowList = (rows) => {
       (x) => x - 64,
     );
   }
-  //eslint-disable-next-line
-  return rows
-    .split(',')
-    .map((x) => x.charCodeAt(0) - 64)
-    .sort((a, b) => a - b);
+
+  return (
+    rows
+      .split(',')
+      //eslint-disable-next-line
+      .map((x) => x.charCodeAt(0) - 64)
+      .sort((a, b) => a - b)
+  );
 };
 export const getColList = (cols) => {
   const rangeCharIndex = cols.indexOf('-');
@@ -60,10 +63,13 @@ export const getColList = (cols) => {
     );
   }
   //eslint-disable-next-line
-  return cols
-    .split(',')
-    .map((x) => parseInt(x, 0))
-    .sort((a, b) => a - b);
+  return (
+    cols
+      .split(',')
+      //eslint-disable-next-line
+      .map((x) => parseInt(x, 0))
+      .sort((a, b) => a - b)
+  );
 };
 
 export const makeSVG = (DOMURL, html) => {
@@ -80,6 +86,7 @@ export const makeSVG = (DOMURL, html) => {
   );
 };
 export const isItemInArray = (array, item) => {
+  //eslint-disable-next-line
   const arrayString = _.map(array, (x) => String(x));
 
   return arrayString.includes(String(item));
@@ -118,9 +125,8 @@ export const paintTable = (tableBoundaries, allocationMapping) => {
         return x;
       });
 
-      //eslint-disable-next-line
       acc.appendChild(
-        mapFill.reduce((a, x, i) => {
+        mapFill.reduce((a, x) => {
           a.appendChild(x);
           return a;
         }, document.createElement('tr')),

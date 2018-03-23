@@ -94,15 +94,33 @@ li span {
                     <table id="tableGoesHere" style="max-width:100%;height:auto" v-if="allocationMapping&&allocationMapping[highlightedLineNumber]">
                       <tr v-for="row in tableBoundaries[0]">
                         <td v-for="col in tableBoundaries[1]">
-                            <div class="bg-secondary border border-secondary  rounded p-3"  v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
+                            <div class="bg-secondary border border-secondary  rounded p-3"
+                            @mouseover="handleShowCellContents([row,col])"
+                            v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
 
                             </div>
-                            <div class="bg-light border border-light rounded p-3"  v-else>
+                            <div class="bg-light border border-light rounded p-3"
+                                  @mouseover="handleShowCellContents([row,col])"
+                             v-else>
 
                             </div>
                         </td>
                       </tr>
                     </table>
+                    <div class="w-100" v-if="allocationData&&allocationData[currentPlate]&&currentRow&&currentCol">
+                      <div class="row">
+                      <h5 class="col"><strong>Contents of {{String.fromCharCode(currentRow+64)}}{{currentCol}}</strong></h5>
+                      <div class="col">
+                      <i class="fa fa-lightbulb-o btn" aria-hidden="true"></i>
+                      <label >Hover over a well</label>
+                    </div>
+                    </div>
+                      <div class="mt-4">
+                        <li class="row" v-for="elem in allocationData[currentPlate][currentRow][currentCol]">
+                          <label class="col-3" v-for="entity in elem">{{entity}}</label>
+                        </li>
+                      </div>
+                    </div>
                 </div>
             </div>
             <div class="row text-left " v-show="showSuggestionList">
