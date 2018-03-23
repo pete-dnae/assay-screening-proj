@@ -56,7 +56,6 @@ li span {
 </style>
 
 <template>
-
 <div class="container-fluid w-75">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
@@ -86,7 +85,7 @@ li span {
             <div id="editor" class="" @keyup="editorChange" @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
-            <div class="row mt-3" v-if="">
+            <div class="row mt-3" >
               <hovervisualizer :currentPlate="currentPlate"
                                :tableBoundaries="tableBoundaries"
                                :highlightedLineNumber="highlightedLineNumber"
@@ -98,7 +97,7 @@ li span {
                 <h5 class="mt-3 w-100"><strong>Suggestions :</strong></h5>
                 <h5><strong>Currently retreiving 5+ suggestions</strong></h5>
                 <div class="list-group w-100 pre-scrollable">
-                    <button class="list-group-item list-group-item-action" v-for="text in suggestions" @click.left="handleAutoCompleteClick(text);" @click.middle="hideSuggestion()">
+                    <button class="list-group-item list-group-item-action" v-for="text in suggestions" v-bind:key="text" @click.left="handleAutoCompleteClick(text);" @click.middle="hideSuggestion()">
                         {{text}}
                     </button>
                 </div>
@@ -106,7 +105,7 @@ li span {
         </div>
         <span v-bind:style="tooltiptext" v-show="showSuggestionToolTip">
     <ul >
-    <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
+    <li v-for = "text in suggestions" v-bind:key="text" @click.left="handleAutoCompleteClick(text);"
     @click.middle="hideSuggestion()">
       {{text}}
     </li>
