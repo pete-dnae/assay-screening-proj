@@ -309,21 +309,15 @@ class RuleScriptParser:
         to the basic_message..
 
         The *culprit_string* parameter is optional. When you provide a non
-        empty one, this will be included in the error message, and it will also
-        be used to deduce whereabouts on the line the error occurs so this also
-        can be reported..
+        empty one, this will be included in the error message.
         """
         # Add line number to the error message.
         basic_message += (' Line %d.' % (self._parse_posn.line_index + 1))
+        if culprit_string:
+            basic_message += ' Culprit: (%s).' % culprit_string
 
         position_in_script = self._chars_in_script_preceding(
                 self._parse_posn.line_index)
-
-        # If *culprit_string* is given, we can add a character number too.
-        if culprit_string:
-            index_in_line = self._parse_posn.line.find(culprit_string)
-            basic_message += ' Character %d.' % (index_in_line + 1)
-            position_in_script = position_in_script + index_in_line
 
         raise ParseError(basic_message, position_in_script)
 

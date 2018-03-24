@@ -1,8 +1,18 @@
 *  Deal with reagent categories
 *  Fix the row/col transposition error
 
+o  Switch to new CORS scheme
+    *  Has Pras updated requirements.txt? = no
+    *  Note what exists already - settings are all fine
+    *  Add settings as recommended by new CORS web page
+        *  require / install django-cors-headers
+
 o  The A...A index bug
-    o  
+    *  Return only the char index at which the offending line starts
+    *  Survey how to put it in =  Change definition of culprit_string
+    o  Regression up
+    o  Improve / add culprit string injection?
+    o  Tell Prasanna
 o  Think clone is obsolete
 o  Bring in primer pools
 o  Front end backlog
