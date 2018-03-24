@@ -22,11 +22,3 @@ class ExperimentModel(models.Model):
         )
         exp.save()
         return exp
-
-    @classmethod
-    def clone(cls, src):
-        return cls.make(
-            src.experiment_name, # Plain copy
-            RulesScriptModel.clone(src.rule_script) # New
-        )
-
