@@ -50,5 +50,8 @@ class RulesScriptProcessor:
                     cells = rule_obj.cells
                 elif isinstance(rule_obj, TransferRule):
                     cells = rule_obj.d_cells
-                mapping[line_number].extend(cells.all_cells())
+                # These *cells* are ordered [(row,col), (row,col)...]
+                # whereas we want [(col,row), (col,row)...] in ouput.
+                transposed = [(col, row) for row, col in cells.all_cells()]
+                mapping[line_number].extend(transposed)
         return mapping
