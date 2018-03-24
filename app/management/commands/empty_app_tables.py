@@ -4,6 +4,7 @@ from app.models.experiment_model import *
 from app.models.rules_script_model import *
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import *
+from app.models.reagent_group_model import *
 from app.models.units_model import *
 
 # This list has to be in dependency order.
@@ -12,6 +13,7 @@ from app.models.units_model import *
 _APP_MODEL_CLASSES = (
     ExperimentModel,
     RulesScriptModel,
+    ReagentGroupModel,
     ReagentModel,
     ReagentCategoryModel,
     UnitsModel,

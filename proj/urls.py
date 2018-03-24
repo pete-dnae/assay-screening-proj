@@ -35,6 +35,7 @@ router.register(r'api/experiments', ExperimentViewSet)
 router.register(r'api/rule-scripts', RulesScriptViewSet)
 router.register(r'api/reagents', ReagentViewSet)
 router.register(r'api/reagent-categories', ReagentCategoryViewSet)
+router.register(r'api/reagent-groups', ReagentGroupViewSet)
 router.register(r'api/units', UnitViewSet)
 
 urlpatterns += router.urls

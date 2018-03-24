@@ -4,11 +4,9 @@
 *  The A...A index bug
 *  Think clone is obsolete
 *  Bug fix - lnums is still in (row,col) order
-o  Bring in groups
-    o  Requirements
+*  Bring in groups at model level
+o  Add tolerance of groups in script in place of reagents
     o  Design
-    o  Code
-    o  Test
 o  Front end backlog
 o  Management scripts to feed in bulk reagents and pools
 o  Provide endpoint that Chris' script needs
@@ -20,7 +18,16 @@ o  Plan and prepare for deployment
 o  Deploy
 
 ---------------------------------------------------------------------------
+Groups
 ---------------------------------------------------------------------------
+A table of <ReagentGroup>s
+Each of which has-a name.
+Each of which has-a ReagentCategory FK.
+Each of which has-a m2m field of Reagent FK.
 
+Must make it a bad request if receive a write op that includes a Reagent FK
+that references a Reagent of a mis-matched category.
+
+---------------------------------------------------------------------------
 from pdb import set_trace as st
-Moesif Origin & CORS Changer
+---------------------------------------------------------------------------
