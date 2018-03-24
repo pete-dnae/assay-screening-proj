@@ -1,10 +1,10 @@
 *  Deal with reagent categories
+*  Fix the row/col transposition error
+
 o  The A...A index bug
-    o  Suggest to Prasanna that we only report the line that is wrong, and
-       that I can still provide an index - but it can be the first character in
-       the offending line.
+    o  
 o  Think clone is obsolete
-o  Bring in pools in every respect
+o  Bring in primer pools
 o  Front end backlog
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
@@ -16,7 +16,5 @@ o  Deploy
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
-from app.models.reagent_model import ReagentModel
-ReagentModel
-
 from pdb import set_trace as st
+Moesif Origin & CORS Changer

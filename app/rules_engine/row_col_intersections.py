@@ -3,6 +3,15 @@ class RowColIntersections():
     This class stores a list of some rows and columns that you specify and can 
     provide you with a list of all the cells thus formed by their intersections, 
     along with whether this comprises a contiguous rectangular region or not.
+
+    CAUTION
+
+    The vast majority of the code in the rest of the rules subsystem always
+    specifies rows and columns in data structures and in positional arguments
+    to functions, and in data payloads, by specifying column then row. E.g
+    (2,3) usually means column 2, row 3. The exception is this
+    RowColumnIntersection class, which reverses this convention in order to
+    match up with the name of the class.
     """
 
     SINGLE = 1

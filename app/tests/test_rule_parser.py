@@ -1,4 +1,5 @@
 import unittest
+import re
 from pdb import set_trace as st
 
 from app.rules_engine.rule_script_parser import RuleScriptParser
@@ -11,6 +12,25 @@ class RuleScriptParserTest(unittest.TestCase):
 
     def setUp(self):
         pass
+
+    def test_rows_and_columns_right_way_round(self):
+        """
+        Make a script with only a single cell allocation, and ensure that the
+        row and column end up properly set in the output.
+        """
+        # Cut the reference script to just a single allocation rule that
+        # targets column 2, and row C (i.e. 3)
+        regex = re.compile(r'Taq.*', re.DOTALL)
+        script = re.sub(regex, 'Taq 2  C 0.02 M/uL', REFERENCE_SCRIPT)
+        parser = RuleScriptParser(
+                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, script)
+        parser.parse()
+        rule_objects = parser.rule_objects
+        plate, rules = rule_objects.popitem()
+        rule = rules[0]
+        cells = rule.cells
+        self.assertEqual(cells.cols, [2,])
+        self.assertEqual(cells.rows, [3,])
 
     def test_example_from_language_spec(self):
         """
@@ -33,10 +53,10 @@ class RuleScriptParserTest(unittest.TestCase):
         # two of the row/col spec formats.
         rule = rules[0]
         self.assertEqual(rule.source_plate, 'Plate1')
-        self.assertEqual(rule.s_cells.rows, [1])
-        self.assertEqual(rule.s_cells.cols, [2])
-        self.assertEqual(rule.d_cells.rows, [1,2,3,4,5,6,7,8,9,10,11,12])
-        self.assertEqual(rule.d_cells.cols, [1,2,3,4,5,6,7,8])
+        self.assertEqual(rule.s_cells.cols, [1])
+        self.assertEqual(rule.s_cells.rows, [2])
+        self.assertEqual(rule.d_cells.cols, [1,2,3,4,5,6,7,8,9,10,11,12])
+        self.assertEqual(rule.d_cells.rows, [1,2,3,4,5,6,7,8])
         self.assertEqual(rule.dilution_factor, 20)
 
         # Move back to the first plate
@@ -50,8 +70,8 @@ class RuleScriptParserTest(unittest.TestCase):
         # the remainder of the row/col specs.
         rule = rules[1]
         self.assertEqual(rule.reagent_name, '(Eco)-ATCC-BAA-2355')
-        self.assertEqual(rule.cells.rows, [1,5,9])
-        self.assertEqual(rule.cells.cols, [2,])
+        self.assertEqual(rule.cells.cols, [1,5,9])
+        self.assertEqual(rule.cells.rows, [2,])
         self.assertEqual(rule.conc, 1.16)
         self.assertEqual(rule.units, 'x')
 
@@ -156,7 +176,7 @@ class RuleScriptParserTest(unittest.TestCase):
             'Units for a transfer must be <dilution>. Line 8. Character 44.')
         self.assertEqual(e.where_in_script, 228)
 
-    def test_error_non_number_in_row(self):
+    def test_error_non_number_in_col(self):
         modified_script = REFERENCE_SCRIPT.replace('1,5,9', '1,A,9')
         parser = RuleScriptParser(
                 REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
@@ -164,7 +184,7 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Struggling with a non-number in rows specification. ' + \
+            'Struggling with a non-number in columns specification. ' + \
             'Line 4. Character 29.')
         self.assertEqual(e.where_in_script, 93)
 
@@ -179,7 +199,7 @@ class RuleScriptParserTest(unittest.TestCase):
             'Cannot convert concentration to a number. Line 3. Character 39.')
         self.assertEqual(e.where_in_script, 55)
 
-    def test_error_non_letter_in_column_spec(self):
+    def test_error_non_letter_in_rows_spec(self):
         modified_script = REFERENCE_SCRIPT.replace('C,D', 'C,3')
         parser = RuleScriptParser(
                 REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
@@ -187,7 +207,7 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Only letters allowed in columns specification. ' + \
+            'Only letters allowed in rows specification. ' + \
             'Line 5. Character 35.')
         self.assertEqual(e.where_in_script, 144)
 

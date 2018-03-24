@@ -1,4 +1,5 @@
 import unittest
+import re
 from pdb import set_trace as st
 
 from app.rules_engine.rule_script_parser import RuleScriptParser
@@ -14,6 +15,25 @@ class RuleInterpreterTest(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_smallest_alloc_example_to_make_sure_row_col_right_way_round(self):
+        # Cut the reference script to just a single allocation rule that
+        # targets column 2, and row C (i.e. 3)
+        regex = re.compile(r'Taq.*', re.DOTALL)
+        script = re.sub(regex, 'Taq 2  C 0.02 M/uL', REFERENCE_SCRIPT)
+        parser = RuleScriptParser(  
+            REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, script)
+        parser.parse()
+        machine_readable_rules = parser.rule_objects
+        interpreter = RulesObjInterpreter(machine_readable_rules)
+        alloc_table = interpreter.interpret()
+        # This should be the only cell included in the results.
+        # And comprise one reagent.
+        contents = alloc_table.plate_info['Plate1'][2][3]
+        self.assertEqual(len(contents), 1)
+        reagent, conc, units = contents[0]
+        self.assertEqual(reagent, 'Titanium-Taq')
+
+
     def test_example_from_language_spec(self):
         parser = RuleScriptParser(  
             REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
@@ -26,6 +46,7 @@ class RuleInterpreterTest(unittest.TestCase):
         alloc_table = interpreter.interpret()
 
         # Sample the output where created with AllocRule(s)
+        # Choose column 1, row B which is targeted by the first two rules.
         contents = alloc_table.plate_info['Plate1'][1][2]
 
         reagent, conc, units = contents[0]
@@ -42,6 +63,6 @@ class RuleInterpreterTest(unittest.TestCase):
         contents = alloc_table.plate_info['Plate42'][2][3]
 
         reagent, conc, units = contents[0]
-        self.assertEqual(reagent, 'Transfer Plate42:Row-1:Col-2')
+        self.assertEqual(reagent, 'Transfer Plate42:Col-1:Row-2')
         self.assertEqual(conc, 20.0)
         self.assertEqual(units, 'dilution')

@@ -29,8 +29,7 @@ class RuleScriptProcessorTest(unittest.TestCase):
 
         # Make sure the line number to cells mapping looks ok.
         self.assertEqual(
-            line_number_to_cells_mapping[4],
-            [(1, 2), (5, 2), (9, 2)])
+            line_number_to_cells_mapping[4], [(2, 1), (2, 5), (2, 9)])
 
     def test_on_malformed_rules_script(self):
         reagents = (

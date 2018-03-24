@@ -30,7 +30,7 @@ class TransferRule:
 
     self.mapping works like this: using (d) for destination and (s) for source.
 
-            self.mapping[d_row][d_col] = (s_row, s_col)
+            self.mapping[d_col][d_row] = (s_col, s_row)
     """
 
 
@@ -61,17 +61,12 @@ class TransferRule:
         IncompatibleTransferError if they are not compatible.
         """
 
-        s_cells = RowColIntersections(
-                self.s_cells.rows, self.s_cells.cols)
-        d_cells = RowColIntersections(
-                self.d_cells.rows, self.d_cells.cols)
-
-        s_shape, s_width, s_height = s_cells.shape()
-        d_shape, d_width, d_height = d_cells.shape()
+        s_shape, s_width, s_height = self.s_cells.shape()
+        d_shape, d_width, d_height = self.d_cells.shape()
 
         # Single source can be tranferred to any shape destination.
         if s_shape == RowColIntersections.SINGLE:
-            self._populate_as_single_to_many(s_cells, d_cells)
+            self._populate_as_single_to_many()
             return
 
         # Otherwise we required that BOTH the source and dest are rectangles.
@@ -88,7 +83,7 @@ class TransferRule:
         if s_height == 1:
             if d_width != s_width:
                 raise IncompatibleTransferError()
-            self._populate_as_row_seg_to_rect(s_cells, d_cells)
+            self._populate_as_row_seg_to_rect()
             return
 
         # If the source is a single column segment, then the destination 
@@ -96,69 +91,65 @@ class TransferRule:
         if s_width == 1:
             if d_height != s_height:
                 raise IncompatibleTransferError()
-            self._populate_as_col_seg_to_rect(s_cells, d_cells)
+            self._populate_as_col_seg_to_rect()
             return
 
         # To reach here, both the source and dest are rectangles with both 
         # dimensions > 1. In wich case their sizes must match exactly.
         if (d_height != s_height) or (d_width != s_width):
             raise IncompatibleTransferError()
-        self._populate_as_rect_to_rect(s_cells, d_cells)
+        self._populate_as_rect_to_rect()
         return
 
-    def _populate_as_single_to_many(self, s_cells, d_cells):
+    def _populate_as_single_to_many(self):
         """
         Populate self.mapping in the prior knowledge that the source cells 
         is just a single cell, and the destination cells can be anything.
         """
-        s_row, s_col = s_cells.all_cells()[0]
-        for d_row, d_col in d_cells.all_cells():
-            columns = self.mapping.setdefault(d_row, {})
-            columns[d_col] = (s_row, s_col)
+        s_row, s_col = self.s_cells.all_cells()[0]
+        for d_row, d_col in self.d_cells.all_cells():
+            rows = self.mapping.setdefault(d_col, {})
+            rows[d_row] = (s_col, s_row)
 
-    def _populate_as_row_seg_to_rect(self, s_cells, d_cells):
+    def _populate_as_row_seg_to_rect(self):
         """
         Populate self.mapping in the prior knowledge that the source cells 
         comprise a horizontal strip, and the destination cells form a 
         rectangle of the same width.
         """
-        s_min_row, s_min_col = s_cells.minimums()
-        d_min_row, d_min_col = d_cells.minimums()
+        s_min_row, s_min_col = self.s_cells.minimums()
+        d_min_row, d_min_col = self.d_cells.minimums()
         # Populate the mapping for all the destination cells
-        for d_row, d_col in d_cells.all_cells():
-            columns = self.mapping.setdefault(d_row, {})
-            columns[d_col] = (s_min_row, s_min_col + d_col - d_min_col)
+        for d_row, d_col in self.d_cells.all_cells():
+            rows = self.mapping.setdefault(d_col, {})
+            rows[d_row] = (s_min_col + d_col - d_min_col, s_min_row)
 
-    def _populate_as_col_seg_to_rect(self, s_cells, d_cells):
+    def _populate_as_col_seg_to_rect(self):
         """
         Populate self.mapping in the prior knowledge that the source cells 
         comprise a vertical strip, and the destination cells form a 
         rectangle of the same height.
         """
-        s_min_row, s_min_col = s_cells.minimums()
-        d_min_row, d_min_col = d_cells.minimums()
+        s_min_row, s_min_col = self.s_cells.minimums()
+        d_min_row, d_min_col = self.d_cells.minimums()
         # Populate the mapping for all the destination cells
-        for d_row, d_col in d_cells.all_cells():
-            columns = self.mapping.setdefault(d_row, {})
-            columns[d_col] = (s_min_row + d_row - d_min_row, s_min_col)
+        for d_row, d_col in self.d_cells.all_cells():
+            rows = self.mapping.setdefault(d_col, {})
+            rows[d_row] = (s_min_col, s_min_row + d_row - d_min_row)
             
 
-    def _populate_as_rect_to_rect(self, s_cells, d_cells):
+    def _populate_as_rect_to_rect(self):
         """
         Populate self.mapping in the prior knowledge that the source cells 
         is a full rect, and the destination cells form a rectangle of
         exactly the same shape..
         """
         # Populate the mapping for all the destination cells
-        s_min_row, s_min_col = s_cells.minimums()
-        d_min_row, d_min_col = d_cells.minimums()
-        for d_row, d_col in d_cells.all_cells():
-            columns = self.mapping.setdefault(d_row, {})
-            columns[d_col] = (s_min_row + d_row - d_min_row, 
-                    s_min_col + d_col - d_min_col)
-
-
-
-
-
-
+        s_min_row, s_min_col = self.s_cells.minimums()
+        d_min_row, d_min_col = self.d_cells.minimums()
+        for d_row, d_col in self.d_cells.all_cells():
+            rows = self.mapping.setdefault(d_col, {})
+            rows[d_row] = (
+                s_min_col + d_col - d_min_col,
+                s_min_row + d_row - d_min_row 
+            )

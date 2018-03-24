@@ -43,9 +43,9 @@ class RulesObjInterpreter:
 
     def _apply_transfer_rule(self, plate, rule):
         for d_row, d_col in rule.d_cells.all_cells():
-            s_row, s_col = rule.mapping[d_row][d_col]
+            s_col, s_row = rule.mapping[d_col][d_row]
             virtual_reagent_name = \
-                'Transfer %s:Row-%d:Col-%d' % (plate, s_row, s_col)
+                'Transfer %s:Col-%d:Row-%d' % (plate, s_col, s_row)
             self._allocation_results.add(plate, d_row, d_col, 
                     virtual_reagent_name, rule.dilution_factor, 'dilution')
 
@@ -55,7 +55,7 @@ class AllocationResults():
     This is used by RulesObjInterpreter to deliver its results.
     It's a data structure along these lines:
 
-       .plate_info[plate_name][row][col] = (item1, item2, ... item_n)
+       .plate_info[plate_name][col][row] = (item1, item2, ... item_n)
 
     Where an item looks like:
 
@@ -71,7 +71,7 @@ class AllocationResults():
         self.plate_info = OrderedDict()
 
     def add(self, plate, row, col, reagent_name, conc, units):
-        rows = self.plate_info.setdefault(plate, OrderedDict())
-        cols = rows.setdefault(row, OrderedDict())
-        reagents = cols.setdefault(col, [])
+        cols = self.plate_info.setdefault(plate, OrderedDict())
+        rows = cols.setdefault(col, OrderedDict())
+        reagents = rows.setdefault(row, [])
         reagents.append((reagent_name, conc, units))

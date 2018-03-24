@@ -128,8 +128,8 @@ class RuleScriptParser:
         self._assert_a_plate_is_defined()
 
         reagent = self._fields.field(1, 'Reagent')
-        rows = self._fields.field(2, 'Rows specification')
-        cols = self._fields.field(3, 'Columns specification')
+        cols = self._fields.field(2, 'Columns specification')
+        rows = self._fields.field(3, 'Rows specification')
         conc = self._fields.field(4, 'Concentration')
         units = self._fields.field(5, 'Concentration units')
 
@@ -155,10 +155,10 @@ class RuleScriptParser:
         # s_ for source, d_ for destination
 
         s_plate = self._fields.field(1, 'Source plate name')
-        s_rows = self._fields.field(2, 'Source rows')
-        s_cols = self._fields.field(3, 'Source columns')
-        d_rows = self._fields.field(4, 'Desination rows')
-        d_cols = self._fields.field(5, 'Desination columns')
+        s_cols = self._fields.field(2, 'Source columns')
+        s_rows = self._fields.field(3, 'Source rows')
+        d_cols = self._fields.field(4, 'Desination columns')
+        d_rows = self._fields.field(5, 'Desination rows')
         conc = self._fields.field(6, 'Concentration')
         units = self._fields.field(7, 'Concentration units')
 
@@ -232,57 +232,57 @@ class RuleScriptParser:
         if conc_units != 'dilution':
             self._err('Units for a transfer must be <dilution>.', conc_units)
 
-    def _parse_row_spec(self, rows_spec):
+    def _parse_col_spec(self, cols_spec):
         """
         Interprets (with error handling) strings like these.
         '1-12' or '3,4,5', or '3'
-        Returns a flat list of the row numbers thus represented.
+        Returns a flat list of the column numbers thus represented.
         """
         # Range?
-        m = _INT_RANGE_RE.match(rows_spec)
+        m = _INT_RANGE_RE.match(cols_spec)
         if m is not None:
             start, end = m.group(1,2)
             as_list = [str(x) for x in range(int(start), int(end)+1)]
 
         # Discrete list?
-        elif ',' in rows_spec:
-            as_list = rows_spec.split(',')
+        elif ',' in cols_spec:
+            as_list = cols_spec.split(',')
 
         # Must now be single value
         else:
-            as_list = (rows_spec,)
+            as_list = (cols_spec,)
         # Convert to integers - noting that this is still vulnerable to
         # letters being present in some cases..
         try:
             as_list = [int(s) for s in as_list]
         except ValueError:
-            self._err('Struggling with a non-number in rows specification.', 
-                    rows_spec)
+            self._err('Struggling with a non-number in columns specification.', 
+                    cols_spec)
         return as_list
 
-    def _parse_col_spec(self, cols_spec):
+    def _parse_row_spec(self, rows_spec):
         """
         Interprets (with error handling) strings like these.
         'A-F' or 'A,B,C', or 'C'
-        Returns a flat list of the column letters thus represented - BUT NOT 
+        Returns a flat list of the row letters thus represented - BUT NOT 
         as letters; instead the letters are converted to integers starting with
         1 for 'A'. (Anticipating downstream use of RowColIntersection class.)
         """
         # Range?
-        m = _LETTER_RANGE_RE.match(cols_spec)
+        m = _LETTER_RANGE_RE.match(rows_spec)
         if m is not None:
             start, end = m.group(1,2)
             as_list = [chr(x) for x in range(ord(start), ord(end)+1)]
 
         # Discrete list?
-        elif ',' in cols_spec:
-            as_list = cols_spec.split(',')
-            self._assert_letters(as_list, cols_spec)
+        elif ',' in rows_spec:
+            as_list = rows_spec.split(',')
+            self._assert_letters(as_list, rows_spec)
 
         # Must now be single value
         else:
-            as_list = cols_spec,
-            self._assert_letters(as_list, cols_spec)
+            as_list = rows_spec,
+            self._assert_letters(as_list, rows_spec)
         return [1 + ord(c) - ord('A') for c in as_list]
 
     def _parse_conc_value(self, conc):
@@ -300,7 +300,7 @@ class RuleScriptParser:
         """
         for item in seq:
             if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                self._err('Only letters allowed in columns specification.', 
+                self._err('Only letters allowed in rows specification.', 
                         source_string)
 
     def _err(self, basic_message, culprit_string=None):
