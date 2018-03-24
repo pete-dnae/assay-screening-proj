@@ -56,7 +56,6 @@ li span {
 </style>
 
 <template>
-
 <div class="container-fluid w-75">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
@@ -86,30 +85,19 @@ li span {
             <div id="editor" class="" @keyup="editorChange" @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
-            <div class="row mt-3">
-                <div class="col  text-left" >
-                    <h5 class="text-left"><strong>Plate Visualization</strong></h5>
-                    <strong class="d-block">User Selection</strong>
-                    <label class="mt-2" >Plate Name :{{currentPlate}}</label>
-                    <table id="tableGoesHere" style="max-width:100%;height:auto" v-if="allocationMapping&&allocationMapping[highlightedLineNumber]">
-                      <tr v-for="row in tableBoundaries[0]">
-                        <td v-for="col in tableBoundaries[1]">
-                            <div class="bg-secondary border border-secondary  rounded p-3"  v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
-
-                            </div>
-                            <div class="bg-light border border-light rounded p-3"  v-else>
-
-                            </div>
-                        </td>
-                      </tr>
-                    </table>
-                </div>
+            <div class="row mt-3" >
+              <hovervisualizer :currentPlate="currentPlate"
+                               :tableBoundaries="tableBoundaries"
+                               :highlightedLineNumber="highlightedLineNumber"
+              :allocationMapping="allocationMapping"
+              :allocationData="allocationData">
+            </hovervisualizer>
             </div>
             <div class="row text-left " v-show="showSuggestionList">
                 <h5 class="mt-3 w-100"><strong>Suggestions :</strong></h5>
                 <h5><strong>Currently retreiving 5+ suggestions</strong></h5>
                 <div class="list-group w-100 pre-scrollable">
-                    <button class="list-group-item list-group-item-action" v-for="text in suggestions" @click.left="handleAutoCompleteClick(text);" @click.middle="hideSuggestion()">
+                    <button class="list-group-item list-group-item-action" v-for="text in suggestions" v-bind:key="text" @click.left="handleAutoCompleteClick(text);" @click.middle="hideSuggestion()">
                         {{text}}
                     </button>
                 </div>
@@ -117,7 +105,7 @@ li span {
         </div>
         <span v-bind:style="tooltiptext" v-show="showSuggestionToolTip">
     <ul >
-    <li v-for = "text in suggestions" @click.left="handleAutoCompleteClick(text);"
+    <li v-for = "text in suggestions" v-bind:key="text" @click.left="handleAutoCompleteClick(text);"
     @click.middle="hideSuggestion()">
       {{text}}
     </li>

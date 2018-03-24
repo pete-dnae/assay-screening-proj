@@ -3,7 +3,8 @@ import _ from 'lodash';
 import * as types from './mutation-types';
 import * as api from '@/models/api';
 import experiment from '@/assets/json/response.json';
-import { makeFeedback } from '@/models/editor';
+
+import { getMaxRowCol } from '@/models/editor2.0';
 
 export const state = {
   reagents: [
@@ -39,13 +40,10 @@ export const state = {
     'Spo_gp_x.1_Spo03_Spo05',
   ],
   units: ['mM', 'mg/ml', 'mMeach', 'copies', 'uM', 'ng', 'x', 'dil', '%'],
-  allocation: null,
   maxRow: null,
   maxCol: null,
-  error: null,
   suggestions: [],
   savedScript: null,
-  allocationMap: null,
   ruleScript: {
     data: {
       interpretationResults: { lnums: null, parseError: null, table: null },
@@ -78,9 +76,9 @@ const actions = {
     return new Promise(function(resolve, reject) {
       api
         .postRuleSCript({ ruleScriptNo, text })
-        .then((res) => {
+        .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
-          commit(types.LOAD_API_RESPONSE, res);
+          commit(types.LOAD_API_RESPONSE, data);
           resolve('success');
         })
         .catch((e) => {
@@ -134,19 +132,7 @@ const mutations = {
       text,
     } = response;
 
-    const allCells = _.reduce(
-      lnums,
-      (acc, x, i) => {
-        acc = acc.concat(x);
-        return acc;
-      },
-      [],
-    );
-    state.maxRow = allCells.sort((a, b) => b[0] - a[0])[0][0];
-    state.maxCol = allCells.sort((a, b) => b[1] - a[1])[0][1];
-    state.error = parseError;
-    state.allocation = table;
-    state.allocationMap = lnums;
+    [state.maxRow, state.maxCol] = lnums ? getMaxRowCol(lnums) : [0, 0];
   },
   [types.POST_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
@@ -202,7 +188,7 @@ const getters = {
     return state.quillOptions;
   },
   getError(state, getters, rootState) {
-    return state.error;
+    return state.ruleScript.data.interpretationResults.parseError;
   },
   getReagents(state, getters, rootState) {
     return state.reagents;
@@ -220,10 +206,13 @@ const getters = {
     return [state.maxRow, state.maxCol];
   },
   getAllocationMap(state, getters, rootState) {
-    return state.allocationMap;
+    return state.ruleScript.data.interpretationResults.lnums;
   },
   getRuleScript(state, getters, rootState) {
     return state.ruleScript.data.text;
+  },
+  getAllocationData(state, getters, rootState) {
+    return state.ruleScript.data.interpretationResults.table;
   },
 };
 

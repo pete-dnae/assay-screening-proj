@@ -9,6 +9,22 @@ export const postRuleScript = (text, ruleScriptNo, callBack) => {
     })
     .then(() => callBack());
 };
+
+export const getMaxRowCol = (lnums) => {
+  const allCells = _.reduce(
+    lnums,
+    (acc, x) => {
+      Object.assign(acc, acc.concat(x));
+      return acc;
+    },
+    [],
+  );
+  return [
+    allCells.sort((a, b) => b[0] - a[0])[0][0],
+    allCells.sort((a, b) => b[1] - a[1])[0][1],
+  ];
+};
+
 export const splitLine = (text) => {
   const re = /\S+/g;
   const fields = [];
@@ -39,13 +55,11 @@ export const getChildIndex = (child) => {
   return { lineNumber, plateName };
 };
 
-export const startEndOfLine = (lineNumber, text) => {
-  return [
-    text.split('\n', lineNumber).join('\n').length,
-    text.split('\n', lineNumber + 1).join('\n').length,
-  ];
-};
-
+export const startEndOfLine = (lineNumber, text) => [
+  text.split('\n', lineNumber).join('\n').length,
+  text.split('\n', lineNumber + 1).join('\n').length,
+];
+//eslint-disable-next-line
 export const removeAdditionalNewLine = (currentText) =>
   currentText.slice(0, -1);
 

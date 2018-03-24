@@ -4,7 +4,8 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import { modal } from 'vue-strap';
-import { formatText, paintTable, isItemInArray } from '@/models/visualizer';
+import { formatText, isItemInArray } from '@/models/visualizer';
+import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 // import { validateText } from '@/models/editor';
@@ -20,6 +21,7 @@ export default {
   name: 'ScriptInputComponent',
   components: {
     modal,
+    hovervisualizer,
   },
   data() {
     return {
@@ -29,6 +31,8 @@ export default {
       index: 0,
       newReagent: null,
       currentPlate: null,
+      currentRow: null,
+      currentCol: null,
       highlightedLineNumber: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
@@ -57,6 +61,7 @@ export default {
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
       ruleScript: 'getRuleScript',
+      allocationData: 'getAllocationData',
     }),
   },
   watch: {
@@ -70,12 +75,13 @@ export default {
     ...mapActions(['saveToDb', 'fetchExperiment']),
     isItemInArray,
     editorChange() {
+      debugger;
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
       if (fields[1] && fields[0][0] === 'A') {
         if (this.reagents.indexOf(fields[1][0]) === -1) {
           const suggestions = this.reagents.filter(
-            (x) => x.indexOf(fields[1][0]) !== -1,
+            x => x.indexOf(fields[1][0]) !== -1,
           );
           this.$store.commit('SET_SUGGESTIONS', suggestions);
           this.alterToolTip(cursorIndex);
@@ -86,9 +92,12 @@ export default {
       hesitationTimer.cancel();
       hesitationTimer(
         this.editor.getText(),
-        this.$route.params.ruleScript,
+        this.$route.params.exptNo,
         this.paintText,
       );
+    },
+    handleShowCellContents([row, col]) {
+      [this.currentRow, this.currentCol] = [row, col];
     },
     paintText() {
       const text = this.editor.getText();
@@ -159,11 +168,6 @@ export default {
           'text-shadow',
           '2px 2px 4px #000000',
         );
-        let div = document.getElementById('tableGoesHere');
-        div = paintTable(
-          this.tableBoundaries,
-          this.allocationMapping[lineNumber + 1],
-        );
       }
 
       // console.log(event.fromElement);
@@ -197,16 +201,9 @@ export default {
       this.$store.commit('ADD_REAGENT', this.newReagent);
       this.show = false;
     },
-    handleSelection(range) {
-      if (range && range.length > 1) {
-        const text = this.editor.getText(range.index, range.length);
-        // this.image = paintTable(range.index, text);
-      }
-    },
   },
   mounted() {
     const Delta = Quill.import('delta');
-    const Font = Quill.import('formats/font');
     const Parchment = Quill.import('parchment');
     const LineStyle = new Parchment.Attributor.Style(
       'textShadow',
@@ -218,16 +215,13 @@ export default {
     Quill.register(LineStyle, true);
 
     this.editor = new Quill('#editor', this.options);
-    this.editor.on('selection-change', (range, oldRange, source) =>
-      this.handleSelection(range, oldRange, source),
-    );
-    this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, (range) =>
+    this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
       this.handleTab(range),
     );
-    this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, (range) =>
+    this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, range =>
       this.handleExcludeReagent(range),
     );
-    this.editor.clipboard.addMatcher(Node.TEXT_NODE, (node) =>
+    this.editor.clipboard.addMatcher(Node.TEXT_NODE, node =>
       new Delta().insert(node.data, { font: 'monospace' }),
     );
 
