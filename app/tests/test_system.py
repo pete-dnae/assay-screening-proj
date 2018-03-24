@@ -22,7 +22,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         includes building a fair number of dependent objects (like Reagents for
         example.
 
-        Observe that this set up step alone excercices most of the model
+        Observe that this setup step alone excercices most of the model
         code.
         """
         experiment = ReferenceExperiment()

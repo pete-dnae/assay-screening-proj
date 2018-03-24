@@ -10,8 +10,9 @@ o  Switch to new CORS scheme
 o  The A...A index bug
     *  Return only the char index at which the offending line starts
     *  Survey how to put it in =  Change definition of culprit_string
-    o  Regression up
-    o  Improve / add culprit string injection?
+    *  Regression up
+    *  Improve / add culprit string injection?
+    o  Commit
     o  Tell Prasanna
 o  Think clone is obsolete
 o  Bring in primer pools

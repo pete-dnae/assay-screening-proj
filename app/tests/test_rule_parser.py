@@ -105,8 +105,8 @@ class RuleScriptParserTest(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.message,
             'Your script version is not recognized by this parser. ' + \
-            'Line 1. Character 3.')
-        self.assertEqual(e.where_in_script, 2)
+            'Line 1. Culprit: (fibble).')
+        self.assertEqual(e.where_in_script, 0)
 
     def test_error_transfer_incompatible(self):
         modified_script = REFERENCE_SCRIPT.replace('T Plate1 1', 'T Plate 1,2')
@@ -139,8 +139,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'This plate name been used before. Line 7. Character 3.')
-        self.assertEqual(e.where_in_script, 177)
+            'This plate name been used before. Line 7. Culprit: (Plate1).')
+        self.assertEqual(e.where_in_script, 175)
 
     def test_error_unknown_reagent(self):
         modified_script = REFERENCE_SCRIPT.replace(
@@ -151,8 +151,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Unknown reagent. Line 3. Character 3.')
-        self.assertEqual(e.where_in_script, 19)
+            'Unknown reagent. Line 3. Culprit: (Qitanium-Taq).')
+        self.assertEqual(e.where_in_script, 17)
 
     def test_error_unknown_units(self):
         modified_script = REFERENCE_SCRIPT.replace('M/uL', 'A/uL')
@@ -162,8 +162,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Unknown units. Line 3. Character 44.')
-        self.assertEqual(e.where_in_script, 60)
+            'Unknown units. Line 3. Culprit: (A/uL).')
+        self.assertEqual(e.where_in_script, 17)
 
     def test_error_transfer_must_use_dilution_as_units(self):
         modified_script = REFERENCE_SCRIPT.replace('dilution', 'ailution')
@@ -173,8 +173,9 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Units for a transfer must be <dilution>. Line 8. Character 44.')
-        self.assertEqual(e.where_in_script, 228)
+            'Units for a transfer must be <dilution>. ' + \
+            'Line 8. Culprit: (ailution).')
+        self.assertEqual(e.where_in_script, 185)
 
     def test_error_non_number_in_col(self):
         modified_script = REFERENCE_SCRIPT.replace('1,5,9', '1,A,9')
@@ -185,8 +186,8 @@ class RuleScriptParserTest(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.message,
             'Struggling with a non-number in columns specification. ' + \
-            'Line 4. Character 29.')
-        self.assertEqual(e.where_in_script, 93)
+            'Line 4. Culprit: (1,A,9).')
+        self.assertEqual(e.where_in_script, 65)
 
     def test_error_concentration_not_numeric(self):
         modified_script = REFERENCE_SCRIPT.replace('0.02', 'fibble')
@@ -196,8 +197,9 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Cannot convert concentration to a number. Line 3. Character 39.')
-        self.assertEqual(e.where_in_script, 55)
+            'Cannot convert concentration to a number. ' + \
+            'Line 3. Culprit: (fibble).')
+        self.assertEqual(e.where_in_script, 17)
 
     def test_error_non_letter_in_rows_spec(self):
         modified_script = REFERENCE_SCRIPT.replace('C,D', 'C,3')
@@ -208,8 +210,8 @@ class RuleScriptParserTest(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.message,
             'Only letters allowed in rows specification. ' + \
-            'Line 5. Character 35.')
-        self.assertEqual(e.where_in_script, 144)
+            'Line 5. Culprit: (C,3).')
+        self.assertEqual(e.where_in_script, 110)
 
     def test_error_too_fiew_fields(self):
         modified_script = REFERENCE_SCRIPT.replace('M/uL', '')
