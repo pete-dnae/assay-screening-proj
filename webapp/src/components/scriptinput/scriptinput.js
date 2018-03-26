@@ -226,6 +226,9 @@ export default {
     this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, range =>
       this.handleExcludeReagent(range),
     );
+    this.editor.keyboard.addBinding({ key: 'F', ctrlKey: true }, () =>
+      this.handleFormat(),
+    );
     this.editor.clipboard.addMatcher(Node.TEXT_NODE, node =>
       new Delta().insert(node.data, { font: 'monospace' }),
     );
