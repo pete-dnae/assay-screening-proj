@@ -75,7 +75,6 @@ export default {
     ...mapActions(['saveToDb', 'fetchExperiment']),
     isItemInArray,
     editorChange() {
-      debugger;
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
       if (fields[1] && fields[0][0] === 'A') {
