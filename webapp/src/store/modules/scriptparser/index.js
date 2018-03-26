@@ -1,45 +1,24 @@
 /* eslint-disable */
-import _ from 'lodash';
-import * as types from './mutation-types';
-import * as api from '@/models/api';
-import experiment from '@/assets/json/response.json';
+import _ from "lodash";
+import * as types from "./mutation-types";
+import * as api from "@/models/api";
+import experiment from "@/assets/json/response.json";
 
-import { getMaxRowCol } from '@/models/editor2.0';
+import { getMaxRowCol } from "@/models/editor2.0";
 
 export const state = {
-  reagents: [
-    'DNA-free-Water',
-    'Titanium-PCR-Buffer',
-    'KCl',
-    'MgCl2',
-    'BSA',
-    'dNTPs',
-    'Titanium-Taq',
-    '(Eco)-ATCC-BAA-2355',
-    '(Efs-vanB)-ATCC-700802',
-    '(Kox)-ATCC-15764',
-    'Ec_uidA_6.x_Eco63_Eco60',
-    'Efs_cpn60_1.x_Efs04_Efs01',
-    'Efs_vanB_1.x_van10_van06',
-    'Efm_vanA_1.x_van05_van01',
-    'Ko_pehX_1.x_Kox05_Kox02',
-    'Kp_khe_2.x_Kpn13_Kpn01',
-    'Pm_zapA_1.x_Pmi01_Pmi05',
-    'Spo_gp_1.x_Spo09_Spo13',
-    'HgDna',
-    'Triton',
-    'SYBRgreen',
-    'KOH',
-    'Ec_uidA_x.2_Eco64_Eco66',
-    'Efs_cpn60_x.1_Efs03_Efs02',
-    'Efs_vanB_x.3_van30_van33',
-    'Efm_vanA_x.1_van04_van02',
-    'Ko_pehX_x.1_Kox04_Kox03',
-    'Kp_khe_x.1_Kpn03_Kpn02',
-    'Pm_zapA_x.1_Pmi02_Pmi03',
-    'Spo_gp_x.1_Spo03_Spo05',
-  ],
-  units: ['mM', 'mg/ml', 'mMeach', 'copies', 'uM', 'ng', 'x', 'dil', '%'],
+  reagents: {
+    data: null,
+    isRequesting: false,
+    received: false,
+    didInvalidate: false
+  },
+  units: {
+    data: null,
+    isRequesting: false,
+    received: false,
+    didInvalidate: false
+  },
   maxRow: null,
   maxCol: null,
   suggestions: [],
@@ -47,27 +26,21 @@ export const state = {
   ruleScript: {
     data: {
       interpretationResults: { lnums: null, parseError: null, table: null },
-      text: null,
+      text: null
     },
     isPosting: false,
     isRequesting: false,
     received: false,
     posted: false,
-    didInvalidate: false,
+    didInvalidate: false
   },
   experiment: {
     data: null,
     isRequesting: false,
     received: false,
-    didInvalidate: false,
+    didInvalidate: false
   },
-  quillOptions: {
-    debug: 'warn',
-    modules: {
-      toolbar: false,
-    },
-    theme: 'snow',
-  },
+  quillOptions: { debug: "warn", modules: { toolbar: false }, theme: "snow" }
 };
 const actions = {
   saveToDb({ commit }, { ruleScriptNo, text }) {
@@ -79,9 +52,9 @@ const actions = {
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
           commit(types.LOAD_API_RESPONSE, data);
-          resolve('success');
+          resolve("success");
         })
-        .catch((e) => {
+        .catch(e => {
           commit(types.POST_RULE_SCRIPT_FAILURE);
           reject(e);
         });
@@ -92,27 +65,57 @@ const actions = {
     return new Promise(function(resolve, reject) {
       api
         .getExperiment(expNo)
-        .then((res) => {
+        .then(res => {
           commit(types.EXPERIMENT_SUCCESS, res);
           api
             .getRuleScript(res.rules_script)
-            .then((res) => {
+            .then(res => {
               commit(types.RULE_SCRIPT_SUCCESS);
               commit(types.LOAD_API_RESPONSE, res);
 
-              resolve('success');
+              resolve("success");
             })
-            .catch((e) => {
+            .catch(e => {
               commit(types.RULE_SCRIPT_FAILURE);
               reject(e);
             });
         })
-        .catch((e) => {
+        .catch(e => {
           commit(types.EXPERIMENT_FAILURE);
           reject(e);
         });
     });
   },
+  fetchReagentList({ commit }) {
+    commit(types.REQUEST_REAGENTS);
+    return new Promise(function(resolve, reject) {
+      api
+        .getReagents()
+        .then(res => {
+          commit(types.REAGENTS_RECEIVED, res);
+          resolve('success')
+        })
+        .catch(e => {
+          reject(e);
+          commit(types.REQUEST_REAGENTS_FAILURE);
+        });
+    });
+  },
+  fetchUnitList({ commit }) {
+    commit(types.REQUEST_UNITS);
+    return new Promise(function(resolve, reject) {
+      api
+        .getUnits()
+        .then(res => {
+          commit(types.UNITS_RECEIVED, res);
+          resolve("success");
+        })
+        .catch(e => {
+          reject(e);
+          commit(types.REQUEST_UNITS_FAILURE);
+        });
+    });
+  }
 };
 const mutations = {
   [types.REQUEST_POST_RULE_SCRIPT](state) {
@@ -129,15 +132,47 @@ const mutations = {
     state.ruleScript.data = response;
     const {
       interpretationResults: { lnums, parseError, table },
-      text,
+      text
     } = response;
-    
+
     [state.maxRow, state.maxCol] = lnums ? getMaxRowCol(lnums) : [0, 0];
   },
   [types.POST_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
     state.ruleScript.posted = false;
     state.ruleScript.didInvalidate = true;
+  },
+  [types.REQUEST_REAGENTS](state) {
+    state.reagents.isPosting = true;
+    state.reagents.posted = false;
+    state.reagents.didInvalidate = false;
+  },
+  [types.REAGENTS_RECEIVED](state, data) {
+    state.reagents.data = data;
+    state.reagents.isPosting = false;
+    state.reagents.posted = true;
+    state.reagents.didInvalidate = false;
+  },
+  [types.REQUEST_REAGENTS_FAILURE](state) {
+    state.reagents.isPosting = false;
+    state.reagents.posted = false;
+    state.reagents.didInvalidate = true;
+  },
+  [types.REQUEST_UNITS](state) {
+    state.units.isPosting = true;
+    state.units.posted = false;
+    state.units.didInvalidate = false;
+  },
+  [types.UNITS_RECEIVED](state, data) {
+    state.units.data = data;
+    state.units.isPosting = false;
+    state.units.posted = true;
+    state.units.didInvalidate = false;
+  },
+  [types.REQUEST_UNITS_FAILURE](state) {
+    state.units.isPosting = false;
+    state.units.posted = false;
+    state.units.didInvalidate = true;
   },
   [types.REQUEST_EXPERIMENT](state) {
     state.experiment.isRequesting = true;
@@ -181,7 +216,7 @@ const mutations = {
   },
   [types.ADD_REAGENT](state, value) {
     state.reagents.push(value);
-  },
+  }
 };
 const getters = {
   getQuillOptions(state, getters, rootState) {
@@ -191,10 +226,10 @@ const getters = {
     return state.ruleScript.data.interpretationResults.parseError;
   },
   getReagents(state, getters, rootState) {
-    return state.reagents;
+    return state.reagents.data;
   },
   getUnits(state, getters, rootState) {
-    return state.units;
+    return state.units.data;
   },
   getSuggestions(state, getters, rootState) {
     return state.suggestions;
@@ -213,12 +248,12 @@ const getters = {
   },
   getAllocationData(state, getters, rootState) {
     return state.ruleScript.data.interpretationResults.table;
-  },
+  }
 };
 
 export default {
   state,
   actions,
   mutations,
-  getters,
+  getters
 };

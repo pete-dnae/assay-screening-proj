@@ -3,13 +3,14 @@ import Quill from 'quill';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
+import _ from 'lodash';
 import { modal } from 'vue-strap';
 import { formatText, isItemInArray } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 // import { validateText } from '@/models/editor';
-import { getToolTipPosition } from '@/models/tooltip';
+
 import {
   hesitationTimer,
   startEndOfLine,
@@ -28,26 +29,11 @@ export default {
       msg: 'Welcome',
       show: false,
       showToolTip: false,
-      index: 0,
-      newReagent: null,
+      suggestionIndex: 0,
       currentPlate: null,
-      currentRow: null,
-      currentCol: null,
       highlightedLineNumber: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
-      tooltiptext: {
-        visibility: 'visible',
-        'max-height': '300px',
-        'max-width': '500px',
-        'text-align': 'center',
-        'border-radius': '6px',
-        padding: '5px 0',
-
-        /* Position the tooltip */
-        position: 'absolute',
-        'z-index': 99999,
-      },
     };
   },
   computed: {
@@ -62,25 +48,42 @@ export default {
       showSpinner: 'getRuleIsScriptSaving',
       ruleScript: 'getRuleScript',
       allocationData: 'getAllocationData',
+      tooltiptext: 'getToolTipStyle',
     }),
   },
   watch: {
     showToolTip() {
       if (this.showToolTip === false) {
-        this.index = 0;
+        this.suggestionIndex = 0;
       }
     },
   },
   methods: {
-    ...mapActions(['saveToDb', 'fetchExperiment']),
+    ...mapActions([
+      'saveToDb',
+      'fetchExperiment',
+      'fetchReagentList',
+      'fetchUnitList',
+    ]),
     isItemInArray,
     editorChange() {
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
       if (fields[1] && fields[0][0] === 'A') {
-        if (this.reagents.indexOf(fields[1][0]) === -1) {
+        if (!_.find(this.reagents, reagent => reagent.name === fields[1][0])) {
           const suggestions = this.reagents.filter(
-            x => x.indexOf(fields[1][0]) !== -1,
+            x => x.name.indexOf(fields[1][0]) !== -1,
+          );
+          this.$store.commit('SET_SUGGESTIONS', suggestions);
+          this.alterToolTip(cursorIndex);
+          this.showSuggestionList = suggestions.length > 5;
+          this.showSuggestionToolTip = suggestions.length < 5;
+        }
+      }
+      if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
+        if (!_.find(this.units, unit => unit.abbrev === fields[5][0])) {
+          const suggestions = this.units.filter(
+            unit => unit.abbrev.indexOf(fields[5][0]) !== -1,
           );
           this.$store.commit('SET_SUGGESTIONS', suggestions);
           this.alterToolTip(cursorIndex);
@@ -94,9 +97,6 @@ export default {
         this.$route.params.exptNo,
         this.paintText,
       );
-    },
-    handleShowCellContents([row, col]) {
-      [this.currentRow, this.currentCol] = [row, col];
     },
     paintText() {
       const text = this.editor.getText();
@@ -126,11 +126,10 @@ export default {
       const parentBound = document
         .getElementsByClassName('ql-editor')[0]
         .getBoundingClientRect();
-      this.tooltiptext = getToolTipPosition(
-        this.tooltiptext,
+      this.$store.commit('ADJUST_TOOL_TIP_POSITION', {
         cursorLocation,
         parentBound,
-      );
+      });
     },
     handleExcludeReagent() {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
@@ -143,9 +142,13 @@ export default {
     },
     handleAutoCompleteClick(text) {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
-      this.editor.insertText(cursorIndex, ` ${text}`, {
-        color: 'black',
-      });
+      this.editor.insertText(
+        cursorIndex,
+        ` ${text.name ? text.name : text.abbrev}`,
+        {
+          color: 'black',
+        },
+      );
       this.editor.deleteText(
         currentStringStart,
         cursorIndex - currentStringStart,
@@ -185,15 +188,17 @@ export default {
       const currentStringStart = textTillCursor.lastIndexOf(' ');
       return { currentStringStart, cursorIndex };
     },
-    async handleFormat() {
+    handleFormat() {
       const formattedText = formatText(this.editor.getText());
-      await this.editor.setText(formattedText);
-      this.editorChange();
+      this.editor.setText(formattedText);
+      this.editor.formatText(0, formattedText.length, 'font', 'monospace');
     },
     handleTab() {
-      this.handleAutoCompleteClick(this.suggestions[this.index]);
-      this.index += 1;
-      this.index = this.suggestions[this.index] ? this.index : 0;
+      this.handleAutoCompleteClick(this.suggestions[this.suggestionIndex]);
+      this.suggestionIndex += 1;
+      this.suggestionIndex = this.suggestions[this.suggestionIndex]
+        ? this.suggestionIndex
+        : 0;
       this.showSuggestionToolTip = false;
     },
     handleReagentAdd() {
@@ -224,6 +229,8 @@ export default {
       new Delta().insert(node.data, { font: 'monospace' }),
     );
 
+    this.fetchReagentList().then(() => {}, (err) => {});
+    this.fetchUnitList().then(() => {}, (err) => {});
     this.fetchExperiment(this.$route.params.exptNo).then(() => {
       this.editor.setText(formatText(this.ruleScript));
       this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
