@@ -63,6 +63,33 @@ class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
            'members',
         )
 
+    def validate(self, data):
+        # Reagent categories must be the category this Group is for.
+        reagents = data['members']
+        group_category = data['category']
+        for reagent in reagents:
+            if reagent.category != group_category:
+                raise serializers.ValidationError(
+                    ('Cannot add this reagent <%s> to this group, because ' + \
+                    'its category <%s> does not match the group\'s ' + \
+                    'category <%s>') % (reagent.name, reagent.category.name,
+                    group_category.name)
+                )
+        return data
+
+    # Note *validate_xxx' naming convention triggers automatic calling.
+    def foo(self, reagents):
+        # Reagent categories must be the category this Group is for.
+        for reagent in reagents:
+            if reagent.category != self.category:
+                raise serializers.ValidationError(
+                    'Cannot add reagent <%s> to this group, because ' + \
+                    'its category <%s> does not match the group\'s ' + \
+                    'category <%s>' % (reagent.name, reagent.category,
+                    self.category)
+                )
+        return reagents
+
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
     # Camel-case to make it nice to consum as JSON.
