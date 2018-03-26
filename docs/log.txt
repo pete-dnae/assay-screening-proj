@@ -5,17 +5,22 @@
 *  Think clone is obsolete
 *  Bug fix - lnums is still in (row,col) order
 *  Bring in groups at model level
+o  Front end backlog
+    o  Search needed?
+
+o  Return to groups...
 o  Add error checking if reagent added to reagent group is of incompatible
    reagent_type
     *  Implement validate method
     *  Need object level
     *  But does this call the base validation also? = yes
-    o  Add test for this
-        o  Use make ref exp?
-    o  Add to make reference experiment
-    http://www.django-rest-framework.org/api-guide/serializers/#validation
+    *  Add to make reference experiment
+    o  Mistake - groups must have conc and units too for each reagent
 o  Add tolerance of groups in script in place of reagents
     o  Design
+    o  Do
+    o  Unit test
+    o  Show tolerance of rule citing a group in script
 o  Front end backlog
     o  Search needed?
 o  Starter scripts to prepopulate / augment db
