@@ -14,9 +14,9 @@
             </div>
         </div>
         <table id="tableGoesHere" style="max-width:100%;height:auto" v-if="allocationMapping">
-            <tr v-for="row in tableBoundaries[0]">
-                <td v-for="col in tableBoundaries[1]">
-                    <div class="bg-secondary border border-secondary  rounded p-3 ml-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
+            <tr v-for="row in tableBoundaries[0]" v-bind:key="row">
+                <td v-for="col in tableBoundaries[1]" v-bind:key="col">
+                    <div class="bg-secondary border border-secondary  rounded p-3 ml-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[col,row])">
 
                     </div>
                     <div class="bg-light border border-light rounded p-3 ml-1" @mouseover="handleShowCellContents([row,col])" v-else>

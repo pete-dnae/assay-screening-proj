@@ -85,13 +85,16 @@ li span {
             <div id="editor" class="" @keyup="editorChange" @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
-            <div class="row mt-3" >
+            <div class="row mt-3" v-if="error===null">
               <hovervisualizer :currentPlate="currentPlate"
                                :tableBoundaries="tableBoundaries"
                                :highlightedLineNumber="highlightedLineNumber"
               :allocationMapping="allocationMapping"
               :allocationData="allocationData">
             </hovervisualizer>
+            </div>
+            <div class="row justify-content-center mt-5" v-else>
+              <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
             </div>
             <div class="row text-left " v-show="showSuggestionList">
                 <h5 class="mt-3 w-100"><strong>Suggestions :</strong></h5>

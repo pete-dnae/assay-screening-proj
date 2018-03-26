@@ -131,7 +131,7 @@ const mutations = {
       interpretationResults: { lnums, parseError, table },
       text,
     } = response;
-
+    
     [state.maxRow, state.maxCol] = lnums ? getMaxRowCol(lnums) : [0, 0];
   },
   [types.POST_RULE_SCRIPT_FAILURE](state) {

@@ -13,7 +13,7 @@
     <div class="mt-4">
       <transition-group name="zoomIn" enter-active-class="animated zoomIn"
       leave-active-class="animated zoomOut" tag="p">
-        <li class="row" v-for="elem in allocationData[currentRow][currentCol]" v-bind:key="elem[0]">
+        <li class="row" v-for="elem in allocationData[currentCol][currentRow]" v-bind:key="elem[0]">
             <label class="col-3" v-for="entity in elem">{{entity}}</label>
         </li>
       </transition-group>
