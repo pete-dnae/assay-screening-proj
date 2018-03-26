@@ -6,6 +6,7 @@ from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import ReagentCategoryModel
+from app.models.reagent_group_model import ReagentGroupModel
 from .models.units_model import UnitsModel
 
 # Serialization helpers.
@@ -20,6 +21,46 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
            'url',
            'experiment_name',
            'rules_script',
+        )
+
+
+class ReagentSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReagentModel
+        fields = (
+           'url',
+           'name',
+           'category',
+        )
+
+class UnitsSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = UnitsModel
+        fields = (
+           'url',
+           'abbrev',
+        )
+
+class ReagentCategorySerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReagentCategoryModel
+        fields = (
+           'url',
+           'name',
+        )
+
+class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReagentGroupModel
+        fields = (
+           'url',
+           'name',
+           'category',
+           'members',
         )
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
@@ -53,31 +94,3 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
             'table': table,
             'lnums': lnums
         }
-
-class ReagentSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = ReagentModel
-        fields = (
-           'url',
-           'name',
-           'category',
-        )
-
-class UnitsSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = UnitsModel
-        fields = (
-           'url',
-           'abbrev',
-        )
-
-class ReagentCategorySerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = ReagentCategoryModel
-        fields = (
-           'url',
-           'name',
-        )

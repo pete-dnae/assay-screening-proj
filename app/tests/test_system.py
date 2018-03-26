@@ -52,8 +52,8 @@ class HighLevelSystemSmokeTest(APITestCase):
 
         # Inspect line number mapping part of response.
         lnums = interp_results['lnums']
-        line_4 = lnums[4]
-        self.assertEqual(line_4, [(2, 1), (2, 5), (2, 9)])
+        cells = lnums[4]
+        self.assertEqual(cells, [(1, 2), (5, 2), (9, 2)])
 
         # Inspect error report part of response.
         err = interp_results['parseError']

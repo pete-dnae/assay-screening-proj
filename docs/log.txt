@@ -2,18 +2,32 @@
 *  Fix the row/col transposition error
 *  Switch to new CORS scheme
 *  The A...A index bug
-o  Think clone is obsolete
-o  Bring in primer pools
+*  Think clone is obsolete
+*  Bug fix - lnums is still in (row,col) order
+*  Bring in groups at model level
+o  Add tolerance of groups in script in place of reagents
+    o  Design
 o  Front end backlog
+o  Management scripts to feed in bulk reagents and pools
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
     o  Non debug django mode
     o  No import of pdb
+    o  Security?
 o  Deploy
 
 ---------------------------------------------------------------------------
+Groups
 ---------------------------------------------------------------------------
+A table of <ReagentGroup>s
+Each of which has-a name.
+Each of which has-a ReagentCategory FK.
+Each of which has-a m2m field of Reagent FK.
 
+Must make it a bad request if receive a write op that includes a Reagent FK
+that references a Reagent of a mis-matched category.
+
+---------------------------------------------------------------------------
 from pdb import set_trace as st
-Moesif Origin & CORS Changer
+---------------------------------------------------------------------------
