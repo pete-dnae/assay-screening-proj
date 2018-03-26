@@ -1,160 +1,48 @@
 /* eslint-disable */
-import _ from 'lodash';
-import * as types from './mutation-types';
-import * as api from '@/models/api';
+import _ from "lodash";
+import * as types from "./mutation-types";
+import * as api from "@/models/api";
 export const state = {
-  kit: {},
-  currentPayloadOptions: null,
-  payloadTypeDropDown: [
-    {
-      text: 'Strain Count',
-      value: 'Strain Count',
-    },
-    {
-      text: 'Strain',
-      value: 'Strain',
-    },
-    {
-      text: 'Dilution Factor',
-      value: 'Dilution Factor',
-    },
-    {
-      text: 'PA Primers',
-      value: 'PA Primers',
-    },
-    {
-      text: 'ID Primers',
-      value: 'ID Primers',
-    },
-    {
-      text: 'HgDNA',
-      value: 'HgDNA',
-    },
-  ],
-  patternDropDown: [
-    {
-      text: 'AAAA BBBB CCCC',
-      value: 'In Blocks',
-    },
-    {
-      text: 'ABCD ABCD ABCD',
-      value: 'Consecutive',
-    },
-  ],
-  rowsDropDown: [
-    {
-      text: 'A',
-      value: 'A',
-    },
-    {
-      text: 'B',
-      value: 'B',
-    },
-    {
-      text: 'C',
-      value: 'C',
-    },
-    {
-      text: 'D',
-      value: 'D',
-    },
-    {
-      text: 'E',
-      value: 'E',
-    },
-    {
-      text: 'F',
-      value: 'F',
-    },
-    {
-      text: 'G',
-      value: 'G',
-    },
-    {
-      text: 'H',
-      value: 'H',
-    },
-    {
-      text: 'I',
-      value: 'I',
-    },
-    {
-      text: 'J',
-      value: 'J',
-    },
-    {
-      text: 'K',
-      value: 'K',
-    },
-  ],
-  colsDropDown: [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    1,
-    18,
-    19,
-    20,
-  ],
+  toolTipStyle: {
+    visibility: "visible",
+    "max-height": "300px",
+    "max-width": "500px",
+    "text-align": "center",
+    "border-radius": "6px",
+    padding: "5px 0",
+    /* Position the tooltip */
+    position: "absolute",
+    "z-index": 99999
+  },
+  showBlur:false
 };
 
 const actions = {};
 const mutations = {
-  [types.SET_PRIMER_KIT](state, data) {
-    state.kit['ID Primers'] = data.id_primers;
-    state.kit['PA Primers'] = data.pa_primers;
-  },
-  [types.SET_STRAIN_KIT](state, data) {
-    state.kit.Strain = data.strains;
-  },
-  [types.SET_PAYLOAD_OPTIONS](state, arg) {
-    let kitProxy = new Proxy(state.kit, {
-      get(Obj, prop) {
-        return prop in Obj
-          ? Obj[prop].map(x => {
-              return { text: x.display_name, value: x.display_name };
-            })
-          : `userText`;
-      },
-    });
+[types.ADJUST_TOOL_TIP_POSITION](state,args){
+  
+  const { cursorLocation, parentBound } = args;  
+  const top = `${cursorLocation.top + parentBound.top}px`;
+  const left = `${cursorLocation.left + parentBound.left}px`;
+  state.toolTipStyle = { ...state.toolTipStyle, top, left };
 
-    state.currentPayloadOptions = kitProxy[arg];
-  },
+},
+[types.SHOW_BLUR](state){
+  state.showBlur = true
+}
 };
 const getters = {
-  getCurrentPayloadOptions(state, getters, rootState) {
-    return state.currentPayloadOptions;
+  getToolTipStyle(state, getters, rootState) {
+    return state.toolTipStyle;
   },
-  getPatternDropDown() {
-    return state.patternDropDown;
-  },
-  getPayloadTypeDropDown() {
-    return state.payloadTypeDropDown;
-  },
-  getRowsDropDown() {
-    return state.rowsDropDown;
-  },
-  getColsDropDown() {
-    return state.colsDropDown;
-  },
+  getBlurFlag(state, getters, rootState) {
+    return state.showBlur;
+  }
 };
 
 export default {
   state,
   actions,
   mutations,
-  getters,
+  getters
 };

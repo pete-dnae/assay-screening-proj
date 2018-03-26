@@ -19,9 +19,10 @@ export const getMaxRowCol = (lnums) => {
     },
     [],
   );
+
   return [
-    allCells.sort((a, b) => b[0] - a[0])[0][0],
     allCells.sort((a, b) => b[1] - a[1])[0][1],
+    allCells.sort((a, b) => b[0] - a[0])[0][0],
   ];
 };
 
@@ -60,8 +61,7 @@ export const startEndOfLine = (lineNumber, text) => [
   text.split('\n', lineNumber + 1).join('\n').length,
 ];
 //eslint-disable-next-line
-export const removeAdditionalNewLine = (currentText) =>
-  currentText.slice(0, -1);
+export const removeAdditionalNewLine = currentText => currentText.slice(0, -1);
 
 export const getCurrentLineFields = (currentText, cursorPosition) => {
   const currentLineStart = removeAdditionalNewLine(currentText)
@@ -190,7 +190,7 @@ export const validateRule = (startIndex, fields, text) => {
       if (store.getters.getReagents.indexOf(fields[1][0]) === -1) {
         const suggestions = store.getters.getReagents.filter(
           //eslint-disable-next-line
-          (x) => x.indexOf(fields[1][0]) > -1,
+          x => x.indexOf(fields[1][0]) > -1
         );
 
         store.commit('SET_SUGGESTIONS', suggestions);

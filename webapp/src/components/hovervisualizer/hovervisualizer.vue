@@ -1,3 +1,9 @@
+<style scoped>
+td:hover {
+  background-color: #40a9e6e7 !important;  
+}
+
+</style>
 
 
 <template>
@@ -10,22 +16,26 @@
             <label class="mt-2 col">Plate Name :{{currentPlate}}</label>
             <div class="col">
                 <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>
-                <label>Hover over a line</label>
+                <label class="text-info">Hover over a line</label>
             </div>
         </div>
         <table id="tableGoesHere" style="max-width:100%;height:auto" v-if="allocationMapping">
-            <tr v-for="row in tableBoundaries[0]">
-                <td v-for="col in tableBoundaries[1]">
-                    <div class="bg-secondary border border-secondary  rounded p-3 ml-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[row,col])">
+            <tr v-for="row in tableBoundaries[0]" v-bind:key="row">
+                <td v-for="col in tableBoundaries[1]" v-bind:key="col" class="rounded">
+                    <div id="cell" class="bg-secondary border border-secondary  rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[col,row])">
 
                     </div>
-                    <div class="bg-light border border-light rounded p-3 ml-1" @mouseover="handleShowCellContents([row,col])" v-else>
+                    <div id="cell" class="bg-light border border-light rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-else>
 
                     </div>
                 </td>
             </tr>
         </table>
-        <wellcontents class="mt-3" v-if="allocationData" :currentRow="currentRow" :currentCol="currentCol" :allocationData="allocationData[currentPlate]"></wellcontents>
+        <wellcontents class="mt-3" v-if="currentRow&&currentCol" 
+                                :currentRow="currentRow" 
+                                :currentCol="currentCol" 
+                                :allocationData="allocationData[currentPlate]">
+                                </wellcontents>
     </div>
 </div>
 
