@@ -1,3 +1,3 @@
 export const ADJUST_TOOL_TIP_POSITION = 'ADJUST_TOOL_TIP_POSITION';
-export const DUMMY = 'DUMMY';
+export const SHOW_BLUR = 'SHOW_BLUR';
 

@@ -3,7 +3,7 @@ import _ from "lodash";
 import * as types from "./mutation-types";
 import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
-
+import * as ui from "../ui/mutation-types"
 import { getMaxRowCol } from "@/models/editor2.0";
 
 export const state = {
@@ -56,6 +56,7 @@ const actions = {
         })
         .catch(e => {
           commit(types.POST_RULE_SCRIPT_FAILURE);
+          commit(ui.SHOW_BLUR);
           reject(e);
         });
     });
@@ -66,22 +67,27 @@ const actions = {
       api
         .getExperiment(expNo)
         .then(res => {
+          
           commit(types.EXPERIMENT_SUCCESS, res);
+          
+          
           api
             .getRuleScript(res.rules_script)
             .then(res => {
-              commit(types.RULE_SCRIPT_SUCCESS);
-              commit(types.LOAD_API_RESPONSE, res);
+                commit(types.RULE_SCRIPT_SUCCESS);
+                commit(types.LOAD_API_RESPONSE, res);
 
-              resolve("success");
-            })
+                resolve("success");
+              })
             .catch(e => {
               commit(types.RULE_SCRIPT_FAILURE);
+              commit(ui.SHOW_BLUR);
               reject(e);
             });
         })
-        .catch(e => {
+        .catch(e => {          
           commit(types.EXPERIMENT_FAILURE);
+          commit(ui.SHOW_BLUR);
           reject(e);
         });
     });
@@ -97,6 +103,7 @@ const actions = {
         })
         .catch(e => {
           reject(e);
+          commit(ui.SHOW_BLUR);
           commit(types.REQUEST_REAGENTS_FAILURE);
         });
     });
@@ -112,6 +119,7 @@ const actions = {
         })
         .catch(e => {
           reject(e);
+          commit(ui.SHOW_BLUR);
           commit(types.REQUEST_UNITS_FAILURE);
         });
     });

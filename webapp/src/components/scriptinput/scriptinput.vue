@@ -1,6 +1,6 @@
 <style scoped src="./scriptEditor.css"></style>
 <template>
-<div id="scriptComponent" class="container-fluid w-75">
+<div  :class="{blurComponent:showBlur,'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
           <i class="btn fa fa-info-circle" aria-hidden="true"></i>

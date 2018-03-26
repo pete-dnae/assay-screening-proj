@@ -13,7 +13,8 @@ export const state = {
     /* Position the tooltip */
     position: "absolute",
     "z-index": 99999
-  }
+  },
+  showBlur:false
 };
 
 const actions = {};
@@ -25,12 +26,18 @@ const mutations = {
   const left = `${cursorLocation.left + parentBound.left}px`;
   state.toolTipStyle = { ...state.toolTipStyle, top, left };
 
+},
+[types.SHOW_BLUR](state){
+  state.showBlur = true
 }
 };
 const getters = {
   getToolTipStyle(state, getters, rootState) {
     return state.toolTipStyle;
   },
+  getBlurFlag(state, getters, rootState) {
+    return state.showBlur;
+  }
 };
 
 export default {

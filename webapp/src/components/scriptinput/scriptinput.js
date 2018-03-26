@@ -42,6 +42,7 @@ export default {
       error: 'getError',
       reagents: 'getReagents',
       units: 'getUnits',
+      showBlur: 'getBlurFlag',
       tableBoundaries: 'getTableBoundaries',
       allocationMapping: 'getAllocationMap',
       suggestions: 'getSuggestions',
@@ -229,8 +230,9 @@ export default {
       new Delta().insert(node.data, { font: 'monospace' }),
     );
 
-    this.fetchReagentList().then(() => {}, (err) => {});
-    this.fetchUnitList().then(() => {}, (err) => {});
+    this.fetchReagentList().then();
+    this.fetchUnitList().then();
+
     this.fetchExperiment(this.$route.params.exptNo).then(() => {
       this.editor.setText(formatText(this.ruleScript));
       this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
