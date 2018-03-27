@@ -1,0 +1,26 @@
+Web App Test Plan
+-----------------
+
+Landing page don't touch anything
+Landing page use cases
+    Table editing
+    Syntax Error reporting
+    Hover over a line
+    Hover over a well
+        Basics
+        Switch Plates
+Operating the header / banner
+
+Consider
+--------
+Bugs
+Performance
+Aesthetic improvements
+User feedback
+Smaller screen size issues
+Not immediately clear
+From GUI requirements document
+From Mockup Comparison
+Testing
+Conventions conformance
+

@@ -1,25 +1,23 @@
-*  Deal with reagent categories
-*  Fix the row/col transposition error
-*  Switch to new CORS scheme
-*  The A...A index bug
-*  Think clone is obsolete
-*  Bug fix - lnums is still in (row,col) order
-*  Bring in groups at model level
 o  Front end backlog
-    o  Search needed?
+
+o  Bug (I think back-end - if you type just "A TC" into a line it says
+   "Field number 3 (Columns specification is missing. Line <x>
+
 
 o  Return to groups...
-o  Add error checking if reagent added to reagent group is of incompatible
-   reagent_type
-    *  Implement validate method
-    *  Need object level
-    *  But does this call the base validation also? = yes
-    *  Add to make reference experiment
+    *  Add error checking if reagent added to reagent group is of incompatible
+       reagent_type
+        *  Implement validate method
+        *  Need object level
+        *  But does this call the base validation also? = yes
+        *  Add to make reference experiment
     o  Mistake - groups must have conc and units too for each reagent
+
 o  Add tolerance of groups in script in place of reagents
     o  Design
     o  Do
     o  Unit test
+    o  Add to reference experiment
     o  Show tolerance of rule citing a group in script
 o  Front end backlog
     o  Search needed?
@@ -27,6 +25,7 @@ o  Starter scripts to prepopulate / augment db
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
+    o  Move head to bottom up
     o  Non debug django mode
     o  No import of pdb
     o  Security?
