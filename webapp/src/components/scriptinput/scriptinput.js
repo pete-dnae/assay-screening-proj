@@ -102,24 +102,9 @@ export default {
     paintText() {
       const text = this.editor.getText();
       const textLength = text.length;
-      this.editor.formatText(0, textLength, 'color', 'green');
       this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
-        const lineEnd = text
-          .substr(this.error.where_in_script, textLength)
-          .indexOf('\n');
-        this.editor.formatText(
-          this.error.where_in_script,
-          lineEnd,
-          'color',
-          'black',
-        );
-        this.editor.formatText(
-          lineEnd + this.error.where_in_script,
-          textLength,
-          'color',
-          '#A9A9A9',
-        );
+        this.editor.formatText(this.error.where_in_script, textLength, 'color', '#A9A9A9');
       }
     },
     alterToolTip(cursorIndex) {
@@ -209,6 +194,8 @@ export default {
   },
   mounted() {
     const Delta = Quill.import('delta');
+    console.log(Quill.imports);
+
     const Parchment = Quill.import('parchment');
     const LineStyle = new Parchment.Attributor.Style(
       'textShadow',

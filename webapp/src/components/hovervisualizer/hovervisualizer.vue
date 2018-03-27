@@ -1,8 +1,7 @@
 <style scoped>
 td:hover {
-  background-color: #40a9e6e7 !important;  
+  background-color: #40a9e6e7 !important;
 }
-
 </style>
 
 
@@ -10,24 +9,29 @@ td:hover {
 
 <div class="w-100">
     <div class="col  text-left">
-        <h5 class="text-left"><strong>Plate Visualization</strong></h5>
-        <strong class="d-block">User Selection</strong>
         <div class="row">
-            <label class="mt-2 col">Plate Name :{{currentPlate}}</label>
+            <label class="mt-2 col"><strong>{{currentPlate}}</strong></label>
             <div class="col">
                 <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>
-                <label class="text-info">Hover over a line</label>
+                <label class="text-info">Hover over an &ltA&gt or &ltT&gt line</label>
             </div>
         </div>
         <table id="tableGoesHere" style="max-width:100%;height:auto" v-if="allocationMapping">
-            <tr v-for="row in tableBoundaries[0]" v-bind:key="row">
+            <tr v-for="row in tableBoundaries[0]" v-bind:key="row">                
                 <td v-for="col in tableBoundaries[1]" v-bind:key="col" class="rounded">
-                    <div id="cell" class="bg-secondary border border-secondary  rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[col,row])">
+                    <div  v-if="row===1&&col!=1">
+                        {{col-1}}
+                    </div>       
+                    <div  v-if="col===1&&row!=1">
+                        {{String.fromCharCode(row+63)}}
+                    </div>                                    
+                    <div id="cell" class="bg-secondary border border-secondary  rounded p-3 m-1" @mouseover="handleShowCellContents([row-1,col-1])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[col-1,row-1])">
 
                     </div>
-                    <div id="cell" class="bg-light border border-light rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-else>
+                    <div id="cell" class="bg-light border border-light rounded p-3 m-1" @mouseover="handleShowCellContents([row-1,col-1])" v-if="!isItemInArray(allocationMapping[highlightedLineNumber],[col-1,row-1])&&row!=1&&col!=1">
 
-                    </div>
+                    </div>                  
+                    
                 </td>
             </tr>
         </table>

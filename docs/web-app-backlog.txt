@@ -5,15 +5,6 @@ Backlog
 *  Legal reagent names from database rather than hard coded (if not already)
 *  Legal unit names from database rather than hard coded (if not already)
 
-Removing Cosmetics:
-    o  Info icon doesn't need "info" written after it.
-    o  The format icon doesn't need the word "Format" next to it.
-    o  'Plate1' doesn't need the "Plate Name" label.
-    o  The plate viz doesn't need the titles: "Plate Visualisation" and "User
-   Selection"
-    o  Remove Designed by label/field.
-    o  Experiment name field need not be preceded by the "Experiment" label.
-
 ToolTip Use Cases:
     o  Experiment name search have tool tip.
     o  Copy link has tool tip.
@@ -25,20 +16,34 @@ ToolTip Use Cases:
 Pop Up Use Cases :
     o  Plates and Pools pop up "this feature coming soon".
 
+Removing Cosmetics:
+    *  Info icon doesn't need "info" written after it.
+    *  The format icon doesn't need the word "Format" next to it.
+    *  'Plate1' doesn't need the "Plate Name" label.
+    *  The plate viz doesn't need the titles: "Plate Visualisation" and "User
+   Selection"
+    *  Remove Designed by label/field.
+    *  Experiment name field need not be preceded by the "Experiment" label.
+
 Cosmetic Changes/Additions:
     o  Put in an image and title in banner strip.
-    o  Change "Copy" to "Save As".
-    o  Copy link (all links) in universal link colour (from Bootstrap theme).
-    o  Change Experiment|Reagents|Plates to Reagents|Plates|Pools
-    o  Banner strip could be thinner to take up less room while remaining
+    *  Change "Copy" to "Save As".
+    *  Copy link (all links) in universal link colour (from Bootstrap theme).
+    x  Change Experiment|Reagents|Plates to Reagents|Plates|Pools
+        xx- Need Home button on other pages then -xx
+    x  Banner strip could be thinner to take up less room while remaining
        commanding.
-    o  Type your rules here and the down pointing finger should come after the info
+       xx- Room For Improvement , Banner now a navBar -xx
+    *  Type your rules here and the down pointing finger should come after the info
    icon, and have the finger to the right of the words.
-    o  Change the format icon to the right-justify icon because the current one
+    x  Change the format icon to the right-justify icon because the current one
    implies not formatting but a menu.
-    o  Hover over a line should be "Hover over an <A> or <T> line.
-    o  The plate viz needs the rows / cols decorated with numbers /
+        xx- Current one is "fa-align-justify" icon , also we aren't performing right align -xx
+    *  Hover over a line should be "Hover over an <A> or <T> line.
+    x  The plate viz needs the rows / cols decorated with numbers /
    letters.
+        xx- Although this is acheived , Not quite comfortable with the logic used
+         we are trying to acheive a graph on html table-xx
     o  Personally, I don't like the choice of <HOL> highlighting. I think we should
    avoid using or introducing colour for this. Because I'd like to keep the
    colouring of lines only significant for the tide-mark from the first error

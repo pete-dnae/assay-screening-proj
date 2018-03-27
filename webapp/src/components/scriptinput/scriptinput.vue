@@ -10,7 +10,7 @@
             <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
         </div>
         <div class="col-1">
-            <i @click="handleFormat()" class="btn fa fa-align-justify"></i>            
+            <i @click="handleFormat()" class="btn fa fa-align-right"></i>            
         </div>       
 
         <div class="col-1">
