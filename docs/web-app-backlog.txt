@@ -2,8 +2,6 @@ Backlog
 -------
 
 
-*  Legal reagent names from database rather than hard coded (if not already)
-*  Legal unit names from database rather than hard coded (if not already)
 
 ToolTip Use Cases:
     o  Experiment name search have tool tip.
@@ -82,12 +80,12 @@ DOM and JS Changes:
     Particularly as you travel up the page?
     o  Rule Hover highlight and table viz corresponding should evaporate if you're not
        still hovering.
-    o  Well hover highlight and well contents should evaporate if you're not
+    *  Well hover highlight and well contents should evaporate if you're not
        still hovering.
-    o  Hover over a well <HOW> report wraps the reagent segment.
+    *  Hover over a well <HOW> report wraps the reagent segment.
 
 Vanilla JS Changes(external js files):
-    o  Auto format should leave comment lines alone
+    *  Auto format should leave comment lines alone
     o  Auto complete while suggestions are up, seems to freeze saving sometimes.
     o  Auto complete how is position of pop up resilient?
     o  Auto complete, once you select something, the pop up stays up, and it
@@ -98,7 +96,10 @@ Existing Features:
     o  Make sure the config of the front end to let it switch between dev mode
        and deployed mode - follows 12-factor principles. Probably means using
        environmen tvariables.
-    o  Update developer docs for front end.--need more clarity on this ,existing docs will enable anyone to deploy the app
+    x  Update developer docs for front end.
+        xx-need more clarity on this ,existing docs will enable anyone to deploy the app-xx
+    *  Legal reagent names from database rather than hard coded (if not already)
+    *  Legal unit names from database rather than hard coded (if not already)
 
 Deployment Checks:
     o  Make sure we have a deployable front end by testing it properly deployed.

@@ -206,7 +206,7 @@ export default {
   },
   mounted() {
     const Delta = Quill.import('delta');
-    console.log(Quill.imports);
+
 
     const Parchment = Quill.import('parchment');
     const LineStyle = new Parchment.Attributor.Style(

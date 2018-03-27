@@ -6,11 +6,13 @@ export const formatText = (text) => {
   const lines = text.split('\n');
   const wordPositions = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [] };
   lines.forEach((x) => {
-    x.split(/\s+/).forEach((txt, i) => {
-      if (i < 5) {
-        wordPositions[i].push(txt);
-      }
-    });
+    if (!x.startsWith('#')) {
+      x.split(/\s+/).forEach((txt, i) => {
+        if (i < 5) {
+          wordPositions[i].push(txt);
+        }
+      });
+    }
   });
 
   const maxLength = _.reduce(
@@ -18,7 +20,7 @@ export const formatText = (text) => {
     (acc, x, i) => {
       if (!_.isEmpty(x)) {
         //eslint-disable-next-line
-        const longWord = _.maxBy(x, (a) => a.length);
+        const longWord = _.maxBy(x, a => a.length);
 
         acc[i] = longWord.length;
       }
@@ -30,11 +32,15 @@ export const formatText = (text) => {
 
   lines.forEach((x) => {
     let finalLine = '';
-    x.split(/\s+/).forEach((txt, i) => {
-      const fillSpace = _.repeat(' ', maxLength[i] - txt.length);
-      finalLine += `${txt} ${fillSpace}`;
-    });
-    finalText += `${finalLine.trimRight()}\n`;
+    if (!x.startsWith('#')) {
+      x.split(/\s+/).forEach((txt, i) => {
+        const fillSpace = _.repeat(' ', maxLength[i] - txt.length);
+        finalLine += `${txt} ${fillSpace}`;
+      });
+      finalText += `${finalLine.trimRight()}\n`;
+    } else {
+      finalText += `${x.trimRight()}`;
+    }
   });
   return finalText;
 };
@@ -42,7 +48,7 @@ export const getRowList = (rows) => {
   if (rows.indexOf('-') > -1) {
     return _.range(rows[0].charCodeAt(0), rows[2].charCodeAt(0) + 1).map(
       //eslint-disable-next-line
-      (x) => x - 64,
+      x => x - 64
     );
   }
 
@@ -50,7 +56,7 @@ export const getRowList = (rows) => {
     rows
       .split(',')
       //eslint-disable-next-line
-      .map((x) => x.charCodeAt(0) - 64)
+      .map(x => x.charCodeAt(0) - 64)
       .sort((a, b) => a - b)
   );
 };
@@ -67,7 +73,7 @@ export const getColList = (cols) => {
     cols
       .split(',')
       //eslint-disable-next-line
-      .map((x) => parseInt(x, 0))
+      .map(x => parseInt(x, 0))
       .sort((a, b) => a - b)
   );
 };
@@ -87,7 +93,7 @@ export const makeSVG = (DOMURL, html) => {
 };
 export const isItemInArray = (array, item) => {
   //eslint-disable-next-line
-  const arrayString = _.map(array, (x) => String(x));
+  const arrayString = _.map(array, x => String(x));
 
   return arrayString.includes(String(item));
 };
