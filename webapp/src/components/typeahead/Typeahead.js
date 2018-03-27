@@ -3,7 +3,7 @@ import {
   getJSON,
 } from '../../../node_modules/vue-strap/src/utils/utils.js';
 
-var DELAY = 300;
+const DELAY = 300;
 
 export default {
   props: {
@@ -76,7 +76,13 @@ export default {
           })
           .slice(0, this.limit);
       }
-      this.showDropdown = this.items.length > 0;
+      if (this.items.length > 0) {
+        if (this.items[0] === this.val) {
+          this.showDropdown = false;
+        } else {
+          this.showDropdown = true;
+        }
+      }
     },
     setValue(value) {
       this.asign = value;

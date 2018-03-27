@@ -21,8 +21,9 @@ export const getMaxRowCol = (lnums) => {
   );
 
   return [
-    allCells.sort((a, b) => b[1] - a[1])[0][1],
-    allCells.sort((a, b) => b[0] - a[0])[0][0],
+    // extending boundary by one to display table boundaries
+    allCells.sort((a, b) => b[1] - a[1])[0][1] + 1,
+    allCells.sort((a, b) => b[0] - a[0])[0][0] + 1,
   ];
 };
 

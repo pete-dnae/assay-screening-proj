@@ -8,6 +8,7 @@ import { modal } from 'vue-strap';
 import { formatText, isItemInArray } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
+import wellcontents from '@/components/wellcontents/wellcontents.vue';
 
 // import { validateText } from '@/models/editor';
 
@@ -23,6 +24,7 @@ export default {
   components: {
     modal,
     hovervisualizer,
+    wellcontents,
   },
   data() {
     return {
@@ -34,6 +36,9 @@ export default {
       highlightedLineNumber: null,
       showSuggestionList: false,
       showSuggestionToolTip: false,
+      currentRow: null,
+      currentCol: null,
+      showWellContents: false,
     };
   },
   computed: {
@@ -102,20 +107,10 @@ export default {
     paintText() {
       const text = this.editor.getText();
       const textLength = text.length;
-      this.editor.formatText(0, textLength, 'color', 'green');
       this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
-        const lineEnd = text
-          .substr(this.error.where_in_script, textLength)
-          .indexOf('\n');
         this.editor.formatText(
           this.error.where_in_script,
-          lineEnd,
-          'color',
-          'black',
-        );
-        this.editor.formatText(
-          lineEnd + this.error.where_in_script,
           textLength,
           'color',
           '#A9A9A9',
@@ -164,19 +159,21 @@ export default {
         const [start, end] = startEndOfLine(lineNumber, text);
         this.currentPlate = plateName;
         this.highlightedLineNumber = lineNumber + 1;
-        this.editor.formatText(0, text.length, 'text-shadow', false);
-        this.editor.formatText(
-          start,
-          end - start,
-          'text-shadow',
-          '2px 2px 4px #000000',
-        );
+        this.editor.formatText(0, text.length, 'bg', false);
+        this.editor.formatText(0, text.length, 'color', false);
+        this.editor.formatText(start, end - start, 'bg', 'primary');
+        this.editor.formatText(start, end - start, 'color', 'white');
       }
-
-      // console.log(event.fromElement);
     },
     highlightError(index) {
       this.editor.setSelection(index, 0);
+    },
+    handleWellHover([row, col]) {
+      [this.currentRow, this.currentCol] = [row, col];
+      this.showWellContents = true;
+    },
+    handleHoverComplete() {
+      this.showWellContents = false;
     },
     hideSuggestion() {
       this.showSuggestionList = false;
@@ -209,6 +206,8 @@ export default {
   },
   mounted() {
     const Delta = Quill.import('delta');
+
+
     const Parchment = Quill.import('parchment');
     const LineStyle = new Parchment.Attributor.Style(
       'textShadow',
@@ -217,7 +216,14 @@ export default {
         scope: Parchment.Scope.INLINE,
       },
     );
+    const background = new Parchment.Attributor.Class('bg', 'bg', {
+      scope: Parchment.Scope.INLINE,
+      whitelist: ['primary', 'secondary', 'success'],
+    });
+
+    Quill.register(background, true);
     Quill.register(LineStyle, true);
+    // Quill.register(text, true);
 
     this.editor = new Quill('#editor', this.options);
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
@@ -232,9 +238,8 @@ export default {
     this.editor.clipboard.addMatcher(Node.TEXT_NODE, node =>
       new Delta().insert(node.data, { font: 'monospace' }),
     );
-
-    this.fetchReagentList().then();
-    this.fetchUnitList().then();
+    this.fetchReagentList();
+    this.fetchUnitList();
 
     this.fetchExperiment(this.$route.params.exptNo).then(() => {
       this.editor.setText(formatText(this.ruleScript));

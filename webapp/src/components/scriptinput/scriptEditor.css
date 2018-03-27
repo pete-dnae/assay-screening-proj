@@ -23,7 +23,11 @@ li span {
 #editor {
   font-family: "MONOSPACE";
   font-size: 18px;
-  height: 1000px;
+  height: 1000px;  
+}
+
+.ql-editor p{
+    margin-top: 10px !important
 }
 
 @keyframes spinner {

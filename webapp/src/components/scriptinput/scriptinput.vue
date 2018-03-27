@@ -3,17 +3,15 @@
 <div  :class="{blurComponent:showBlur,'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
-          <i class="btn fa fa-info-circle" aria-hidden="true"></i>
-          <label>info</label>
+          <i class="btn fa fa-info-circle" aria-hidden="true"></i>          
       </div>
-        <div class="col-1">
-            <i @click="handleFormat()" class="btn fa fa-align-justify"></i>
-            <label>Format</label>
-        </div>
-        <div class="col-2">
-            <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
+      <div class="col-2">            
             <label>Type your rules here</label>
+            <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
         </div>
+        <div class="col-1">
+            <i @click="handleFormat()" class="btn fa fa-align-right"></i>            
+        </div>       
 
         <div class="col-1">
             <span v-show="showSpinner" class="spinner "> <i class="fa fa-floppy-o">saving</i></span>
@@ -29,17 +27,27 @@
             <div id="editor" class="" @keyup="editorChange" @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
-            <div class="row mt-3" v-if="error===null">
+            <div class="row mt-3">
               <hovervisualizer :currentPlate="currentPlate"
                                :tableBoundaries="tableBoundaries"
                                :highlightedLineNumber="highlightedLineNumber"
               :allocationMapping="allocationMapping"
-              :allocationData="allocationData">
+              :allocationData="allocationData"
+              @wellHovered="handleWellHover"
+              @hoverComplete="handleHoverComplete">
             </hovervisualizer>
+            </div> 
+            <div class="row mt-3" v-if="showWellContents&&!error">
+                <wellcontents   
+                                :currentRow="currentRow" 
+                                :currentCol="currentCol" 
+                                :allocationData="allocationData[currentPlate]">
+                </wellcontents> 
             </div>
-            <div class="row justify-content-center mt-5" v-else>
+            
+            <div class="row justify-content-center" v-if="error">
               <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
-            </div>
+            </div>          
             <div class="row text-left " v-show="showSuggestionList">
                 <h5 class="mt-3 w-100"><strong>Suggestions :</strong></h5>
                 <h5><strong>Currently retreiving 5+ suggestions</strong></h5>
@@ -50,6 +58,8 @@
                     </button>
                 </div>
             </div>
+            
+            
         </div>
         <span v-bind:style="tooltiptext" v-show="showSuggestionToolTip">
     <ul >

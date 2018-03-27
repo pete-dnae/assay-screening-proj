@@ -3,7 +3,7 @@ import _ from "lodash";
 import * as types from "./mutation-types";
 import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
-import * as ui from "../ui/mutation-types"
+import * as ui from "../ui/mutation-types";
 import { getMaxRowCol } from "@/models/editor2.0";
 
 export const state = {
@@ -14,6 +14,12 @@ export const state = {
     didInvalidate: false
   },
   units: {
+    data: null,
+    isRequesting: false,
+    received: false,
+    didInvalidate: false
+  },
+  experimentList: {
     data: null,
     isRequesting: false,
     received: false,
@@ -36,6 +42,7 @@ export const state = {
   },
   experiment: {
     data: null,
+    currentExperiment:null,
     isRequesting: false,
     received: false,
     didInvalidate: false
@@ -61,31 +68,44 @@ const actions = {
         });
     });
   },
+  fetchExperimentList({ commit }) {
+    commit(types.REQUEST_EXPERIMENT_LIST);
+    return new Promise(function(resolve, reject) {
+      api
+        .getExperimentList()
+        .then(res => {
+          commit(types.EXPERIMENT_LIST_SUCCESS, res);
+          resolve("success");
+        })
+        .catch(e => {
+          reject(e);
+          commit(ui.SHOW_BLUR);
+          commit(types.EXPERIMENT_LIST_FAILURE);
+        });
+    });
+  },
   fetchExperiment({ commit }, expNo) {
     commit(types.REQUEST_EXPERIMENT);
     return new Promise(function(resolve, reject) {
       api
         .getExperiment(expNo)
         .then(res => {
-          
           commit(types.EXPERIMENT_SUCCESS, res);
-          
-          
           api
             .getRuleScript(res.rules_script)
             .then(res => {
-                commit(types.RULE_SCRIPT_SUCCESS);
-                commit(types.LOAD_API_RESPONSE, res);
+              commit(types.RULE_SCRIPT_SUCCESS);
+              commit(types.LOAD_API_RESPONSE, res);
 
-                resolve("success");
-              })
+              resolve("success");
+            })
             .catch(e => {
               commit(types.RULE_SCRIPT_FAILURE);
               commit(ui.SHOW_BLUR);
               reject(e);
             });
         })
-        .catch(e => {          
+        .catch(e => {
           commit(types.EXPERIMENT_FAILURE);
           commit(ui.SHOW_BLUR);
           reject(e);
@@ -99,7 +119,7 @@ const actions = {
         .getReagents()
         .then(res => {
           commit(types.REAGENTS_RECEIVED, res);
-          resolve('success')
+          resolve("success");
         })
         .catch(e => {
           reject(e);
@@ -188,6 +208,7 @@ const mutations = {
     state.experiment.didInvalidate = false;
   },
   [types.EXPERIMENT_SUCCESS](state, response) {
+    state.experiment.currentExperiment = response.experiment_name;
     state.experiment.data = response;
     state.experiment.isRequesting = false;
     state.experiment.received = true;
@@ -197,6 +218,22 @@ const mutations = {
     state.experiment.isRequesting = false;
     state.experiment.received = false;
     state.experiment.didInvalidate = true;
+  },
+  [types.REQUEST_EXPERIMENT_LIST](state) {
+    state.experimentList.isRequesting = true;
+    state.experimentList.received = false;
+    state.experimentList.didInvalidate = false;
+  },
+  [types.EXPERIMENT_LIST_SUCCESS](state, response) {
+    state.experimentList.data = response;
+    state.experimentList.isRequesting = false;
+    state.experimentList.received = true;
+    state.experimentList.didInvalidate = false;
+  },
+  [types.EXPERIMENT_LIST_FAILURE](state) {
+    state.experimentList.isRequesting = false;
+    state.experimentList.received = false;
+    state.experimentList.didInvalidate = true;
   },
   [types.REQUEST_RULE_SCRIPT](state) {
     state.ruleScript.isRequesting = true;
@@ -256,6 +293,12 @@ const getters = {
   },
   getAllocationData(state, getters, rootState) {
     return state.ruleScript.data.interpretationResults.table;
+  },
+  getExperimentList(state, getters, rootState) {
+    return state.experimentList.data;
+  },
+  getCurrentExperiment(state, getters, rootState) {
+    return state.experiment.currentExperiment;
   }
 };
 
