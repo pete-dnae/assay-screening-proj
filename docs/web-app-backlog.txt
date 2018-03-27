@@ -28,20 +28,22 @@ Cosmetic Changes/Additions:
     *  Change "Copy" to "Save As".
     *  Copy link (all links) in universal link colour (from Bootstrap theme).
     x  Change Experiment|Reagents|Plates to Reagents|Plates|Pools
-        xx- Need Home button on other pages then -xx
+        # Need Home button on other pages then . 
+        ie How to get back to experiment page from other pages 
     x  Banner strip could be thinner to take up less room while remaining
        commanding.
-       xx- Room For Improvement , Banner is now a navBar -xx
+       # Room For Improvement , Banner is now a navBar 
     *  Type your rules here and the down pointing finger should come after the info
    icon, and have the finger to the right of the words.
     x  Change the format icon to the right-justify icon because the current one
    implies not formatting but a menu.
-        xx- Current one is "fa-align-justify" icon , also we aren't performing right align -xx
+        # Current one is "fa-align-justify" icon ,
+         would right align look confusing as we aren't performing right align?
     *  Hover over a line should be "Hover over an <A> or <T> line.
     x  The plate viz needs the rows / cols decorated with numbers /
    letters.
-        xx- Although this is acheived , Not quite comfortable with the logic used
-         we are trying to achieve a graph on html table-xx
+        # Although this is acheived , Not quite comfortable with the logic used
+         we are trying to achieve a graph with a html table
     *  Personally, I don't like the choice of <HOL> highlighting. I think we should
    avoid using or introducing colour for this. Because I'd like to keep the
    colouring of lines only significant for the tide-mark from the first error
@@ -50,11 +52,12 @@ Cosmetic Changes/Additions:
    ok lines in black, and the first error line ,and all subsequent, greyed-out.
    x  ERIS - display in plate viz as well as sad face - "Cannot show plate
    visualisation while there are errors in your rules script".
-   xx-Cannot display plate viz while error as the error response nullifies allocation data and lnum data
-      without which table visualizations aren't a possiblity -xx
+   #Cannot display plate viz while error as the error response nullifies table data 
+   and lnum data without which table visualizations aren't a possiblity.
+   Can't Ignore the error response getting added to the state as well (feels weird).    
    x  Consider using Bootstrap Wells to delineate and group the major areas of the
    screen.
-   xx-bootstrap wells are depreciated ,but I got your point-xx
+   #bootstrap wells are depreciated ,but I got your point
    o  On may browser config and default zoom, the text editor is not wide enough
    and the transfer rule wraps.
    o  On may browser config and default zoom, the "contents of" area disappears
@@ -65,7 +68,7 @@ Vue Changes :
     *  Experiment name search offer choices from database.
     *  Experiment name field match that loaded - inlcuded at startup.
     x  Load reference experiment from db at boot time.
-        xx-The app by default loads exp No 1-xx
+        #The app by default loads exp No 1
     o  Info icon should bring up example script.
     o  The example experiment shown on help, should be the reference experiment
    from the database, so that as we evolve the language, and update the
@@ -78,8 +81,14 @@ Vuex change:
 DOM and JS Changes:
     o  The hovering over a line <HOL> target zone doesn't seem quite right.
     Particularly as you travel up the page?
-    o  Rule Hover highlight and table viz corresponding should evaporate if you're not
+    x  Rule Hover highlight and table viz corresponding should evaporate if you're not
        still hovering.
+       # when do we decide that the user isnt hovering ?. 
+         case : user isnt hovering if she moves the mouse out of editor window
+         result: user wont be able to hover over a well as the viz would have disappeared
+                once she is out of editor window
+         case : user isnt hovering if she starts typing again
+         result: user wont be able to see viz as she types 
     *  Well hover highlight and well contents should evaporate if you're not
        still hovering.
     *  Hover over a well <HOW> report wraps the reagent segment.
@@ -97,7 +106,7 @@ Existing Features:
        and deployed mode - follows 12-factor principles. Probably means using
        environmen tvariables.
     x  Update developer docs for front end.
-        xx-need more clarity on this ,existing docs will enable anyone to deploy the app-xx
+        #need more clarity on this ,existing docs will enable anyone to deploy the app
     *  Legal reagent names from database rather than hard coded (if not already)
     *  Legal unit names from database rather than hard coded (if not already)
 
