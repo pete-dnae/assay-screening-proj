@@ -1,75 +1,98 @@
 Backlog
 -------
 
-o  Legal reagent names from database rather than hard coded (if not already)
-o  Legal unit names from database rather than hard coded (if not already)
-o  Put in an image and title in banner strip.
-o  Experiment name search offer choices from database.
-o  Experiment name search have tool tip.
-o  Experiment name field match that loaded - inlcuded at startup.
-o  Experiment name field need not be preceded by the "Experiment" label.
-o  Load reference experiment from db at boot time.
-o  Copy link (all links) in universal link colour (from Bootstrap theme).
-o  Copy link has tool tip.
-o  Change "Copy" to "Save As".
-o  Remove Designed by label/field.
-o  Tooltips on Experiments|Reagents|Plates
-o  Change Experiment|Reagents|Plates to Reagents|Plates|Pools
-o  Plates and Pools pop up "this feature coming soon".
-o  Banner strip could be thinner to take up less room while remaining
-   commanding.
-o  Info icon doesn't need "info" written after it.
-o  Info icon needs tooltip.
-o  Info icon should bring up example script.
-o  Type your rules here and the down pointing finger should come after the info
-   icon, and have the finger to the right of the words.
-o  The format icon doesn't need the word "Format" next to it.
-o  Change the format icon to the right-justify icon because the current one
-   implies not formatting but a menu.
-o  The format icon needs a tooltip.
-o  The plate viz needs the rows / cols decorated with numbers /
-   letters.
-o  The plate viz doesn't need the titles: "Plate Visualisation" and "User
+
+*  Legal reagent names from database rather than hard coded (if not already)
+*  Legal unit names from database rather than hard coded (if not already)
+
+Removing Cosmetics:
+    o  Info icon doesn't need "info" written after it.
+    o  The format icon doesn't need the word "Format" next to it.
+    o  'Plate1' doesn't need the "Plate Name" label.
+    o  The plate viz doesn't need the titles: "Plate Visualisation" and "User
    Selection"
-o  'Plate1' doesn't need the "Plate Name" label.
-o  Hover over a line needs a tooltip.
-o  Hover over a line should be "Hover over an <A> or <T> line.
-o  The hovering over a line <HOL> target zone doesn't seem quite right.
-   Particularly as you travel up the page?
-o  Personally, I don't like the choice of <HOL> highlighting. I think we should
-   avoid using or introducing colour for this. Because I'd like to keep the 
+    o  Remove Designed by label/field.
+    o  Experiment name field need not be preceded by the "Experiment" label.
+
+ToolTip Use Cases:
+    o  Experiment name search have tool tip.
+    o  Copy link has tool tip.
+    o  Tooltips on Experiments|Reagents|Plates
+    o  Info icon needs tooltip.
+    o  The format icon needs a tooltip.
+    o  Hover over a line needs a tooltip.
+
+Pop Up Use Cases :
+    o  Plates and Pools pop up "this feature coming soon".
+
+Cosmetic Changes/Additions:
+    o  Put in an image and title in banner strip.
+    o  Change "Copy" to "Save As".
+    o  Copy link (all links) in universal link colour (from Bootstrap theme).
+    o  Change Experiment|Reagents|Plates to Reagents|Plates|Pools
+    o  Banner strip could be thinner to take up less room while remaining
+       commanding.
+    o  Type your rules here and the down pointing finger should come after the info
+   icon, and have the finger to the right of the words.
+    o  Change the format icon to the right-justify icon because the current one
+   implies not formatting but a menu.
+    o  Hover over a line should be "Hover over an <A> or <T> line.
+    o  The plate viz needs the rows / cols decorated with numbers /
+   letters.
+    o  Personally, I don't like the choice of <HOL> highlighting. I think we should
+   avoid using or introducing colour for this. Because I'd like to keep the
    colouring of lines only significant for the tide-mark from the first error
    onward.  Maybe enboldening, or a background or a border.
-o  Rule Hover highlight and table viz corresponding should evaporate if you're not
-   still hovering.
-o  Well hover highlight and well contents should evaporate if you're not
-   still hovering.
-o  On may browser config and default zoom, the text editor is not wide enough
+   o  On may browser config and default zoom, the text editor is not wide enough
    and the transfer rule wraps.
-o  On may browser config and default zoom, the "contents of" area disappears
+   o  On may browser config and default zoom, the "contents of" area disappears
    off the bottom. Need to brainstorm best answer to this.
-o  At boot time the app should load the most recently viewed experiment when
-   there is one, otherwise the reference experiment from the db.
-o  Hover over a well <HOW> report wraps the reagent segment.
-o  Auto format should leave comment lines alone
-o  Error reporting in script (ERIS) - I still like the idea of showing all the
+   o  Error reporting in script (ERIS) - I still like the idea of showing all the
    ok lines in black, and the first error line ,and all subsequent, greyed-out.
-o  ERIS - display in plate viz as well as sad face - "Cannot show plate
+    o  ERIS - display in plate viz as well as sad face - "Cannot show plate
    visualisation while there are errors in your rules script".
-o  Bug (I think back-end - if you type just "A TC" into a line it says
-   "Field number 3 (Columns specification is missing. Line <x>
-o  Auto complete while suggestions are up, seems to freeze saving sometimes.
-o  Auto complete how is position of pop up resilient?
-o  Auto complete, once you select something, the pop up stays up, and it
-   doesn't trigger a save?
-o  Auto save - I reckon we could set the time a tiny bit quicker?
-o  The example experiment shown on help, should be the reference experiment
+   o  Consider using Bootstrap Wells to delineate and group the major areas of the
+   screen.--bootstrap wells are depreciated ,but I got your point
+
+
+Vue Changes :
+    o  Experiment name search offer choices from database.
+    o  Experiment name field match that loaded - inlcuded at startup.
+    o  Load reference experiment from db at boot time.
+    o  Info icon should bring up example script.
+    o  At boot time the app should load the most recently viewed experiment when
+   there is one, otherwise the reference experiment from the db.
+    o  The example experiment shown on help, should be the reference experiment
    from the database, so that as we evolve the language, and update the
    reference experiment, so the help example changes with it.
-o  Make sure the config of the front end to let it switch between dev mode 
-   and deployed mode - follows 12-factor principles. Probably means using 
-   environmen tvariables.
-o  Update developer docs for front end.
-o  Make sure we have a deployable front end by testing it properly deployed.
-o  Consider using Bootstrap Wells to delineate and group the major areas of the
-   screen.
+
+DOM and JS Changes:
+    o  The hovering over a line <HOL> target zone doesn't seem quite right.
+    Particularly as you travel up the page?
+    o  Rule Hover highlight and table viz corresponding should evaporate if you're not
+       still hovering.
+    o  Well hover highlight and well contents should evaporate if you're not
+       still hovering.
+    o  Hover over a well <HOW> report wraps the reagent segment.
+
+Vanilla JS Changes(external js files):
+    o  Auto format should leave comment lines alone
+    o  Auto complete while suggestions are up, seems to freeze saving sometimes.
+    o  Auto complete how is position of pop up resilient?
+    o  Auto complete, once you select something, the pop up stays up, and it
+       doesn't trigger a save?
+    o  Auto save - I reckon we could set the time a tiny bit quicker?
+
+Existing Features:
+    o  Make sure the config of the front end to let it switch between dev mode
+       and deployed mode - follows 12-factor principles. Probably means using
+       environmen tvariables.
+    o  Update developer docs for front end.--need more clarity on this ,existing docs will enable anyone to deploy the app
+
+Deployment Checks:
+    o  Make sure we have a deployable front end by testing it properly deployed.
+
+
+BUGS:
+    o  Bug (I think back-end - if you type just "A TC" into a line it says
+   "Field number 3 (Columns specification is missing. Line <x>

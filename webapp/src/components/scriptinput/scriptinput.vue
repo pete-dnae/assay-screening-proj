@@ -3,17 +3,15 @@
 <div  :class="{blurComponent:showBlur,'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
-          <i class="btn fa fa-info-circle" aria-hidden="true"></i>
-          <label>info</label>
+          <i class="btn fa fa-info-circle" aria-hidden="true"></i>          
       </div>
-        <div class="col-1">
-            <i @click="handleFormat()" class="btn fa fa-align-justify"></i>
-            <label>Format</label>
-        </div>
-        <div class="col-2">
-            <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
+      <div class="col-2">            
             <label>Type your rules here</label>
+            <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
         </div>
+        <div class="col-1">
+            <i @click="handleFormat()" class="btn fa fa-align-justify"></i>            
+        </div>       
 
         <div class="col-1">
             <span v-show="showSpinner" class="spinner "> <i class="fa fa-floppy-o">saving</i></span>
