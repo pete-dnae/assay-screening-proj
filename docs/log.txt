@@ -1,4 +1,6 @@
 *  Start Front end backlog
+o  Test fixed front end backlog and remove * items if happy.
+o  Update front end backlog with feedback for Prasanna
 
 o  Bug (I think back-end - if you type just "A TC" into a line it says
    "Field number 3 (Columns specification is missing. Line <x>
