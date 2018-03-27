@@ -13,6 +13,30 @@ class RuleScriptParserTest(unittest.TestCase):
     def setUp(self):
         pass
 
+    #-----------------------------------------------------------------------
+    # Regression tests for bug fixes. I.e. make sure they don't reappear.
+    #-----------------------------------------------------------------------
+    def test_bug_regression_unknown_reagent_masked_if_too_few_fields(self):
+        """
+        If you had a (truncated) rule like this:
+            A Foo
+        It would raise an error about the absence of column 3, instead of
+        <Foo> being an unknown reagent. The cause was the parser reading all
+        the required fields first then checking them for legality afterwards.
+        """
+        regex = re.compile(r'A Tit.*$', re.DOTALL)
+        modified_script = re.sub(regex, 'A TC', REFERENCE_SCRIPT)
+        parser = RuleScriptParser(
+                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+        with self.assertRaises(ParseError) as cm:
+            parser.parse()
+        e = cm.exception
+        self.assertEqual(e.message, 'Unknown reagent. Line 3. Culprit: (TC).')
+        self.assertEqual(e.where_in_script, 17)
+
+    #-----------------------------------------------------------------------
+    # Regular unit tests.
+    #-----------------------------------------------------------------------
     def test_rows_and_columns_right_way_round(self):
         """
         Make a script with only a single cell allocation, and ensure that the
@@ -152,7 +176,7 @@ class RuleScriptParserTest(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.message,
             'Unknown reagent. Line 3. Culprit: (Qitanium-Taq).')
-        self.assertEqual(e.where_in_script, 17)
+
 
     def test_error_unknown_units(self):
         modified_script = REFERENCE_SCRIPT.replace('M/uL', 'A/uL')

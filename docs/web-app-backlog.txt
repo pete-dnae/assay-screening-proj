@@ -113,8 +113,6 @@ Deployment Checks:
 
 
 BUGS:
-    o  Bug (I think back-end - if you type just "A TC" into a line it says
-   "Field number 3 (Columns specification is missing. Line <x>
 
 NEW OBSERVATIONS
     o  Don't think changing to a new experiment (if you create one in the 

@@ -128,18 +128,21 @@ class RuleScriptParser:
         self._assert_a_plate_is_defined()
 
         reagent = self._fields.field(1, 'Reagent')
+        # Check the reagent so that any error message about the reagent
+        # doesn't get masked by an error about there being too few fields.
+        self._assert_reagent_is_known(reagent)
+
         cols = self._fields.field(2, 'Columns specification')
         rows = self._fields.field(3, 'Rows specification')
         conc = self._fields.field(4, 'Concentration')
+
         units = self._fields.field(5, 'Concentration units')
+        self._assert_units_are_known(units)
 
         rows = self._parse_row_spec(rows)
         cols = self._parse_col_spec(cols)
         conc_value = self._parse_conc_value(conc)
         conc_units = units
-
-        self._assert_reagent_is_known(reagent)
-        self._assert_units_are_known(units)
 
         return AllocRule(reagent, RowColIntersections(rows, cols), 
                 conc_value, units)
@@ -155,12 +158,16 @@ class RuleScriptParser:
         # s_ for source, d_ for destination
 
         s_plate = self._fields.field(1, 'Source plate name')
+        self._assert_plate_is_known(s_plate)
+
         s_cols = self._fields.field(2, 'Source columns')
         s_rows = self._fields.field(3, 'Source rows')
         d_cols = self._fields.field(4, 'Desination columns')
         d_rows = self._fields.field(5, 'Desination rows')
         conc = self._fields.field(6, 'Concentration')
+
         units = self._fields.field(7, 'Concentration units')
+        self._assert_units_is_dilution(units)
 
         s_rows = self._parse_row_spec(s_rows)
         s_cols = self._parse_col_spec(s_cols)
@@ -168,9 +175,6 @@ class RuleScriptParser:
         d_cols = self._parse_col_spec(d_cols)
         conc_value = self._parse_conc_value(conc)
         conc_units = units
-
-        self._assert_plate_is_known(s_plate)
-        self._assert_units_is_dilution(conc_units)
 
         # The TransferRule constructor raises exceptions if the source and 
         # destination row/columns are incompatible shapes.
