@@ -1,7 +1,10 @@
-o  Front end backlog
+*  Start Front end backlog
 
 o  Bug (I think back-end - if you type just "A TC" into a line it says
    "Field number 3 (Columns specification is missing. Line <x>
+    *  Reproduce in web API = yes
+    *  Why isn't unrecognized reagent firing?
+    o  Set up regression test to debug the problem and fix it
 
 
 o  Return to groups...
@@ -11,6 +14,7 @@ o  Return to groups...
         *  Need object level
         *  But does this call the base validation also? = yes
         *  Add to make reference experiment
+    o  Groups must contain no duplicates
     o  Mistake - groups must have conc and units too for each reagent
 
 o  Add tolerance of groups in script in place of reagents
@@ -19,29 +23,19 @@ o  Add tolerance of groups in script in place of reagents
     o  Unit test
     o  Add to reference experiment
     o  Show tolerance of rule citing a group in script
-o  Front end backlog
-    o  Search needed?
-o  Starter scripts to prepopulate / augment db
+o  Starter scripts to prepopulate / augment db with reagents and groups
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
-    o  Move head to bottom up
+    o  Move git head to bottom up branch
     o  Non debug django mode
     o  No import of pdb
-    o  Security?
+    o  Security and authentication
 o  Deploy
+o  Update deployment docco.
 
 ---------------------------------------------------------------------------
-Groups
 ---------------------------------------------------------------------------
-A table of <ReagentGroup>s
-Each of which has-a name.
-Each of which has-a ReagentCategory FK.
-Each of which has-a m2m field of Reagent FK.
-
-Must make it a bad request if receive a write op that includes a Reagent FK
-that references a Reagent of a mis-matched category.
-
 ---------------------------------------------------------------------------
 from pdb import set_trace as st
 ---------------------------------------------------------------------------
