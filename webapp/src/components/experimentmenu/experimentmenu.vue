@@ -4,7 +4,9 @@
     <div class="navbar navbar-dark bg-dark">
         <div class="form-inline my-2 my-lg-0">            
             
-              <typeahead class="form-control mr-sm-2" :data="USstate" placeholder="Experiment Name"></typeahead>
+              <typeahead class="form-control mr-sm-2" 
+              :data="data" placeholder="Experiment Name"
+              :value="currentExperiment"></typeahead>
             
             <div class="btn  my-2 my-sm-0">              
               <p><a href="#" class="text-primary">Save As</a></p>
