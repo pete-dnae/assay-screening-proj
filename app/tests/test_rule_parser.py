@@ -5,7 +5,7 @@ from pdb import set_trace as st
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
 from app.model_builders.reference_data import REFERENCE_SCRIPT
-from app.model_builders.reference_data import REFERENCE_REAGENT_NAMES
+from app.model_builders.reference_data import REFERENCE_ALLOWED_NAMES
 from app.model_builders.reference_data import REFERENCE_UNITS
 
 class RuleScriptParserTest(unittest.TestCase):
@@ -27,7 +27,7 @@ class RuleScriptParserTest(unittest.TestCase):
         regex = re.compile(r'A Tit.*$', re.DOTALL)
         modified_script = re.sub(regex, 'A TC', REFERENCE_SCRIPT)
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -47,7 +47,7 @@ class RuleScriptParserTest(unittest.TestCase):
         regex = re.compile(r'Taq.*', re.DOTALL)
         script = re.sub(regex, 'Taq 2  C 0.02 M/uL', REFERENCE_SCRIPT)
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, script)
         parser.parse()
         rule_objects = parser.rule_objects
         plate, rules = rule_objects.popitem()
@@ -62,7 +62,7 @@ class RuleScriptParserTest(unittest.TestCase):
         readable results are properly formed.
         """
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
         parser.parse()
         rule_objects = parser.rule_objects
 
@@ -71,7 +71,7 @@ class RuleScriptParserTest(unittest.TestCase):
         plate, rules = rule_objects.popitem()
 
         self.assertEqual(plate, 'Plate42')
-        self.assertEqual(len(rules), 1)
+        self.assertEqual(len(rules), 3)
 
         # This checks all the fields of a transfer rule, including
         # two of the row/col spec formats.
@@ -82,6 +82,14 @@ class RuleScriptParserTest(unittest.TestCase):
         self.assertEqual(rule.d_cells.cols, [1,2,3,4,5,6,7,8,9,10,11,12])
         self.assertEqual(rule.d_cells.rows, [1,2,3,4,5,6,7,8])
         self.assertEqual(rule.dilution_factor, 20)
+
+        # This checks the reference to a reagent group.
+        rule = rules[1]
+        self.assertEqual(rule.reagent_name, 'Pool_1')
+        self.assertEqual(rule.cells.cols, [1,2,3])
+        self.assertEqual(rule.cells.rows, [1,2,3,4,5,6,7,8])
+        self.assertEqual(rule.conc, 1.0)
+        self.assertEqual(rule.units, 'x')
 
         # Move back to the first plate
 
@@ -112,7 +120,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_wrong_letter_at_start_of_line(self):
         modified_script = REFERENCE_SCRIPT.replace('A Titani', 'N Titani')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -123,7 +131,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_wrong_version(self):
         modified_script = REFERENCE_SCRIPT.replace('ver-1', 'fibble')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -135,7 +143,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_transfer_incompatible(self):
         modified_script = REFERENCE_SCRIPT.replace('T Plate1 1', 'T Plate 1,2')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -147,7 +155,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_no_plate_defined_yet(self):
         modified_script = REFERENCE_SCRIPT.replace('P Plate1', '')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -158,7 +166,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_plate_reused(self):
         modified_script = REFERENCE_SCRIPT.replace('P Plate42', 'P Plate1')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -170,7 +178,7 @@ class RuleScriptParserTest(unittest.TestCase):
         modified_script = REFERENCE_SCRIPT.replace(
                 'Titanium-Taq', 'Qitanium-Taq')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -181,7 +189,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_unknown_units(self):
         modified_script = REFERENCE_SCRIPT.replace('M/uL', 'A/uL')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -192,7 +200,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_transfer_must_use_dilution_as_units(self):
         modified_script = REFERENCE_SCRIPT.replace('dilution', 'ailution')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -204,7 +212,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_non_number_in_col(self):
         modified_script = REFERENCE_SCRIPT.replace('1,5,9', '1,A,9')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -216,7 +224,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_concentration_not_numeric(self):
         modified_script = REFERENCE_SCRIPT.replace('0.02', 'fibble')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -228,7 +236,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_non_letter_in_rows_spec(self):
         modified_script = REFERENCE_SCRIPT.replace('C,D', 'C,3')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -240,7 +248,7 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_too_fiew_fields(self):
         modified_script = REFERENCE_SCRIPT.replace('M/uL', '')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -253,7 +261,7 @@ class RuleScriptParserTest(unittest.TestCase):
         # existing one will fall onto line 2 and thus illegal.
         modified_script = 'V ver-1\n' + REFERENCE_SCRIPT
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
@@ -264,10 +272,10 @@ class RuleScriptParserTest(unittest.TestCase):
     def test_error_version_never_specified(self):
         modified_script = REFERENCE_SCRIPT.replace('V ver-1', '')
         parser = RuleScriptParser(
-                REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, modified_script)
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'You must specify a version (in the first line). Line 8.')
-        self.assertEqual(e.where_in_script, 178)
+            'You must specify a version (in the first line). Line 10.')
+        self.assertEqual(e.where_in_script, 275)

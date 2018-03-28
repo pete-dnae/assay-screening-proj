@@ -6,6 +6,8 @@ A (Eco)-ATCC-BAA-9999       2     C,D 1.16 x
 # This is a comment
 P Plate42
 T Plate1 1 B                1-12  A-H   20 dilution
+A Pool_1                    1-3   A-H    1 x
+A Ec_uidA_6.x_Eco63_Eco60   4-9   A-H  0.4 uM
 """
 
 """
@@ -40,5 +42,7 @@ REFERENCE_GROUP = {
 }
 
 REFERENCE_REAGENT_NAMES = [name for name, category in REFERENCE_REAGENTS_DATA]
+REFERENCE_GROUP_NAMES = [REFERENCE_GROUP['name']]
+REFERENCE_ALLOWED_NAMES = REFERENCE_REAGENT_NAMES + REFERENCE_GROUP_NAMES
 
 REFERENCE_UNITS = ('M/uL', 'x', 'uM', 'dilution')

@@ -5,7 +5,7 @@ from pdb import set_trace as st
 from app.rules_engine.rule_script_parser import RuleScriptParser
 from app.rules_engine.rule_script_parser import ParseError
 from app.rules_engine.rule_obj_interpreter import RulesObjInterpreter
-from app.model_builders.reference_data import REFERENCE_REAGENT_NAMES
+from app.model_builders.reference_data import REFERENCE_ALLOWED_NAMES
 from app.model_builders.reference_data import REFERENCE_SCRIPT
 from app.model_builders.reference_data import REFERENCE_UNITS
 
@@ -21,7 +21,7 @@ class RuleInterpreterTest(unittest.TestCase):
         regex = re.compile(r'Taq.*', re.DOTALL)
         script = re.sub(regex, 'Taq 2  C 0.02 M/uL', REFERENCE_SCRIPT)
         parser = RuleScriptParser(  
-            REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, script)
+            REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, script)
         parser.parse()
         machine_readable_rules = parser.rule_objects
         interpreter = RulesObjInterpreter(machine_readable_rules)
@@ -36,7 +36,7 @@ class RuleInterpreterTest(unittest.TestCase):
 
     def test_example_from_language_spec(self):
         parser = RuleScriptParser(  
-            REFERENCE_REAGENT_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
+            REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
         parser.parse()
         machine_readable_rules = parser.rule_objects
 
@@ -66,3 +66,11 @@ class RuleInterpreterTest(unittest.TestCase):
         self.assertEqual(reagent, 'Transfer Plate42:Col-1:Row-2')
         self.assertEqual(conc, 20.0)
         self.assertEqual(units, 'dilution')
+
+        # Sample the output where created using a reagent group name.
+        contents = alloc_table.plate_info['Plate42'][1][1]
+
+        reagent, conc, units = contents[1]
+        self.assertEqual(reagent, 'Pool_1')
+        self.assertEqual(conc, 1.0)
+        self.assertEqual(units, 'x')

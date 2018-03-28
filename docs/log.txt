@@ -2,24 +2,22 @@
 
 *  Return to groups...
     *  Change defn of group to: name, reagent, conc, units
-    *  Fix create ref exp to suit, using primers while do so
-    *  Upgrade serializer checks
-        *  Code
-        *  Upgrade the test
-            *  Get legit read/write working
-            *  Add check for dupe name
-    *  Regression up everything
 
 o  Syntax spelling errors in web gui inappropriate
 
 o  Add tolerance of groups in script in place of reagents
-    o  Design
-    o  Do
-    o  Unit test
-    o  Add to reference experiment
-        o  Note existing groups are illegal because their categories are
-           illegal, plus should be primers.
-    o  Show tolerance of rule citing a group in script
+    *  Change reference experiment to put it through its paces.
+    *  Parser
+    *  Interpreter
+    *  RuleProcessor
+    *  Try system test
+    *  Try complete regression
+    o  Have we checked that conc and units for a group are 1 and x?
+
+    o  Brief Prasanna that can put in groups but must combine allowed reagents
+       with allowed groups, and that ref exp does now. Does need better end
+       point to enumerate?
+
 o  Starter scripts to prepopulate / augment db with reagents and groups
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation

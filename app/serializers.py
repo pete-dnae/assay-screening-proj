@@ -80,7 +80,7 @@ class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
-    # Camel-case to make it nice to consum as JSON.
+    # Camel-case to make it nice to consume as JSON.
     interpretationResults = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -92,11 +92,14 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_interpretationResults(self, rule_script):
-        reagents = [r.name for r  in ReagentModel.objects.all()]
-        units = [u.abbrev for u  in UnitsModel.objects.all()]
+        reagent_names = [r.name for r in ReagentModel.objects.all()]
+        group_names = set([g.group_name for g in \
+                ReagentGroupModel.objects.all()])
+        allowed_names = reagent_names + list(group_names)
+        units = [u.abbrev for u in UnitsModel.objects.all()]
 
         interpreter = RulesScriptProcessor(
-                rule_script.text, reagents, units)
+                rule_script.text, allowed_names, units)
         parse_error, alloc_table, line_num_mapping = \
                 interpreter.parse_and_interpret()
 

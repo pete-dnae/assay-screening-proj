@@ -14,17 +14,6 @@ class HighLevelSystemSmokeTest(APITestCase):
     """
 
     def setUp(self):
-        """
-        Reminder - that Django unit tests work on an - in-memory database that
-        is created then destroyed before and after tests...
-
-        This setUp step creates a reference experiment in the database, which
-        includes building a fair number of dependent objects (like Reagents for
-        example.
-
-        Observe that this setup step alone excercices most of the model
-        code.
-        """
         experiment = ReferenceExperiment()
         experiment.create()
 
