@@ -8,7 +8,7 @@ export default {
     tableBoundaries: Array,
     allocationMapping: Object,
     highlightedLineNumber: Number,
-    allocationData: Object,
+    hoverHighlight: Boolean,
   },
   data() {
     return {
