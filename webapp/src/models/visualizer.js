@@ -39,7 +39,7 @@ export const formatText = (text) => {
       });
       finalText += `${finalLine.trimRight()}\n`;
     } else {
-      finalText += `${x.trimRight()}`;
+      finalText += `${x.trimRight()}\n`;
     }
   });
   return finalText;

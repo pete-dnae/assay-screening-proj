@@ -1,22 +1,30 @@
 import axios from 'axios';
 import _ from 'lodash';
-//eslint-disable-next-line
-const fetchRes = url => {
-  return new Promise((resolve, reject) => {
-    axios.get(url).then(({ data }) => {
+
+const pureAxios = axios.create();
+
+const fetchRes = url =>
+  new Promise((resolve, reject) => {
+    axios.get(url).then(
+      ({ data }) => {
+        const response = _.isEmpty(data) ? null : data;
+        resolve(response);
+      },
+      (err) => {
+        reject(err);
+      },
+    );
+  });
+
+const fetchResPure = url =>
+  new Promise((resolve, reject) => {
+    pureAxios.get(url).then(({ data }) => {
       const response = _.isEmpty(data) ? null : data;
       resolve(response);
-    }, (err) => { reject(err); });
+    }, (err) => {
+      reject(err);
+    });
   });
-};
-
-// const postRes = (url, data) =>
-//   axios.post(url, data, {
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//   });
-
 const putRes = (url, data) =>
   axios.put(url, data, {
     headers: {
@@ -27,7 +35,7 @@ const putRes = (url, data) =>
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
 // TODO : check with pete if he can deliver the rulescript uniqueid alone
-export const getRuleScript = () => fetchRes('api/rule-scripts/1/');
+export const getRuleScript = url => fetchResPure(url);
 
 export const getExperimentList = () => fetchRes('api/experiments/');
 export const postRuleSCript = ({ ruleScriptNo, text }) =>

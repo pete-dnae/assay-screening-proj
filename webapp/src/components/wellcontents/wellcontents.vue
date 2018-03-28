@@ -25,6 +25,9 @@
 
 
     </div>
+    <div class="mt-4" v-else>
+        <label class="text-primary"><strong>Well Empty</strong></label>
+    </div>
 </div>
 
 </template>

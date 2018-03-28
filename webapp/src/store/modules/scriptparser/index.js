@@ -25,14 +25,24 @@ export const state = {
     received: false,
     didInvalidate: false
   },
-  maxRow: null,
-  maxCol: null,
   suggestions: [],
   savedScript: null,
   ruleScript: {
-    data: {
-      interpretationResults: { lnums: null, parseError: null, table: null },
-      text: null
+    referenceExperiment: {
+      data: {
+        interpretationResults: { lnums: null, parseError: null, table: null },
+        text: null
+      },
+      maxCol: null,
+      maxRow: null
+    },
+    currentExperiment: {
+      data: {
+        interpretationResults: { lnums: null, parseError: null, table: null },
+        text: null
+      },
+      maxCol: null,
+      maxRow: null
     },
     isPosting: false,
     isRequesting: false,
@@ -41,8 +51,14 @@ export const state = {
     didInvalidate: false
   },
   experiment: {
-    data: null,
-    currentExperiment:null,
+    referenceExperiment: {
+      data: null
+    },
+    currentExperiment: {
+      data: null,
+      name: null
+    },
+    currentlyShowing: "currentExperiment",
     isRequesting: false,
     received: false,
     didInvalidate: false
@@ -59,6 +75,7 @@ const actions = {
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
           commit(types.LOAD_API_RESPONSE, data);
+          commit("LOAD_CURRENT_EXPERIMENT");
           resolve("success");
         })
         .catch(e => {
@@ -84,19 +101,25 @@ const actions = {
         });
     });
   },
-  fetchExperiment({ commit }, expNo) {
+  fetchExperiment({ commit }, { exptNo, referenceExperimentFlag = false }) {
     commit(types.REQUEST_EXPERIMENT);
     return new Promise(function(resolve, reject) {
       api
-        .getExperiment(expNo)
+        .getExperiment(exptNo)
         .then(res => {
           commit(types.EXPERIMENT_SUCCESS, res);
           api
             .getRuleScript(res.rules_script)
             .then(res => {
               commit(types.RULE_SCRIPT_SUCCESS);
-              commit(types.LOAD_API_RESPONSE, res);
-
+              console.log(referenceExperimentFlag)
+              if (referenceExperimentFlag) {
+                commit(types.LOAD_API_RESPONSE_REF_EXP, res);
+                commit(types.SET_MAX_ROW_COL, "referenceExperiment");
+              } else {
+                commit(types.LOAD_API_RESPONSE, res);
+                commit(types.SET_MAX_ROW_COL, "currentExperiment");
+              }
               resolve("success");
             })
             .catch(e => {
@@ -157,13 +180,20 @@ const mutations = {
     state.ruleScript.didInvalidate = false;
   },
   [types.LOAD_API_RESPONSE](state, response) {
-    state.ruleScript.data = response;
-    const {
-      interpretationResults: { lnums, parseError, table },
-      text
-    } = response;
+    state.ruleScript.currentExperiment.data = response;
+  },
+  [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
+    state.ruleScript.referenceExperiment.data = response;
+  },
+  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {
+    console.log(currentOrReferenceFlag);
 
-    [state.maxRow, state.maxCol] = lnums ? getMaxRowCol(lnums) : [0, 0];
+    const lnums =
+      state.ruleScript[currentOrReferenceFlag].data.interpretationResults.lnums;
+    [
+      state.ruleScript[currentOrReferenceFlag].maxRow,
+      state.ruleScript[currentOrReferenceFlag].maxCol
+    ] = lnums ? getMaxRowCol(lnums) : [0, 0];
   },
   [types.POST_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
@@ -174,6 +204,12 @@ const mutations = {
     state.reagents.isPosting = true;
     state.reagents.posted = false;
     state.reagents.didInvalidate = false;
+  },
+  [types.LOAD_CURRENT_EXPERIMENT](state) {
+    state.experiment.currentlyShowing = "currentExperiment";
+  },
+  [types.LOAD_REFERENCE_EXPERIMENT](state) {
+    state.experiment.currentlyShowing = "referenceExperiment";
   },
   [types.REAGENTS_RECEIVED](state, data) {
     state.reagents.data = data;
@@ -208,8 +244,8 @@ const mutations = {
     state.experiment.didInvalidate = false;
   },
   [types.EXPERIMENT_SUCCESS](state, response) {
-    state.experiment.currentExperiment = response.experiment_name;
-    state.experiment.data = response;
+    state.experiment.currentExperiment.name = response.experiment_name;
+    state.experiment.currentExperiment.data = response;
     state.experiment.isRequesting = false;
     state.experiment.received = true;
     state.experiment.didInvalidate = false;
@@ -268,7 +304,8 @@ const getters = {
     return state.quillOptions;
   },
   getError(state, getters, rootState) {
-    return state.ruleScript.data.interpretationResults.parseError;
+    return state.ruleScript[state.experiment.currentlyShowing].data
+      .interpretationResults.parseError;
   },
   getReagents(state, getters, rootState) {
     return state.reagents.data;
@@ -283,22 +320,30 @@ const getters = {
     return state.ruleScript.isPosting;
   },
   getTableBoundaries(state, getters, rootState) {
-    return [state.maxRow, state.maxCol];
+    return [
+      state.ruleScript[state.experiment.currentlyShowing].maxRow,
+      state.ruleScript[state.experiment.currentlyShowing].maxCol
+    ];
   },
   getAllocationMap(state, getters, rootState) {
-    return state.ruleScript.data.interpretationResults.lnums;
+    return state.ruleScript[state.experiment.currentlyShowing].data
+      .interpretationResults.lnums;
   },
   getRuleScript(state, getters, rootState) {
-    return state.ruleScript.data.text;
+    return state.ruleScript[state.experiment.currentlyShowing].data.text;
   },
   getAllocationData(state, getters, rootState) {
-    return state.ruleScript.data.interpretationResults.table;
+    return state.ruleScript[state.experiment.currentlyShowing].data
+      .interpretationResults.table;
   },
   getExperimentList(state, getters, rootState) {
     return state.experimentList.data;
   },
   getCurrentExperiment(state, getters, rootState) {
-    return state.experiment.currentExperiment;
+    return state.experiment[state.experiment.currentlyShowing].name;
+  },
+  getCurrentlyShowing(state, getters, rootState){
+    return state.experiment.currentlyShowing;
   }
 };
 

@@ -39,6 +39,7 @@ export default {
       currentRow: null,
       currentCol: null,
       showWellContents: false,
+      hoverHighlight: true,
     };
   },
   computed: {
@@ -55,6 +56,7 @@ export default {
       ruleScript: 'getRuleScript',
       allocationData: 'getAllocationData',
       tooltiptext: 'getToolTipStyle',
+      currentlyShowing: 'getCurrentlyShowing',
     }),
   },
   watch: {
@@ -117,6 +119,14 @@ export default {
         );
       }
     },
+    handleMouseOut(event) {
+      if (event.fromElement.nodeName === 'DIV') {
+        this.hoverHighlight = false;
+        const text = this.editor.getText();
+        this.editor.formatText(0, text.length, 'bg', false);
+        this.editor.formatText(0, text.length, 'color', false);
+      }
+    },
     alterToolTip(cursorIndex) {
       const cursorLocation = this.editor.getBounds(cursorIndex);
       const parentBound = document
@@ -149,6 +159,12 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
+      hesitationTimer(
+        this.editor.getText(),
+        this.$route.params.exptNo,
+        this.paintText,
+      );
+      this.hideSuggestion();
     },
     handleMouseOver(event) {
       const fromElement = event.fromElement;
@@ -163,6 +179,7 @@ export default {
         this.editor.formatText(0, text.length, 'color', false);
         this.editor.formatText(start, end - start, 'bg', 'primary');
         this.editor.formatText(start, end - start, 'color', 'white');
+        this.hoverHighlight = true;
       }
     },
     highlightError(index) {
@@ -172,7 +189,7 @@ export default {
       [this.currentRow, this.currentCol] = [row, col];
       this.showWellContents = true;
     },
-    handleHoverComplete() {
+    handleWellHoverComplete() {
       this.showWellContents = false;
     },
     hideSuggestion() {
@@ -203,10 +220,20 @@ export default {
       this.$store.commit('ADD_REAGENT', this.newReagent);
       this.show = false;
     },
+    handleInfoClick(flag) {
+      if (flag === 'current') {
+        this.$store.commit('LOAD_CURRENT_EXPERIMENT');
+        this.editor.setText(formatText(this.ruleScript));
+        this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
+      } else {
+        this.$store.commit('LOAD_REFERENCE_EXPERIMENT');
+        this.editor.setText(formatText(this.ruleScript));
+        this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
+      }
+    },
   },
   mounted() {
     const Delta = Quill.import('delta');
-
 
     const Parchment = Quill.import('parchment');
     const LineStyle = new Parchment.Attributor.Style(
@@ -240,8 +267,8 @@ export default {
     );
     this.fetchReagentList();
     this.fetchUnitList();
-
-    this.fetchExperiment(this.$route.params.exptNo).then(() => {
+    this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
+    this.fetchExperiment({ exptNo: this.$route.params.exptNo }).then(() => {
       this.editor.setText(formatText(this.ruleScript));
       this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
     });

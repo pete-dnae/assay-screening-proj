@@ -15,13 +15,13 @@
         <div class="d-flex flex-row-reverse">
           <ul class="nav nav-pills nav-fill">
             <li class="nav-item">
-              <a class="nav-link active" href="#">Reagents</a>
+              <a class="nav-link active" href="#/">Experiment</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Plates</a>
+              <a class="nav-link" href="#/reagents">Reagents</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Pools</a>
+              <a class="nav-link" href="#/pools">Pools</a>
             </li>
           </ul>
         </div>

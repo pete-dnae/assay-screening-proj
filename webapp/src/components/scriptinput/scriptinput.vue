@@ -1,20 +1,24 @@
 <style scoped src="./scriptEditor.css"></style>
 <template>
-<div  :class="{blurComponent:showBlur,'container-fluid':true,'w-75':true}">
+<div>
+<div  :class="{'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
-          <i class="btn fa fa-info-circle" aria-hidden="true"></i>          
+          <i class="btn fa fa-info-circle" aria-hidden="true" 
+            @click="handleInfoClick('reference')" 
+            v-if="currentlyShowing==='currentExperiment'"></i>  
+          <i class="fa fa-arrow-circle-left" aria-hidden="true" @click="handleInfoClick('current')" v-else></i>      
       </div>
       <div class="col-2">            
             <label>Type your rules here</label>
-            <i class="btn fa fa-hand-o-down" aria-hidden="true"></i>
+            <i class="btn fa fa-hand-o-down" aria-hidden="true" ></i>
         </div>
         <div class="col-1">
             <i @click="handleFormat()" class="btn fa fa-align-right"></i>            
         </div>       
 
         <div class="col-1">
-            <span v-show="showSpinner" class="spinner "> <i class="fa fa-floppy-o">saving</i></span>
+            <span v-show="showSpinner"> <i class="fa fa-floppy-o">saving</i></span>
         </div>
         <div id="result" class="col" v-if="error" @mouseover="highlightError(error.where_in_script)">
           <i class="fa fa-frown-o fa-2x" aria-hidden="true"></i>
@@ -22,19 +26,20 @@
         </div>
     </div>
     <div class="row">
-        <div id="editorwindow" class="col-5 h-100">
+        <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
 
-            <div id="editor" class="" @keyup="editorChange" @mouseover="handleMouseOver"></div>
+            <div id="editor" :class="{border:true,'border-primary':true}" @keyup="editorChange"
+                                      @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
             <div class="row mt-3">
               <hovervisualizer :currentPlate="currentPlate"
                                :tableBoundaries="tableBoundaries"
                                :highlightedLineNumber="highlightedLineNumber"
-              :allocationMapping="allocationMapping"
-              :allocationData="allocationData"
-              @wellHovered="handleWellHover"
-              @hoverComplete="handleHoverComplete">
+                               :hoverHighlight="hoverHighlight"
+                                :allocationMapping="allocationMapping"                                
+                                @wellHovered="handleWellHover"
+                                @hoverComplete="handleWellHoverComplete">
             </hovervisualizer>
             </div> 
             <div class="row mt-3" v-if="showWellContents&&!error">
@@ -61,7 +66,8 @@
             
             
         </div>
-        <span v-bind:style="tooltiptext" v-show="showSuggestionToolTip">
+        <span v-bind:style="tooltiptext" v-if="showSuggestionToolTip">
+            
     <ul >
     <li v-for = "text in suggestions" v-bind:key="text.url" @click.left="handleAutoCompleteClick(text);"
     @click.middle="hideSuggestion()">
@@ -74,7 +80,11 @@
     <!-- <modal v-model="show" id="modal" @ok="handleReagentAdd" @keyup="handleReagentAdd">
         Do you want to save "{{newReagent}}" to the database
     </modal> -->
+   
 </div>
-
+ <div id="overlay" v-if="showBlur">
+        <div id="text">Possible Connection Error</div>
+</div>
+</div>
 </template>
 <script src="./scriptinput.js"></script>

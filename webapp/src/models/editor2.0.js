@@ -22,8 +22,8 @@ export const getMaxRowCol = (lnums) => {
 
   return [
     // extending boundary by one to display table boundaries
-    allCells.sort((a, b) => b[1] - a[1])[0][1] + 1,
-    allCells.sort((a, b) => b[0] - a[0])[0][0] + 1,
+    allCells.sort((a, b) => b[1] - a[1])[0][1],
+    allCells.sort((a, b) => b[0] - a[0])[0][0],
   ];
 };
 
@@ -76,7 +76,7 @@ export const getCurrentLineFields = (currentText, cursorPosition) => {
   return splitLine(currentLine);
 };
 
-export const hesitationTimer = _.debounce(postRuleScript, 1000);
+export const hesitationTimer = _.debounce(postRuleScript, 500);
 
 export const fieldIndexRange = (lineStart, field) => {
   const startIndex = lineStart + field.index;

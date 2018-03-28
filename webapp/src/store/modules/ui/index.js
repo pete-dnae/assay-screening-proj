@@ -3,8 +3,7 @@ import _ from "lodash";
 import * as types from "./mutation-types";
 import * as api from "@/models/api";
 export const state = {
-  toolTipStyle: {
-    visibility: "visible",
+  toolTipStyle: {    
     "max-height": "300px",
     "max-width": "500px",
     "text-align": "center",
