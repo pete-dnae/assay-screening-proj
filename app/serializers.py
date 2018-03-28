@@ -58,47 +58,25 @@ class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
         model = ReagentGroupModel
         fields = (
            'url',
-           'name',
-           'category',
-           'members',
+           'group_name',
+           'reagent',
+           'concentration',
+           'units',
         )
 
     def validate(self, data):
-        # Reagent categories must be the category this Group is for.
-        # And reagent names must not be duplicated.
-        reagents = data['members']
-        group_category = data['category']
-        seen = []
-        for reagent in reagents:
-            reagent_name = reagent.name
-            if reagent_name in seen:
-                raise serializers.ValidationError(
-                    'Group members must not include duplicates: <%s>' %
-                    reagent_name
-                )
-            seen.append(reagent_name)
-
-            if reagent.category != group_category:
-                raise serializers.ValidationError(
-                    ('Cannot add this reagent <%s> to this group, because ' + \
-                    'its category <%s> does not match the group\'s ' + \
-                    'category <%s>') % (reagent.name, reagent.category.name,
-                    group_category.name)
-                )
+        # Reagent names must not already exist in the group.
+        group_name = data['group_name']
+        reagent_name = data['reagent'].name
+        existing_member_names = [group.reagent.name for group in \
+            ReagentGroupModel.objects.filter(group_name=group_name)]
+        if reagent_name in existing_member_names:
+            raise serializers.ValidationError(
+                ('Cannot add <%s> to group <%s> because it ' + \
+                'already contains it.') % (reagent_name, group_name)
+            )
         return data
 
-    # Note *validate_xxx' naming convention triggers automatic calling.
-    def foo(self, reagents):
-        # Reagent categories must be the category this Group is for.
-        for reagent in reagents:
-            if reagent.category != self.category:
-                raise serializers.ValidationError(
-                    'Cannot add reagent <%s> to this group, because ' + \
-                    'its category <%s> does not match the group\'s ' + \
-                    'category <%s>' % (reagent.name, reagent.category,
-                    self.category)
-                )
-        return reagents
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 

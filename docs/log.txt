@@ -1,14 +1,16 @@
 *  Bug (I think back-end - if you type just "A TC" into a line it says
 
-o  Return to groups...
-    *  Add error checking if reagent added to reagent group is of incompatible
-       reagent_type
-        *  Implement validate method
-        *  Need object level
-        *  But does this call the base validation also? = yes
-        *  Add to make reference experiment
-    *  Groups must contain no duplicate reagent names
-    o  Mistake - groups must have conc and units too for each reagent
+*  Return to groups...
+    *  Change defn of group to: name, reagent, conc, units
+    *  Fix create ref exp to suit, using primers while do so
+    *  Upgrade serializer checks
+        *  Code
+        *  Upgrade the test
+            *  Get legit read/write working
+            *  Add check for dupe name
+    *  Regression up everything
+
+o  Syntax spelling errors in web gui inappropriate
 
 o  Add tolerance of groups in script in place of reagents
     o  Design
@@ -30,7 +32,37 @@ o  Deploy
 o  Update deployment docco.
 
 ---------------------------------------------------------------------------
+Reference Experiment
 ---------------------------------------------------------------------------
+
+xxxx = """V ver-1
+P Plate1
+A Titanium-Taq              1-12  A-H 0.02 M/uL
+A (Eco)-ATCC-BAA-2355       1,5,9 B   1.16 x
+A (Eco)-ATCC-BAA-9999       2     C,D 1.16 x
+# This is a comment
+P Plate42
+T Plate1 1 B                1-12  A-H   20 dilution
+A Pool_1                    1-3   A-H    1 x
+A Ec_uidA_6.x_Eco63_Eco60   4-9   A-H  0.4 uM
+"""
+
+Ec_uidA_6.x_Eco63_Eco60
+
+Group
+    name: "Pool_1",
+    members: [
+        ('Efs_cpn60_1.x_Efs04_Efs01', 0.4, uM),
+        ('Efs_vanB_1.x_van10_van06', 0.4, uM),
+    ]
+
+
+    Efs_cpn60_1.x_Efs04_Efs01
+    Efs_vanB_1.x_van10_van06
+
+
+
+
 ---------------------------------------------------------------------------
 from pdb import set_trace as st
 ---------------------------------------------------------------------------

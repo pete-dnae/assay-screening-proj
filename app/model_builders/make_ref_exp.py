@@ -13,6 +13,7 @@ from app.models.reagent_group_model import ReagentGroupModel
 from app.models.units_model import UnitsModel
 from app.model_builders.reference_data import REFERENCE_SCRIPT
 from app.model_builders.reference_data import REFERENCE_REAGENTS_DATA
+from app.model_builders.reference_data import REFERENCE_GROUP
 from app.model_builders.reference_data import REFERENCE_UNITS
 
 
@@ -47,13 +48,12 @@ class ReferenceExperiment():
                 categories[cat_name] = cat
             ReagentModel.make(reagent, cat)
 
-        # Make a strains groups that includes both the strain
-        # reagents we created above.
-        reagents = ReagentModel.objects.filter(category__name='Strain')
-        category = ReagentCategoryModel.objects.get(name='Strain')
-        ReagentGroupModel.make('Strain', category, reagents)
-
-
+        # Make a primer group with two of the primers in.
+        group_name = REFERENCE_GROUP['name']
+        for member_name, conc, units in REFERENCE_GROUP['members']:
+            reagent = ReagentModel.objects.get(name=member_name)
+            units = UnitsModel.objects.get(abbrev=units)
+            ReagentGroupModel.make(group_name, reagent, conc, units)
 
 
         return self.experiment

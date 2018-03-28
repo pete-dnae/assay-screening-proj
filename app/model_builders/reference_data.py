@@ -26,8 +26,19 @@ REFERENCE_REAGENTS_DATA = (
             ('Titanium-Taq', 'Buffer Ingredient'),
             ('(Eco)-ATCC-BAA-2355', 'Strain'),
             ('(Eco)-ATCC-BAA-9999', 'Strain'),
+            ('Ec_uidA_6.x_Eco63_Eco60', 'Primer'),
+            ('Efs_cpn60_1.x_Efs04_Efs01', 'Primer'),
+            ('Efs_vanB_1.x_van10_van06', 'Primer'),
 )
+
+REFERENCE_GROUP = {
+    'name': 'Pool_1',
+    'members': (
+        ('Efs_cpn60_1.x_Efs04_Efs01', 0.4, 'uM'),
+        ('Efs_vanB_1.x_van10_van06', 0.4, 'uM'),
+    )
+}
 
 REFERENCE_REAGENT_NAMES = [name for name, category in REFERENCE_REAGENTS_DATA]
 
-REFERENCE_UNITS = ('M/uL', 'x', 'dilution')
+REFERENCE_UNITS = ('M/uL', 'x', 'uM', 'dilution')

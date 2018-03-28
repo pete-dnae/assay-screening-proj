@@ -21,62 +21,43 @@ class GroupsEndPointTest(APITestCase):
         response = client.get('/api/reagent-groups/1/')
 
         json = response.data
-        self.assertEqual(json['members'], 
-            ['http://testserver/api/reagents/2/',
-            'http://testserver/api/reagents/3/']
-        )
-        self.assertEqual(json['category'],
-            'http://testserver/api/reagent-categories/2/')
-        self.assertEqual(json['name'], 'Strain')
+        self.assertEqual(json['group_name'], 'Pool_1')
+        self.assertEqual(json['reagent'], 'http://testserver/api/reagents/5/')
+        self.assertEqual(json['concentration'], 0.4)
+        self.assertEqual(json['units'], 'http://testserver/api/units/3/')
 
-    def test_put_group(self):
+    def test_post_group(self):
         client = APIClient()
         post_data = {
-            'name': 'new name',
-            'category': 'http://testserver/api/reagent-categories/1/',
-            'members': ['http://testserver/api/reagents/1/',],
+            'group_name': 'new name',
+            'reagent': '/api/reagents/1/',
+            'concentration': 0.001,
+            'units': '/api/units/1/',
         }
-        response = client.put(
-            '/api/reagent-groups/1/', post_data, format='json')
+        response = client.post('/api/reagent-groups/', post_data, format='json')
         json = response.data
         # Smoke test response.
-        self.assertEqual(json['members'], 
-            ['http://testserver/api/reagents/1/']
-        )
+        self.assertEqual(json['group_name'], 'new name')
 
-    def test_put_group_incompatible_category_error_response(self):
+    def test_post_group_error_handling_when_duplicates(self):
         client = APIClient()
-        # Use a reagent whose category is incompatible with that of the group.
         post_data = {
-            'name': 'new name',
-            'category': 'http://testserver/api/reagent-categories/2/',
-            'members': ['http://testserver/api/reagents/1/',],
+            'group_name': 'new name',
+            'reagent': '/api/reagents/1/',
+            'concentration': 0.001,
+            'units': '/api/units/1/',
         }
-        response = client.put(
-            '/api/reagent-groups/1/', post_data, format='json')
-        json = response.data
-        err_report = json['non_field_errors']
-        self.assertEqual(err_report, 
-            ["Cannot add this reagent <Titanium-Taq> to this " + \
-            "group, because its category <Buffer Ingredient> does " + \
-            "not match the group's category <Strain>"]
-        )
-
-    def test_put_group_duplicate_reagent_error_response(self):
-        client = APIClient()
-        # Use duplicate reagents.
+        response = client.post('/api/reagent-groups/', post_data, format='json')
+        # This second POST introduces a duplicate  reagent to the group.
         post_data = {
-            'name': 'new name',
-            'category': 'http://testserver/api/reagent-categories/1/',
-            'members': [
-                'http://testserver/api/reagents/1/', 
-                'http://testserver/api/reagents/1/'
-             ],
+            'group_name': 'new name',
+            'reagent': '/api/reagents/1/',
+            'concentration': 0.003,
+            'units': '/api/units/2/',
         }
-        response = client.put(
-            '/api/reagent-groups/1/', post_data, format='json')
-        json = response.data
-        err_report = json['non_field_errors']
-        self.assertEqual(err_report, 
-            ['Group members must not include duplicates: <Titanium-Taq>']
-        )
+        response = client.post('/api/reagent-groups/', post_data, format='json')
+        err_report = response.data['non_field_errors'][0]
+        self.assertTrue(err_report.startswith(
+            'Cannot add <Titanium-Taq> to group <new name> because it'))
+        self.assertTrue(err_report.endswith(
+            'already contains it.'))
