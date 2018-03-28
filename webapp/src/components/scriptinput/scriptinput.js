@@ -58,6 +58,9 @@ export default {
       tooltiptext: 'getToolTipStyle',
       currentlyShowing: 'getCurrentlyShowing',
     }),
+    showingInfo() {
+      return this.currentlyShowing === 'referenceExperiment';
+    },
   },
   watch: {
     showToolTip() {

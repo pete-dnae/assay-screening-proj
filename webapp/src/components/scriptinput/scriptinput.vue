@@ -6,7 +6,7 @@
       <div class="col-1">
           <i class="btn fa fa-info-circle" aria-hidden="true" 
             @click="handleInfoClick('reference')" 
-            v-if="currentlyShowing==='currentExperiment'"></i>  
+            v-if="!showingInfo"></i>  
           <i class="fa fa-arrow-circle-left" aria-hidden="true" @click="handleInfoClick('current')" v-else></i>      
       </div>
       <div class="col-2">            
@@ -28,7 +28,7 @@
     <div class="row">
         <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
 
-            <div id="editor" :class="{border:true,'border-primary':true}" @keyup="editorChange"
+            <div id="editor" :class="{border:true,'border-primary':showingInfo}" @keyup="editorChange"
                                       @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
