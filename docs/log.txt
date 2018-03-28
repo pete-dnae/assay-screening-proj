@@ -1,4 +1,4 @@
-o  Bug (I think back-end - if you type just "A TC" into a line it says
+*  Bug (I think back-end - if you type just "A TC" into a line it says
 
 o  Return to groups...
     *  Add error checking if reagent added to reagent group is of incompatible
@@ -7,7 +7,7 @@ o  Return to groups...
         *  Need object level
         *  But does this call the base validation also? = yes
         *  Add to make reference experiment
-    o  Groups must contain no duplicates
+    *  Groups must contain no duplicate reagent names
     o  Mistake - groups must have conc and units too for each reagent
 
 o  Add tolerance of groups in script in place of reagents
@@ -15,6 +15,8 @@ o  Add tolerance of groups in script in place of reagents
     o  Do
     o  Unit test
     o  Add to reference experiment
+        o  Note existing groups are illegal because their categories are
+           illegal, plus should be primers.
     o  Show tolerance of rule citing a group in script
 o  Starter scripts to prepopulate / augment db with reagents and groups
 o  Provide endpoint that Chris' script needs

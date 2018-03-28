@@ -65,9 +65,19 @@ class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, data):
         # Reagent categories must be the category this Group is for.
+        # And reagent names must not be duplicated.
         reagents = data['members']
         group_category = data['category']
+        seen = []
         for reagent in reagents:
+            reagent_name = reagent.name
+            if reagent_name in seen:
+                raise serializers.ValidationError(
+                    'Group members must not include duplicates: <%s>' %
+                    reagent_name
+                )
+            seen.append(reagent_name)
+
             if reagent.category != group_category:
                 raise serializers.ValidationError(
                     ('Cannot add this reagent <%s> to this group, because ' + \
