@@ -1,23 +1,22 @@
 *  Bug (I think back-end - if you type just "A TC" into a line it says
-
 *  Return to groups...
     *  Change defn of group to: name, reagent, conc, units
+*  Add tolerance of groups in script in place of reagents
+o  See if making a list view to enumerate group names helps
+    *  Try to get a plain APIView working with no serializer to start with.
+    *  Make it call an external thing to get the data
+        *  Design content from Prasanna's email.
+        *  Design code organisiation for this helper
+        *  TDD the helper
+        *  Hook it up
+        *  Add system level test
+    o  How to document that it exists?
+        *  Read about schema again from drf docs
+        o  Commit / Push noting commit before experimenting
+o  Do rest of fantasy views
+o  Update backlog doc
 
 o  Syntax spelling errors in web gui inappropriate
-
-o  Add tolerance of groups in script in place of reagents
-    *  Change reference experiment to put it through its paces.
-    *  Parser
-    *  Interpreter
-    *  RuleProcessor
-    *  Try system test
-    *  Try complete regression
-    o  Have we checked that conc and units for a group are 1 and x?
-
-    o  Brief Prasanna that can put in groups but must combine allowed reagents
-       with allowed groups, and that ref exp does now. Does need better end
-       point to enumerate?
-
 o  Starter scripts to prepopulate / augment db with reagents and groups
 o  Provide endpoint that Chris' script needs
 o  Get rid of all out of data documentation
@@ -30,33 +29,11 @@ o  Deploy
 o  Update deployment docco.
 
 ---------------------------------------------------------------------------
-Reference Experiment
+Fantasy end point
 ---------------------------------------------------------------------------
-
-xxxx = """V ver-1
-P Plate1
-A Titanium-Taq              1-12  A-H 0.02 M/uL
-A (Eco)-ATCC-BAA-2355       1,5,9 B   1.16 x
-A (Eco)-ATCC-BAA-9999       2     C,D 1.16 x
-# This is a comment
-P Plate42
-T Plate1 1 B                1-12  A-H   20 dilution
-A Pool_1                    1-3   A-H    1 x
-A Ec_uidA_6.x_Eco63_Eco60   4-9   A-H  0.4 uM
-"""
-
-Ec_uidA_6.x_Eco63_Eco60
-
-Group
-    name: "Pool_1",
-    members: [
-        ('Efs_cpn60_1.x_Efs04_Efs01', 0.4, uM),
-        ('Efs_vanB_1.x_van10_van06', 0.4, uM),
-    ]
-
-
-    Efs_cpn60_1.x_Efs04_Efs01
-    Efs_vanB_1.x_van10_van06
+units
+reagents
+groups
 
 
 

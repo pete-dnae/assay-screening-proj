@@ -69,3 +69,20 @@ class HighLevelSystemSmokeTest(APITestCase):
 
         self.assertEqual(message, 
             'Line must start with one of the letters V|P|A|T. Line 1.')
+
+    def test_allowed_names_end_point(self):
+        client = APIClient()
+        resp = client.get('/api/allowed-names/', format='json')
+        all_names = resp.data
+
+        self.assertEqual(all_names['reagents'], [
+            '(Eco)-ATCC-BAA-2355',
+            '(Eco)-ATCC-BAA-9999',
+            'Ec_uidA_6.x_Eco63_Eco60',
+            'Efs_cpn60_1.x_Efs04_Efs01',
+            'Efs_vanB_1.x_van10_van06',
+            'Titanium-Taq'])
+
+        self.assertEqual(all_names['groups'], ['Pool_1'])
+
+        self.assertEqual(all_names['units'], ['M/uL', 'dilution', 'uM', 'x'])

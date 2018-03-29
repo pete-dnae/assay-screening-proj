@@ -25,6 +25,7 @@ from app.views import *
 # URL config for custom views.
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
+    re_path(r'^api/allowed-names/$', AllowedNamesView.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 
