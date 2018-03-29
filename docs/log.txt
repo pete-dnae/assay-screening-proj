@@ -2,17 +2,7 @@
 *  Return to groups...
     *  Change defn of group to: name, reagent, conc, units
 *  Add tolerance of groups in script in place of reagents
-o  See if making a list view to enumerate group names helps
-    *  Try to get a plain APIView working with no serializer to start with.
-    *  Make it call an external thing to get the data
-        *  Design content from Prasanna's email.
-        *  Design code organisiation for this helper
-        *  TDD the helper
-        *  Hook it up
-        *  Add system level test
-    o  How to document that it exists?
-        *  Read about schema again from drf docs
-        o  Commit / Push noting commit before experimenting
+*  See if making a list view to enumerate group names helps
 o  Do rest of fantasy views
 o  Update backlog doc
 
