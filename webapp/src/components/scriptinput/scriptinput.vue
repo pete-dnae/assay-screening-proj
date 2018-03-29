@@ -24,7 +24,7 @@
     </div>
     <div class="row">
         <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
-            <div id="editor" class="border" @keyup="editorChange"
+            <div id="editor" class="border editor" @keyup="editorChange"
                                       @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
@@ -72,13 +72,9 @@
     </ul>
     </span>
     </div>  
-    <div class="modal fade bd-example-modal-lg" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-            {{referenceText}}
-            </div>
-        </div>
-    </div>
+    <modal title="Fade/Zoom Modal" effect="fade/zoom" large :value="hoverHighlight">
+        <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
+    </modal>
    
 </div>
  <div id="overlay" v-if="showBlur">

@@ -5,6 +5,7 @@ import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
 import * as ui from "../ui/mutation-types";
 import { getMaxRowCol } from "@/models/editor2.0";
+import {formatText} from '@/models/visualizer.js'
 
 export const state = {
   reagents: {
@@ -182,6 +183,7 @@ const mutations = {
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
+    state.ruleScript.referenceExperiment.data.text = formatText(response.text);
   },
   [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {   
 
