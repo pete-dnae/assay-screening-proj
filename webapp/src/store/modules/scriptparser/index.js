@@ -182,8 +182,8 @@ const mutations = {
     state.ruleScript.currentExperiment.data = response;
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
-    state.ruleScript.referenceExperiment.data = response;
-    state.ruleScript.referenceExperiment.data.text = formatText(response.text);
+    state.ruleScript.referenceExperiment.data = response;  
+
   },
   [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {   
 

@@ -57,8 +57,8 @@ Cosmetic Changes/Additions:
 
 
 Vue Changes :
-    o  Info icon should bring up example script.
-    o  The example experiment shown on help, should be the reference experiment
+    *  Info icon should bring up example script.
+    *  The example experiment shown on help, should be the reference experiment
    from the database, so that as we evolve the language, and update the
    reference experiment, so the help example changes with it.
 
