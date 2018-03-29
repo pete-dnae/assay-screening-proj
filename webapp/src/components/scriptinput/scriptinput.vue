@@ -4,7 +4,7 @@
 <div  :class="{'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
-          <i class="btn fa fa-info-circle" aria-hidden="true"></i>            
+          <i class="btn fa fa-info-circle" @click="showInfo=true" aria-hidden="true"></i>            
       </div>
       <div class="col-2">            
             <label>Type your rules here</label>
@@ -72,8 +72,11 @@
     </ul>
     </span>
     </div>  
-    <modal title="Fade/Zoom Modal" effect="fade/zoom" large :value="hoverHighlight">
+    <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
         <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="showInfo = false">Exit</button>
+        </div>
     </modal>
    
 </div>

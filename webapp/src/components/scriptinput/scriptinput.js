@@ -40,6 +40,7 @@ export default {
       currentCol: null,
       showWellContents: false,
       hoverHighlight: true,
+      showInfo: false,
     };
   },
   computed: {
