@@ -5,7 +5,7 @@ td:hover {
 </style>
 <template>
 
-<div class="w-100">
+<div class="w-100" @mouseout="handleHoverLeave">
     <div class="row text-left">
             <label class="mt-2 col"><strong>{{currentPlate}}</strong></label>
             <div class="col">
@@ -13,7 +13,7 @@ td:hover {
                 <label class="text-info">Hover over an &lt;A&gt; or &lt;T&gt; line</label>
             </div>
         </div>
-        <div @mouseout="handleHoverLeave">
+        <div id="monitorMouseLeave">
         <table id="tableGoesHere" class="m-5 h-100" v-if="allocationMapping">
             <tr>
                 <td>

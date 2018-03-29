@@ -21,7 +21,7 @@ export default {
       this.$emit('wellHovered', [row, col]);
     },
     handleHoverLeave() {
-      this.$emit('hoverComplete');
+      if (event.fromElement.id === 'monitorMouseLeave') this.$emit('hoverComplete');
     },
   },
 };
