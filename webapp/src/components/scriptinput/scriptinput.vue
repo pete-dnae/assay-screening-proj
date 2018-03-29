@@ -4,10 +4,7 @@
 <div  :class="{'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
-          <i class="btn fa fa-info-circle" aria-hidden="true" 
-            @click="handleInfoClick('reference')" 
-            v-if="!showingInfo"></i>  
-          <i class="fa fa-arrow-circle-left" aria-hidden="true" @click="handleInfoClick('current')" v-else></i>      
+          <i class="btn fa fa-info-circle" @click="showInfo=true" aria-hidden="true"></i>            
       </div>
       <div class="col-2">            
             <label>Type your rules here</label>
@@ -27,8 +24,7 @@
     </div>
     <div class="row">
         <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
-
-            <div id="editor" :class="{border:true,'border-primary':showingInfo}" @keyup="editorChange"
+            <div id="editor" class="border editor" @keyup="editorChange"
                                       @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
@@ -43,8 +39,7 @@
             </hovervisualizer>
             </div> 
             <div class="row mt-3" v-if="showWellContents&&!error">
-                <wellcontents   
-                                :currentRow="currentRow" 
+                <wellcontents   :currentRow="currentRow" 
                                 :currentCol="currentCol" 
                                 :allocationData="allocationData[currentPlate]">
                 </wellcontents> 
@@ -76,10 +71,13 @@
     </li>
     </ul>
     </span>
-    </div>
-    <!-- <modal v-model="show" id="modal" @ok="handleReagentAdd" @keyup="handleReagentAdd">
-        Do you want to save "{{newReagent}}" to the database
-    </modal> -->
+    </div>  
+    <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
+        <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="showInfo = false">Exit</button>
+        </div>
+    </modal>
    
 </div>
  <div id="overlay" v-if="showBlur">

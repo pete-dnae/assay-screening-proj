@@ -40,6 +40,7 @@ export default {
       currentCol: null,
       showWellContents: false,
       hoverHighlight: true,
+      showInfo: false,
     };
   },
   computed: {
@@ -56,11 +57,8 @@ export default {
       ruleScript: 'getRuleScript',
       allocationData: 'getAllocationData',
       tooltiptext: 'getToolTipStyle',
-      currentlyShowing: 'getCurrentlyShowing',
+      referenceText: 'getReferenceExperiment',
     }),
-    showingInfo() {
-      return this.currentlyShowing === 'referenceExperiment';
-    },
   },
   watch: {
     showToolTip() {
@@ -222,17 +220,6 @@ export default {
     handleReagentAdd() {
       this.$store.commit('ADD_REAGENT', this.newReagent);
       this.show = false;
-    },
-    handleInfoClick(flag) {
-      if (flag === 'current') {
-        this.$store.commit('LOAD_CURRENT_EXPERIMENT');
-        this.editor.setText(formatText(this.ruleScript));
-        this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
-      } else {
-        this.$store.commit('LOAD_REFERENCE_EXPERIMENT');
-        this.editor.setText(formatText(this.ruleScript));
-        this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
-      }
     },
   },
   mounted() {

@@ -5,6 +5,7 @@ import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
 import * as ui from "../ui/mutation-types";
 import { getMaxRowCol } from "@/models/editor2.0";
+import {formatText} from '@/models/visualizer.js'
 
 export const state = {
   reagents: {
@@ -57,8 +58,7 @@ export const state = {
     currentExperiment: {
       data: null,
       name: null
-    },
-    currentlyShowing: "currentExperiment",
+    },    
     isRequesting: false,
     received: false,
     didInvalidate: false
@@ -111,8 +111,7 @@ const actions = {
           api
             .getRuleScript(res.rules_script)
             .then(res => {
-              commit(types.RULE_SCRIPT_SUCCESS);
-              console.log(referenceExperimentFlag)
+              commit(types.RULE_SCRIPT_SUCCESS);              
               if (referenceExperimentFlag) {
                 commit(types.LOAD_API_RESPONSE_REF_EXP, res);
                 commit(types.SET_MAX_ROW_COL, "referenceExperiment");
@@ -184,9 +183,9 @@ const mutations = {
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
+    state.ruleScript.referenceExperiment.data.text = formatText(response.text);
   },
-  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {
-    console.log(currentOrReferenceFlag);
+  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {   
 
     const lnums =
       state.ruleScript[currentOrReferenceFlag].data.interpretationResults.lnums;
@@ -204,12 +203,6 @@ const mutations = {
     state.reagents.isPosting = true;
     state.reagents.posted = false;
     state.reagents.didInvalidate = false;
-  },
-  [types.LOAD_CURRENT_EXPERIMENT](state) {
-    state.experiment.currentlyShowing = "currentExperiment";
-  },
-  [types.LOAD_REFERENCE_EXPERIMENT](state) {
-    state.experiment.currentlyShowing = "referenceExperiment";
   },
   [types.REAGENTS_RECEIVED](state, data) {
     state.reagents.data = data;
@@ -304,8 +297,8 @@ const getters = {
     return state.quillOptions;
   },
   getError(state, getters, rootState) {
-    return state.ruleScript[state.experiment.currentlyShowing].data
-      .interpretationResults.parseError;
+    return state.ruleScript.currentExperiment.data.interpretationResults
+      .parseError;
   },
   getReagents(state, getters, rootState) {
     return state.reagents.data;
@@ -321,29 +314,27 @@ const getters = {
   },
   getTableBoundaries(state, getters, rootState) {
     return [
-      state.ruleScript[state.experiment.currentlyShowing].maxRow,
-      state.ruleScript[state.experiment.currentlyShowing].maxCol
+      state.ruleScript.currentExperiment.maxRow,
+      state.ruleScript.currentExperiment.maxCol
     ];
   },
   getAllocationMap(state, getters, rootState) {
-    return state.ruleScript[state.experiment.currentlyShowing].data
-      .interpretationResults.lnums;
+    return state.ruleScript.currentExperiment.data.interpretationResults.lnums;
   },
   getRuleScript(state, getters, rootState) {
-    return state.ruleScript[state.experiment.currentlyShowing].data.text;
+    return state.ruleScript.currentExperiment.data.text;
   },
   getAllocationData(state, getters, rootState) {
-    return state.ruleScript[state.experiment.currentlyShowing].data
-      .interpretationResults.table;
+    return state.ruleScript.currentExperiment.data.interpretationResults.table;
   },
   getExperimentList(state, getters, rootState) {
     return state.experimentList.data;
   },
   getCurrentExperiment(state, getters, rootState) {
-    return state.experiment[state.experiment.currentlyShowing].name;
+    return state.experiment.currentExperiment.name;
   },
-  getCurrentlyShowing(state, getters, rootState){
-    return state.experiment.currentlyShowing;
+  getReferenceExperiment(state, getters, rootState) {
+    return state.ruleScript.referenceExperiment.data.text;
   }
 };
 

@@ -20,8 +20,8 @@ li span {
   font-weight: bold;
 }
 
-#editor {
-  font-family: "MONOSPACE";
+.editor {
+  font-family: "MONOSPACE" !important;
   font-size: 18px;
   height: 1000px;  
 }
