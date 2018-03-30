@@ -9,6 +9,7 @@ New Observations for Prasanna to Categorize
     o  Don't think changing to a new experiment (if you create one in the 
        browsable API), is saving changes to new rules script end-point?
     o  Implement save-as feature.
+    o  Seem to have spell check active on script editor?
 
 ToolTip Use Cases:
     o  Experiment name search have tool tip.
@@ -39,7 +40,7 @@ Cosmetic Changes/Additions:
        disappears off the bottom. Need to brainstorm best answer to this.
 
 
-Vue Changes :
+Vue Changes:
 
 Vuex change:
     o  At boot time the app should load the most recently viewed 
