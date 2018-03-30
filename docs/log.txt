@@ -3,8 +3,9 @@
     *  Change defn of group to: name, reagent, conc, units
 *  Add tolerance of groups in script in place of reagents
 *  See if making a list view to enumerate group names helps
-o  Do rest of fantasy views
+*  Do rest of fantasy views
 o  Update backlog doc
+    o  Add relative URL comment
 
 o  Syntax spelling errors in web gui inappropriate
 o  Starter scripts to prepopulate / augment db with reagents and groups
