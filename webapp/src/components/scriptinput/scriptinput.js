@@ -4,7 +4,7 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import _ from 'lodash';
-import { modal } from 'vue-strap';
+import { modal, tooltip } from 'vue-strap';
 import { formatText, isItemInArray } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -25,6 +25,7 @@ export default {
     modal,
     hovervisualizer,
     wellcontents,
+    tooltip,
   },
   data() {
     return {

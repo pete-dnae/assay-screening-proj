@@ -74,8 +74,7 @@ const actions = {
         .postRuleSCript({ ruleScriptNo, text })
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
-          commit(types.LOAD_API_RESPONSE, data);
-          commit("LOAD_CURRENT_EXPERIMENT");
+          commit(types.LOAD_API_RESPONSE, data);          
           resolve("success");
         })
         .catch(e => {

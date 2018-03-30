@@ -4,15 +4,16 @@ Backlog
 
 
 ToolTip Use Cases:
-    o  Experiment name search have tool tip.
-    o  Copy link has tool tip.
-    o  Tooltips on Experiments|Reagents|Plates
-    o  Info icon needs tooltip.
-    o  The format icon needs a tooltip.
-    o  Hover over a line needs a tooltip.
+    *  Experiment name search have tool tip.
+    *  Copy link has tool tip.
+    *  Tooltips on Experiments|Reagents|Plates
+    *  Info icon needs tooltip.
+    *  The format icon needs a tooltip.
+    x  Hover over a line needs a tooltip.
+        Prasanna: Need some time to read on this , needs to be customized in quill editor
 
 Pop Up Use Cases :
-    o  Plates and Pools pop up "this feature coming soon".
+    *  Plates and Pools pop up "this feature coming soon".
 
 
 
