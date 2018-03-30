@@ -112,3 +112,7 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
             'table': table,
             'lnums': lnums
         }
+
+#-------------------------------------------------------------------------
+# Some convenience serializers to help in particular use-cases.
+#-------------------------------------------------------------------------

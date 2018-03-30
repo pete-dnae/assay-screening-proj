@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import *
+from .view_helpers import ViewHelpers
 
 class ExperimentViewSet(viewsets.ModelViewSet):
     queryset = ExperimentModel.objects.all()
@@ -27,3 +28,13 @@ class ReagentCategoryViewSet(viewsets.ModelViewSet):
 class ReagentGroupViewSet(viewsets.ModelViewSet):
     queryset = ReagentGroupModel.objects.all()
     serializer_class =  ReagentGroupSerializer
+
+
+#-------------------------------------------------------------------------
+# Some convenience (non-model) views.
+#-------------------------------------------------------------------------
+
+class AllowedNamesView(APIView):
+
+    def get(self, request, format=None):
+        return Response(ViewHelpers.all_allowed_names())
