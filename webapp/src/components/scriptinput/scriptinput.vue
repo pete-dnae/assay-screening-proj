@@ -4,14 +4,18 @@
 <div  :class="{'container-fluid':true,'w-75':true}">
     <div class="row text-left" style="height:50px">
       <div class="col-1">
-          <i class="btn fa fa-info-circle" @click="showInfo=true" aria-hidden="true"></i>            
+          <tooltip effect="scale" placement="bottom" content="Click me to show example script">
+          <i class="btn fa fa-info-circle" @click="showInfo=!showInfo" aria-hidden="true"></i>            
+          </tooltip>
       </div>
       <div class="col-2">            
             <label>Type your rules here</label>
             <i class="btn fa fa-hand-o-down" aria-hidden="true" ></i>
         </div>
         <div class="col-1">
-            <i @click="handleFormat()" class="btn fa fa-align-right"></i>            
+            <tooltip effect="scale" placement="bottom" content="Click me to format text or Press ctrl+F ">
+            <i @click="handleFormat()" class="btn fa fa-align-right"></i>    
+            </tooltip>        
         </div>       
 
         <div class="col-1">
@@ -75,7 +79,7 @@
     <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
         <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
         <div slot="modal-footer" class="modal-footer">
-            <button type="button" class="btn btn-default" @click="showInfo = false">Exit</button>
+            <button type="button" class="btn btn-default" @click="showInfo = !showInfo">Exit</button>
         </div>
     </modal>
    

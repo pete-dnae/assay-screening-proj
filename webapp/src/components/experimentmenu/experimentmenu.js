@@ -1,5 +1,6 @@
 import typeahead from '@/components/typeahead/Typeahead.vue';
 import { mapGetters, mapActions } from 'vuex';
+import { tooltip } from 'vue-strap';
 
 export default {
   name: 'ExperimentMenu',
@@ -11,6 +12,7 @@ export default {
   },
   components: {
     typeahead,
+    tooltip,
   },
   computed: {
     ...mapGetters({
@@ -19,9 +21,7 @@ export default {
     }),
   },
   methods: {
-    ...mapActions([
-      'fetchExperimentList',
-    ]),
+    ...mapActions(['fetchExperimentList']),
     handleLoadedExperiment(value) {
       this.currentExperiment = value;
     },
