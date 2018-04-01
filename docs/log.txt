@@ -1,15 +1,12 @@
-*  Bug (I think back-end - if you type just "A TC" into a line it says
-*  Return to groups...
-    *  Change defn of group to: name, reagent, conc, units
-*  Add tolerance of groups in script in place of reagents
-*  See if making a list view to enumerate group names helps
-*  Do rest of fantasy views
-o  Update backlog doc
-    o  Add relative URL comment
-
-o  Syntax spelling errors in web gui inappropriate
 o  Starter scripts to prepopulate / augment db with reagents and groups
+    o  Requirements
+    o  Design uxp
+    o  Do and test
+    o  Invite Nicky to pop
+o  Design group and reagnet housekeeping UXP
+    o  Consult Nicky
 o  Provide endpoint that Chris' script needs
+    o  What does he need?
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
     o  Move git head to bottom up branch
@@ -20,11 +17,35 @@ o  Deploy
 o  Update deployment docco.
 
 ---------------------------------------------------------------------------
-Fantasy end point
+Script req
 ---------------------------------------------------------------------------
-units
-reagents
-groups
+
+Bulk addition of reagent with name and category - imply categories
+
+Bulk addition of groups with list of (name, conc, units)
+
+CSV for reagents
+
+    reagent, category
+    reagent, category
+
+YAML for groups
+
+group:
+    - reagent conc units
+    - reagent conc units
+group:
+    - reagent conc units
+    - reagent conc units
+
+---------------------------------------------------------------------------
+Reagent UXP
+---------------------------------------------------------------------------
+
+
+
+
+
 
 
 
