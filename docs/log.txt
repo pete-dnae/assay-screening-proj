@@ -1,6 +1,11 @@
+stop 1630
+
 o  Starter scripts to prepopulate / augment db with reagents and groups
-    o  Write helper with test that works of simple dictionaries so that 
-       parse can come later.
+    *  Class and test to batch load reagents from memory ds.
+    *  Class and test to batch load groups from memory ds.
+    o  Command to operate these from an arbitrary input file format.
+        o  Get bulk reagents going first
+            o  Add csv read
 o  Design group and reagnet housekeeping UXP
     o  Consult Nicky
 o  Provide endpoint that Chris' script needs
