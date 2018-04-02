@@ -1,42 +1,27 @@
 o  Starter scripts to prepopulate / augment db with reagents and groups
-    o  Requirements
-    o  Design uxp
-    o  Do and test
-    o  Invite Nicky to pop
+    o  Write helper with test that works of simple dictionaries so that 
+       parse can come later.
 o  Design group and reagnet housekeeping UXP
     o  Consult Nicky
 o  Provide endpoint that Chris' script needs
     o  What does he need?
 o  Get rid of all out of data documentation
 o  Plan and prepare for deployment
+    o  Make mgmt scripts work also on heroku
     o  Move git head to bottom up branch
     o  Non debug django mode
     o  No import of pdb
     o  Security and authentication
+    o  Test deploy what we have to Heroku
 o  Deploy
 o  Update deployment docco.
+o  See if can get it to work dockerised with local db
+o  See if can get it to work dockerised with cloud sql saas
 
 ---------------------------------------------------------------------------
 Script req
 ---------------------------------------------------------------------------
 
-Bulk addition of reagent with name and category - imply categories
-
-Bulk addition of groups with list of (name, conc, units)
-
-CSV for reagents
-
-    reagent, category
-    reagent, category
-
-YAML for groups
-
-group:
-    - reagent conc units
-    - reagent conc units
-group:
-    - reagent conc units
-    - reagent conc units
 
 ---------------------------------------------------------------------------
 Reagent UXP
