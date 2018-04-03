@@ -1,3 +1,22 @@
+import re
+
+from app.model_builders.batch_reagent_entry import BatchReagentEntry
+
+"""
+Django *command* that helps you put a batch of reagents into the database in
+one go.
+    
+Takes a CSV file name as a command line parameter, and expects to find 
+(reagent + category) contents like this:
+
+    sausage, savoury
+    beans, savoury
+    apples, fruit
+
+It then uses the BatchReagentEntry class to bulk-load these into the
+database. Refer to *BatchReagentEntry* for more detailed usage rules.
+"""
+
 from pdb import set_trace as st
 
 import argparse
@@ -5,16 +24,56 @@ import argparse
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-class BulkLoadReagents():
+class Loader():
+    """
+    The class that actually does the work.
+    """
 
     @classmethod
     def load(cls, fd):
-        # parse file into ds required for loader
-        # use loader to load
-        pass
+        """
+        Provide (in fd), a pre-opened file descriptor.
+        """
+        # Parse and validate input.
+        lines = fd.readlines()
+        rows = []
+        for idx, line in enumerate(lines):
+            lnum = int(idx) + 1
+            line = line.strip()
+            if len(line) == 0:
+                continue
+            fields = line.split(',')
+            cls._assert_two_fields(fields, line, lnum)
+            fields = [f.strip() for f in fields]
+            for field in fields:
+                cls._assert_no_spaces(field, line, lnum)
+            rows.append(fields) # reagent, category
+            
+        # Use loader to load.
+        loader = BatchReagentEntry()
+        loader.load_db(rows)
+
+    @classmethod
+    def _assert_two_fields(cls, fields, line, lnum):
+        if len(fields) == 2:
+            return
+        raise RuntimeError(
+            'Line <%d> (%s), does not have 2 fields.' % (lnum, line))
+
+    @classmethod
+    def _assert_no_spaces(cls, field, line, lnum):
+        if re.match(r'^\S+$', field):
+            return
+        raise RuntimeError(
+            'This field: <%s>, on line number %d contains a space.' % 
+                (field, lnum))
 
 
 class Command(BaseCommand):
+    """
+    The Django management command wrapper. Includes automated command line
+    argument validation and parsing.
+    """
 
     help = 'Loads reagents in bulk, from CSV file.'
 
@@ -22,7 +81,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-f', dest=Command._CSV_FILE, type=argparse.FileType(mode='r'))
+            'csv_file', type=argparse.FileType(mode='r'))
 
     def handle(self, *args, **options):
         fd = options[Command._CSV_FILE]
+        Loader.load(fd)
