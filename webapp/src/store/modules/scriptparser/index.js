@@ -67,16 +67,50 @@ export const state = {
 };
 const actions = {
   saveToDb({ commit }, { ruleScriptNo, text }) {
-    commit(types.REQUEST_POST_RULE_SCRIPT);
+    commit(types.REQUEST_PUT_RULE_SCRIPT);
     commit(types.SAVE_SCRIPT, text);
     return new Promise(function(resolve, reject) {
       api
         .putRuleSCript({ ruleScriptNo, text })
         .then(({ data }) => {
-          commit(types.POST_RULE_SCRIPT_SUCCESS);
+          commit(types.PUT_RULE_SCRIPT_SUCCESS);
           commit(types.LOAD_API_RESPONSE, data);
           commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
+        })
+        .catch(e => {
+          commit(types.PUT_RULE_SCRIPT_FAILURE);
+          commit(ui.SHOW_BLUR);
+          reject(e);
+        });
+    });
+  },
+  saveExperimentAs({ commit }, experimentName) {
+    commit(types.REQUEST_POST_RULE_SCRIPT);
+    
+    return new Promise(function(resolve, reject) {
+      api
+        .postRuleScript({text:state.savedScript})
+        .then(({data}) => {          
+          commit(types.POST_RULE_SCRIPT_SUCCESS);
+          commit(types.REQUEST_POST_NEW_EXPERIMENT);
+              
+          api
+            .postNewExperiment(              
+              {
+                experiment_name: experimentName,
+                rules_script: data.url
+              }
+            )
+            .then(({data}) => {
+              resolve(data);
+              commit(types.POST_NEW_EXPERIMENT_SUCCESS);
+            })
+            .catch(e => {
+              commit(types.POST_NEW_EXPERIMENT_FAILURE);
+              commit(ui.SHOW_BLUR);
+              reject(e);
+            });
         })
         .catch(e => {
           commit(types.POST_RULE_SCRIPT_FAILURE);
@@ -117,6 +151,7 @@ const actions = {
                 commit(types.SET_MAX_ROW_COL, "referenceExperiment");
               } else {
                 commit(types.LOAD_API_RESPONSE, res);
+                commit(types.SAVE_SCRIPT, res.text);
                 commit(types.SET_MAX_ROW_COL, "currentExperiment");
               }
               resolve("success");
@@ -168,12 +203,12 @@ const actions = {
   }
 };
 const mutations = {
-  [types.REQUEST_POST_RULE_SCRIPT](state) {
+  [types.REQUEST_PUT_RULE_SCRIPT](state) {
     state.ruleScript.isPosting = true;
     state.ruleScript.posted = false;
     state.ruleScript.didInvalidate = false;
   },
-  [types.POST_RULE_SCRIPT_SUCCESS](state) {
+  [types.PUT_RULE_SCRIPT_SUCCESS](state) {
     state.ruleScript.isPosting = false;
     state.ruleScript.posted = true;
     state.ruleScript.didInvalidate = false;
@@ -191,6 +226,21 @@ const mutations = {
       state.ruleScript[currentOrReferenceFlag].maxRow,
       state.ruleScript[currentOrReferenceFlag].maxCol
     ] = lnums ? getMaxRowCol(lnums) : [0, 0];
+  },
+  [types.PUT_RULE_SCRIPT_FAILURE](state) {
+    state.ruleScript.isPosting = false;
+    state.ruleScript.posted = false;
+    state.ruleScript.didInvalidate = true;
+  },
+  [types.REQUEST_POST_RULE_SCRIPT](state) {
+    state.ruleScript.isPosting = true;
+    state.ruleScript.posted = false;
+    state.ruleScript.didInvalidate = false;
+  },
+  [types.POST_RULE_SCRIPT_SUCCESS](state) {
+    state.ruleScript.isPosting = false;
+    state.ruleScript.posted = true;
+    state.ruleScript.didInvalidate = false;
   },
   [types.POST_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
@@ -246,6 +296,21 @@ const mutations = {
     state.experiment.received = false;
     state.experiment.didInvalidate = true;
   },
+  [types.REQUEST_POST_NEW_EXPERIMENT](state) {
+    state.experiment.isRequesting = true;
+    state.experiment.received = false;
+    state.experiment.didInvalidate = false;
+  },
+  [types.POST_NEW_EXPERIMENT_SUCCESS](state, response) {
+    state.experiment.isRequesting = false;
+    state.experiment.received = true;
+    state.experiment.didInvalidate = false;
+  },
+  [types.POST_NEW_EXPERIMENT_FAILURE](state) {
+    state.experiment.isRequesting = false;
+    state.experiment.received = false;
+    state.experiment.didInvalidate = true;
+  },
   [types.REQUEST_EXPERIMENT_LIST](state) {
     state.experimentList.isRequesting = true;
     state.experimentList.received = false;
@@ -278,13 +343,10 @@ const mutations = {
     state.ruleScript.didInvalidate = true;
   },
   [types.SAVE_SCRIPT](state, scriptText) {
-    state.validScript = scriptText;
+    state.savedScript = scriptText;
   },
   [types.SET_SUGGESTIONS](state, value) {
     state.suggestions = value;
-  },
-  [types.SET_VALID_SCRIPT](state, data) {
-    state.savedScript = data;
   },
   [types.ADD_REAGENT](state, value) {
     state.reagents.push(value);
