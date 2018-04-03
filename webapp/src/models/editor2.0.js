@@ -65,15 +65,20 @@ export const startEndOfLine = (lineNumber, text) => [
 export const removeAdditionalNewLine = currentText => currentText.slice(0, -1);
 
 export const getCurrentLineFields = (currentText, cursorPosition) => {
-  const currentLineStart = removeAdditionalNewLine(currentText)
-    .substr(0, cursorPosition)
-    .lastIndexOf('\n');
-
-  const currentLine = currentText.substr(
-    currentLineStart === -1 ? 0 : currentLineStart,
-    cursorPosition,
-  );
-  return splitLine(currentLine);
+  let plateName;
+  const textTillCursor = removeAdditionalNewLine(currentText)
+    .substr(0, cursorPosition);
+  const currentLineStart = textTillCursor.lastIndexOf('\n');
+  const currentLineLength = currentText
+    .substr(currentLineStart + 1, currentText.length)
+    .indexOf('\n') + 1;
+  const lineNumber = (textTillCursor.match(/\n/g) || []).length + 1;
+  textTillCursor.split('\n').forEach((line) => {
+    if (line.startsWith('P')) {
+      [, plateName] = line.split(/\s+/g);
+    }
+  });
+  return { currentLineStart, currentLineLength, lineNumber, plateName };
 };
 
 export const hesitationTimer = _.debounce(postRuleScript, 500);

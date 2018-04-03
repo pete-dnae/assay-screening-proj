@@ -9,15 +9,14 @@ import { formatText, isItemInArray } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 import wellcontents from '@/components/wellcontents/wellcontents.vue';
-
 // import { validateText } from '@/models/editor';
 
 import {
   hesitationTimer,
-  startEndOfLine,
   getChildIndex,
   getCurrentLineFields,
 } from '@/models/editor2.0';
+import { debug } from 'util';
 
 export default {
   name: 'ScriptInputComponent',
@@ -77,7 +76,7 @@ export default {
       'fetchUnitList',
     ]),
     isItemInArray,
-    editorChange() {
+    editorChange(event) {
       const cursorIndex = this.editor.getSelection().index;
       const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
       if (fields[1] && fields[0][0] === 'A') {
@@ -171,20 +170,20 @@ export default {
       this.hideSuggestion();
     },
     handleMouseOver(event) {
-      const fromElement = event.fromElement;
-      if (fromElement && fromElement.tagName === 'SPAN' && !this.error) {
-        const text = this.editor.getText();
-        const elem = fromElement.parentElement;
-        const { lineNumber, plateName } = getChildIndex(elem);
-        const [start, end] = startEndOfLine(lineNumber, text);
-        this.currentPlate = plateName;
-        this.highlightedLineNumber = lineNumber + 1;
-        this.editor.formatText(0, text.length, 'bg', false);
-        this.editor.formatText(0, text.length, 'color', false);
-        this.editor.formatText(start, end - start, 'bg', 'primary');
-        this.editor.formatText(start, end - start, 'color', 'white');
-        this.hoverHighlight = true;
-      }
+      // const fromElement = event.fromElement;
+      // if (fromElement && fromElement.tagName === 'SPAN' && !this.error) {
+      //   const text = this.editor.getText();
+      //   const elem = fromElement.parentElement;
+      //   const { lineNumber, plateName } = getChildIndex(elem);
+      //   const [start, end] = startEndOfLine(lineNumber, text);
+      //   this.currentPlate = plateName;
+      //   this.highlightedLineNumber = lineNumber + 1;
+      //   this.editor.formatText(0, text.length, 'bg', false);
+      //   this.editor.formatText(0, text.length, 'color', false);
+      //   this.editor.formatText(start, end - start, 'bg', 'primary');
+      //   this.editor.formatText(start, end - start, 'color', 'white');
+      //   this.hoverHighlight = true;
+      // }
     },
     highlightError(index) {
       this.editor.setSelection(index, 0);
@@ -247,9 +246,9 @@ export default {
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
       this.handleTab(range),
     );
-    this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, range =>
-      this.handleExcludeReagent(range),
-    );
+    // this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, range =>
+    //   this.handleExcludeReagent(range),
+    // );
     this.editor.keyboard.addBinding({ key: 'F', ctrlKey: true }, () =>
       this.handleFormat(),
     );
@@ -263,6 +262,34 @@ export default {
       this.editor.setText(formatText(this.referenceText));
       this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
       this.paintText();
+    });
+    this.editor.on('selection-change', (range) => {
+      if (range) {
+        const text = this.editor.getText();
+        const {
+          currentLineStart,
+          currentLineLength,
+          lineNumber,
+          plateName,
+        } = getCurrentLineFields(text, range.index);
+        this.editor.formatText(0, text.length, 'bg', false);
+        this.editor.formatText(0, text.length, 'color', false);
+        this.editor.formatText(
+          currentLineStart,
+          currentLineLength,
+          'bg',
+          'primary',
+        );
+        this.editor.formatText(
+          currentLineStart,
+          currentLineLength,
+          'color',
+          'white',
+        );
+        this.currentPlate = plateName;
+        this.highlightedLineNumber = lineNumber;
+        this.hoverHighlight = true;
+      }
     });
 
     this.editor.focus();

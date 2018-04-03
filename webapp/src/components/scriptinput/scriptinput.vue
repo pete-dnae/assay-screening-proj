@@ -28,7 +28,7 @@
     </div>
     <div class="row mt-3">
         <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
-            <div id="editor" class="editor ql-editor" @keyup="editorChange"
+            <div id="editor" class="editor ql-editor" @keyup="editorChange"                                                                                                             
                                       @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
