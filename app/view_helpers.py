@@ -15,9 +15,12 @@ class ViewHelpers:
         Provides a data structure that lists all the reagent names available,
         all the group names available, and all the units.
         """
+        reagent_names = cls.reagent_names()
+        group_names = cls.group_names()
+        combined = sorted(reagent_names + group_names)
+
         return {
-            'reagents': cls.reagent_names(),
-            'groups': cls.group_names(),
+            'reagents_and_groups': combined,
             'units': cls.units(),
         }
 
@@ -27,7 +30,7 @@ class ViewHelpers:
         Provides a list of all available reagent names.
         """
         names = [r.name for r in ReagentModel.objects.all()]
-        return sorted(names)
+        return names
 
     @classmethod
     def group_names(cls):
@@ -37,7 +40,7 @@ class ViewHelpers:
         names = set()
         for group in ReagentGroupModel.objects.all():
             names.add(group.group_name)
-        return sorted(names)
+        return list(names)
         
     @classmethod
     def units(cls):

@@ -1,5 +1,10 @@
-stop 1630
 
+o  divert to concat and sort reagents and groups
+    *  do all existing tests work? = no
+    *  change code
+    *  fix up regressions
+    o  commit
+    o  tell Prasanna
 o  Starter scripts to prepopulate / augment db with reagents and groups
     *  Class and test to batch load reagents from memory ds.
     *  Class and test to batch load groups from memory ds.

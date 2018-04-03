@@ -16,7 +16,7 @@ class BulkLoadReagents():
 
 class Command(BaseCommand):
 
-    help = 'Loads reagents in bulk from CSV file.'
+    help = 'Loads reagents in bulk, from CSV file.'
 
     _CSV_FILE = 'csv_file'
 

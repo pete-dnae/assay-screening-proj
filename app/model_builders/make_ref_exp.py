@@ -1,10 +1,5 @@
 from pdb import set_trace as st
 
-"""
-Creates the minimum viable starter content for a virgin database.
-With one experiment and only its dependents.
-"""
-
 from app.models.experiment_model import ExperimentModel
 from app.models.rules_script_model import RulesScriptModel
 from app.models.reagent_model import ReagentModel
@@ -21,18 +16,22 @@ class ReferenceExperiment():
     """
     Creates all the database entities required to assemble an example,
     refrence models.Experiment, and returns the correpsonding instance.
+    Aborts and does nothing if the experiment already exists in the databse.
     """
 
     def __init__(self):
         self.experiment = None
 
     def create(self):
+        if self._already_exists_in_db():
+            return
+
         # A rules script
         rules_script = RulesScriptModel.make(REFERENCE_SCRIPT)
 
         # An experiment
         self.experiment = ExperimentModel.make(
-                'Reference Experiment', rules_script)
+                self._REFERENCE_EXPERIMENT, rules_script)
 
         # Approved concentration units.
         for units in REFERENCE_UNITS:
@@ -61,6 +60,16 @@ class ReferenceExperiment():
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
+
+    _REFERENCE_EXPERIMENT = 'Reference Experiment'
+
+    def _already_exists_in_db(self):
+        try:
+            ExperimentModel.objects.get(
+                experiment_name=self._REFERENCE_EXPERIMENT)
+        except ExperimentModel.DoesNotExist:
+            return False
+        return True
 
 
 if __name__ == "__main__":
