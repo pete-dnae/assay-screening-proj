@@ -38,7 +38,7 @@ export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
 export const getRuleScript = url => fetchResPure(url);
 
 export const getExperimentList = () => fetchRes('api/experiments/');
-export const postRuleSCript = ({ ruleScriptNo, text }) =>
+export const putRuleSCript = ({ ruleScriptNo, text }) =>
   putRes(`api/rule-scripts/${ruleScriptNo}/`, { text });
 export const getReagents = () => fetchRes('/api/reagents/');
 export const getUnits = () => fetchRes('/api/units/');

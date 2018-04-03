@@ -71,7 +71,7 @@ const actions = {
     commit(types.SAVE_SCRIPT, text);
     return new Promise(function(resolve, reject) {
       api
-        .postRuleSCript({ ruleScriptNo, text })
+        .putRuleSCript({ ruleScriptNo, text })
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
           commit(types.LOAD_API_RESPONSE, data);
