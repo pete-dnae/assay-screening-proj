@@ -9,7 +9,7 @@
               :value="currentExperiment"></typeahead>
             </tooltip>
             <div class="btn  my-2 my-sm-0">  
-              <tooltip effect="scale" placement="right" content="to save your current script under different experimt name">            
+              <tooltip effect="scale" placement="right" content="To save your current script under different experimt name">            
               <p><a href="#" class="text-primary">Save As</a></p>
               </tooltip>
             </div>
@@ -23,14 +23,15 @@
             </tooltip>
             <tooltip effect="scale" placement="bottom" content="Coming soon">
             <li class="nav-item">
-              <a class="nav-link" href="#/reagents">Reagents</a>
+              <a class="nav-link" href="#/pools">Pools</a>
             </li>
             </tooltip>
             <tooltip effect="scale" placement="bottom" content="Coming soon">
             <li class="nav-item">
-              <a class="nav-link" href="#/pools">Pools</a>
+              <a class="nav-link" href="#/reagents">Reagents</a>
             </li>
             </tooltip>
+       
           </ul>
         </div>
     </div>

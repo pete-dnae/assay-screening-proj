@@ -112,8 +112,8 @@ export default {
     paintText() {
       const text = this.editor.getText();
       const textLength = text.length;
+      this.editor.formatText(0, text.length, 'color', false);
       this.editor.formatText(0, textLength, 'font', 'monospace');
-      debugger;
       if (this.error) {
         this.editor.formatText(
           this.error.where_in_script,
@@ -121,8 +121,6 @@ export default {
           'color',
           '#A9A9A9',
         );
-      } else {
-        this.editor.formatText(0, text.length, 'color', false);
       }
     },
     handleMouseOut(event) {
@@ -245,7 +243,6 @@ export default {
 
     Quill.register(background, true);
     Quill.register(LineStyle, true);
-    // Quill.register(text, true);
     this.editor = new Quill('#editor', this.options);
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
       this.handleTab(range),
@@ -269,5 +266,8 @@ export default {
     });
 
     this.editor.focus();
+    // document.addEventListener('contextmenu', (e) => {
+    //   e.preventDefault();
+    // }, false);
   },
 };

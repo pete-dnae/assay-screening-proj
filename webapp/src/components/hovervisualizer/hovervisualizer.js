@@ -1,8 +1,11 @@
 import { isItemInArray } from '@/models/visualizer';
-
+import { tooltip } from 'vue-strap';
 
 export default {
   name: 'HoverVisualizer',
+  components: {
+    tooltip,
+  },
   props: {
     currentPlate: String,
     tableColCount: Number,

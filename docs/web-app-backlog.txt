@@ -16,23 +16,24 @@ ToolTip Use Cases:
     *  Tooltips on Experiments|Reagents|Plates
     *  Info icon needs tooltip.
     *  The format icon needs a tooltip.
-    x  Hover over a line needs a tooltip.
+    *  Hover over a line needs a tooltip.
         Prasanna: Need some time to read on this , needs to be customized in quill editor
 
 Pop Up Use Cases :
-    o  Contents of B3 list - would prefer reagents to be either left or right
+    *  Contents of B3 list - would prefer reagents to be either left or right
        justified instead of centred.
 
 
 Cosmetic Changes/Additions:
     o  Put in an image and title in banner strip.
-    o   Experiment name field How about tacking on a box extension to the right
+    *   Experiment name field How about tacking on a box extension to the right
         with the search icon in it - like gmail's? Maybe using
         https://bootstrap-vue.js.org/docs/components/input-group
     *  "Cannot show plate visualisation while there are errors in your
         rules script".
-    o  Consider using Bootstrap Wells (or similar) to delineate and group the 
+    x  Consider using Bootstrap Wells (or similar) to delineate and group the
        major areas of the screen.
+       Prasanna : Inprogress , might need a outside opini
     o  On my browser config and default zoom, the text editor is not wide enough
        and the transfer rule wraps.
     o  On may browser config and default zoom, the "contents of" area 
@@ -49,7 +50,7 @@ Vuex change:
     o  At boot time the app should load the most recently viewed 
        experiment when there is one, otherwise the reference experiment from 
        the db.
-
+    o Move UI variables to state
 DOM and JS Changes:
     o  The hovering over a line <HOL> **target zone** doesn't seem quite right.
        Particularly as you travel up the page?
