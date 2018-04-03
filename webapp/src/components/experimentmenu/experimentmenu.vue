@@ -23,14 +23,15 @@
             </tooltip>
             <tooltip effect="scale" placement="bottom" content="Coming soon">
             <li class="nav-item">
-              <a class="nav-link" href="#/reagents">Reagents</a>
+              <a class="nav-link" href="#/pools">Pools</a>
             </li>
             </tooltip>
             <tooltip effect="scale" placement="bottom" content="Coming soon">
             <li class="nav-item">
-              <a class="nav-link" href="#/pools">Pools</a>
+              <a class="nav-link" href="#/reagents">Reagents</a>
             </li>
             </tooltip>
+       
           </ul>
         </div>
     </div>
