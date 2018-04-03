@@ -1,3 +1,5 @@
+from pdb import set_trace as st
+
 from django.core.management.base import BaseCommand
 
 from app.model_builders.make_ref_exp import ReferenceExperiment

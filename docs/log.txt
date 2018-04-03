@@ -1,22 +1,31 @@
 o  Consult Nicky on group and reagnet bulk entry.
+o  Add experiment ID to experiment serializer.
 
-o  Get rid of all out of data documentation
-    o  Ditch irrelevants, noting what needs changing
-    o  Do planned changes
+*  Get rid of all out of data documentation
+*  Upgrade management scripts to suit deploymnet
+    *  Make complete_reset only work on sqlite3 databases
+    *  Alter complete reset to call pop ref directly
+    *  Remove reset_db and mt tables
+    *  Test in dev mode
+    *  Any broken tests?
+    *  Update developer docs
 
-o  Provide endpoint that Chris' script needs
-    o  What does he need?
 
 o  Plan and prepare for deployment
     o  Make mgmt scripts work also on heroku
-    o  Move git head to bottom up branch
+        o  Which?
+        o  Complete reset
+    o  Move git head to bottom up branch or similar
     o  Non debug django mode
     o  No import of pdb
-    o  Security and authentication
+    o  Security and authentication?
     o  Test deploy what we have to Heroku
+        
 
 o  Deploy
 o  Update deployment docco.
+o  Provide endpoint that Chris' script needs
+    o  What does he need?
 o  See if can get it to work dockerised with local db
 o  See if can get it to work dockerised with cloud sql saas
 
