@@ -19,6 +19,7 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
         model = ExperimentModel
         fields = (
            'url',
+           'id',
            'experiment_name',
            'rules_script',
         )

@@ -1,14 +1,8 @@
 o  Consult Nicky on group and reagnet bulk entry.
-o  Add experiment ID to experiment serializer.
 
+*  Add experiment ID to experiment serializer.
 *  Get rid of all out of data documentation
 *  Upgrade management scripts to suit deploymnet
-    *  Make complete_reset only work on sqlite3 databases
-    *  Alter complete reset to call pop ref directly
-    *  Remove reset_db and mt tables
-    *  Test in dev mode
-    *  Any broken tests?
-    *  Update developer docs
 
 
 o  Plan and prepare for deployment
