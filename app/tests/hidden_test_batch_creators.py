@@ -9,24 +9,31 @@ from app.models.reagent_group_model import ReagentGroupModel
 
 class BatchCreatorTest(unittest.TestCase):
 
-    def setUp(self):
+    # NOTE using class-level set up, not test method-level.
+    @classmethod
+    def setUpClass(cls):
         experiment = ReferenceExperiment()
         experiment.create()
 
-    def test_add_some_reagents(self):
+    def test_add_some_reagents_with_no_duplicates_present(self):
         submitter = BatchReagentEntry()
         reagents = (
             ('reagent_1', 'category_A'),
             ('reagent_2', 'category_A'),
             ('reagent_3', 'category_B'),
         )
+        next_index = len(list(ReagentModel.objects.all()))
         submitter.load_db(reagents)
-        sample_reagent = ReagentModel.objects.get(name='reagent_2')
-        self.assertEqual(sample_reagent.category.name, 'category_A')
 
+        saved_reagents = ReagentModel.objects.all()
+        self.assertEqual(
+            saved_reagents[next_index + 2].name, 'reagent_3')
+        self.assertEqual(
+            saved_reagents[next_index + 2].category.name, 'category_B')
 
     def test_make_some_groups(self):
-        # Use reagents created by the reference experiment.
+        # Use reagents and units that have been created by the reference
+        # experiment.
         submitter = BatchGroupsEntry()
         groups = {
             'Pool_42': (
