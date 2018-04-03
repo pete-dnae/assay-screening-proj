@@ -1,7 +1,7 @@
 import {
   delayer,
   getJSON,
-} from '../../../node_modules/vue-strap/src/utils/utils.js';
+} from '../../../node_modules/vue-strap/src/utils/utils';
 
 const DELAY = 300;
 

@@ -26,13 +26,14 @@ Pop Up Use Cases :
 
 Cosmetic Changes/Additions:
     o  Put in an image and title in banner strip.
-    o   Experiment name field How about tacking on a box extension to the right
+    *   Experiment name field How about tacking on a box extension to the right
         with the search icon in it - like gmail's? Maybe using
         https://bootstrap-vue.js.org/docs/components/input-group
     *  "Cannot show plate visualisation while there are errors in your
         rules script".
-    o  Consider using Bootstrap Wells (or similar) to delineate and group the 
+    x  Consider using Bootstrap Wells (or similar) to delineate and group the
        major areas of the screen.
+       Prasanna : Inprogress , might need a outside opini
     o  On my browser config and default zoom, the text editor is not wide enough
        and the transfer rule wraps.
     o  On may browser config and default zoom, the "contents of" area 

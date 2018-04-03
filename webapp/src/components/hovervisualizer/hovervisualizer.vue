@@ -5,9 +5,9 @@ td:hover {
 </style>
 <template>
 
-<div class="w-100" @mouseout="handleHoverLeave">
+<div class="w-100 ml-5 border border-light rounded bg-light " @mouseout="handleHoverLeave">
     <div class="row text-left">
-            <label class="mt-2 col"><strong>{{currentPlate}}</strong></label>
+            <label class="m-3 col"><strong>{{currentPlate}}</strong></label>
             <div class="col">
                 <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>
                 <tooltip effect="scale" placement="bottom" content="Hover over the rules on your editor to highlight the area of impact for each rule">
@@ -31,7 +31,7 @@ td:hover {
                 <td v-for="col in tableColCount" v-bind:key="col" class="rounded">                                                            
                     <div id="cell" class="bg-secondary border border-secondary  rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[col,row])&&hoverHighlight">
                     </div>
-                    <div id="cell" class="bg-light border border-light rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-else>
+                    <div id="cell" class="bg-white border border-light rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-else>
                     </div>                                      
                 </td>
             </tr>

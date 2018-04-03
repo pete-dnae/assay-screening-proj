@@ -2,7 +2,7 @@
 <template>
 <div>
 <div  :class="{'container-fluid':true,'w-75':true}">
-    <div class="row text-left" style="height:50px">
+    <div class="row text-left toolbar ql-toolbar ql-snow border border-secondary rounded" style="height:50px">
       <div class="col-1">
           <tooltip effect="scale" placement="bottom" content="Click me to show example script">
           <i class="btn fa fa-info-circle" @click="showInfo=!showInfo" aria-hidden="true"></i>            
@@ -26,9 +26,9 @@
           <label class="text-danger">{{error.message}}</label>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
         <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
-            <div id="editor" class="border editor" @keyup="editorChange"
+            <div id="editor" class="editor ql-editor" @keyup="editorChange"
                                       @mouseover="handleMouseOver"></div>
         </div>
         <div class="col-5">
@@ -42,8 +42,8 @@
                                 @wellHovered="handleWellHover"
                                 @hoverComplete="handleWellHoverComplete">
             </hovervisualizer>
-            <div class="row w-100">
-                <div class="col-md-4"></div>
+            <div class="row w-100 mt-3">
+                <div class="col-md-6"></div>
                 <div class="col">
                     <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
                     <label class="text-info">Hover over a well</label>
