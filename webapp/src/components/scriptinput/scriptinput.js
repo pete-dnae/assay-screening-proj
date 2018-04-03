@@ -61,6 +61,9 @@ export default {
       referenceText: 'getReferenceExperiment',
     }),
   },
+  beforeRouteUpdate(to, from, next) {
+    debugger;
+  },
   watch: {
     showToolTip() {
       if (this.showToolTip === false) {
@@ -226,7 +229,6 @@ export default {
   },
   mounted() {
     const Delta = Quill.import('delta');
-
     const Parchment = Quill.import('parchment');
     const LineStyle = new Parchment.Attributor.Style(
       'textShadow',
@@ -260,6 +262,7 @@ export default {
     this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
     this.fetchExperiment({ exptNo: this.$route.params.exptNo }).then(() => {
       this.editor.setText(formatText(this.referenceText));
+
       this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
       this.paintText();
     });
