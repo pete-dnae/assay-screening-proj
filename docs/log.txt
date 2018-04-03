@@ -1,8 +1,4 @@
-o  Starter scripts to prepopulate / augment db with reagents and groups
-    *  Class and test to batch load reagents from memory ds.
-    *  Class and test to batch load groups from memory ds.
-    o  Command to operate these from an arbitrary input file format.
-        *  Get bulk reagents going first
+*  Starter scripts to prepopulate / augment db with reagents and groups
 o  Design group and reagnet housekeeping UXP
     o  Consult Nicky
 o  Provide endpoint that Chris' script needs
