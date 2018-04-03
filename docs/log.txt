@@ -1,9 +1,12 @@
-*  Starter scripts to prepopulate / augment db with reagents and groups
-o  Design group and reagnet housekeeping UXP
-    o  Consult Nicky
+o  Consult Nicky on group and reagnet bulk entry.
+
+o  Get rid of all out of data documentation
+    o  Ditch irrelevants, noting what needs changing
+    o  Do planned changes
+
 o  Provide endpoint that Chris' script needs
     o  What does he need?
-o  Get rid of all out of data documentation
+
 o  Plan and prepare for deployment
     o  Make mgmt scripts work also on heroku
     o  Move git head to bottom up branch
@@ -11,18 +14,15 @@ o  Plan and prepare for deployment
     o  No import of pdb
     o  Security and authentication
     o  Test deploy what we have to Heroku
+
 o  Deploy
 o  Update deployment docco.
 o  See if can get it to work dockerised with local db
 o  See if can get it to work dockerised with cloud sql saas
 
 ---------------------------------------------------------------------------
-Script req
 ---------------------------------------------------------------------------
-
-
 ---------------------------------------------------------------------------
-Reagent UXP
 ---------------------------------------------------------------------------
 
 

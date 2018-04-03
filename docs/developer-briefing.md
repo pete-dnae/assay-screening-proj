@@ -36,17 +36,31 @@ App will aid the scientists in managing and curating these shared resources.
 
 The other side to the database is that it contains Experiments. Scientists can
 create and then design experiments in the Web App, which get saved in the
-database. An experiment design is centered around what we call a *Rules
-Script*. This is a mini-program in a very simple domain specific language. It's
-little more than a series of *plate* declarations, interspersed with lines of
-text that say "I want to put this *reagent* and this *concentration* into these
-cells". You can specify the cells singly, in blocks or in sets. You can also
-put in similar lines that describe the *transfer* of some liquid from a well on
-plate into some well(s) on another.
+database.
 
-The Web App provides an editor for this script, and shows alongside the
-resultant allocation that the user is defining with the rules script, by way of
-feedback.
+An experiment design is centered around what we call a *Rules
+Script*. This is a mini-program in a very simple domain specific language.
+Like this: (Taken from app/model_builders/reference_data.py)
+
+    V ver-1
+    P Plate1
+    A Titanium-Taq              1-12  A-H 0.02 M/uL
+    A (Eco)-ATCC-BAA-2355       1,5,9 B   1.16 x
+    A (Eco)-ATCC-BAA-9999       2     C,D 1.16 x
+    # This is a comment
+    P Plate42
+    T Plate1 1 B                1-12  A-H   20 dilution
+    A Pool_1                    1-3   A-H    1 x
+    A Ec_uidA_6.x_Eco63_Eco60   4-9   A-H  0.4 uM
+
+It's little more than a series of *plate* declarations, interspersed with lines
+of text that say "I want to put this *reagent* and this *concentration* into
+these cells". You can specify the cells singly, in blocks or in sets. You can
+also put in similar lines that describe the *transfer* of some liquid from a
+well on plate into some well(s) on another.
+
+The Web App provides an editor for this script, that provides live graphical
+feedback on the allocation being created.
 
 We anticipate the app being extended fairly continuously to cover things like
 automating the programming of lab robots. And helping to keep track of such
@@ -61,15 +75,16 @@ Javascript application that runs in your browser. It follows the _Single Page
 Application_ architecture. And uses the _Vue.js_ web framework, with the Vuex
 extension to manage application state. Plus the _Bootstrap_ CSS library.
 
-Most of the logic and intelligence for the application resides in a back-end web
-service running in the Cloud. The Web App has a conversation with the back-end
-web service in order to decide what to show, at any one time, and it also sends
-messages to it when the user edits things, so that the web service can reply
-with changes in what to show in the new state. This conversation uses the _REST_
-communication methodology. The backend web service is implemented in Python
-using the _Django_ framework, plus the _Django Rest Framework_ extension. There
-is only one backend web service, but there can be multiple simultaneous Web
-App's being used by scientists all talking to the back end at once.
+Much of the logic and intelligence for the application resides in a back-end
+web service running in the Cloud. The Web App has a *conversation* with the
+back-end web service in order to decide what to show, at any one time, and it
+also sends messages to it when the user edits things, so that the web service
+can reply with changes in what to show in the new state. This conversation uses
+the _REST_ communication methodology. The backend web service is implemented in
+Python using the _Django_ framework, plus the _Django Rest Framework_
+extension. There is only one backend web service, but there can be multiple
+simultaneous Web App's being used by scientists all talking to the back end at
+once.
 
 The web service in the cloud is hosted on the _Heroku_ Platform-As-A-Service
 (PAAS). Behind the web service is a database as the permanent data-store, and
@@ -108,7 +123,7 @@ Run the unit tests
     python manage.py test app.tests.test_xxx # no .py extension
 
 
-Smoke test the server will serve
+Smoke test the API server will serve
 
     python manage.py runserver # just to see if python env is viable.
     # then quit the server
@@ -118,9 +133,9 @@ Database initialisation
 When running locally you get a pre-configured sqlite database, which is 
 included in the pip install above.
 
-To build for the first time or to stomp on any previous database and re baseline
-it to a suitable virgin state that contains one reference experiment object and
-its deep tree of dependencies do this:
+To build for the first time or to stomp on any previous database and re
+baseline it to a suitable virgin state that contains one reference experiment
+object and its deep tree of dependencies do this:
 
     Automated for Linux as follows:
     For more information, see documentation the script source.
@@ -163,3 +178,8 @@ yarn dev
 Building the app for deployment:
 From root directory <webapp>
 yarn build
+
+#Deployment
+Assumes the Heroku PAAS service account exists.
+todo
+
