@@ -6,10 +6,16 @@ o  Consult Nicky on group and reagnet bulk entry.
 
 
 o  Plan and prepare for deployment
-    o  Make mgmt scripts work also on heroku
-        o  Which?
-        o  Complete reset
     o  Move git head to bottom up branch or similar
+        o  Make sure have clean bottom up branch
+        o  Checkout master
+        o  Pull from remote master to make sure remote/local is synched.
+        o  Merge into master from bottom up
+        o  Resolve conflicts and commit
+        o  Test
+        o  Pull from remote master again
+        o  Push to github master
+        o  Tell Prasanna have merged and should switch
     o  Non debug django mode
     o  No import of pdb
     o  Security and authentication?
