@@ -18,15 +18,15 @@ td:hover {
             <tr>
                 <td>
                 </td>
-                <td v-for="col in tableBoundaries[1]" v-bind:key="col">
+                <td v-for="col in tableColCount" v-bind:key="col">
                     {{col}}
                 </td>
             </tr>
-            <tr v-for="row in tableBoundaries[0]" v-bind:key="row">   
+            <tr v-for="row in tableRowCount" v-bind:key="row">   
                 <td>
                     {{String.fromCharCode(row+64)}}
                 </td>             
-                <td v-for="col in tableBoundaries[1]" v-bind:key="col" class="rounded">                                                            
+                <td v-for="col in tableColCount" v-bind:key="col" class="rounded">                                                            
                     <div id="cell" class="bg-secondary border border-secondary  rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-if="isItemInArray(allocationMapping[highlightedLineNumber],[col,row])&&hoverHighlight">
                     </div>
                     <div id="cell" class="bg-light border border-light rounded p-3 m-1" @mouseover="handleShowCellContents([row,col])" v-else>

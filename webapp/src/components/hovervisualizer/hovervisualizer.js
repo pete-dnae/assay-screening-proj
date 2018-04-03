@@ -5,7 +5,8 @@ export default {
   name: 'HoverVisualizer',
   props: {
     currentPlate: String,
-    tableBoundaries: Array,
+    tableColCount: Number,
+    tableRowCount: Number,
     allocationMapping: Object,
     highlightedLineNumber: Number,
     hoverHighlight: Boolean,

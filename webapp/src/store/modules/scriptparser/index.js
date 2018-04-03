@@ -5,7 +5,7 @@ import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
 import * as ui from "../ui/mutation-types";
 import { getMaxRowCol } from "@/models/editor2.0";
-import {formatText} from '@/models/visualizer.js'
+import { formatText } from "@/models/visualizer.js";
 
 export const state = {
   reagents: {
@@ -58,7 +58,7 @@ export const state = {
     currentExperiment: {
       data: null,
       name: null
-    },    
+    },
     isRequesting: false,
     received: false,
     didInvalidate: false
@@ -74,7 +74,8 @@ const actions = {
         .postRuleSCript({ ruleScriptNo, text })
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
-          commit(types.LOAD_API_RESPONSE, data);          
+          commit(types.LOAD_API_RESPONSE, data);
+          commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
         })
         .catch(e => {
@@ -110,7 +111,7 @@ const actions = {
           api
             .getRuleScript(res.rules_script)
             .then(res => {
-              commit(types.RULE_SCRIPT_SUCCESS);              
+              commit(types.RULE_SCRIPT_SUCCESS);
               if (referenceExperimentFlag) {
                 commit(types.LOAD_API_RESPONSE_REF_EXP, res);
                 commit(types.SET_MAX_ROW_COL, "referenceExperiment");
@@ -181,11 +182,9 @@ const mutations = {
     state.ruleScript.currentExperiment.data = response;
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
-    state.ruleScript.referenceExperiment.data = response;  
-
+    state.ruleScript.referenceExperiment.data = response;
   },
-  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {   
-
+  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {
     const lnums =
       state.ruleScript[currentOrReferenceFlag].data.interpretationResults.lnums;
     [
@@ -311,11 +310,11 @@ const getters = {
   getRuleIsScriptSaving(state, getters, rootState) {
     return state.ruleScript.isPosting;
   },
-  getTableBoundaries(state, getters, rootState) {
-    return [
-      state.ruleScript.currentExperiment.maxRow,
-      state.ruleScript.currentExperiment.maxCol
-    ];
+  getTableRowCount(state, getters, rootState) {
+    return state.ruleScript.currentExperiment.maxRow;
+  },
+  getTableColCount(state, getters, rootState) {
+    return state.ruleScript.currentExperiment.maxCol;
   },
   getAllocationMap(state, getters, rootState) {
     return state.ruleScript.currentExperiment.data.interpretationResults.lnums;
