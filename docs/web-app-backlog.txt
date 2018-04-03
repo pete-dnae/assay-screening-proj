@@ -1,68 +1,28 @@
-Backlog
+FOR MVP
 -------
 
 
-New Observations for Prasanna to Categorize
-    *  'Hover over well' label doesn't show up until you hover over a well
-       for the first time.
-    x  Example script popup should be monospaced font and auto formatted.
-        Prasanna : Aware of this happening . unable to enforce it, need some time and attention
-    X  Seem to have spell check active on script editor?
-        Prasanna : No its chrome performing the spell check thing.
-
-ToolTip Use Cases:
-    *  Experiment name search have tool tip.
-    *  Copy link has tool tip.
-    *  Tooltips on Experiments|Reagents|Plates
-    *  Info icon needs tooltip.
-    *  The format icon needs a tooltip.
-    *  Hover over a line needs a tooltip.
-        Prasanna: Need some time to read on this , needs to be customized in quill editor
-
-Pop Up Use Cases :
-    *  Contents of B3 list - would prefer reagents to be either left or right
-       justified instead of centred.
+o  Put title in banner strip.
+o  Format transfers so that destinatino row/col lines up with that of
+   allcoation rule.
+o  Let user re-size either side to avoid wrapping
+o  Implement save-as feature.
 
 
-Cosmetic Changes/Additions:
-    o  Put in an image and title in banner strip.
-    *   Experiment name field How about tacking on a box extension to the right
-        with the search icon in it - like gmail's? Maybe using
-        https://bootstrap-vue.js.org/docs/components/input-group
-    *  "Cannot show plate visualisation while there are errors in your
-        rules script".
-    x  Consider using Bootstrap Wells (or similar) to delineate and group the
-       major areas of the screen.
-       Prasanna : Inprogress , might need a outside opini
-    o  On my browser config and default zoom, the text editor is not wide enough
-       and the transfer rule wraps.
-    o  On may browser config and default zoom, the "contents of" area 
-       disappears off the bottom. Need to brainstorm best answer to this.
+o  Make sure that the files deployed to form the front end are immutable.
+   Any variation between deployments must come from environment variables 
+   rather than code. Its ok to have alternate config files. But you ship them
+   both, and have the *runtime* consult an *environment* variable to 
+   choose which to use. See 12-factors #Config and #Dev/Prod parity.
+
+o  Make sure we have a deployable front end by testing it properly deployed.
 
 
-Vue Changes:
-    o  Don't think changing to a new experiment (if you create one in the
-       browsable API), is saving changes to new rules script end-point?
-    o  Implement save-as feature.
-    o  Visualizations per plate ?
+LATER
+-----
 
-Vuex change:
-    o  At boot time the app should load the most recently viewed 
-       experiment when there is one, otherwise the reference experiment from 
-       the db.
-    o Move UI variables to state
-DOM and JS Changes:
-    o  The hovering over a line <HOL> **target zone** doesn't seem quite right.
-       Particularly as you travel up the page?
+o  Example script popup should be monospaced font and auto formatted.
 
-Vanilla JS Changes(external js files):
-
-Existing Features:
-    o  Make sure that the files deployed to form the front end are immutable.
-       Any variation between deployments must come from environment variables 
-       rather than code. Its ok to have alternate config files. But you ship them
-       both, and have the *runtime* consult an *environment* variable to 
-       choose which to use. See 12-factors #Config and #Dev/Prod parity.
-
-Deployment Checks:
-    o  Make sure we have a deployable front end by testing it properly deployed.
+o  At boot time the app should load the most recently viewed 
+   experiment when there is one, otherwise the reference experiment from 
+   the db.
