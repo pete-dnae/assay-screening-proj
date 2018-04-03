@@ -3,13 +3,12 @@ Backlog
 
 
 New Observations for Prasanna to Categorize
-    o  'Hover over well' label doesn't show up until you hover over a well
+    *  'Hover over well' label doesn't show up until you hover over a well
        for the first time.
-    o  Example script popup should be monospaced font and auto formatted.
-    o  Don't think changing to a new experiment (if you create one in the 
-       browsable API), is saving changes to new rules script end-point?
-    o  Implement save-as feature.
-    o  Seem to have spell check active on script editor?
+    x  Example script popup should be monospaced font and auto formatted.
+        Prasanna : Aware of this happening . unable to enforce it, need some time and attention
+    X  Seem to have spell check active on script editor?
+        Prasanna : No its chrome performing the spell check thing.
 
 ToolTip Use Cases:
     *  Experiment name search have tool tip.
@@ -30,7 +29,7 @@ Cosmetic Changes/Additions:
     o   Experiment name field How about tacking on a box extension to the right
         with the search icon in it - like gmail's? Maybe using
         https://bootstrap-vue.js.org/docs/components/input-group
-    o  "Cannot show plate visualisation while there are errors in your 
+    *  "Cannot show plate visualisation while there are errors in your
         rules script".
     o  Consider using Bootstrap Wells (or similar) to delineate and group the 
        major areas of the screen.
@@ -41,6 +40,10 @@ Cosmetic Changes/Additions:
 
 
 Vue Changes:
+    o  Don't think changing to a new experiment (if you create one in the
+       browsable API), is saving changes to new rules script end-point?
+    o  Implement save-as feature.
+    o  Visualizations per plate ?
 
 Vuex change:
     o  At boot time the app should load the most recently viewed 

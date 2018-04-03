@@ -5,9 +5,7 @@
 <div class="w-100" v-if="allocationData">
     <div class="row">
         <label class="col text-left "><strong>Contents of </strong><strong>{{String.fromCharCode(currentRow+64)}}{{currentCol}} </strong></label>
-        <div class="col">
-            <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
-            <label class="text-info">Hover over a well</label>
+        <div class="col">            
         </div>
     </div>
     <div class="mt-4" v-if="allocationData[currentCol]&&allocationData[currentCol][currentRow]">        

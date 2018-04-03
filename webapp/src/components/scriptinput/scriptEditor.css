@@ -57,3 +57,13 @@ li span {
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
 }
+
+.color-box {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    background-color: #A9A9A9;
+    position: relative;
+    left: 5px;
+    top: 10px;
+}

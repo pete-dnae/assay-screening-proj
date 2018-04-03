@@ -51,7 +51,8 @@ export default {
       reagents: 'getReagents',
       units: 'getUnits',
       showBlur: 'getBlurFlag',
-      tableBoundaries: 'getTableBoundaries',
+      tableRowCount: 'getTableRowCount',
+      tableColCount: 'getTableColCount',
       allocationMapping: 'getAllocationMap',
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
@@ -112,6 +113,7 @@ export default {
       const text = this.editor.getText();
       const textLength = text.length;
       this.editor.formatText(0, textLength, 'font', 'monospace');
+      debugger;
       if (this.error) {
         this.editor.formatText(
           this.error.where_in_script,
@@ -119,10 +121,12 @@ export default {
           'color',
           '#A9A9A9',
         );
+      } else {
+        this.editor.formatText(0, text.length, 'color', false);
       }
     },
     handleMouseOut(event) {
-      if (event.fromElement.nodeName === 'DIV') {
+      if (event.fromElement.nodeName === 'DIV' && !this.error) {
         this.hoverHighlight = false;
         const text = this.editor.getText();
         this.editor.formatText(0, text.length, 'bg', false);
@@ -170,7 +174,7 @@ export default {
     },
     handleMouseOver(event) {
       const fromElement = event.fromElement;
-      if (fromElement && fromElement.tagName === 'SPAN') {
+      if (fromElement && fromElement.tagName === 'SPAN' && !this.error) {
         const text = this.editor.getText();
         const elem = fromElement.parentElement;
         const { lineNumber, plateName } = getChildIndex(elem);
@@ -261,6 +265,7 @@ export default {
     this.fetchExperiment({ exptNo: this.$route.params.exptNo }).then(() => {
       this.editor.setText(formatText(this.referenceText));
       this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
+      this.paintText();
     });
 
     this.editor.focus();
