@@ -176,8 +176,21 @@ From root directory <webapp>
 yarn dev
 #point browser at http://localhost:8080/
 
+#heroku installation
+Download heroku client at https://devcenter.heroku.com/articles/heroku-cli#getting-started
+
+Open command prompt 
+    cd <foo>
+Type in
+    heroku login 
+    username:pete.howard@dnae.com
+    pass:qa3ZU5Q7
+After login
+    heroku create
+This will create a remote repo under the name heroku in git config.
 
 #Deployment
+
 The app is served from https://assay-screening.herokuapp.com/
 
 This is a PAAS infrastructure.

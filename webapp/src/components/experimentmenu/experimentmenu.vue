@@ -3,10 +3,11 @@
 <div class="container-fluid w-75 text-white">
     <div class="navbar navbar-dark bg-dark">
       <a class="navbar-brand">Assay Screening</a>
-        <div class="form-inline my-2 my-lg-0">            
+        <div class="form-inline my-2 my-lg-0">                   
             <tooltip effect="scale" placement="left" content="Search your experiment here">            
               <typeahead class="form-control mr-sm-2" 
               :data="data" placeholder="Experiment Name"
+              :on-hit="loadExperimentFromName"
               :value="currentExperiment"></typeahead>
             </tooltip>
             <div class="btn  my-2 my-sm-0">  

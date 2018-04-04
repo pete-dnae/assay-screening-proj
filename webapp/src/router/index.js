@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/experiment/1',
+      redirect: '/experiment',
     },
     {
       path: '/reagents',
@@ -23,9 +23,10 @@ export default new Router({
       component: reagents,
     },
     {
-      path: '/experiment/:exptNo',
+      path: '/experiment',
       name: 'experimenthome',
       component: experimenthome,
+      props: true,
     },
   ],
 });

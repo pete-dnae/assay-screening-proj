@@ -15,6 +15,7 @@ import {
   hesitationTimer,
   getCurrentLineFields,
 } from '@/models/editor2.0';
+import { debug } from 'util';
 
 export default {
   name: 'ScriptInputComponent',
@@ -41,15 +42,6 @@ export default {
       showInfo: false,
     };
   },
-  beforeRouteEnter(to, from, next) {
-    debugger;
-  },
-  beforeRouteUpdate(to, from, next) {
-    debugger;
-  },
-  beforeRouteLeave(to, from, next) {
-    debugger;
-  },
   computed: {
     ...mapGetters({
       options: 'getQuillOptions',
@@ -66,14 +58,19 @@ export default {
       allocationData: 'getAllocationData',
       tooltiptext: 'getToolTipStyle',
       referenceText: 'getReferenceExperiment',
+      experimentId: 'getExperimentId',
     }),
   },
-
   watch: {
     showToolTip() {
       if (this.showToolTip === false) {
         this.suggestionIndex = 0;
       }
+    },
+    ruleScript() {
+      console.log('change');
+      this.editor.setText(formatText(this.ruleScript));
+      this.paintText();
     },
   },
   methods: {
@@ -110,11 +107,7 @@ export default {
         }
       }
       hesitationTimer.cancel();
-      hesitationTimer(
-        this.editor.getText(),
-        this.$route.params.exptNo,
-        this.paintText,
-      );
+      hesitationTimer(this.editor.getText(), this.experimentId, this.paintText);
     },
     paintText() {
       const text = this.editor.getText();
@@ -253,9 +246,6 @@ export default {
     this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
       this.handleTab(range),
     );
-    // this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, range =>
-    //   this.handleExcludeReagent(range),
-    // );
     this.editor.keyboard.addBinding({ key: 'F', ctrlKey: true }, () =>
       this.handleFormat(),
     );
@@ -265,12 +255,7 @@ export default {
     this.fetchReagentList();
     this.fetchUnitList();
     this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
-    this.fetchExperiment({ exptNo: this.$route.params.exptNo }).then(() => {
-      this.editor.setText(formatText(this.referenceText));
-
-      this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
-      this.paintText();
-    });
+    this.fetchExperiment({ exptNo: 1 });
     this.editor.on('selection-change', (range) => {
       if (range) {
         const text = this.editor.getText();
@@ -301,8 +286,8 @@ export default {
     });
 
     this.editor.focus();
-    // document.addEventListener('contextmenu', (e) => {
-    //   e.preventDefault();
-    // }, false);
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    }, false);
   },
 };

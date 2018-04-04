@@ -26,6 +26,6 @@ export default {
   name: 'app',
   components: {
     experimentmenu,
-  },
+  },  
 };
 </script>
