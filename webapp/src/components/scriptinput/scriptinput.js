@@ -15,7 +15,6 @@ import {
   hesitationTimer,
   getCurrentLineFields,
 } from '@/models/editor2.0';
-import { debug } from 'util';
 
 export default {
   name: 'ScriptInputComponent',
@@ -68,7 +67,6 @@ export default {
       }
     },
     ruleScript() {
-      console.log('change');
       this.editor.setText(formatText(this.ruleScript));
       this.paintText();
     },
@@ -81,9 +79,9 @@ export default {
       'fetchUnitList',
     ]),
     isItemInArray,
-    editorChange(event) {
+    editorChange() {
       const cursorIndex = this.editor.getSelection().index;
-      const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
+      const { fields } = getCurrentLineFields(this.editor.getText(), cursorIndex);
       if (fields[1] && fields[0][0] === 'A') {
         if (!_.find(this.reagents, reagent => reagent.name === fields[1][0])) {
           const suggestions = this.reagents.filter(
@@ -169,22 +167,6 @@ export default {
         this.paintText,
       );
       this.hideSuggestion();
-    },
-    handleMouseOver(event) {
-      // const fromElement = event.fromElement;
-      // if (fromElement && fromElement.tagName === 'SPAN' && !this.error) {
-      //   const text = this.editor.getText();
-      //   const elem = fromElement.parentElement;
-      //   const { lineNumber, plateName } = getChildIndex(elem);
-      //   const [start, end] = startEndOfLine(lineNumber, text);
-      //   this.currentPlate = plateName;
-      //   this.highlightedLineNumber = lineNumber + 1;
-      //   this.editor.formatText(0, text.length, 'bg', false);
-      //   this.editor.formatText(0, text.length, 'color', false);
-      //   this.editor.formatText(start, end - start, 'bg', 'primary');
-      //   this.editor.formatText(start, end - start, 'color', 'white');
-      //   this.hoverHighlight = true;
-      // }
     },
     highlightError(index) {
       this.editor.setSelection(index, 0);
