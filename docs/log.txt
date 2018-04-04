@@ -1,25 +1,31 @@
 o  Consult Nicky on group and reagnet bulk entry.
-
-*  Add experiment ID to experiment serializer.
-*  Get rid of all out of data documentation
-*  Upgrade management scripts to suit deploymnet
+o  Work with Prasanna to sort out front end deployment
 
 
 o  Plan and prepare for deployment
-    o  Move git head to bottom up branch or similar
-        o  Make sure have clean bottom up branch
-        o  Checkout master
-        o  Pull from remote master to make sure remote/local is synched.
-        o  Merge into master from bottom up
-        o  Resolve conflicts and commit
-        o  Test
-        o  Pull from remote master again
-        o  Push to github master
-        o  Tell Prasanna have merged and should switch
+    *  Move git head to bottom up branch or similar
+    o  Test deploy what we have to Heroku
+        *  Build webapp as per instructions
+        *  Remind heroku creds and instructions
+        o  Give it a go
+            o  Try run local
+                o  Note how to run local incl collectstatic
+                *  API works
+                o  Web app half works at /static/index.hml
+                    o  Suspect ajax misconfigured.
+            o  Try proper deploy
+                o  Remind how
+                    o  build step as per dev docs
+                    o  commit
+                    o  push github
+                    o  heroku login
+                    o  git push heroku master
+                o  Do
+                o  Test
+        o  Tell prasanna
     o  Non debug django mode
     o  No import of pdb
     o  Security and authentication?
-    o  Test deploy what we have to Heroku
         
 
 o  Deploy
