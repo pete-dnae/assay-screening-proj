@@ -20,11 +20,15 @@ o  Plan and prepare for deployment
                     o  push github
                     o  heroku login
                     o  git push heroku master
+                    o  if forget url do heroku open
+                    o  https://assay-screening.herokuapp.com/
                 o  Do
                 o  Test
+                    o  Still connection error think from ajax calls
         o  Tell prasanna
     o  Non debug django mode
     o  No import of pdb
+    o  Upgrade from free version?
     o  Security and authentication?
         
 
