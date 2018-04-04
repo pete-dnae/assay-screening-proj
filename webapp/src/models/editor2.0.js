@@ -2,7 +2,6 @@ import store from '@/store';
 import _ from 'lodash';
 
 export const postRuleScript = (text, ruleScriptNo, callBack) => {
-  debugger;
   store
     .dispatch('saveToDb', {
       text,

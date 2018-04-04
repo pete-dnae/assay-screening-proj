@@ -109,5 +109,6 @@
         <div id="text">Possible Connection Error</div>
 </div>
 </div>
+
 </template>
 <script src="./scriptinput.js"></script>

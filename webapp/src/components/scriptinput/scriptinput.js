@@ -47,6 +47,9 @@ export default {
   beforeRouteUpdate(to, from, next) {
     debugger;
   },
+  beforeRouteLeave(to, from, next) {
+    debugger;
+  },
   computed: {
     ...mapGetters({
       options: 'getQuillOptions',
