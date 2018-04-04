@@ -13,10 +13,8 @@ import wellcontents from '@/components/wellcontents/wellcontents.vue';
 
 import {
   hesitationTimer,
-  getChildIndex,
   getCurrentLineFields,
 } from '@/models/editor2.0';
-import { debug } from 'util';
 
 export default {
   name: 'ScriptInputComponent',
@@ -43,6 +41,12 @@ export default {
       showInfo: false,
     };
   },
+  beforeRouteEnter(to, from, next) {
+    debugger;
+  },
+  beforeRouteUpdate(to, from, next) {
+    debugger;
+  },
   computed: {
     ...mapGetters({
       options: 'getQuillOptions',
@@ -61,9 +65,7 @@ export default {
       referenceText: 'getReferenceExperiment',
     }),
   },
-  beforeRouteUpdate(to, from, next) {
-    debugger;
-  },
+
   watch: {
     showToolTip() {
       if (this.showToolTip === false) {

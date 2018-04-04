@@ -36,10 +36,10 @@ const putRes = (url, data) =>
   });
 
 const postRes = (url, data) => axios.post(url, data, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
