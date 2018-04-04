@@ -5,6 +5,7 @@
 * Intro and Overview
 * Computing Architecture Overview
 * Developer getting started instructions
+* Deployment
 
 # Intro and Overview
 
@@ -175,11 +176,35 @@ From root directory <webapp>
 yarn dev
 #point browser at http://localhost:8080/
 
-Building the app for deployment:
-From root directory <webapp>
-yarn build
 
 #Deployment
-Assumes the Heroku PAAS service account exists.
-todo
+The app is served from https://assay-screening.herokuapp.com/
 
+This is a PAAS infrastructure.
+Account User name and credentials are:
+    pete.howard@dnae.com
+    Pass: qa3ZU5Q7
+
+    Admin superuser
+    admin, pass kTaDN5RV
+    Backup admin email pete.howard@dnae.com
+
+The API is served from lives at /
+The Web App lives at /static/index.html
+
+Make a deployable build and commit it
+
+    git checkout master # We're deploying from master right now
+    git pull (whatever you've called your upstream github)
+    Build the app for deployment:
+    From root directory <webapp>
+    yarn build
+    git add --all
+    git commit (say this is a deployed build in the commit comment)
+    git push (whatever you've called your upstream github)
+
+Send it to heroku
+    heroku login
+    git push heroku master # the heroku remote is set up automatically
+    # if you want confirmation of the URL being served from...
+    heroku open
