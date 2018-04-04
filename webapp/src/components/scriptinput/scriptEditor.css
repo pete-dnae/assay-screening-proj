@@ -22,8 +22,9 @@ li span {
 
 .editor {
   font-family: "MONOSPACE" !important;
-  font-size: 18px;
-  height: 1000px;  
+  font-size: 18px;  
+  resize: both;
+  overflow: auto;
 }
 
 .ql-editor p{

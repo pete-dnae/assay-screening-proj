@@ -5,7 +5,7 @@ o  Need to implement the convineince endpoint that was provided.
 o  Put title in banner strip.
 o  Format transfers so that destinatino row/col lines up with that of
    allcoation rule.
-o  Let user re-size either side to avoid wrapping
+x  Let user re-size either side to avoid wrapping
 x  Implement save-as feature.
     Prasanna: Need to make the experiment name uniquie.
 
