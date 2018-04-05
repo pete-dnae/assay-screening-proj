@@ -45,6 +45,7 @@ export default {
     handleSave(experimentName) {
       this.saveExperimentAs(experimentName).then((data) => {
         this.loadExperiment(data.id);
+        this.showModal = false;
         this.fetchExperimentList().then(() => {
           this.mapData();
         });
