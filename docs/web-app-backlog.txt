@@ -1,5 +1,0 @@
-FOR MVP
--------
-
-o  Need to implement the convineince endpoint that was provided.
-o  Need to make the experiment name uniquie.
