@@ -193,6 +193,7 @@ The API is served from lives at /
 The Web App lives at /static/index.html
 
 Make a deployable build and commit it
+    (assumes no schema changes, and not the first ever time!)
 
     git checkout master # We're deploying from master right now
     git pull (whatever you've called your upstream github)

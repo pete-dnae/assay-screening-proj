@@ -3,37 +3,15 @@ o  Work with Prasanna to sort out front end deployment
 
 
 o  Plan and prepare for deployment
-    *  Move git head to bottom up branch or similar
-    o  Test deploy what we have to Heroku
-        *  Build webapp as per instructions
-        *  Remind heroku creds and instructions
-        o  Give it a go
-            o  Try run local
-                o  Note how to run local incl collectstatic
-                *  API works
-                o  Web app half works at /static/index.hml
-                    o  Suspect ajax misconfigured.
-            o  Try proper deploy
-                o  Remind how
-                    o  build step as per dev docs
-                    o  commit
-                    o  push github
-                    o  heroku login
-                    o  git push heroku master
-                    o  if forget url do heroku open
-                    o  https://assay-screening.herokuapp.com/
-                o  Do
-                o  Test
-                    o  Still connection error think from ajax calls
-        o  Tell prasanna
+    o  Test
+        o  Still connection error think from ajax calls
+            o  Can we see logs from django?
     o  Non debug django mode
     o  No import of pdb
-    o  Upgrade from free version?
+    o  Upgrade from free version or heroku?
     o  Security and authentication?
         
 
-o  Deploy
-o  Update deployment docco.
 o  Provide endpoint that Chris' script needs
     o  What does he need?
 o  See if can get it to work dockerised with local db
