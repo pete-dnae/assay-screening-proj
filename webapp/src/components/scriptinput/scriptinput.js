@@ -161,11 +161,7 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
-      hesitationTimer(
-        this.editor.getText(),
-        this.$route.params.exptNo,
-        this.paintText,
-      );
+      hesitationTimer(this.editor.getText(), this.experimentId, this.paintText);
       this.hideSuggestion();
     },
     highlightError(index) {
