@@ -5,18 +5,13 @@ import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import _ from 'lodash';
 import { modal, tooltip } from 'vue-strap';
-import { formatText, isItemInArray } from '@/models/visualizer';
+import { formatText } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 import wellcontents from '@/components/wellcontents/wellcontents.vue';
 // import { validateText } from '@/models/editor';
 
-import {
-  hesitationTimer,
-  getChildIndex,
-  getCurrentLineFields,
-} from '@/models/editor2.0';
-import { debug } from 'util';
+import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
 
 export default {
   name: 'ScriptInputComponent',
@@ -34,8 +29,6 @@ export default {
       suggestionIndex: 0,
       currentPlate: null,
       highlightedLineNumber: null,
-      showSuggestionList: false,
-      showSuggestionToolTip: false,
       currentRow: null,
       currentCol: null,
       showWellContents: false,
@@ -59,16 +52,20 @@ export default {
       allocationData: 'getAllocationData',
       tooltiptext: 'getToolTipStyle',
       referenceText: 'getReferenceExperiment',
+      experimentId: 'getExperimentId',
+      showSuggestionList: 'getSuggestionList',
+      showSuggestionToolTip: 'getSuggestionToolTip',
     }),
-  },
-  beforeRouteUpdate(to, from, next) {
-    debugger;
   },
   watch: {
     showToolTip() {
       if (this.showToolTip === false) {
         this.suggestionIndex = 0;
       }
+    },
+    ruleScript() {
+      this.editor.setText(formatText(this.ruleScript));
+      this.paintText();
     },
   },
   methods: {
@@ -78,43 +75,56 @@ export default {
       'fetchReagentList',
       'fetchUnitList',
     ]),
-    isItemInArray,
     editorChange(event) {
-      const cursorIndex = this.editor.getSelection().index;
-      const fields = getCurrentLineFields(this.editor.getText(), cursorIndex);
-      if (fields[1] && fields[0][0] === 'A') {
-        if (!_.find(this.reagents, reagent => reagent.name === fields[1][0])) {
-          const suggestions = this.reagents.filter(
-            x => x.name.indexOf(fields[1][0]) !== -1,
-          );
-          this.$store.commit('SET_SUGGESTIONS', suggestions);
-          this.alterToolTip(cursorIndex);
-          this.showSuggestionList = suggestions.length > 5;
-          this.showSuggestionToolTip = suggestions.length < 5;
+      if (
+        !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
+      ) {
+        this.removeEditorColorFormatting();
+        const cursorIndex = this.editor.getSelection().index;
+        const { fields } = getCurrentLineFields(
+          this.editor.getText(),
+          cursorIndex,
+        );
+        if (fields[1] && fields[0][0] === 'A') {
+          if (
+            !_.find(this.reagents, reagent => reagent.name === fields[1][0])
+          ) {
+            const suggestions = this.reagents.filter(
+              x => x.name.indexOf(fields[1][0]) !== -1,
+            );
+            this.$store.commit('SET_SUGGESTIONS', suggestions);
+            this.alterToolTip(cursorIndex);
+
+            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length > 5);
+
+            this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
+          }
         }
-      }
-      if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
-        if (!_.find(this.units, unit => unit.abbrev === fields[5][0])) {
-          const suggestions = this.units.filter(
-            unit => unit.abbrev.indexOf(fields[5][0]) !== -1,
-          );
-          this.$store.commit('SET_SUGGESTIONS', suggestions);
-          this.alterToolTip(cursorIndex);
-          this.showSuggestionList = suggestions.length > 5;
-          this.showSuggestionToolTip = suggestions.length < 5;
+        if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
+          if (!_.find(this.units, unit => unit.abbrev === fields[5][0])) {
+            const suggestions = this.units.filter(
+              unit => unit.abbrev.indexOf(fields[5][0]) !== -1,
+            );
+            this.$store.commit('SET_SUGGESTIONS', suggestions);
+            this.alterToolTip(cursorIndex);
+
+            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length > 5);
+
+            this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
+          }
         }
+        hesitationTimer.cancel();
+        hesitationTimer(
+          this.editor.getText(),
+          this.experimentId,
+          this.paintText,
+        );
       }
-      hesitationTimer.cancel();
-      hesitationTimer(
-        this.editor.getText(),
-        this.$route.params.exptNo,
-        this.paintText,
-      );
     },
     paintText() {
       const text = this.editor.getText();
       const textLength = text.length;
-      this.editor.formatText(0, text.length, 'color', false);
+      this.removeEditorColorFormatting();
       this.editor.formatText(0, textLength, 'font', 'monospace');
       if (this.error) {
         this.editor.formatText(
@@ -128,9 +138,7 @@ export default {
     handleMouseOut(event) {
       if (event.fromElement.nodeName === 'DIV' && !this.error) {
         this.hoverHighlight = false;
-        const text = this.editor.getText();
-        this.editor.formatText(0, text.length, 'bg', false);
-        this.editor.formatText(0, text.length, 'color', false);
+        this.removeEditorColorFormatting();
       }
     },
     alterToolTip(cursorIndex) {
@@ -142,6 +150,11 @@ export default {
         cursorLocation,
         parentBound,
       });
+    },
+    removeEditorColorFormatting() {
+      const text = this.editor.getText();
+      this.editor.formatText(0, text.length, 'bg', false);
+      this.editor.formatText(0, text.length, 'color', false);
     },
     handleExcludeReagent() {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
@@ -165,28 +178,8 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
-      hesitationTimer(
-        this.editor.getText(),
-        this.$route.params.exptNo,
-        this.paintText,
-      );
+      hesitationTimer(this.editor.getText(), this.experimentId, this.paintText);
       this.hideSuggestion();
-    },
-    handleMouseOver(event) {
-      // const fromElement = event.fromElement;
-      // if (fromElement && fromElement.tagName === 'SPAN' && !this.error) {
-      //   const text = this.editor.getText();
-      //   const elem = fromElement.parentElement;
-      //   const { lineNumber, plateName } = getChildIndex(elem);
-      //   const [start, end] = startEndOfLine(lineNumber, text);
-      //   this.currentPlate = plateName;
-      //   this.highlightedLineNumber = lineNumber + 1;
-      //   this.editor.formatText(0, text.length, 'bg', false);
-      //   this.editor.formatText(0, text.length, 'color', false);
-      //   this.editor.formatText(start, end - start, 'bg', 'primary');
-      //   this.editor.formatText(start, end - start, 'color', 'white');
-      //   this.hoverHighlight = true;
-      // }
     },
     highlightError(index) {
       this.editor.setSelection(index, 0);
@@ -199,8 +192,8 @@ export default {
       this.showWellContents = false;
     },
     hideSuggestion() {
-      this.showSuggestionList = false;
-      this.showSuggestionToolTip = false;
+      this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', false);
+      this.$store.commit('SHOW_SUGGESTIONS_LIST', false);
     },
     getCurrentStringRange() {
       this.editor.focus();
@@ -226,47 +219,7 @@ export default {
       this.$store.commit('ADD_REAGENT', this.newReagent);
       this.show = false;
     },
-  },
-  mounted() {
-    const Delta = Quill.import('delta');
-    const Parchment = Quill.import('parchment');
-    const LineStyle = new Parchment.Attributor.Style(
-      'textShadow',
-      'text-shadow',
-      {
-        scope: Parchment.Scope.INLINE,
-      },
-    );
-    const background = new Parchment.Attributor.Class('bg', 'bg', {
-      scope: Parchment.Scope.INLINE,
-      whitelist: ['primary', 'secondary', 'success'],
-    });
-
-    Quill.register(background, true);
-    Quill.register(LineStyle, true);
-    this.editor = new Quill('#editor', this.options);
-    this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
-      this.handleTab(range),
-    );
-    // this.editor.keyboard.addBinding({ key: '1', shiftKey: true }, range =>
-    //   this.handleExcludeReagent(range),
-    // );
-    this.editor.keyboard.addBinding({ key: 'F', ctrlKey: true }, () =>
-      this.handleFormat(),
-    );
-    this.editor.clipboard.addMatcher(Node.TEXT_NODE, node =>
-      new Delta().insert(node.data, { font: 'monospace' }),
-    );
-    this.fetchReagentList();
-    this.fetchUnitList();
-    this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
-    this.fetchExperiment({ exptNo: this.$route.params.exptNo }).then(() => {
-      this.editor.setText(formatText(this.referenceText));
-
-      this.editor.formatText(0, this.ruleScript.length, 'font', 'monospace');
-      this.paintText();
-    });
-    this.editor.on('selection-change', (range) => {
+    handleLineHover(range) {
       if (range) {
         const text = this.editor.getText();
         const {
@@ -275,8 +228,7 @@ export default {
           lineNumber,
           plateName,
         } = getCurrentLineFields(text, range.index);
-        this.editor.formatText(0, text.length, 'bg', false);
-        this.editor.formatText(0, text.length, 'color', false);
+        this.removeEditorColorFormatting();
         this.editor.formatText(
           currentLineStart,
           currentLineLength,
@@ -293,11 +245,55 @@ export default {
         this.highlightedLineNumber = lineNumber;
         this.hoverHighlight = true;
       }
-    });
+    },
+    setupQuill() {
+      const Delta = Quill.import('delta');
+      const Parchment = Quill.import('parchment');
+      const LineStyle = new Parchment.Attributor.Style(
+        'textShadow',
+        'text-shadow',
+        {
+          scope: Parchment.Scope.INLINE,
+        },
+      );
+      const background = new Parchment.Attributor.Class('bg', 'bg', {
+        scope: Parchment.Scope.INLINE,
+        whitelist: ['primary', 'secondary', 'success'],
+      });
 
-    this.editor.focus();
-    // document.addEventListener('contextmenu', (e) => {
-    //   e.preventDefault();
-    // }, false);
+      Quill.register(background, true);
+      Quill.register(LineStyle, true);
+      this.editor = new Quill('#editor', this.options);
+      this.editor.keyboard.addBinding({ key: 'tab', shiftKey: true }, range =>
+        this.handleTab(range),
+      );
+      this.editor.keyboard.addBinding({ key: 'F', ctrlKey: true }, () =>
+        this.handleFormat(),
+      );
+      this.editor.clipboard.addMatcher(Node.TEXT_NODE, node =>
+        new Delta().insert(node.data, { font: 'monospace' }),
+      );
+      this.editor.on('selection-change', (range) => {
+        this.handleLineHover(range);
+      });
+      this.editor.focus();
+    },
+  },
+  mounted() {
+    // Quill Initialization
+    this.setupQuill();
+    // Data Retreival
+    this.fetchReagentList();
+    this.fetchUnitList();
+    this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
+    this.fetchExperiment({ exptNo: 1 });
+
+    document.addEventListener(
+      'contextmenu',
+      (e) => {
+        e.preventDefault();
+      },
+      false,
+    );
   },
 };

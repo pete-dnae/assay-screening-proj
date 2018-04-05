@@ -20,24 +20,44 @@ export default {
   computed: {
     ...mapGetters({
       experiments: 'getExperimentList',
-      currentExperiment: 'getCurrentExperiment',
     }),
+    currentExperiment: {
+      get() {
+        return this.$store.state.scriptparser.experiment.currentExperiment.name;
+      },
+    },
   },
   methods: {
-    ...mapActions(['fetchExperimentList', 'saveExperimentAs']),
-    handleLoadedExperiment(value) {
-      this.currentExperiment = value;
+    ...mapActions([
+      'fetchExperimentList',
+      'saveExperimentAs',
+      'fetchExperiment',
+    ]),
+    mapData() {
+      this.data = this.experiments.map(expObject => expObject.experiment_name);
+    },
+    loadExperimentFromName(value) {
+      const exptNo = this.experiments.find(
+        expObject => expObject.experiment_name === value,
+      ).id;
+      this.loadExperiment(exptNo);
     },
     handleSave(experimentName) {
       this.saveExperimentAs(experimentName).then((data) => {
-        const exptNo = data.url.match('/[0-9]+/')[0].match(/[0-9]+/g)[0];
-        this.$router.push({ path: '/experiment', params: { exptNo } });
+        this.loadExperiment(data.id);
+        this.showModal = false;
+        this.fetchExperimentList().then(() => {
+          this.mapData();
+        });
       });
+    },
+    loadExperiment(exptNo) {
+      this.fetchExperiment({ exptNo });
     },
   },
   mounted() {
     this.fetchExperimentList().then(() => {
-      this.data = this.experiments.map(expObject => expObject.experiment_name);
+      this.mapData();
     });
   },
 };

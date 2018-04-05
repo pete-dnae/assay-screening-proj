@@ -56,7 +56,7 @@ export const state = {
       data: null
     },
     currentExperiment: {
-      data: null,
+      data: {id:null},      
       name: null
     },
     isRequesting: false,
@@ -74,7 +74,9 @@ const actions = {
         .putRuleSCript({ ruleScriptNo, text })
         .then(({ data }) => {
           commit(types.PUT_RULE_SCRIPT_SUCCESS);
+          delete data.text;
           commit(types.LOAD_API_RESPONSE, data);
+          
           commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
         })
@@ -200,7 +202,7 @@ const actions = {
           commit(types.REQUEST_UNITS_FAILURE);
         });
     });
-  }
+  },
 };
 const mutations = {
   [types.REQUEST_PUT_RULE_SCRIPT](state) {
@@ -214,7 +216,7 @@ const mutations = {
     state.ruleScript.didInvalidate = false;
   },
   [types.LOAD_API_RESPONSE](state, response) {
-    state.ruleScript.currentExperiment.data = response;
+    state.ruleScript.currentExperiment.data = Object.assign(state.ruleScript.currentExperiment.data,response);    
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
@@ -395,7 +397,10 @@ const getters = {
   },
   getReferenceExperiment(state, getters, rootState) {
     return state.ruleScript.referenceExperiment.data.text;
-  }
+  },
+  getExperimentId(state, getters, rootState) {
+    return state.experiment.currentExperiment.data.id;
+  },
 };
 
 export default {

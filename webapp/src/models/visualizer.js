@@ -32,14 +32,34 @@ export const formatText = (text) => {
 
   lines.forEach((x) => {
     let finalLine = '';
-    if (!x.startsWith('#')) {
+    if (!x.startsWith('#') && !x.startsWith('T')) {
       x.split(/\s+/).forEach((txt, i) => {
         const fillSpace = _.repeat(' ', maxLength[i] - txt.length);
         finalLine += `${txt} ${fillSpace}`;
       });
       finalText += `${finalLine.trimRight()}\n`;
-    } else {
+    } else if (x.startsWith('#')) {
       finalText += `${x.trimRight()}\n`;
+    } else if (x.startsWith('T')) {
+      const fields = x.split(/\s+/);
+      if (fields.length === 8) {
+        finalLine += `${fields[0]} ${_.repeat(
+          ' ',
+          maxLength[0] - fields[0].length,
+        )}${fields.slice(1, 4).join(' ')} ${_.repeat(
+          ' ',
+          maxLength[1] - fields.slice(1, 4).join(' ').length,
+        )}${fields[4]} ${_.repeat(' ', maxLength[2] - fields[4].length)}${
+          fields[5]
+        } ${_.repeat(' ', maxLength[3] - fields[5].length)}${
+          fields[6]
+        } ${_.repeat(' ', maxLength[4] - fields[6].length)}${
+          fields[7]
+        } ${_.repeat(' ', maxLength[5] - fields[7].length)}`;
+        finalText += `${finalLine.trimRight()}\n`;
+      } else {
+        finalText += `${x.trimRight()}\n`;
+      }
     }
   });
   return finalText;
