@@ -202,7 +202,7 @@ const actions = {
           commit(types.REQUEST_UNITS_FAILURE);
         });
     });
-  }
+  },
 };
 const mutations = {
   [types.REQUEST_PUT_RULE_SCRIPT](state) {

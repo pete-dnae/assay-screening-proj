@@ -27,10 +27,10 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div id="editorwindow" class="col-5 h-100" @mouseout="handleMouseOut">
+        <div id="editorwindow" class="col-6 h-100" @mouseout="handleMouseOut">
             <div id="editor" class="editor ql-editor" @keyup="editorChange"></div>
         </div>
-        <div class="col-5">
+        <div class="col-6">
             <div class="row mt-3" v-if="!error">
               <hovervisualizer :currentPlate="currentPlate"                               
                                :tableRowCount="tableRowCount"

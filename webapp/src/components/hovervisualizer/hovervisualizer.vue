@@ -10,7 +10,7 @@ td:hover {
             <label class="m-3 col"><strong>{{currentPlate}}</strong></label>
             <div class="col">
                 <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>
-                <tooltip effect="scale" placement="bottom" content="Hover over the rules on your editor to highlight the area of impact for each rule">
+                <tooltip effect="scale" placement="bottom" content="Click on a rules from your editor to highlight the area of impact for each rule">
                     <label class="text-info">Hover over an &lt;A&gt; or &lt;T&gt; line</label>
                 </tooltip>    
             </div>

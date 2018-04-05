@@ -29,8 +29,6 @@ export default {
       suggestionIndex: 0,
       currentPlate: null,
       highlightedLineNumber: null,
-      showSuggestionList: false,
-      showSuggestionToolTip: false,
       currentRow: null,
       currentCol: null,
       showWellContents: false,
@@ -55,6 +53,8 @@ export default {
       tooltiptext: 'getToolTipStyle',
       referenceText: 'getReferenceExperiment',
       experimentId: 'getExperimentId',
+      showSuggestionList: 'getSuggestionList',
+      showSuggestionToolTip: 'getSuggestionToolTip',
     }),
   },
   watch: {
@@ -94,8 +94,10 @@ export default {
             );
             this.$store.commit('SET_SUGGESTIONS', suggestions);
             this.alterToolTip(cursorIndex);
-            this.showSuggestionList = suggestions.length > 5;
-            this.showSuggestionToolTip = suggestions.length < 5;
+
+            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length > 5);
+
+            this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
           }
         }
         if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
@@ -105,8 +107,10 @@ export default {
             );
             this.$store.commit('SET_SUGGESTIONS', suggestions);
             this.alterToolTip(cursorIndex);
-            this.showSuggestionList = suggestions.length > 5;
-            this.showSuggestionToolTip = suggestions.length < 5;
+
+            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length > 5);
+
+            this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
           }
         }
         hesitationTimer.cancel();
@@ -188,8 +192,8 @@ export default {
       this.showWellContents = false;
     },
     hideSuggestion() {
-      this.showSuggestionList = false;
-      this.showSuggestionToolTip = false;
+      this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', false);
+      this.$store.commit('SHOW_SUGGESTIONS_LIST', false);
     },
     getCurrentStringRange() {
       this.editor.focus();

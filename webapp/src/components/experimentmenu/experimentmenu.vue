@@ -11,7 +11,7 @@
               :value="currentExperiment"></typeahead>
             </tooltip>
             <div class="btn  my-2 my-sm-0">  
-              <tooltip effect="scale" placement="right" content="To save your current script under different experimt name">            
+              <tooltip effect="scale" placement="right" content="To save your current script under different experiment name">            
               <p><a href="#" class="text-primary" @click="showModal=!showModal">Save As</a></p>
               </tooltip>
             </div>
