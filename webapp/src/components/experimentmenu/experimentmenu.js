@@ -10,12 +10,22 @@ export default {
       data: null,
       showModal: false,
       experiment: null,
+      invalidExpName: false,
     };
   },
   components: {
     typeahead,
     tooltip,
     modal,
+  },
+  watch: {
+    experiment() {
+      if (this.data.includes(this.experiment)) {
+        this.invalidExpName = true;
+      } else {
+        this.invalidExpName = false;
+      }
+    },
   },
   computed: {
     ...mapGetters({

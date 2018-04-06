@@ -7,7 +7,7 @@ class ExperimentModel(models.Model):
     The top level object that encapsulate an assay screening experiment.
     Contains an experiment name and an allocation rules script.
     """
-    experiment_name = models.CharField(max_length=80) 
+    experiment_name = models.CharField(max_length=80,unique=True)
     # We use a foreign key for the rules script text to make sure that we can
     # offer CRUD operations on a RulesScriptModel independently.
     rules_script = models.ForeignKey(

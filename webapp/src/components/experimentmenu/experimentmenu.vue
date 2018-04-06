@@ -37,10 +37,18 @@
           </ul>
         </div>
     </div>
-    <modal title="Fade/Zoom Modal" effect="fade/zoom"
-      :value="showModal" @ok="handleSave(experiment)">
-      <label class="text-primary">Experiment Name :</label>
-      <input type="text" v-model="experiment"/>
+    <modal effect="fade/zoom" :value="showModal">
+      <div class="form-group mx-sm-3 mb-2 ">
+        <label class="text-primary float-left">Experiment Name :</label>
+        <input type="text" :class="{'form-control':true,'is-invalid':invalidExpName}" v-model="experiment"/>
+         <div :class="{'invalid-feedback':invalidExpName,'float-left':true}">
+            Experiment name already taken
+          </div>
+      </div>
+    <div slot="modal-footer" class="modal-footer">
+      <button type="button" class="btn btn-default" @click="showModal = !showModal">Exit</button>
+      <button type="button" class="btn btn-success" @click="handleSave(experiment)" :disabled="invalidExpName"> Save</button>    
+    </div>
     </modal>
 </div>
 

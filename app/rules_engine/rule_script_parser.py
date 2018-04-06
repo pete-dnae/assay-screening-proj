@@ -304,7 +304,7 @@ class RuleScriptParser:
         """
         for item in seq:
             if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                self._err('Only letters allowed in rows specification.', 
+                self._err('Only uppercase letters allowed in rows specification.',
                         source_string)
 
     def _err(self, basic_message, culprit_string=None):
