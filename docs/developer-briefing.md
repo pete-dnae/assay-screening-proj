@@ -191,7 +191,7 @@ This will create a remote repo under the name heroku in git config.
 
 #Deployment
 
-The app is served from https://assay-screening.herokuapp.com/
+The app is served from http://assay-screening.herokuapp.com/
 
 This is a PAAS infrastructure.
 Account User name and credentials are:
