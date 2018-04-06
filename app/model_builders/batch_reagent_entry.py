@@ -25,12 +25,15 @@ class BatchReagentEntry():
 
         The categories will be created on-the-fly automatically if necessary.
 
-        If pre-existing reagent names are encountered, these will be skipped,
-        leaving the incumbent unaltered.
+        If pre-existing reagent names are encountered, these will have their
+        categories updates.
         """
         for reagent_name, category_str in reagents:
-            if ReagentModel.objects.filter(name=reagent_name).exists():
-                pass
             category_obj, newly_created = \
                 ReagentCategoryModel.objects.get_or_create(name=category_str)
-            ReagentModel.make(reagent_name, category_obj)
+            try:
+                reagent_obj = ReagentModel.objects.get(name=reagent_name)
+                reagent_obj.category = category_obj
+                reagent_obj.save()
+            except ReagentModel.DoesNotExist:
+                reagent_obj = ReagentModel.make(reagent_name, category_obj)
