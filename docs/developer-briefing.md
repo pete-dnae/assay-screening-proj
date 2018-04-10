@@ -218,7 +218,10 @@ Make a deployable build and commit it
     git push (whatever you've called your upstream github)
 
 Send it to heroku
-    heroku login
+    heroku login with
+        pete.howard@dnae.com
+        Pass: qa3ZU5Q7
+
     git push heroku master # the heroku remote is set up automatically
     # if you want confirmation of the URL being served from...
     heroku open
