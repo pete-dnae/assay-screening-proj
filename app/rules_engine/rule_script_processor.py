@@ -29,7 +29,7 @@ class RulesScriptProcessor:
                     self._reagents, self._units, self._script)
             parser.parse()
         except ParseError as e:
-            return (e, None, None)
+            return (e, None,None, None)
 
         interpreter = RulesObjInterpreter(parser.rule_objects)
         alloc_table,thermal_cycling_results = interpreter.interpret()
