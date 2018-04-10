@@ -95,12 +95,11 @@ export default {
             this.$store.commit('SET_SUGGESTIONS', suggestions);
             this.alterToolTip(cursorIndex);
 
-            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length > 5);
+            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length >= 5);
 
             this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
           }
-        }
-        if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
+        } else if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
           if (!_.find(this.units, unit => unit.abbrev === fields[5][0])) {
             const suggestions = this.units.filter(
               unit => unit.abbrev.indexOf(fields[5][0]) !== -1,

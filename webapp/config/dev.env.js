@@ -5,5 +5,5 @@ const prodEnv = require('./prod.env');
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  API_LOCATION: '"http://localhost:8000"',
+  API_LOCATION: '"http://assay-screening.herokuapp.com/"'
 });

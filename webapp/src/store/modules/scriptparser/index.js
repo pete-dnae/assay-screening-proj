@@ -348,7 +348,7 @@ const mutations = {
   [types.SAVE_SCRIPT](state, scriptText) {
     state.savedScript = scriptText;
   },
-  [types.SET_SUGGESTIONS](state, value) {
+  [types.SET_SUGGESTIONS](state, value) {    
     state.suggestions = value;
   },
   [types.ADD_REAGENT](state, value) {
