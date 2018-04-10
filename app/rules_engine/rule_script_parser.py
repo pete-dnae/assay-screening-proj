@@ -80,7 +80,7 @@ class RuleScriptParser:
                 self.rule_objects[self._cur_plate].append(thermal_cycling_rule)
                 self.line_number_mapping[thermal_cycling_rule] = line_index + 1
             else:
-                self._err('Line must start with one of the letters V|P|A|T.')
+                self._err('Line must start with one of the letters V|P|A|T|C.')
         if self._version is None:
             self._err('You must specify a version (in the first line).')
 
