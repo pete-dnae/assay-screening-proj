@@ -53,7 +53,6 @@ export default {
       tooltiptext: 'getToolTipStyle',
       referenceText: 'getReferenceExperiment',
       experimentId: 'getExperimentId',
-      ruleScriptUrl: 'getRuleScriptUrl',
       showSuggestionList: 'getSuggestionList',
       showSuggestionToolTip: 'getSuggestionToolTip',
     }),
@@ -106,6 +105,7 @@ export default {
             const suggestions = this.units.filter(
               unit => unit.abbrev.indexOf(fields[5][0]) !== -1,
             );
+
             this.$store.commit('SET_SUGGESTIONS', suggestions);
             this.alterToolTip(cursorIndex);
 
@@ -115,7 +115,9 @@ export default {
           }
         }
         hesitationTimer.cancel();
-        hesitationTimer(this.editor.getText(), this.ruleScriptUrl, this.paintText);
+
+
+        hesitationTimer(this.editor.getText(), this.paintText);
       }
     },
     paintText() {
@@ -175,7 +177,7 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
-      hesitationTimer(this.editor.getText(), this.ruleScriptUrl, this.paintText);
+      hesitationTimer(this.editor.getText(), this.paintText);
       this.hideSuggestion();
     },
     highlightError(index) {

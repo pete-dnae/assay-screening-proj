@@ -66,12 +66,15 @@ export const state = {
   quillOptions: { debug: "warn", modules: { toolbar: false }, theme: "snow" }
 };
 const actions = {
-  saveToDb({ commit }, { ruleScriptUrl, text }) {
+  saveToDb({ commit }, { text }) {
     commit(types.REQUEST_PUT_RULE_SCRIPT);
     commit(types.SAVE_SCRIPT, text);
     return new Promise(function(resolve, reject) {
       api
-        .putRuleSCript({ ruleScriptUrl, text })
+        .putRuleSCript({
+          ruleScriptUrl: state.experiment.currentExperiment.data.rules_script,
+          text
+        })
         .then(({ data }) => {
           commit(types.PUT_RULE_SCRIPT_SUCCESS);
           delete data.text;
@@ -214,7 +217,7 @@ const mutations = {
     state.ruleScript.didInvalidate = false;
   },
   [types.LOAD_API_RESPONSE](state, response) {
-    state.ruleScript.currentExperiment.data = Object.assign(state.ruleScript.currentExperiment.data,response);    
+    state.ruleScript.currentExperiment.data = Object.assign(state.ruleScript.currentExperiment.data,response);        
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
@@ -399,9 +402,6 @@ const getters = {
   getExperimentId(state, getters, rootState) {
     return state.experiment.currentExperiment.data.id;
   },
-  getRuleScriptUrl(state, getters, rootState) {
-    return state.ruleScript.currentExperiment.data.url;
-  }
 };
 
 export default {

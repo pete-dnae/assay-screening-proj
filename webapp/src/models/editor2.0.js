@@ -1,9 +1,9 @@
 import store from '@/store';
 import _ from 'lodash';
 
-export const postRuleScript = (text, ruleScriptUrl, callBack) => {
+export const postRuleScript = (text, callBack) => {
   store
-    .dispatch('saveToDb', { text, ruleScriptUrl })
+    .dispatch('saveToDb', { text })
     .then(() => callBack());
 };
 
