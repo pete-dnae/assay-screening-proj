@@ -77,9 +77,8 @@ export const getCurrentLineFields = (currentText, cursorPosition) => {
       [, plateName] = line.split(/\s+/g);
     }
   });
-  const fields = splitLine(
-    currentText.substr(currentLineStart, currentLineStart + currentLineLength),
-  );
+
+  const fields = splitLine(currentText.substr(currentLineStart, currentLineLength));
   return { currentLineStart, currentLineLength, lineNumber, plateName, fields };
 };
 

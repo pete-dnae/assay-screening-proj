@@ -43,7 +43,6 @@ const postRes = (url, data) => axios.post(url, data, {
 
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
-// TODO : check with pete if he can deliver the rulescript uniqueid alone
 export const getRuleScript = url => fetchResPure(url);
 export const postRuleScript = data =>
   postRes('/api/rule-scripts/', data);
