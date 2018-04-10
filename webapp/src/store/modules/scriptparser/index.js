@@ -66,17 +66,17 @@ export const state = {
   quillOptions: { debug: "warn", modules: { toolbar: false }, theme: "snow" }
 };
 const actions = {
-  saveToDb({ commit }, { ruleScriptNo, text }) {
+  saveToDb({ commit }, { ruleScriptUrl, text }) {
     commit(types.REQUEST_PUT_RULE_SCRIPT);
     commit(types.SAVE_SCRIPT, text);
     return new Promise(function(resolve, reject) {
       api
-        .putRuleSCript({ ruleScriptNo, text })
+        .putRuleSCript({ ruleScriptUrl, text })
         .then(({ data }) => {
           commit(types.PUT_RULE_SCRIPT_SUCCESS);
           delete data.text;
           commit(types.LOAD_API_RESPONSE, data);
-          
+
           commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
         })
@@ -89,22 +89,20 @@ const actions = {
   },
   saveExperimentAs({ commit }, experimentName) {
     commit(types.REQUEST_POST_RULE_SCRIPT);
-    
+
     return new Promise(function(resolve, reject) {
       api
-        .postRuleScript({text:state.savedScript})
-        .then(({data}) => {          
+        .postRuleScript({ text: state.savedScript })
+        .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
           commit(types.REQUEST_POST_NEW_EXPERIMENT);
-              
+
           api
-            .postNewExperiment(              
-              {
-                experiment_name: experimentName,
-                rules_script: data.url
-              }
-            )
-            .then(({data}) => {
+            .postNewExperiment({
+              experiment_name: experimentName,
+              rules_script: data.url
+            })
+            .then(({ data }) => {
               resolve(data);
               commit(types.POST_NEW_EXPERIMENT_SUCCESS);
             })
@@ -202,7 +200,7 @@ const actions = {
           commit(types.REQUEST_UNITS_FAILURE);
         });
     });
-  },
+  }
 };
 const mutations = {
   [types.REQUEST_PUT_RULE_SCRIPT](state) {
@@ -401,6 +399,9 @@ const getters = {
   getExperimentId(state, getters, rootState) {
     return state.experiment.currentExperiment.data.id;
   },
+  getRuleScriptUrl(state, getters, rootState) {
+    return state.ruleScript.currentExperiment.data.url;
+  }
 };
 
 export default {

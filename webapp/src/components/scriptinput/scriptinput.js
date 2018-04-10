@@ -53,6 +53,7 @@ export default {
       tooltiptext: 'getToolTipStyle',
       referenceText: 'getReferenceExperiment',
       experimentId: 'getExperimentId',
+      ruleScriptUrl: 'getRuleScriptUrl',
       showSuggestionList: 'getSuggestionList',
       showSuggestionToolTip: 'getSuggestionToolTip',
     }),
@@ -114,11 +115,7 @@ export default {
           }
         }
         hesitationTimer.cancel();
-        hesitationTimer(
-          this.editor.getText(),
-          this.experimentId,
-          this.paintText,
-        );
+        hesitationTimer(this.editor.getText(), this.ruleScriptUrl, this.paintText);
       }
     },
     paintText() {
@@ -178,7 +175,7 @@ export default {
         currentStringStart,
         cursorIndex - currentStringStart,
       );
-      hesitationTimer(this.editor.getText(), this.experimentId, this.paintText);
+      hesitationTimer(this.editor.getText(), this.ruleScriptUrl, this.paintText);
       this.hideSuggestion();
     },
     highlightError(index) {
