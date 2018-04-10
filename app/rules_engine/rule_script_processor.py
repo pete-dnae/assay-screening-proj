@@ -32,10 +32,10 @@ class RulesScriptProcessor:
             return (e, None, None)
 
         interpreter = RulesObjInterpreter(parser.rule_objects)
-        alloc_table = interpreter.interpret()
+        alloc_table,thermal_cycling_results = interpreter.interpret()
         line_number_to_cells_mapping = \
             self._make_line_number_to_cells_mapping(parser)
-        return (None, alloc_table, dict(line_number_to_cells_mapping))
+        return (None, alloc_table,thermal_cycling_results, dict(line_number_to_cells_mapping))
         
     def _make_line_number_to_cells_mapping(self, parser):
         """

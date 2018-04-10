@@ -101,17 +101,19 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
         interpreter = RulesScriptProcessor(
                 rule_script.text, allowed_names, units)
-        parse_error, alloc_table, line_num_mapping = \
+        parse_error, alloc_table,thermal_cycling_results ,line_num_mapping = \
                 interpreter.parse_and_interpret()
+
 
         err = None if not parse_error else parse_error.__dict__
         table = None if not alloc_table else alloc_table.plate_info
         lnums = None if not line_num_mapping else line_num_mapping
-        
+        thermal_cycling = None if not thermal_cycling_results else thermal_cycling_results.plate_info
         return {
             'parseError': err,
             'table': table,
-            'lnums': lnums
+            'lnums': lnums,
+            'thermalCycling':thermal_cycling
         }
 
 #-------------------------------------------------------------------------

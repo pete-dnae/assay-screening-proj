@@ -12,6 +12,7 @@ from app.rules_engine.alloc_rule import AllocRule
 from app.rules_engine.transfer_rule import TransferRule
 from app.rules_engine.transfer_rule import IncompatibleTransferError
 from app.rules_engine.row_col_intersections import RowColIntersections
+from app.rules_engine.thermal_cycle_rule import ThermalCycleRule
 
 
 class RuleScriptParser:
@@ -21,7 +22,7 @@ class RuleScriptParser:
     successfully validated script, or details about how it fails validation.
     """
 
-    VERSION = "ver-1" # Language version this parser is for.
+    VERSION = "ver-1"  # Language version this parser is for.
 
     def __init__(self, reagents, units, script):
         """
@@ -36,8 +37,8 @@ class RuleScriptParser:
         # State variables to support the parsing operation.
         self._cur_plate = None
         self._version = None
-        self._parse_posn = _ParsePosn() # Position reached in script.
-        self._fields = None # The fields in the current line.
+        self._parse_posn = _ParsePosn()  # Position reached in script.
+        self._fields = None  # The fields in the current line.
 
         # self.rule_objects is an OrderedDict keyed on plate name. The
         # values are sequences of mixed AllocRule and TransferRule objects.
@@ -45,8 +46,7 @@ class RuleScriptParser:
 
         # self.line_number_mapping provides the the script line number
         # provenance for each rule object in self.rule_objects.
-        self.line_number_mapping = {} 
-
+        self.line_number_mapping = {}
 
     def parse(self):
         """
@@ -70,11 +70,15 @@ class RuleScriptParser:
             elif self._fields.field(0, seeking) == 'A':
                 alloc_rule = self._parse_allocation_line()
                 self.rule_objects[self._cur_plate].append(alloc_rule)
-                self.line_number_mapping[alloc_rule] =  line_index + 1
+                self.line_number_mapping[alloc_rule] = line_index + 1
             elif self._fields.field(0, seeking) == 'T':
                 trans_rule = self._parse_transfer_line()
                 self.rule_objects[self._cur_plate].append(trans_rule)
-                self.line_number_mapping[trans_rule] =  line_index + 1
+                self.line_number_mapping[trans_rule] = line_index + 1
+            elif self._fields.field(0, seeking) == 'C':
+                thermal_cycling_rule = self._parse_cycling_line()
+                self.rule_objects[self._cur_plate].append(thermal_cycling_rule)
+                self.line_number_mapping[thermal_cycling_rule] = line_index + 1
             else:
                 self._err('Line must start with one of the letters V|P|A|T.')
         if self._version is None:
@@ -105,8 +109,8 @@ class RuleScriptParser:
             self._err('Version must be specified in the first line.')
         version_string = self._fields.field(1, 'Version')
         if version_string != self.VERSION:
-            self._err('Your script version is not recognized by this parser.', 
-                    version_string)
+            self._err('Your script version is not recognized by this parser.',
+                      version_string)
         self._version = version_string
 
     def _register_plate(self):
@@ -144,8 +148,62 @@ class RuleScriptParser:
         conc_value = self._parse_conc_value(conc)
         conc_units = units
 
-        return AllocRule(reagent, RowColIntersections(rows, cols), 
-                conc_value, units)
+        return AllocRule(reagent, RowColIntersections(rows, cols),
+                         conc_value, units)
+
+    def _parse_cycling_line(self):
+        """
+        Parses and validates a 'C' line, storing the results in ???
+        """
+        self._assert_a_plate_is_defined()
+
+        temperature_steps = self._fields.field(1, 'temperature steps')
+        temperature_steps = self._parse_thermal_cycle_steps(temperature_steps)
+        cycle = self._fields.field(2, 'repeat cycle')
+        self._assert_repeat_cycle_is_valid(cycle)
+        unit = self._fields.field(3, 'x')
+        self._assert_thermal_cycling_unit(unit)
+        return ThermalCycleRule(temperature_steps, cycle, unit)
+
+    def _parse_thermal_cycle_steps(self, steps):
+        """
+        Verifies if instructions for thermal cycling
+        is a comma separated strings of temperature and time combination
+
+        A temperature and time combination should be represented in below format
+
+         time@temperature
+            ex : 10@95 meaning ten seconds at 95 degree centigrade
+        """
+        m = _THERMAL_CYCLING_STEPS_RE.match(steps)
+
+        if m is not None:
+            steps_as_list = steps.split(',')
+            steps_as_instructions = ''
+            for entity in steps_as_list:
+                time,temp = entity.split('@')
+                steps_as_instructions += ('%s Sec at %s °C' % (time,temp))
+        else:
+            self._err('Incorrect format for steps expected time@temp,time@temp...', steps)
+
+        return steps_as_instructions
+
+    def _assert_repeat_cycle_is_valid(self, cycle):
+        """
+        Demands that the cycle number provided in thermal cycling is an integer
+        """
+        try:
+            return int(cycle)
+        except ValueError:
+            self._err('cycle is not a valid integer', cycle)
+
+
+    def _assert_thermal_cycling_unit(self, unit):
+        """
+        Demands that the unit mentioned in thermal cycling rule is x
+        """
+        if unit.lower() != 'x':
+            self._err('Number of cycles should be followed by x', unit)
 
     def _parse_transfer_line(self):
         """
@@ -179,12 +237,12 @@ class RuleScriptParser:
         # The TransferRule constructor raises exceptions if the source and 
         # destination row/columns are incompatible shapes.
         try:
-            t_rule = TransferRule(s_plate, 
-                RowColIntersections(s_rows, s_cols), 
-                RowColIntersections(d_rows, d_cols), conc_value)
+            t_rule = TransferRule(s_plate,
+                                  RowColIntersections(s_rows, s_cols),
+                                  RowColIntersections(d_rows, d_cols), conc_value)
         except IncompatibleTransferError:
             self._err('Shape of source rows/columns is incompatible with ' + \
-                    'that of destination.')
+                      'that of destination.')
         return t_rule
 
     def _assert_a_plate_is_defined(self):
@@ -228,7 +286,6 @@ class RuleScriptParser:
             return
         self._err('Unknown units.', units)
 
-
     def _assert_units_is_dilution(self, conc_units):
         """
         Demands that the units is 'dilution'
@@ -245,8 +302,8 @@ class RuleScriptParser:
         # Range?
         m = _INT_RANGE_RE.match(cols_spec)
         if m is not None:
-            start, end = m.group(1,2)
-            as_list = [str(x) for x in range(int(start), int(end)+1)]
+            start, end = m.group(1, 2)
+            as_list = [str(x) for x in range(int(start), int(end) + 1)]
 
         # Discrete list?
         elif ',' in cols_spec:
@@ -260,8 +317,8 @@ class RuleScriptParser:
         try:
             as_list = [int(s) for s in as_list]
         except ValueError:
-            self._err('Struggling with a non-number in columns specification.', 
-                    cols_spec)
+            self._err('Struggling with a non-number in columns specification.',
+                      cols_spec)
         return as_list
 
     def _parse_row_spec(self, rows_spec):
@@ -275,8 +332,8 @@ class RuleScriptParser:
         # Range?
         m = _LETTER_RANGE_RE.match(rows_spec)
         if m is not None:
-            start, end = m.group(1,2)
-            as_list = [chr(x) for x in range(ord(start), ord(end)+1)]
+            start, end = m.group(1, 2)
+            as_list = [chr(x) for x in range(ord(start), ord(end) + 1)]
 
         # Discrete list?
         elif ',' in rows_spec:
@@ -305,7 +362,7 @@ class RuleScriptParser:
         for item in seq:
             if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
                 self._err('Only uppercase letters allowed in rows specification.',
-                        source_string)
+                          source_string)
 
     def _err(self, basic_message, culprit_string=None):
         """
@@ -321,10 +378,9 @@ class RuleScriptParser:
             basic_message += ' Culprit: (%s).' % culprit_string
 
         position_in_script = self._chars_in_script_preceding(
-                self._parse_posn.line_index)
+            self._parse_posn.line_index)
 
         raise ParseError(basic_message, position_in_script)
-
 
     def _chars_in_script_preceding(self, line_index):
         """
@@ -344,8 +400,8 @@ class _ParsePosn():
     """
 
     def __init__(self):
-        self.line_index = None # Line number, but zero-based.
-        self.line = None # Line contents.
+        self.line_index = None  # Line number, but zero-based.
+        self.line = None  # Line contents.
 
     def starting_new_line(self, line_index, line):
         """
@@ -378,9 +434,9 @@ class _LineFields():
         """
         # Too few fields present?
         if field_index >= len(self.strings):
-            field_num = field_index + 1 # Human 1-based.
+            field_num = field_index + 1  # Human 1-based.
             self._error_callback_fn(
-                    'Field number %d (%s) is missing.' % (field_num, name))
+                'Field number %d (%s) is missing.' % (field_num, name))
         return self.strings[field_index]
 
 
@@ -400,5 +456,6 @@ class ParseError(Exception):
         self.where_in_script = where_in_script
 
 
-_INT_RANGE_RE =re.compile(r'(\d+)-(\d+)$')
-_LETTER_RANGE_RE =re.compile(r'([A-Z])-([A-Z])$')
+_INT_RANGE_RE = re.compile(r'(\d+)-(\d+)$')
+_LETTER_RANGE_RE = re.compile(r'([A-Z])-([A-Z])$')
+_THERMAL_CYCLING_STEPS_RE = re.compile(r'(\d+@\d+)(,\s*\d+@\d+)*')

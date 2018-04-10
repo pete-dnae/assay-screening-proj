@@ -3,6 +3,7 @@ from pdb import set_trace as st
 
 from app.rules_engine.alloc_rule import AllocRule
 from app.rules_engine.transfer_rule import TransferRule
+from app.rules_engine.thermal_cycle_rule import ThermalCycleRule
 
 
 class RulesObjInterpreter:
@@ -20,21 +21,25 @@ class RulesObjInterpreter:
         """
         self._plates_with_rules = plates_with_rules
         self._allocation_results = None # AllocationResults
+        self._thermal_cycling_results = None
 
     def interpret(self):
         """
         Returns an AllocationResults object.
         """
         self._allocation_results = AllocationResults()
+        self._thermal_cycling_results = ThermalCyclingResults()
         for plate, rules in self._plates_with_rules.items():
             for rule in rules:
                 if isinstance(rule, AllocRule):
                     self._apply_alloc_rule(plate, rule)
                 elif isinstance(rule, TransferRule):
                     self._apply_transfer_rule(plate, rule)
+                elif isinstance(rule, ThermalCycleRule):
+                    self._apply_thermal_cycle_rule(plate, rule)
                 else:
                     raise TypeError('Rule type not recognized')
-        return(self._allocation_results)
+        return self._allocation_results,self._thermal_cycling_results
 
     def _apply_alloc_rule(self, plate, rule):
         for row, col in rule.cells.all_cells():
@@ -49,8 +54,12 @@ class RulesObjInterpreter:
             self._allocation_results.add(plate, d_row, d_col, 
                     virtual_reagent_name, rule.dilution_factor, 'dilution')
 
+    def _apply_thermal_cycle_rule(self, plate, rule):
+        self._thermal_cycling_results.add(plate,rule.todict())
 
-class AllocationResults():
+
+class AllocationResults:
+
     """
     This is used by RulesObjInterpreter to deliver its results.
     It's a data structure along these lines:
@@ -75,3 +84,28 @@ class AllocationResults():
         rows = cols.setdefault(col, OrderedDict())
         reagents = rows.setdefault(row, [])
         reagents.append((reagent_name, conc, units))
+
+
+class ThermalCyclingResults:
+
+    """
+    Used by RulesObjInterpreter to deliver interpretation of thermal cycling rules
+
+    Data structure skeleton below :
+        .plate_info[plate_name]=[item1,item2]
+
+    Where an Item looks like
+        item1={
+            temperature_steps:'12 seconds at 95 C ,15 seconds at 60C',
+            repeat_cycles: 5,
+            units:x
+        }
+        The dictionaries are OrderedDict(s)
+    """
+
+    def __init__(self):
+        self.plate_info = OrderedDict()
+
+    def add(self, plate,thermal_cycling_item):
+        self.plate_info.setdefault(plate, []).append(thermal_cycling_item)
+
