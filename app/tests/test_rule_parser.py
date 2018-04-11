@@ -96,7 +96,7 @@ class RuleScriptParserTest(unittest.TestCase):
         plate, rules = rule_objects.popitem()
 
         self.assertEqual(plate, 'Plate1')
-        self.assertEqual(len(rules), 3)
+        self.assertEqual(len(rules), 5)
 
         # This checks all the fields of an alloc rule, including
         # the remainder of the row/col specs.
@@ -125,7 +125,7 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Line must start with one of the letters V|P|A|T. Line 3.')
+            'Line must start with one of the letters V|P|A|T|C. Line 3.')
         self.assertEqual(e.where_in_script, 17)
 
     def test_error_wrong_version(self):
@@ -149,8 +149,8 @@ class RuleScriptParserTest(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.message,
             'Shape of source rows/columns is incompatible with that of ' + \
-            'destination. Line 8.')
-        self.assertEqual(e.where_in_script, 185)
+            'destination. Line 10.')
+        self.assertEqual(e.where_in_script, 275)
 
     def test_error_no_plate_defined_yet(self):
         modified_script = REFERENCE_SCRIPT.replace('P Plate1', '')
@@ -171,8 +171,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'This plate name been used before. Line 7. Culprit: (Plate1).')
-        self.assertEqual(e.where_in_script, 175)
+            'This plate name been used before. Line 9. Culprit: (Plate1).')
+        self.assertEqual(e.where_in_script, 265)
 
     def test_error_unknown_reagent(self):
         modified_script = REFERENCE_SCRIPT.replace(
@@ -206,8 +206,8 @@ class RuleScriptParserTest(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.message,
             'Units for a transfer must be <dilution>. ' + \
-            'Line 8. Culprit: (ailution).')
-        self.assertEqual(e.where_in_script, 185)
+            'Line 10. Culprit: (ailution).')
+        self.assertEqual(e.where_in_script, 275)
 
     def test_error_non_number_in_col(self):
         modified_script = REFERENCE_SCRIPT.replace('1,5,9', '1,A,9')
@@ -241,8 +241,7 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'Only letters allowed in rows specification. ' + \
-            'Line 5. Culprit: (C,3).')
+            'Only uppercase letters allowed in rows specification. Line 5. Culprit: (C,3).')
         self.assertEqual(e.where_in_script, 110)
 
     def test_error_too_fiew_fields(self):
@@ -277,5 +276,40 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-            'You must specify a version (in the first line). Line 10.')
-        self.assertEqual(e.where_in_script, 275)
+            'You must specify a version (in the first line). Line 12.')
+        self.assertEqual(e.where_in_script, 365)
+
+    def test_error_at_never_specified(self):
+        modified_script = REFERENCE_SCRIPT.replace('@', '')
+        parser = RuleScriptParser(
+                REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
+        with self.assertRaises(ParseError) as cm:
+            parser.parse()
+        e = cm.exception
+        self.assertEqual(e.message,
+            'Incorrect format for steps expected time@temp,time@temp... Line 6. Culprit: (1095,1260,1565).')
+        self.assertEqual(e.where_in_script, 155)
+
+    def test_error_x_never_specified(self):
+        modified_script = REFERENCE_SCRIPT.replace('C 10@95,12@60,15@65                   5    x',
+                                                   'C 10@95,12@60,15@65                   5    y')
+        parser = RuleScriptParser(
+            REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
+        with self.assertRaises(ParseError) as cm:
+            parser.parse()
+        e = cm.exception
+        self.assertEqual(e.message,
+                         'Number of cycles should be followed by x Line 6. Culprit: (y).')
+        self.assertEqual(e.where_in_script, 155)
+
+    def test_error_cycle_not_int(self):
+        modified_script = REFERENCE_SCRIPT.replace('C 10@95,12@60,15@65                   5    x',
+                                                   'C 10@95,12@60,15@65                   a    y')
+        parser = RuleScriptParser(
+            REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
+        with self.assertRaises(ParseError) as cm:
+            parser.parse()
+        e = cm.exception
+        self.assertEqual(e.message,
+                         'cycle is not a valid integer Line 6. Culprit: (a).')
+        self.assertEqual(e.where_in_script, 155)

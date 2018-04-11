@@ -25,7 +25,7 @@ class RuleInterpreterTest(unittest.TestCase):
         parser.parse()
         machine_readable_rules = parser.rule_objects
         interpreter = RulesObjInterpreter(machine_readable_rules)
-        alloc_table = interpreter.interpret()
+        alloc_table,thermal_cycling_results = interpreter.interpret()
         # This should be the only cell included in the results.
         # And comprise one reagent.
         contents = alloc_table.plate_info['Plate1'][2][3]
@@ -33,6 +33,19 @@ class RuleInterpreterTest(unittest.TestCase):
         reagent, conc, units = contents[0]
         self.assertEqual(reagent, 'Titanium-Taq')
 
+    def test_cycling_rule(self):
+        # pollute the existing cycling rule
+        script =  REFERENCE_SCRIPT.replace('10@95','15@90')
+        parser = RuleScriptParser(
+            REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, script)
+        parser.parse()
+        machine_readable_rules = parser.rule_objects
+        interpreter = RulesObjInterpreter(machine_readable_rules)
+        alloc_table,thermal_cycling_results = interpreter.interpret()
+        contents = thermal_cycling_results.plate_info['Plate1'][0]
+        self.assertEqual(contents['temperature_steps'], '15Sec at 90°C, 12Sec at 60°C, 15Sec at 65°C, ')
+        contents = thermal_cycling_results.plate_info['Plate1'][1]
+        self.assertEqual(contents['temperature_steps'], '7Sec at 60°C, 10Sec at 65°C, 15Sec at 90°C, ')
 
     def test_example_from_language_spec(self):
         parser = RuleScriptParser(  
@@ -43,7 +56,7 @@ class RuleInterpreterTest(unittest.TestCase):
         interpreter = RulesObjInterpreter(machine_readable_rules)
         # If any exceptions are raised in the call below, then in this case,
         # the test should fail.
-        alloc_table = interpreter.interpret()
+        alloc_table,thermal_cycling_results = interpreter.interpret()
 
         # Sample the output where created with AllocRule(s)
         # Choose column 1, row B which is targeted by the first two rules.

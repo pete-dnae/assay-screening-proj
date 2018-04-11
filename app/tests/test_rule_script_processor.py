@@ -15,7 +15,7 @@ class RuleScriptProcessorTest(unittest.TestCase):
     def test_on_properly_formed_rules_script(self):
         interpreter = RulesScriptProcessor(
             REFERENCE_SCRIPT, REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS)
-        parse_error, alloc_table, line_number_to_cells_mapping = \
+        parse_error, alloc_table,thermal_cycling_results, line_number_to_cells_mapping = \
                 interpreter.parse_and_interpret()
 
         # Make sure no error is reported.
@@ -41,7 +41,7 @@ class RuleScriptProcessorTest(unittest.TestCase):
         broken_script = REFERENCE_SCRIPT.replace('A (Eco', 'Q (Eco')
         interpreter = RulesScriptProcessor(
             broken_script, REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS)
-        parse_error, alloc_table, line_number_to_cells_mapping = \
+        parse_error, alloc_table,thermal_cycling_results, line_number_to_cells_mapping = \
                 interpreter.parse_and_interpret()
         self.assertEqual(parse_error.message,
-                'Line must start with one of the letters V|P|A|T. Line 4.')
+                'Line must start with one of the letters V|P|A|T|C. Line 4.')

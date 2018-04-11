@@ -182,7 +182,7 @@ class RuleScriptParser:
             steps_as_instructions = ''
             for entity in steps_as_list:
                 time,temp = entity.split('@')
-                steps_as_instructions += ('%s Sec at %s °C' % (time,temp))
+                steps_as_instructions += ('%sSec at %s°C, ' % (time,temp))
         else:
             self._err('Incorrect format for steps expected time@temp,time@temp...', steps)
 

@@ -68,7 +68,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         message = resp.data['interpretationResults']['parseError']['message']
 
         self.assertEqual(message, 
-            'Line must start with one of the letters V|P|A|T. Line 1.')
+            'Line must start with one of the letters V|P|A|T|C. Line 1.')
 
     def test_allowed_names_end_point(self):
         client = APIClient()
