@@ -222,3 +222,13 @@ Send it to heroku
     git push heroku master # the heroku remote is set up automatically
     # if you want confirmation of the URL being served from...
     heroku open
+
+Tips for editing production DB:
+Point browser to admin ulr http://assay-screening.herokuapp.com/admin
+Use the following credentials to log in
+User :admin, 
+pass :kTaDN5RV
+
+On successful login you will be provided with a list of tables
+available in the current DB.
+Click on change button to proceed to editing.

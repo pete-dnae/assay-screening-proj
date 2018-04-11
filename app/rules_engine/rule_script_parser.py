@@ -360,7 +360,7 @@ class RuleScriptParser:
         Demand that all the strings provided in *seq* are capital letters.
         """
         for item in seq:
-            if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+            if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' and not item:
                 self._err('Only uppercase letters allowed in rows specification.',
                           source_string)
 
@@ -458,4 +458,4 @@ class ParseError(Exception):
 
 _INT_RANGE_RE = re.compile(r'(\d+)-(\d+)$')
 _LETTER_RANGE_RE = re.compile(r'([A-Z])-([A-Z])$')
-_THERMAL_CYCLING_STEPS_RE = re.compile(r'(\d+@\d+)(,\s*\d+@\d+)*')
+_THERMAL_CYCLING_STEPS_RE = re.compile(r'^(\d+@\d+)(,\s*\d+@\d+)*$')
