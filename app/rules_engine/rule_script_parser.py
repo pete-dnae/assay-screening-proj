@@ -360,7 +360,10 @@ class RuleScriptParser:
         Demand that all the strings provided in *seq* are capital letters.
         """
         for item in seq:
-            if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' and not item:
+            if not item:
+                self._err('Empty item in rows specification Hint: do not leave trailing commas',
+                          source_string)
+            if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
                 self._err('Only uppercase letters allowed in rows specification.',
                           source_string)
 
