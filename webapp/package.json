@@ -11,7 +11,8 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "dev-write" :"webpack --watch --config build/webpack.dev.conf.js"
   },
   "dependencies": {
     "animate.css": "^3.5.2",

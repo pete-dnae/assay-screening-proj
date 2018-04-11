@@ -23,6 +23,7 @@ li span {
 .editor {
   font-family: "MONOSPACE" !important;
   font-size: 18px;  
+  width:50%;
   resize: both;
   overflow: auto;
 }
