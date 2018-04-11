@@ -1,12 +1,9 @@
 import store from '@/store';
 import _ from 'lodash';
 
-export const postRuleScript = (text, ruleScriptNo, callBack) => {
+export const postRuleScript = (text, callBack) => {
   store
-    .dispatch('saveToDb', {
-      text,
-      ruleScriptNo,
-    })
+    .dispatch('saveToDb', { text })
     .then(() => callBack());
 };
 
@@ -80,9 +77,8 @@ export const getCurrentLineFields = (currentText, cursorPosition) => {
       [, plateName] = line.split(/\s+/g);
     }
   });
-  const fields = splitLine(
-    currentText.substr(currentLineStart, currentLineStart + currentLineLength),
-  );
+
+  const fields = splitLine(currentText.substr(currentLineStart, currentLineLength));
   return { currentLineStart, currentLineLength, lineNumber, plateName, fields };
 };
 

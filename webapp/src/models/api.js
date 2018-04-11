@@ -29,7 +29,7 @@ const fetchResPure = url =>
     );
   });
 const putRes = (url, data) =>
-  axios.put(url, data, {
+  pureAxios.put(url, data, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -43,13 +43,14 @@ const postRes = (url, data) => axios.post(url, data, {
 
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
-// TODO : check with pete if he can deliver the rulescript uniqueid alone
 export const getRuleScript = url => fetchResPure(url);
 export const postRuleScript = data =>
   postRes('/api/rule-scripts/', data);
 export const getExperimentList = () => fetchRes('api/experiments/');
-export const putRuleSCript = ({ ruleScriptNo, text }) =>
-  putRes(`api/rule-scripts/${ruleScriptNo}/`, { text });
+export const putRuleSCript = ({ ruleScriptUrl, text }) => putRes(
+           ruleScriptUrl,
+           { text },
+         );
 export const getReagents = () => fetchRes('/api/reagents/');
 export const getUnits = () => fetchRes('/api/units/');
 export const postNewExperiment = data =>
