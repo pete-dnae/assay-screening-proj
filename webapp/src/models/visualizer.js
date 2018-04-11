@@ -32,7 +32,7 @@ export const formatText = (text) => {
 
   lines.forEach((x) => {
     let finalLine = '';
-    if (!x.startsWith('#') && !x.startsWith('T')) {
+    if (x.startsWith('A') || x.startsWith('V') || x.startsWith('P')) {
       x.split(/\s+/).forEach((txt, i) => {
         const fillSpace = _.repeat(' ', maxLength[i] - txt.length);
         finalLine += `${txt} ${fillSpace}`;
@@ -56,6 +56,21 @@ export const formatText = (text) => {
         } ${_.repeat(' ', maxLength[4] - fields[6].length)}${
           fields[7]
         } ${_.repeat(' ', maxLength[5] - fields[7].length)}`;
+        finalText += `${finalLine.trimRight()}\n`;
+      } else {
+        finalText += `${x.trimRight()}\n`;
+      }
+    } else if (x.startsWith('C')) {
+      const fields = x.split(/\s+/);
+      if (fields.length === 4) {
+        const spaceBeforeCycle = maxLength[1] + maxLength[2] + maxLength[3] + 2;
+        finalLine += `${fields[0]} ${_.repeat(
+          ' ',
+          maxLength[0] - fields[0].length,
+        )}${fields[1]} ${_.repeat(' ', spaceBeforeCycle - fields[1].length)}${
+          fields[2]
+        } ${_.repeat(' ', maxLength[4] - fields[2].length)}${fields[3]}`;
+
         finalText += `${finalLine.trimRight()}\n`;
       } else {
         finalText += `${x.trimRight()}\n`;
