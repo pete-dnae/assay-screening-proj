@@ -46,8 +46,7 @@
                     <wellcontents   :currentRow="currentRow" 
                                     :currentCol="currentCol" 
                                     :allocationData="allocationData[currentPlate]">
-                    </wellcontents> 
-                    
+                    </wellcontents>                  
                 </div>
                 <!-- wellcontents -->
                 <!-- error pane -->
