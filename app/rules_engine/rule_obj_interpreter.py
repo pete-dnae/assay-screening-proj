@@ -14,6 +14,8 @@ class RulesObjInterpreter:
     It returns an AllocResults. (defined later in this module)
     """
 
+    # todo pch - class comment needs updating.
+
     def __init__(self, plates_with_rules):
         """
         Provide a dictionary keyed on plate names, with values that are a
@@ -27,6 +29,7 @@ class RulesObjInterpreter:
         """
         Returns an AllocationResults object.
         """
+        # todo pch - comment above needs updating.
         self._allocation_results = AllocationResults()
         self._thermal_cycling_results = ThermalCyclingResults()
         for plate, rules in self._plates_with_rules.items():

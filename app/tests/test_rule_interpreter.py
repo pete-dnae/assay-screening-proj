@@ -33,6 +33,9 @@ class RuleInterpreterTest(unittest.TestCase):
         reagent, conc, units = contents[0]
         self.assertEqual(reagent, 'Titanium-Taq')
 
+    # todo pch there is no need to mutate the reference experiment to
+    # achieve the goals of this test. In fact, I think you could just put
+    # the body of it into test_example_from_language_spec(). 
     def test_cycling_rule(self):
         # pollute the existing cycling rule
         script =  REFERENCE_SCRIPT.replace('10@95','15@90')

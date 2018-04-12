@@ -42,6 +42,8 @@ class RuleScriptParser:
 
         # self.rule_objects is an OrderedDict keyed on plate name. The
         # values are sequences of mixed AllocRule and TransferRule objects.
+
+        # todo pch - should comment say also ThermalCyclingRules
         self.rule_objects = OrderedDict()
 
         # self.line_number_mapping provides the the script line number
@@ -124,6 +126,9 @@ class RuleScriptParser:
         self.rule_objects[plate_name] = []
         self._cur_plate = plate_name
 
+    # todo pch - the comments in this method and the methods for the other two
+    # rule types, should not say 'storing the results in...'. They don't take
+    # responsibility for the storage any more.
     def _parse_allocation_line(self):
         """
         Parses and validates an 'A' line, storing the results in the results
@@ -177,6 +182,11 @@ class RuleScriptParser:
         """
         m = _THERMAL_CYCLING_STEPS_RE.match(steps)
 
+        # todo pch - to keep the style in this app consistent, suggest
+        # put the error-guard first. Calling self._err raises an exception by
+        # design, so the code that deals with the non-error case can just
+        # follow on without conditional entry.
+
         if m is not None:
             steps_as_list = steps.split(',')
             steps_as_instructions = ''
@@ -202,6 +212,9 @@ class RuleScriptParser:
         """
         Demands that the unit mentioned in thermal cycling rule is x
         """
+        # todo pch - in the interests of consistency, don't do any 
+        # automatic case-conversion. None is done elsewhere - we expect the
+        # user to get it right as a convention.
         if unit.lower() != 'x':
             self._err('Number of cycles should be followed by x', unit)
 
