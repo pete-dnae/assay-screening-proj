@@ -1,7 +1,7 @@
 <style scoped src="./scriptEditor.css"></style>
 <template>
 <div>
-    <div  :class="{'container-fluid':true,'w-75':true}">
+    <div  :class="{'container-fluid':true}">
         <!-- toolbar -->
         <toolbar    :error="error"
                     :showSpinner="showSpinner"

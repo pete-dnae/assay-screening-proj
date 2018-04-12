@@ -1,6 +1,6 @@
 <template>
 
-<div class="container-fluid w-75 text-white">
+<div class="container-fluid text-white">
     <div class="navbar navbar-dark bg-dark">
       <a class="navbar-brand">Assay Screening</a>
         <div class="form-inline my-2 my-lg-0">                   
