@@ -37,6 +37,8 @@ class RuleScriptProcessorTest(unittest.TestCase):
         self.assertEqual(
             line_number_to_cells_mapping[4], [(1, 2), (5, 2), (9, 2)])
 
+        # todo pch - think you should sample the cycling info block here.
+
     def test_on_malformed_rules_script(self):
         broken_script = REFERENCE_SCRIPT.replace('A (Eco', 'Q (Eco')
         interpreter = RulesScriptProcessor(

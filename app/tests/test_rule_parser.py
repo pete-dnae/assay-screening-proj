@@ -126,7 +126,7 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-                         'Line must start with one of the letters V|P|A|T|C. Line 3.')
+                 'Line must start with one of the letters V|P|A|T|C. Line 3.')
         self.assertEqual(e.where_in_script, 17)
 
     def test_error_wrong_version(self):
@@ -137,8 +137,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-                         'Your script version is not recognized by this parser. ' + \
-                         'Line 1. Culprit: (fibble).')
+                     'Your script version is not recognized by this parser. ' + \
+                     'Line 1. Culprit: (fibble).')
         self.assertEqual(e.where_in_script, 0)
 
     def test_error_transfer_incompatible(self):
@@ -149,8 +149,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-                         'Shape of source rows/columns is incompatible with that of ' + \
-                         'destination. Line 10.')
+                 'Shape of source rows/columns is incompatible with that of ' + \
+                 'destination. Line 10.')
         self.assertEqual(e.where_in_script, 275)
 
     def test_error_no_plate_defined_yet(self):
@@ -172,7 +172,7 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-                         'This plate name been used before. Line 9. Culprit: (Plate1).')
+                 'This plate name been used before. Line 9. Culprit: (Plate1).')
         self.assertEqual(e.where_in_script, 265)
 
     def test_error_unknown_reagent(self):
@@ -217,8 +217,8 @@ class RuleScriptParserTest(unittest.TestCase):
             parser.parse()
         e = cm.exception
         self.assertEqual(e.message,
-                         'Struggling with a non-number in columns specification. ' + \
-                         'Line 4. Culprit: (1,A,9).')
+                 'Struggling with a non-number in columns specification. ' + \
+                 'Line 4. Culprit: (1,A,9).')
         self.assertEqual(e.where_in_script, 65)
 
     def test_error_concentration_not_numeric(self):
@@ -240,6 +240,8 @@ class RuleScriptParserTest(unittest.TestCase):
         with self.assertRaises(ParseError) as cm:
             parser.parse()
         e = cm.exception
+        # todo pch many of the error messsage strings are indented more
+        # than before, and now spill over the 80 column limit ?
         self.assertEqual(e.message,
                          'Only uppercase letters allowed in rows specification. Line 5. Culprit: (C,3).')
         self.assertEqual(e.where_in_script, 110)
@@ -291,6 +293,7 @@ class RuleScriptParserTest(unittest.TestCase):
                          ' Line 6. Culprit: (1095,1260,1565).')
         self.assertEqual(e.where_in_script, 155)
 
+    # todo pch - please check ALL .py files for 80 column overspill.
     def test_error_x_never_specified(self):
         modified_script = REFERENCE_SCRIPT.replace('C 10@95,12@60,15@65                   5    x',
                                                    'C 10@95,12@60,15@65                   5    y')
