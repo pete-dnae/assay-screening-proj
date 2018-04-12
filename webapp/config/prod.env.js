@@ -1,5 +1,5 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  API_LOCATION:'"http://assay-screening.herokuapp.com/"'
+  API_LOCATION:'"https://assay-screening.herokuapp.com/"'
 }

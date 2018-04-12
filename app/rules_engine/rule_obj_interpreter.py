@@ -9,12 +9,10 @@ from app.rules_engine.thermal_cycle_rule import ThermalCycleRule
 class RulesObjInterpreter:
     """
     This class owns the business logic that knows how to interpret a sequence
-    of heterogeneous AllocRule(s) and TransferRule(s).
+    of heterogeneous AllocRule(s) , TransferRule(s) and ThermalCyclingRule(s).
 
-    It returns an AllocResults. (defined later in this module)
+    It returns  AllocResults and ThermalCyclingResults . (defined later in this module)
     """
-
-    # todo pch - class comment needs updating.
 
     def __init__(self, plates_with_rules):
         """
@@ -27,9 +25,9 @@ class RulesObjInterpreter:
 
     def interpret(self):
         """
-        Returns an AllocationResults object.
+        Returns  AllocationResults object and ThermalCyclingResults Object.
         """
-        # todo pch - comment above needs updating.
+
         self._allocation_results = AllocationResults()
         self._thermal_cycling_results = ThermalCyclingResults()
         for plate, rules in self._plates_with_rules.items():

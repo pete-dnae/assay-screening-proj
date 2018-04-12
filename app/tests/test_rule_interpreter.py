@@ -33,23 +33,6 @@ class RuleInterpreterTest(unittest.TestCase):
         reagent, conc, units = contents[0]
         self.assertEqual(reagent, 'Titanium-Taq')
 
-    # todo pch there is no need to mutate the reference experiment to
-    # achieve the goals of this test. In fact, I think you could just put
-    # the body of it into test_example_from_language_spec(). 
-    def test_cycling_rule(self):
-        # pollute the existing cycling rule
-        script =  REFERENCE_SCRIPT.replace('10@95','15@90')
-        parser = RuleScriptParser(
-            REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, script)
-        parser.parse()
-        machine_readable_rules = parser.rule_objects
-        interpreter = RulesObjInterpreter(machine_readable_rules)
-        alloc_table,thermal_cycling_results = interpreter.interpret()
-        contents = thermal_cycling_results.plate_info['Plate1'][0]
-        self.assertEqual(contents['temperature_steps'], '15Sec at 90°C, 12Sec at 60°C, 15Sec at 65°C, ')
-        contents = thermal_cycling_results.plate_info['Plate1'][1]
-        self.assertEqual(contents['temperature_steps'], '7Sec at 60°C, 10Sec at 65°C, 15Sec at 90°C, ')
-
     def test_example_from_language_spec(self):
         parser = RuleScriptParser(  
             REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, REFERENCE_SCRIPT)
@@ -90,3 +73,8 @@ class RuleInterpreterTest(unittest.TestCase):
         self.assertEqual(reagent, 'Pool_1')
         self.assertEqual(conc, 1.0)
         self.assertEqual(units, 'x')
+
+        contents = thermal_cycling_results.plate_info['Plate1'][0]
+        self.assertEqual(contents['temperature_steps'], '10Sec at 95°C, 12Sec at 60°C, 15Sec at 65°C, ')
+        contents = thermal_cycling_results.plate_info['Plate1'][1]
+        self.assertEqual(contents['temperature_steps'], '7Sec at 60°C, 10Sec at 65°C, 10Sec at 95°C, ')

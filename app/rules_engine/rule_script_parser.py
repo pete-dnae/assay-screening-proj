@@ -41,9 +41,9 @@ class RuleScriptParser:
         self._fields = None  # The fields in the current line.
 
         # self.rule_objects is an OrderedDict keyed on plate name. The
-        # values are sequences of mixed AllocRule and TransferRule objects.
+        # values are sequences of mixed AllocRule,TransferRule objects
+        # and ThermalCyclingRules.
 
-        # todo pch - should comment say also ThermalCyclingRules
         self.rule_objects = OrderedDict()
 
         # self.line_number_mapping provides the the script line number
@@ -131,8 +131,8 @@ class RuleScriptParser:
     # responsibility for the storage any more.
     def _parse_allocation_line(self):
         """
-        Parses and validates an 'A' line, storing the results in the results
-        in self.rule_objects.
+        Parses and validates an 'A' line, and returns a AllocRule Object on
+        successful parsing
         """
         self._assert_a_plate_is_defined()
 
@@ -158,7 +158,8 @@ class RuleScriptParser:
 
     def _parse_cycling_line(self):
         """
-        Parses and validates a 'C' line, storing the results in ???
+        Parses and validates a 'C' line, and returns a ThermalCyclingRule
+        Object on successful parsing
         """
         self._assert_a_plate_is_defined()
 
@@ -182,19 +183,14 @@ class RuleScriptParser:
         """
         m = _THERMAL_CYCLING_STEPS_RE.match(steps)
 
-        # todo pch - to keep the style in this app consistent, suggest
-        # put the error-guard first. Calling self._err raises an exception by
-        # design, so the code that deals with the non-error case can just
-        # follow on without conditional entry.
-
-        if m is not None:
-            steps_as_list = steps.split(',')
-            steps_as_instructions = ''
-            for entity in steps_as_list:
-                time,temp = entity.split('@')
-                steps_as_instructions += ('%sSec at %s°C, ' % (time,temp))
-        else:
+        if m is None:
             self._err('Incorrect format for steps expected time@temp,time@temp...', steps)
+
+        steps_as_list = steps.split(',')
+        steps_as_instructions = ''
+        for entity in steps_as_list:
+            time, temp = entity.split('@')
+            steps_as_instructions += ('%sSec at %s°C, ' % (time, temp))
 
         return steps_as_instructions
 
@@ -212,10 +208,8 @@ class RuleScriptParser:
         """
         Demands that the unit mentioned in thermal cycling rule is x
         """
-        # todo pch - in the interests of consistency, don't do any 
-        # automatic case-conversion. None is done elsewhere - we expect the
-        # user to get it right as a convention.
-        if unit.lower() != 'x':
+
+        if unit != 'x':
             self._err('Number of cycles should be followed by x', unit)
 
     def _parse_transfer_line(self):

@@ -71,14 +71,14 @@
                                ></suggestionToolTip>
         <!-- suggestionToolTip -->
         </div>  
-        <!-- saveAsPane -->
+        <!-- sampleExperiment -->
         <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
             <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
             <div slot="modal-footer" class="modal-footer">
                 <button type="button" class="btn btn-default" @click="handleSwitchInfoVisiblity()">Exit</button>
             </div>
         </modal>
-        <!-- saveAsPane -->    
+        <!-- sampleExperiment -->    
     </div>
  <div id="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>

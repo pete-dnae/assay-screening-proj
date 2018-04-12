@@ -37,7 +37,15 @@ class RuleScriptProcessorTest(unittest.TestCase):
         self.assertEqual(
             line_number_to_cells_mapping[4], [(1, 2), (5, 2), (9, 2)])
 
-        # todo pch - think you should sample the cycling info block here.
+        cell_contents = thermal_cycling_results.plate_info['Plate1'][0]
+        expected_element ={
+            'temperature_steps':'10Sec at 95°C, 12Sec at 60°C, 15Sec at 65°C, ',
+            'cycles': '5',
+            'units': 'x'
+        }
+        self.assertEquals(cell_contents,expected_element)
+
+
 
     def test_on_malformed_rules_script(self):
         broken_script = REFERENCE_SCRIPT.replace('A (Eco', 'Q (Eco')
