@@ -16,7 +16,11 @@ export const state = {
   showBlur: false,
   showWellContents:false,
   showInfo:false,
-  highlightHover:false
+  highlightHover:true,
+  highlightedLineNumber:null,
+  currentPlate:null,
+  currentCol:null,
+  currentRow:null
 };
 
 const actions = {};
@@ -39,11 +43,23 @@ const mutations = {
   [types.SHOW_WELL_CONTENTS](state, bool) {
     state.showWellContents = bool;
   },
-  [types.SHOW_INFO](state, bool) {
-    state.showInfo = bool;
+  [types.SHOW_INFO](state) {
+    state.showInfo = !state.showInfo;
   },
   [types.HIGHLIGHT_HOVER](state, bool) {
     state.highlightHover = bool;
+  },
+  [types.SET_CURRENT_ROW](state, number) {
+    state.currentRow = number;
+  },
+  [types.SET_CURRENT_COL](state, number) {
+    state.currentCol = number;
+  },
+  [types.SET_CURRENT_PLATE](state, value) {
+    state.currentPlate = value;
+  },
+  [types.SET_HIGHLIGHTED_LINE_NUMBER](state, number) {
+    state.highlightedLineNumber = number;
   }
 };
 const getters = {
@@ -67,6 +83,18 @@ const getters = {
   },
   getHighlightHover(state, getters, rootState) {
     return state.highlightHover;
+  },
+  getCurrentRow(state, getters, rootState) {
+    return state.currentRow;
+  },
+  getCurrentCol(state, getters, rootState) {
+    return state.currentCol;
+  },
+  getCurrentPlate(state, getters, rootState) {
+    return state.currentPlate;
+  },
+  getHighlightedLineNumber(state, getters, rootState) {
+    return state.highlightedLineNumber;
   }
 };
 

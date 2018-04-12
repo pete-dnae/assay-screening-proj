@@ -2,7 +2,6 @@ import Quill from 'quill';
 // require styles
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
-import 'quill/dist/quill.bubble.css';
 import _ from 'lodash';
 import { modal, tooltip } from 'vue-strap';
 import { formatText } from '@/models/visualizer';
@@ -11,7 +10,11 @@ import { mapGetters, mapActions } from 'vuex';
 import wellcontents from '@/components/wellcontents/wellcontents.vue';
 // import { validateText } from '@/models/editor';
 
-import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
+import {
+  hesitationTimer,
+  getCurrentLineFields,
+  findSuggestions,
+} from '@/models/editor2.0';
 
 export default {
   name: 'ScriptInputComponent',
@@ -24,16 +27,8 @@ export default {
   data() {
     return {
       msg: 'Welcome',
-      show: false,
-      showToolTip: false,
       suggestionIndex: 0,
-      currentPlate: null,
-      highlightedLineNumber: null,
-      currentRow: null,
-      currentCol: null,
-      showWellContents: false,
-      hoverHighlight: true,
-      showInfo: false,
+      editor: null,
     };
   },
   computed: {
@@ -55,14 +50,16 @@ export default {
       experimentId: 'getExperimentId',
       showSuggestionList: 'getSuggestionList',
       showSuggestionToolTip: 'getSuggestionToolTip',
+      hoverHighlight: 'getHighlightHover',
+      showWellContents: 'getShowWellContetns',
+      currentRow: 'getCurrentRow',
+      currentCol: 'getCurrentCol',
+      highlightedLineNumber: 'getHighlightedLineNumber',
+      currentPlate: 'getCurrentPlate',
+      showInfo: 'getShowInfo',
     }),
   },
   watch: {
-    showToolTip() {
-      if (this.showToolTip === false) {
-        this.suggestionIndex = 0;
-      }
-    },
     ruleScript() {
       this.editor.setText(formatText(this.ruleScript));
       this.paintText();
@@ -75,48 +72,44 @@ export default {
       'fetchReagentList',
       'fetchUnitList',
     ]),
+    handleSwitchInfoVisiblity() {
+      this.$store.commit('SHOW_INFO');
+    },
     editorChange(event) {
       if (
         !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
       ) {
         this.removeEditorColorFormatting();
         const cursorIndex = this.editor.getSelection().index;
+        this.alterToolTip(cursorIndex);
         const { fields } = getCurrentLineFields(
           this.editor.getText(),
           cursorIndex,
         );
 
         if (fields[1] && fields[0][0] === 'A') {
-          if (
-            !_.find(this.reagents, reagent => reagent.name === fields[1][0])
-          ) {
-            const suggestions = this.reagents.filter(
-              x => x.name.indexOf(fields[1][0]) !== -1,
-            );
-            this.$store.commit('SET_SUGGESTIONS', suggestions);
-            this.alterToolTip(cursorIndex);
-
-            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length >= 5);
-
-            this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
-          }
+          this.$store.commit(
+            'SET_SUGGESTIONS',
+            findSuggestions(fields[1][0], 'name', this.reagents),
+          );
         }
         if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
-          if (!_.find(this.units, unit => unit.abbrev === fields[5][0])) {
-            const suggestions = this.units.filter(
-              unit => unit.abbrev.indexOf(fields[5][0]) !== -1,
-            );
-
-            this.$store.commit('SET_SUGGESTIONS', suggestions);
-            this.alterToolTip(cursorIndex);
-
-            this.$store.commit('SHOW_SUGGESTIONS_LIST', suggestions.length > 5);
-
-            this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', suggestions.length < 5);
-          }
+          this.$store.commit(
+            'SET_SUGGESTIONS',
+            findSuggestions(fields[5][0], 'abbrev', this.units),
+          );
         }
-        hesitationTimer.cancel();
+        this.alterToolTip(cursorIndex);
+        this.$store.commit(
+          'SHOW_SUGGESTIONS_LIST',
+          this.suggestions.length > 5,
+        );
 
+        this.$store.commit(
+          'SHOW_SUGGESTIONS_TOOL_TIP',
+          this.suggestions.length < 5,
+        );
+        hesitationTimer.cancel();
 
         hesitationTimer(this.editor.getText(), this.paintText);
       }
@@ -137,7 +130,7 @@ export default {
     },
     handleMouseOut(event) {
       if (event.fromElement.nodeName === 'DIV' && !this.error) {
-        this.hoverHighlight = false;
+        this.$store.commit('HIGHLIGHT_HOVER', false);
         this.removeEditorColorFormatting();
       }
     },
@@ -155,15 +148,6 @@ export default {
       const text = this.editor.getText();
       this.editor.formatText(0, text.length, 'bg', false);
       this.editor.formatText(0, text.length, 'color', false);
-    },
-    handleExcludeReagent() {
-      const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
-      this.newReagent = this.editor
-        .getText()
-        .substr(currentStringStart, cursorIndex)
-        .replace('!', '');
-      this.show = true;
-      document.getElementById('modal').focus();
     },
     handleAutoCompleteClick(text) {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
@@ -185,11 +169,12 @@ export default {
       this.editor.setSelection(index, 0);
     },
     handleWellHover([row, col]) {
-      [this.currentRow, this.currentCol] = [row, col];
-      this.showWellContents = true;
+      this.$store.commit('SET_CURRENT_ROW', row);
+      this.$store.commit('SET_CURRENT_COL', col);
+      this.$store.commit('SHOW_WELL_CONTENTS', true);
     },
     handleWellHoverComplete() {
-      this.showWellContents = false;
+      this.$store.commit('SHOW_WELL_CONTENTS', false);
     },
     hideSuggestion() {
       this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', false);
@@ -213,11 +198,7 @@ export default {
       this.suggestionIndex = this.suggestions[this.suggestionIndex]
         ? this.suggestionIndex
         : 0;
-      this.showSuggestionToolTip = false;
-    },
-    handleReagentAdd() {
-      this.$store.commit('ADD_REAGENT', this.newReagent);
-      this.show = false;
+      this.$store.commit('SHOW_SUGGESTIONS_TOOL_TIP', false);
     },
     handleLineHover(range) {
       if (range) {
@@ -241,9 +222,9 @@ export default {
           'color',
           'white',
         );
-        this.currentPlate = plateName;
-        this.highlightedLineNumber = lineNumber;
-        this.hoverHighlight = true;
+        this.$store.commit('SET_CURRENT_PLATE', plateName);
+        this.$store.commit('SET_HIGHLIGHTED_LINE_NUMBER', lineNumber);
+        this.$store.commit('HIGHLIGHT_HOVER', true);
       }
     },
     setupQuill() {

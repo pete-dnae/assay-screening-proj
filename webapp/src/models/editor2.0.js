@@ -1,3 +1,4 @@
+
 import store from '@/store';
 import _ from 'lodash';
 
@@ -5,6 +6,13 @@ export const postRuleScript = (text, callBack) => {
   store
     .dispatch('saveToDb', { text })
     .then(() => callBack());
+};
+
+export const findSuggestions = (value, key, data) => {
+  if (!_.find(data, element => element[key] === value)) {
+    return data.filter(element => element[key].indexOf(value) !== -1);
+  }
+  return null;
 };
 
 export const getMaxRowCol = (lnums) => {
@@ -324,3 +332,4 @@ export const validateText = (text) => {
     store.commit('SET_VALID_SCRIPT', text.substr(0, startIndex));
   }
 };
+

@@ -8,6 +8,7 @@
         <div class="col">            
         </div>
     </div>
+    
     <div class="mt-4" v-if="allocationData[currentCol]&&allocationData[currentCol][currentRow]">        
       <transition-group name="zoomIn" enter-active-class="animated zoomIn"
       leave-active-class="animated zoomOut">

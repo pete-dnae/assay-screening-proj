@@ -5,7 +5,7 @@
     <div class="row text-left toolbar ql-toolbar ql-snow border border-secondary rounded" style="height:50px">
       <div class="col-1">
           <tooltip effect="scale" placement="bottom" content="Click me to show example script">
-          <i class="btn fa fa-info-circle" @click="showInfo=!showInfo" aria-hidden="true"></i>            
+          <i class="btn fa fa-info-circle" @click="handleSwitchInfoVisiblity()" aria-hidden="true"></i>            
           </tooltip>
       </div>
       <div class="col-2">            
@@ -49,6 +49,7 @@
                 </div>                
             </div>
             </div> 
+            
             <div class="row mt-3" v-if="showWellContents&&!error">
                 <wellcontents   :currentRow="currentRow" 
                                 :currentCol="currentCol" 
@@ -99,7 +100,7 @@
     <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
         <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
         <div slot="modal-footer" class="modal-footer">
-            <button type="button" class="btn btn-default" @click="showInfo = !showInfo">Exit</button>
+            <button type="button" class="btn btn-default" @click="handleSwitchInfoVisiblity()">Exit</button>
         </div>
     </modal>
    
