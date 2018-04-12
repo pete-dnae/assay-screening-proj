@@ -1,110 +1,85 @@
 <style scoped src="./scriptEditor.css"></style>
 <template>
 <div>
-<div  :class="{'container-fluid':true,'w-75':true}">
-    <div class="row text-left toolbar ql-toolbar ql-snow border border-secondary rounded" style="height:50px">
-      <div class="col-1">
-          <tooltip effect="scale" placement="bottom" content="Click me to show example script">
-          <i class="btn fa fa-info-circle" @click="handleSwitchInfoVisiblity()" aria-hidden="true"></i>            
-          </tooltip>
-      </div>
-      <div class="col-2">            
-            <label>Type your rules here</label>
-            <i class="btn fa fa-hand-o-down" aria-hidden="true" ></i>
-        </div>
-        <div class="col-1">
-            <tooltip effect="scale" placement="bottom" content="Click me to format text or Press ctrl+F ">
-            <i @click="handleFormat()" class="btn fa fa-align-right"></i>    
-            </tooltip>        
-        </div>       
-
-        <div class="col-1">
-            <span v-show="showSpinner"> <i class="fa fa-floppy-o">saving</i></span>
-        </div>
-        <div id="result" class="col" v-if="error" @mouseover="highlightError(error.where_in_script)">
-          <i class="fa fa-frown-o fa-2x" aria-hidden="true"></i>
-          <label class="text-danger">{{error.message}}</label>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div id="editor" class="editor ql-editor" @keyup="editorChange"  
-        @mouseout="handleMouseOut"></div>
-        
-        <div class="mw-100">
-            <div class="row mt-3" v-if="!error">
-              <hovervisualizer :currentPlate="currentPlate"                               
-                               :tableRowCount="tableRowCount"
-                               :tableColCount="tableColCount"
-                               :highlightedLineNumber="highlightedLineNumber"
-                               :hoverHighlight="hoverHighlight"
-                                :allocationMapping="allocationMapping"                                
-                                @wellHovered="handleWellHover"
-                                @hoverComplete="handleWellHoverComplete">
-            </hovervisualizer>
-            <div class="row w-100 mt-3">
-                <div class="col-md-6"></div>
-                <div class="col">
-                    <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
-                    <label class="text-info">Hover over a well</label>
-                </div>                
+    <div  :class="{'container-fluid':true,'w-75':true}">
+        <!-- toolbar -->
+        <toolbar    :error="error"
+                    :showSpinner="showSpinner"
+                    @switchInfoVisiblity="handleSwitchInfoVisiblity"
+                    @formatText="handleFormat"
+                    @highlightError="highlightError"
+                    >
+        </toolbar>     
+        <!-- toolbar -->
+        <div class="row mt-3">
+            <!-- editor -->
+            <div id="editor" class="editor ql-editor" @keyup="editorChange"  
+            @mouseout="handleMouseOut">
             </div>
-            </div> 
-            
-            <div class="row mt-3" v-if="showWellContents&&!error">
-                <wellcontents   :currentRow="currentRow" 
-                                :currentCol="currentCol" 
-                                :allocationData="allocationData[currentPlate]">
-                </wellcontents> 
-            </div>
-            
-            <div v-if="error">
-                 <div class="row d-block">
-                    <i class="fa fa-frown-o fa-5x" aria-hidden="true"></i>
-                </div>               
-                <div class="row m-5">
-                    <div class="alert alert-warning" role="alert">
-                        <h4 class="alert-heading">Error in Script!</h4>
-                            <p>
-                                Cannot show plate visualisation while there are errors in your rules script
-                            </p>
-                            <hr>
-                            <p class="mb-0">Line containing error would be coloured grey <label class="color-box"></label></p>
+            <!-- editor -->
+            <div class="mw-100">
+                <!-- hovervisualizer -->
+                <div class="row mt-3" v-if="!error">                    
+                    <hovervisualizer    :currentPlate="currentPlate"                               
+                                        :tableRowCount="tableRowCount"
+                                        :tableColCount="tableColCount"
+                                        :highlightedLineNumber="highlightedLineNumber"
+                                        :hoverHighlight="hoverHighlight"
+                                        :allocationMapping="allocationMapping"                                
+                                        @wellHovered="handleWellHover"
+                                        @hoverComplete="handleWellHoverComplete">
+                    </hovervisualizer>                    
+                    <div class="row w-100 mt-3">
+                        <div class="col-md-6">
+                            
+                        </div>
+                        <div class="col">
+                            <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
+                            <label class="text-info">Hover over a well</label>
+                        </div>                
                     </div>
+                </div> 
+                <!-- hovervisualizer -->
+                <!-- wellcontents -->
+                <div class="row mt-3" v-if="showWellContents&&!error">
+                    
+                    <wellcontents   :currentRow="currentRow" 
+                                    :currentCol="currentCol" 
+                                    :allocationData="allocationData[currentPlate]">
+                    </wellcontents> 
+                    
                 </div>
-                
-            </div>          
-            <div class="row text-left " v-show="showSuggestionList">
-                <h5 class="mt-3 w-100"><strong>Suggestions :</strong></h5>
-                <h5><strong>Currently retreiving 5+ suggestions</strong></h5>
-                <div class="list-group w-100 pre-scrollable">
-                    <button class="list-group-item list-group-item-action" v-for="text in suggestions" v-bind:key="text.url" @click.left="handleAutoCompleteClick(text);" @click.middle="hideSuggestion()">
-                        <div v-if="text['name']">{{text['name']}}</div>
-                        <div v-else>{{text['abbrev']}}</div>
-                    </button>
-                </div>
+                <!-- wellcontents -->
+                <!-- error pane -->
+                <errorPane v-if="error"></errorPane>     
+                <!-- error pane -->   
+                <!-- suggestionslist -->             
+                <suggestionsList    v-show="showSuggestionList"
+                                    :suggestions="suggestions"
+                                    @autoComplete="handleAutoCompleteClick"
+                                    @hideSuggestion="hideSuggestion"
+                                    >
+                </suggestionsList>   
+                <!-- suggestionslist -->              
             </div>
-            
-            
-        </div>
-        <span v-bind:style="tooltiptext" v-if="showSuggestionToolTip">
-            
-    <ul >
-    <li v-for = "text in suggestions" v-bind:key="text.url" @click.left="handleAutoCompleteClick(text);"
-    @click.right="hideSuggestion()">
-      <div v-if="text['name']">{{text['name']}}</div>
-                        <div v-else>{{text['abbrev']}}</div>
-    </li>
-    </ul>
-    </span>
-    </div>  
-    <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
-        <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
-        <div slot="modal-footer" class="modal-footer">
-            <button type="button" class="btn btn-default" @click="handleSwitchInfoVisiblity()">Exit</button>
-        </div>
-    </modal>
-   
-</div>
+        <!-- suggestionToolTip -->        
+            <suggestionToolTip  v-if="showSuggestionToolTip"
+                                :suggestions="suggestions"
+                                :toolTipPosition="tooltiptext" 
+                                @autoComplete="handleAutoCompleteClick"
+                                @hideSuggestion="hideSuggestion"
+                               ></suggestionToolTip>
+        <!-- suggestionToolTip -->
+        </div>  
+        <!-- saveAsPane -->
+        <modal title="Example Script" effect="fade/zoom" large :value="showInfo">
+            <textarea v-model="referenceText" class="w-100 editor" readonly></textarea>
+            <div slot="modal-footer" class="modal-footer">
+                <button type="button" class="btn btn-default" @click="handleSwitchInfoVisiblity()">Exit</button>
+            </div>
+        </modal>
+        <!-- saveAsPane -->    
+    </div>
  <div id="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>
 </div>

@@ -8,6 +8,10 @@ import { formatText } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 import wellcontents from '@/components/wellcontents/wellcontents.vue';
+import toolbar from '@/components/editortoolbar/editortoolbar.vue';
+import errorPane from '@/components/scripterrorpane/scripterrorpane';
+import suggestionsList from '@/components/suggestionslist/suggestionslist.vue';
+import suggestionToolTip from '@/components/suggestionstooltip/suggestionstooltip.vue';
 // import { validateText } from '@/models/editor';
 
 import {
@@ -23,6 +27,10 @@ export default {
     hovervisualizer,
     wellcontents,
     tooltip,
+    toolbar,
+    errorPane,
+    suggestionsList,
+    suggestionToolTip,
   },
   data() {
     return {
@@ -102,7 +110,7 @@ export default {
         this.alterToolTip(cursorIndex);
         this.$store.commit(
           'SHOW_SUGGESTIONS_LIST',
-          this.suggestions.length > 5,
+          this.suggestions.length >= 5,
         );
 
         this.$store.commit(
