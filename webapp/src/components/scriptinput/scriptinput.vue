@@ -11,7 +11,7 @@
                     >
         </toolbar>     
         <!-- toolbar -->
-        <div class="row mt-3">
+        <div class="row mt-3 w-100">
             <!-- editor -->
             <div id="editor" class="editor ql-editor" @keyup="editorChange"  
             @mouseout="handleMouseOut">
@@ -27,7 +27,8 @@
                                         :hoverHighlight="hoverHighlight"
                                         :allocationMapping="allocationMapping"                                
                                         @wellHovered="handleWellHover"
-                                        @hoverComplete="handleWellHoverComplete">
+                                        @hoverComplete="handleWellHoverComplete"
+                                        >
                     </hovervisualizer>                    
                     <div class="row w-100 mt-3">
                         <div class="col-md-6">
