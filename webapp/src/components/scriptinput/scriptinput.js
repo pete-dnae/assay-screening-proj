@@ -108,15 +108,18 @@ export default {
           );
         }
         this.alterToolTip(cursorIndex);
-        this.$store.commit(
-          'SHOW_SUGGESTIONS_LIST',
-          this.suggestions.length >= 5,
-        );
+        if (this.suggestions) {
+          this.$store.commit(
+            'SHOW_SUGGESTIONS_LIST',
+            this.suggestions.length >= 5,
+          );
 
-        this.$store.commit(
-          'SHOW_SUGGESTIONS_TOOL_TIP',
-          this.suggestions.length < 5,
-        );
+          this.$store.commit(
+            'SHOW_SUGGESTIONS_TOOL_TIP',
+            this.suggestions.length < 5,
+          );
+        }
+
         hesitationTimer.cancel();
 
         hesitationTimer(this.editor.getText(), this.paintText);
