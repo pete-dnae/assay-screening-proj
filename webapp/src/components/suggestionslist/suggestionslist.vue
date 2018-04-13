@@ -5,8 +5,7 @@
     <div class="list-group w-100 pre-scrollable">
         <button class="list-group-item list-group-item-action" v-for="text in suggestions" 
         v-bind:key="text.url" @click.left="handleAutoCompleteClick(text);" @click.middle="hideSuggestion()">
-            <div v-if="text['name']">{{text['name']}}</div>
-            <div v-else>{{text['abbrev']}}</div>
+            <div>{{text}}</div>            
         </button>
     </div>
 </div>  

@@ -17,7 +17,6 @@ import suggestionToolTip from '@/components/suggestionstooltip/suggestionstoolti
 import {
   hesitationTimer,
   getCurrentLineFields,
-  findSuggestions,
 } from '@/models/editor2.0';
 
 export default {
@@ -77,8 +76,8 @@ export default {
     ...mapActions([
       'saveToDb',
       'fetchExperiment',
-      'fetchReagentList',
-      'fetchUnitList',
+      'fetchAvailableSuggestions',
+      'setSuggestions',
     ]),
     handleSwitchInfoVisiblity() {
       this.$store.commit('SHOW_INFO');
@@ -94,31 +93,8 @@ export default {
           this.editor.getText(),
           cursorIndex,
         );
-
-        if (fields[1] && fields[0][0] === 'A') {
-          this.$store.commit(
-            'SET_SUGGESTIONS',
-            findSuggestions(fields[1][0], 'name', this.reagents),
-          );
-        }
-        if (fields[5] && (fields[0][0] === 'A' || fields[0][0] === 'T')) {
-          this.$store.commit(
-            'SET_SUGGESTIONS',
-            findSuggestions(fields[5][0], 'abbrev', this.units),
-          );
-        }
+        this.setSuggestions(fields);
         this.alterToolTip(cursorIndex);
-        if (this.suggestions) {
-          this.$store.commit(
-            'SHOW_SUGGESTIONS_LIST',
-            this.suggestions.length >= 5,
-          );
-
-          this.$store.commit(
-            'SHOW_SUGGESTIONS_TOOL_TIP',
-            this.suggestions.length < 5,
-          );
-        }
 
         hesitationTimer.cancel();
 
@@ -164,7 +140,7 @@ export default {
       const { currentStringStart, cursorIndex } = this.getCurrentStringRange();
       this.editor.insertText(
         cursorIndex,
-        ` ${text.name ? text.name : text.abbrev}`,
+        ` ${text}`,
         {
           color: 'black',
         },
@@ -275,8 +251,8 @@ export default {
     // Quill Initialization
     this.setupQuill();
     // Data Retreival
-    this.fetchReagentList();
-    this.fetchUnitList();
+
+    this.fetchAvailableSuggestions();
     this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
     this.fetchExperiment({ exptNo: 1 });
 

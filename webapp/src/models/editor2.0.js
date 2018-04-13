@@ -8,9 +8,9 @@ export const postRuleScript = (text, callBack) => {
     .then(() => callBack());
 };
 
-export const findSuggestions = (value, key, data) => {
-  if (!_.find(data, element => element[key] === value)) {
-    return data.filter(element => element[key].indexOf(value) !== -1);
+export const findSuggestions = (value, data) => {
+  if (!_.find(data, element => element === value)) {
+    return data.filter(element => element.indexOf(value) !== -1);
   }
   return null;
 };

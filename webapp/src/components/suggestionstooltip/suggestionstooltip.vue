@@ -26,8 +26,7 @@ li span {
     <ul >
         <li v-for = "text in suggestions" v-bind:key="text.url" @click.left="handleAutoCompleteClick(text);"
         @click.right="hideSuggestion()">
-            <div v-if="text['name']">{{text['name']}}</div>
-            <div v-else>{{text['abbrev']}}</div>
+            <div>{{text}}</div>            
         </li>
     </ul>
 </span>

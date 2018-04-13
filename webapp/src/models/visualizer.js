@@ -180,3 +180,40 @@ export const paintTable = (tableBoundaries, allocationMapping) => {
   tableBody.setAttribute('height', 'auto');
   return tableBody;
 };
+
+export const getReagentAllocationDict = (allocationMapping, plateName) => {
+  const plateAllocation = allocationMapping[plateName];
+  const rowLength = Object.keys(plateAllocation)
+    ? Object.keys(plateAllocation).length
+    : null;
+  const colLength = _.reduce(plateAllocation, (acc, row) => {
+    const colPerRow = Object.keys(row).length;
+    if (colPerRow > acc) {
+      acc = colPerRow;
+    }
+    return acc;
+  }, 0);
+  const reagentAllocationDict = {};
+  _.range(1, rowLength + 1).forEach((rowNum) => {
+    _.range(1, colLength + 1).forEach((colNum) => {
+      if (plateAllocation[rowNum][colNum]) {
+        const reagentList = plateAllocation[rowNum][colNum].reduce(
+          (acc, reagentEntity) => {
+            acc.push(reagentEntity[0]);
+            return acc;
+          },
+          [],
+        );
+        reagentList.forEach((reagent) => {
+          if (reagentAllocationDict[reagent]) {
+            reagentAllocationDict[reagent].push(
+                  [rowNum, colNum]);
+          } else {
+            reagentAllocationDict[reagent] = [[rowNum, colNum]];
+          }
+        });
+      }
+    });
+  });
+  return reagentAllocationDict;
+};

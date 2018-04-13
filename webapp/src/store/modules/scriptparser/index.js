@@ -5,28 +5,15 @@ import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
 import * as ui from "../ui/mutation-types";
 import { getMaxRowCol } from "@/models/editor2.0";
-import { formatText } from "@/models/visualizer.js";
+import { formatText, getReagentAllocationDict } from "@/models/visualizer.js";
 
 export const state = {
-  reagents: {
-    data: null,
-    isRequesting: false,
-    received: false,
-    didInvalidate: false
-  },
-  units: {
-    data: null,
-    isRequesting: false,
-    received: false,
-    didInvalidate: false
-  },
   experimentList: {
     data: null,
     isRequesting: false,
     received: false,
     didInvalidate: false
-  },
-  suggestions: [],
+  },  
   savedScript: null,
   ruleScript: {
     referenceExperiment: {
@@ -171,38 +158,6 @@ const actions = {
           reject(e);
         });
     });
-  },
-  fetchReagentList({ commit }) {
-    commit(types.REQUEST_REAGENTS);
-    return new Promise(function(resolve, reject) {
-      api
-        .getReagents()
-        .then(res => {
-          commit(types.REAGENTS_RECEIVED, res);
-          resolve("success");
-        })
-        .catch(e => {
-          reject(e);
-          commit(ui.SHOW_BLUR);
-          commit(types.REQUEST_REAGENTS_FAILURE);
-        });
-    });
-  },
-  fetchUnitList({ commit }) {
-    commit(types.REQUEST_UNITS);
-    return new Promise(function(resolve, reject) {
-      api
-        .getUnits()
-        .then(res => {
-          commit(types.UNITS_RECEIVED, res);
-          resolve("success");
-        })
-        .catch(e => {
-          reject(e);
-          commit(ui.SHOW_BLUR);
-          commit(types.REQUEST_UNITS_FAILURE);
-        });
-    });
   }
 };
 const mutations = {
@@ -218,6 +173,8 @@ const mutations = {
   },
   [types.LOAD_API_RESPONSE](state, response) {
     state.ruleScript.currentExperiment.data = Object.assign(state.ruleScript.currentExperiment.data,response);        
+    
+    
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
@@ -249,38 +206,6 @@ const mutations = {
     state.ruleScript.isPosting = false;
     state.ruleScript.posted = false;
     state.ruleScript.didInvalidate = true;
-  },
-  [types.REQUEST_REAGENTS](state) {
-    state.reagents.isPosting = true;
-    state.reagents.posted = false;
-    state.reagents.didInvalidate = false;
-  },
-  [types.REAGENTS_RECEIVED](state, data) {
-    state.reagents.data = data;
-    state.reagents.isPosting = false;
-    state.reagents.posted = true;
-    state.reagents.didInvalidate = false;
-  },
-  [types.REQUEST_REAGENTS_FAILURE](state) {
-    state.reagents.isPosting = false;
-    state.reagents.posted = false;
-    state.reagents.didInvalidate = true;
-  },
-  [types.REQUEST_UNITS](state) {
-    state.units.isPosting = true;
-    state.units.posted = false;
-    state.units.didInvalidate = false;
-  },
-  [types.UNITS_RECEIVED](state, data) {
-    state.units.data = data;
-    state.units.isPosting = false;
-    state.units.posted = true;
-    state.units.didInvalidate = false;
-  },
-  [types.REQUEST_UNITS_FAILURE](state) {
-    state.units.isPosting = false;
-    state.units.posted = false;
-    state.units.didInvalidate = true;
   },
   [types.REQUEST_EXPERIMENT](state) {
     state.experiment.isRequesting = true;
@@ -348,9 +273,6 @@ const mutations = {
   [types.SAVE_SCRIPT](state, scriptText) {
     state.savedScript = scriptText;
   },
-  [types.SET_SUGGESTIONS](state, value) {    
-    state.suggestions = value;
-  },
   [types.ADD_REAGENT](state, value) {
     state.reagents.push(value);
   }
@@ -362,15 +284,6 @@ const getters = {
   getError(state, getters, rootState) {
     return state.ruleScript.currentExperiment.data.interpretationResults
       .parseError;
-  },
-  getReagents(state, getters, rootState) {
-    return state.reagents.data;
-  },
-  getUnits(state, getters, rootState) {
-    return state.units.data;
-  },
-  getSuggestions(state, getters, rootState) {
-    return state.suggestions;
   },
   getRuleIsScriptSaving(state, getters, rootState) {
     return state.ruleScript.isPosting;

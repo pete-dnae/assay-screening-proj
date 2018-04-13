@@ -55,3 +55,4 @@ export const getReagents = () => fetchRes('/api/reagents/');
 export const getUnits = () => fetchRes('/api/units/');
 export const postNewExperiment = data =>
   postRes('/api/experiments/', data);
+export const getAvailableSuggestions = () => fetchRes('/api/allowed-names');
