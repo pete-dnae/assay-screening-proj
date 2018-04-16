@@ -2,6 +2,7 @@ from collections import Counter
 from functools import reduce
 from collections import OrderedDict
 
+
 class ImageRecipe:
     """
     Responsibility of this class is to decide what should go into images for one plate
@@ -16,9 +17,9 @@ class ImageRecipe:
         self.common_entities = self.get_common_entities()
         self.exclusive_categories = exclusive_categories
 
-    def prepare_recipe(self):
-        filtered_entities = self.get_filtered_entitites()
-        print(filtered_entities)
+    def prepare_image_spec(self):
+
+        return self.get_filtered_entities()
 
 
     def get_common_entities(self):
@@ -37,8 +38,6 @@ class ImageRecipe:
 
         return reduce(lambda x,y: set(x).intersection(set(y)),entity_list)
 
-
-
     def entity_criteria_check(self,entity):
         """
         Function which decides whether a entity should be included or excluded
@@ -51,7 +50,7 @@ class ImageRecipe:
             elif entity not in self.common_entities:
                 return True
 
-    def get_filtered_entitites(self):
+    def get_filtered_entities(self):
         """
         Function which returns a dictionary keyed by cols
         and each cols key has a row dictionary and each
@@ -61,15 +60,15 @@ class ImageRecipe:
 
         """
 
-        cols = OrderedDict()
-        for colno, entities in self.plate_info.items():
-            row = cols.setdefault(colno, OrderedDict())
-            for rowno, well_contents in entities.items():
-                entities = row.setdefault(rowno, [])
+        table = OrderedDict()
+        for col_no, entities in self.plate_info.items():
+            row = table.setdefault(col_no, OrderedDict())
+            for row_no, well_contents in entities.items():
+                entities = row.setdefault(row_no, [])
                 for entity in well_contents:
                     if self.entity_criteria_check(entity):
                         entities.append(entity)
-        return cols
+        return table
 
 
 

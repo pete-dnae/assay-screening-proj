@@ -4,7 +4,7 @@ from app.models.units_model import UnitsModel
 from app.models.reagent_group_model import ReagentGroupModel
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_recipe import ImageRecipe
-
+from app.images.image_renderer import ImageRenderer
 class ImageMaker:
 
     """
@@ -24,9 +24,9 @@ class ImageMaker:
     def prepare_images(self):
 
         for plate_name,plate_info in self.allocation_results.items():
-            recipe = ImageRecipe(plate_info,self.reagent_category,[])
-            recipe.prepare_recipe()
-
+            recipe_maker = ImageRecipe(plate_info,self.reagent_category,[])
+            image_spec = recipe_maker.prepare_image_spec()
+            ImageRenderer(image_spec).prepare_html_viz()
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
