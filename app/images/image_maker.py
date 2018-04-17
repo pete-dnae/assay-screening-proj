@@ -5,8 +5,9 @@ from app.models.reagent_group_model import ReagentGroupModel
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_recipe import ImageRecipe
 from app.images.image_renderer import ImageRenderer
-class ImageMaker:
 
+
+class ImageMaker:
     """
     Orchestrates  first the fetching of relevant experiment , then its rule script
     then user rule script processor to get hold of allocation results .
@@ -22,11 +23,11 @@ class ImageMaker:
         self.reagent_category = self._fetch_reagent_category_dict()
 
     def prepare_images(self):
-
-        for plate_name,plate_info in self.allocation_results.items():
-            recipe_maker = ImageRecipe(plate_info,self.reagent_category,[])
+        for plate_name, plate_info in self.allocation_results.items():
+            recipe_maker = ImageRecipe(plate_info, self.reagent_category, [])
             image_spec = recipe_maker.prepare_image_spec()
             ImageRenderer(image_spec).prepare_html_viz()
+
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
@@ -46,11 +47,8 @@ class ImageMaker:
         return None if not alloc_table else alloc_table.plate_info
 
     def _fetch_experiment(self):
-
         return ExperimentModel.objects.get(pk=self.experiment_id)
 
     @staticmethod
     def _fetch_reagent_category_dict():
-
-        return {r.name : r.category.name for r in ReagentModel.objects.all()}
-
+        return {r.name: r.category.name for r in ReagentModel.objects.all()}

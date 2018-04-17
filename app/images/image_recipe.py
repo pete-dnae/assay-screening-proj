@@ -10,7 +10,7 @@ class ImageRecipe:
     into images
     """
 
-    def __init__(self,plate_info,reagent_category,exclusive_categories):
+    def __init__(self, plate_info, reagent_category, exclusive_categories):
 
         self.plate_info = plate_info
         self.reagent_category = reagent_category
@@ -21,7 +21,6 @@ class ImageRecipe:
 
         return self.get_filtered_entities()
 
-
     def get_common_entities(self):
         """
         Function returns a list of entities that are present in each well
@@ -30,19 +29,18 @@ class ImageRecipe:
 
         entity_list = []
 
-        for colno,entities in self.plate_info.items():
+        for colno, entities in self.plate_info.items():
 
-            for rowno,well_contents in entities.items():
-
+            for rowno, well_contents in entities.items():
                 entity_list.append(well_contents)
 
-        return reduce(lambda x,y: set(x).intersection(set(y)),entity_list)
+        return reduce(lambda x, y: set(x).intersection(set(y)), entity_list)
 
-    def entity_criteria_check(self,entity):
+    def entity_criteria_check(self, entity):
         """
         Function which decides whether a entity should be included or excluded
         """
-        name,conc,unit = entity
+        name, conc, unit = entity
 
         if name in self.reagent_category:
             if self.reagent_category[name] in self.exclusive_categories:
@@ -69,7 +67,3 @@ class ImageRecipe:
                     if self.entity_criteria_check(entity):
                         entities.append(entity)
         return table
-
-
-
-

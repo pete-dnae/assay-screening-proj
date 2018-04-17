@@ -1,0 +1,20 @@
+{% load filters %}
+<table>
+    <tr>
+        <td>
+        </td>
+        {% for col_no in cols %}
+        <td>{{col_no}}</td>
+        {% endfor %}
+    </tr>
+    {% for row_no in rows %}
+    <tr>
+        <td>{{row_no}}</td>
+        {% for col_no in cols %}
+
+        <td>{{image_spec|column:col_no|row:row_no|safe}}</td>
+
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
