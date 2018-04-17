@@ -18,21 +18,42 @@ class ImageMaker:
 
     def __init__(self, experiment_id):
         self.experiment_id = experiment_id
-        self.experiment = self._fetch_experiment()
         self.allocation_results = self._fetch_allocation_results()
         self.reagent_category = self._fetch_reagent_category_dict()
+        self.image_dictionary = {}
 
     def prepare_images(self):
-        for plate_name, plate_info in self.allocation_results.items():
-            recipe_maker = ImageRecipe(plate_info, self.reagent_category, [])
-            image_spec = recipe_maker.prepare_image_spec()
-            ImageRenderer(image_spec).prepare_html_viz()
-
+        """
+        Iterates through plates in allocation results and co-ordinates
+        creation of image-spec using ImageRecipe and htmltable using
+        ImageRenderer
+        """
+        if self.allocation_results:
+            for plate_name, plate_info in self.allocation_results.items():
+                recipe_maker = ImageRecipe(plate_info, self.reagent_category, [])
+                image_spec = recipe_maker.prepare_image_spec()
+                html_table = ImageRenderer(image_spec).prepare_html_viz()
+                self.image_dictionary[plate_name] = html_table
+            return {
+                'parseError': None,
+                'results': self.image_dictionary
+            }
+        else:
+            return {
+                'parseError': 'There are no allocation results for the script',
+                'results': None
+            }
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
 
     def _fetch_allocation_results(self):
+        """
+          Fetches experiment ,prepares allowed reagents and units.
+          Co-ordinates interpretation of ruleScript to produce allocation results
+          returns None if errors are present
+        """
+        experiment = self._fetch_experiment()
         reagent_names = [r.name for r in ReagentModel.objects.all()]
         group_names = set([g.group_name for g in \
                            ReagentGroupModel.objects.all()])
@@ -40,7 +61,7 @@ class ImageMaker:
         units = [u.abbrev for u in UnitsModel.objects.all()]
 
         interpreter = RulesScriptProcessor(
-            self.experiment.rules_script.text, allowed_names, units)
+           experiment.rules_script.text, allowed_names, units)
         parse_error, alloc_table, thermal_cycling_results, line_num_mapping = \
             interpreter.parse_and_interpret()
 

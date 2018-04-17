@@ -11,7 +11,7 @@ from .models.units_model import UnitsModel
 
 # Serialization helpers.
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
-
+from app.images.image_maker import ImageMaker
 
 class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -119,3 +119,12 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 #-------------------------------------------------------------------------
 # Some convenience serializers to help in particular use-cases.
 #-------------------------------------------------------------------------
+
+
+class MakeImageSerializer(serializers.Serializer):
+
+    experimentImages = serializers.SerializerMethodField(read_only=True)
+
+    def get_experimentImages(self,experiment_id):
+        image_maker = ImageMaker(experiment_id)
+        return image_maker.prepare_images()

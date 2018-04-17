@@ -26,6 +26,7 @@ from app.views import *
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/allowed-names/$', AllowedNamesView.as_view()),
+    re_path(r'^api/experiment-images/(?P<experiment_id>\d+)$',ExperimentImagesView.as_view())
 ]
 
 # Automated config of URLs for the default ViewSet-derived views.

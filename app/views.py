@@ -38,3 +38,9 @@ class AllowedNamesView(APIView):
 
     def get(self, request, format=None):
         return Response(ViewHelpers.all_allowed_names())
+
+class ExperimentImagesView(APIView):
+
+    def get(self,request,experiment_id):
+        results = MakeImageSerializer(experiment_id).data
+        return Response(results)
