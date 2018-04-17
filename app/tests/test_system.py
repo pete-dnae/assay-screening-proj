@@ -85,3 +85,17 @@ class HighLevelSystemSmokeTest(APITestCase):
             'Titanium-Taq'])
 
         self.assertEqual(all_names['units'], ['M/uL', 'dilution', 'uM', 'x'])
+
+    def test_name_filtered_reagent_query(self):
+        client = APIClient()
+
+        # First with a name that does exist.
+        resp = client.get('/api/reagents/?name=Titanium-Taq', format='json')
+        reagents = resp.data
+        self.assertEqual(reagents[0]['url'], 
+            'http://testserver/api/reagents/1/')
+
+        # Now with a name that does not exist.
+        resp = client.get('/api/reagents/?name=fried-rain', format='json')
+        reagents = resp.data
+        self.assertEqual(len(reagents), 0)
