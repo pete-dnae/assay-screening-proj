@@ -38,20 +38,24 @@ const actions = {
         fields[1][0],
         state.avaliableSuggestions.data["reagents_and_groups"]
       );
-      let suggestionsLength = suggestions ? suggestions.length : 0      
-      commit(types.SAVE_SUGGESTIONS, suggestions);
-      commit(ui.SHOW_SUGGESTIONS_LIST, suggestionsLength >= 5);
-      commit(ui.SHOW_SUGGESTIONS_TOOL_TIP, suggestionsLength < 5);
+      let suggestionsLength = suggestions ? suggestions.length : 0;
+      if (suggestions) {
+        commit(types.SAVE_SUGGESTIONS, suggestions);
+        commit(ui.SHOW_SUGGESTIONS_LIST, suggestionsLength >= 5);
+        commit(ui.SHOW_SUGGESTIONS_TOOL_TIP, suggestionsLength < 5);
+      }
     }
     if (fields[5] && (fields[0][0] === "A" || fields[0][0] === "T")) {
       let suggestionsUnit = findSuggestions(
         fields[5][0],
         state.avaliableSuggestions.data["units"]
       );
-      let suggestionsLength = suggestionsUnit ? suggestionsUnit.length : 0;      
-      commit(types.SAVE_SUGGESTIONS, suggestionsUnit);
-      commit(ui.SHOW_SUGGESTIONS_LIST, suggestionsLength >= 5);
-      commit(ui.SHOW_SUGGESTIONS_TOOL_TIP, suggestionsLength < 5);
+      let suggestionsLength = suggestionsUnit ? suggestionsUnit.length : 0;
+      if (suggestionsUnit) {
+        commit(types.SAVE_SUGGESTIONS, suggestionsUnit);
+        commit(ui.SHOW_SUGGESTIONS_LIST, suggestionsLength >= 5);
+        commit(ui.SHOW_SUGGESTIONS_TOOL_TIP, suggestionsLength < 5);
+      }
     }
   }
 };
