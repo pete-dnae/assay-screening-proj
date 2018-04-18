@@ -224,7 +224,7 @@ class RuleScriptParser:
 
         s_plate = self._fields.field(1, 'Source plate name')
         self._assert_plate_is_known(s_plate)
-
+        self._assert_plate_is_not_current(s_plate)
         s_cols = self._fields.field(2, 'Source columns')
         s_rows = self._fields.field(3, 'Source rows')
         d_cols = self._fields.field(4, 'Desination columns')
@@ -273,7 +273,15 @@ class RuleScriptParser:
         Demands tha the plate name is one of those captured earlier from
         a plate declaration.
         """
-        return plate_name in self.rule_objects.keys()
+        if plate_name not in self.rule_objects.keys():
+            self._err('Transfer from unknown plate', plate_name)
+
+    def _assert_plate_is_not_current(self,plate_name):
+        """
+        Demands that the transfer rule does not refer to the current plate
+        """
+        if plate_name == self._cur_plate:
+            self._err('Transfer from same plate is not allowed',plate_name)
 
     def _assert_reagent_is_known(self, reagent):
         """

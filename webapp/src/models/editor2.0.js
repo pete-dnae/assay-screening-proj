@@ -1,11 +1,8 @@
-
 import store from '@/store';
 import _ from 'lodash';
 
 export const postRuleScript = (text, callBack) => {
-  store
-    .dispatch('saveToDb', { text })
-    .then(() => callBack());
+  store.dispatch('saveToDb', { text }).then(() => callBack());
 };
 
 export const findSuggestions = (value, data) => {
@@ -30,7 +27,22 @@ export const getMaxRowCol = (lnums) => {
     allCells.sort((a, b) => b[0] - a[0])[0][0],
   ];
 };
-
+export const getMaxRowColPlate = allocationInstructions =>
+  _.reduce(allocationInstructions, (acc, plateInfo, plateName) => {
+    const keys = Object.keys(plateInfo);
+    const colCount = keys ? keys.length : 0;
+    const rowCount = Math.max(
+      ..._.map(plateInfo, (row) => {
+        const rowKeys = Object.keys(row);
+        return rowKeys ? rowKeys.length : 0;
+      }),
+    );
+    acc[plateName] = {
+      rowCount,
+      colCount,
+    };
+    return acc;
+  }, {});
 export const splitLine = (text) => {
   const re = /\S+/g;
   const fields = [];
@@ -62,9 +74,10 @@ export const getCurrentLineFields = (currentText, cursorPosition) => {
     }
   });
 
-  const fields = splitLine(currentText.substr(currentLineStart, currentLineLength));
+  const fields = splitLine(
+    currentText.substr(currentLineStart, currentLineLength),
+  );
   return { currentLineStart, currentLineLength, lineNumber, plateName, fields };
 };
 
 export const hesitationTimer = _.debounce(postRuleScript, 500);
-

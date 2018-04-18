@@ -126,5 +126,11 @@ class MakeImageSerializer(serializers.Serializer):
     experimentImages = serializers.SerializerMethodField(read_only=True)
 
     def get_experimentImages(self,experiment_id):
+
         image_maker = ImageMaker(experiment_id)
-        return image_maker.prepare_images()
+        err,results = image_maker.prepare_images()
+
+        return {
+            'parseError':err,
+            'results':results
+        }

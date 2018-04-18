@@ -50,8 +50,9 @@ class RulesObjInterpreter:
     def _apply_transfer_rule(self, plate, rule):
         for d_row, d_col in rule.d_cells.all_cells():
             s_col, s_row = rule.mapping[d_col][d_row]
+            s_plate = rule.source_plate
             virtual_reagent_name = \
-                'Transfer %s:Col-%d:Row-%d' % (plate, s_col, s_row)
+                'Transfer %s:Col-%d:Row-%d' % (s_plate, s_col, s_row)
             self._allocation_results.add(plate, d_row, d_col, 
                     virtual_reagent_name, rule.dilution_factor, 'dilution')
 

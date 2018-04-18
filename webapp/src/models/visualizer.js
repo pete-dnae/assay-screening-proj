@@ -188,6 +188,7 @@ export const getReagentAllocationDict = (allocationMapping, plateName) => {
     (acc, row) => {
       const colPerRow = Object.keys(row).length;
       if (colPerRow > acc) {
+        //eslint-disable-next-line
         acc = colPerRow;
       }
       return acc;

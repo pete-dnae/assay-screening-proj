@@ -4,7 +4,7 @@ import * as types from "./mutation-types";
 import * as api from "@/models/api";
 import experiment from "@/assets/json/response.json";
 import * as ui from "../ui/mutation-types";
-import { getMaxRowCol } from "@/models/editor2.0";
+import { getMaxRowCol, getMaxRowColPlate } from "@/models/editor2.0";
 import { formatText, getReagentAllocationDict } from "@/models/visualizer.js";
 
 export const state = {
@@ -13,7 +13,7 @@ export const state = {
     isRequesting: false,
     received: false,
     didInvalidate: false
-  },  
+  },
   savedScript: null,
   ruleScript: {
     referenceExperiment: {
@@ -22,7 +22,8 @@ export const state = {
         text: null
       },
       maxCol: null,
-      maxRow: null
+      maxRow: null,
+      plateBoundaries: null
     },
     currentExperiment: {
       data: {
@@ -30,7 +31,8 @@ export const state = {
         text: null
       },
       maxCol: null,
-      maxRow: null
+      maxRow: null,
+      plateBoundaries: null
     },
     isPosting: false,
     isRequesting: false,
@@ -39,13 +41,8 @@ export const state = {
     didInvalidate: false
   },
   experiment: {
-    referenceExperiment: {
-      data: null
-    },
-    currentExperiment: {
-      data: {id:null},      
-      name: null
-    },
+    referenceExperiment: { data: null },
+    currentExperiment: { data: { id: null }, name: null },
     isRequesting: false,
     received: false,
     didInvalidate: false
@@ -65,8 +62,7 @@ const actions = {
         .then(({ data }) => {
           commit(types.PUT_RULE_SCRIPT_SUCCESS);
           delete data.text;
-          commit(types.LOAD_API_RESPONSE, data);
-
+          commit(types.LOAD_API_RESPONSE, data);          
           commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
         })
@@ -172,20 +168,21 @@ const mutations = {
     state.ruleScript.didInvalidate = false;
   },
   [types.LOAD_API_RESPONSE](state, response) {
-    state.ruleScript.currentExperiment.data = Object.assign(state.ruleScript.currentExperiment.data,response);        
-    
-    
+    state.ruleScript.currentExperiment.data = Object.assign(
+      state.ruleScript.currentExperiment.data,
+      response
+    );
   },
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
   },
-  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {
-    const lnums =
-      state.ruleScript[currentOrReferenceFlag].data.interpretationResults.lnums;
-    [
-      state.ruleScript[currentOrReferenceFlag].maxRow,
-      state.ruleScript[currentOrReferenceFlag].maxCol
-    ] = lnums ? getMaxRowCol(lnums) : [0, 0];
+  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {    
+    state.ruleScript[
+      currentOrReferenceFlag
+    ].plateBoundaries = getMaxRowColPlate(
+      state.ruleScript[currentOrReferenceFlag].data.interpretationResults.table
+    );
+    
   },
   [types.PUT_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
@@ -288,12 +285,6 @@ const getters = {
   getRuleIsScriptSaving(state, getters, rootState) {
     return state.ruleScript.isPosting;
   },
-  getTableRowCount(state, getters, rootState) {
-    return state.ruleScript.currentExperiment.maxRow;
-  },
-  getTableColCount(state, getters, rootState) {
-    return state.ruleScript.currentExperiment.maxCol;
-  },
   getAllocationMap(state, getters, rootState) {
     return state.ruleScript.currentExperiment.data.interpretationResults.lnums;
   },
@@ -315,6 +306,9 @@ const getters = {
   getExperimentId(state, getters, rootState) {
     return state.experiment.currentExperiment.data.id;
   },
+  getPlateBoundaries(state, getters, rootState) {
+    return state.ruleScript.currentExperiment.plateBoundaries;
+  }
 };
 
 export default {

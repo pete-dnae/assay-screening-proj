@@ -8,10 +8,12 @@ export default class SVGtoPNGDataURL {
   // Generate PNG data URL from SVG and send it to callback function when ready
   go(mySVG, callback) {
     const svgAsXML = new XMLSerializer().serializeToString(mySVG);
-    this.loader.width = this.can.width = 2800;
-    this.loader.height = this.can.height = 2800;
+    this.loader.width = 2800;
+    this.can.width = 2800;
+    this.loader.height = 2800;
+    this.can.height = 2800;
     const self = this;
-    this.loader.onload = function () {
+    this.loader.onload = () => {
       self.ctx.drawImage(
         self.loader,
         0,

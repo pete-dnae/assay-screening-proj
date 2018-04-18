@@ -1,7 +1,7 @@
 .editor {
   font-family: "MONOSPACE" !important;
   font-size: 18px;  
-  width: 45%;
+  width: 100%;
   resize: both;
   overflow: auto;
 }

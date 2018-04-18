@@ -14,7 +14,7 @@ def row(dict_key,row):
         string = '<ul style="list-style-type: none">'
         for entity in dict[column][row]:
             reagent,conc,unit = entity
-            string += '<li>%s at %s %s</li>' % (reagent,conc,unit)
+            string += '<li>%s at %s %s</li><hr>' % (reagent,conc,unit)
         string += '</ul>'
         return string
     else:

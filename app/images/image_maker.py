@@ -34,15 +34,10 @@ class ImageMaker:
                 image_spec = recipe_maker.prepare_image_spec()
                 html_table = ImageRenderer(image_spec).prepare_html_viz()
                 self.image_dictionary[plate_name] = html_table
-            return {
-                'parseError': None,
-                'results': self.image_dictionary
-            }
+            return None, self.image_dictionary
         else:
-            return {
-                'parseError': 'There are no allocation results for the script',
-                'results': None
-            }
+            err = 'There are no allocation results for the script'
+            return err, None
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------

@@ -13,6 +13,7 @@ export default {
     allocationMapping: Object,
     highlightedLineNumber: Number,
     hoverHighlight: Boolean,
+    plateBoundaries: Object,
   },
   data() {
     return {
