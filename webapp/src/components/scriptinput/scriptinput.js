@@ -2,7 +2,6 @@ import Quill from 'quill';
 // require styles
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
-import domtoimage from 'dom-to-image';
 import _ from 'lodash';
 import { modal, tooltip } from 'vue-strap';
 import { formatText, makeSVG } from '@/models/visualizer';
@@ -13,6 +12,7 @@ import toolbar from '@/components/editortoolbar/editortoolbar.vue';
 import errorPane from '@/components/scripterrorpane/scripterrorpane';
 import suggestionsList from '@/components/suggestionslist/suggestionslist.vue';
 import suggestionToolTip from '@/components/suggestionstooltip/suggestionstooltip.vue';
+import pictures from '@/components/pictures/pictures.vue';
 // import { validateText } from '@/models/editor';
 import * as api from '@/models/api';
 import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
@@ -28,12 +28,15 @@ export default {
     errorPane,
     suggestionsList,
     suggestionToolTip,
+    pictures,
   },
   data() {
     return {
       msg: 'Welcome',
       suggestionIndex: 0,
       editor: null,
+      experimentImages: null,
+      showPictures: false,
     };
   },
   computed: {
@@ -272,45 +275,15 @@ export default {
     this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
     this.fetchExperiment({ exptNo: 1 });
     api.getExperimentImages(1).then((res) => {
-      const html = res.experimentImages.results.Plate1;
-      const template = document.getElementById('lol');
-      html.trim();
-      template.innerHTML = html;
-      // domtoimage
-      //   .toPng(document.getElementById('overlay'))
-      //   .then((dataUrl) => {
-      //     const link = document.createElement('a');
-      //     link.download = 'my-image-name.png';
-      //     link.href = dataUrl;
-      //     link.click();
-      //   });
-
-
-      domtoimage.toBlob(template.firstElementChild).then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.style = 'display: none';
-        a.href = url;
-        a.download = 'sample';
-        a.click();
-      });
-      // const DOMURL = self.URL || self.webkitURL || self;
-      // const svg = makeSVG(DOMURL, html);
-      // const a = document.createElement('a');
-      // document.body.appendChild(a);
-      // a.style = 'display: none';
-      // a.href = svg;
-      // a.download = 'sample';
-      // a.click();
-      // window.URL.revokeObjectURL(svg);
+      this.experimentImages = res.experimentImages.results;
     });
-    document.addEventListener(
-      'contextmenu',
-      (e) => {
-        e.preventDefault();
-      },
-      false,
-    );
+
+    // document.addEventListener(
+    //   'contextmenu',
+    //   (e) => {
+    //     e.preventDefault();
+    //   },
+    //   false,
+    // );
   },
 };

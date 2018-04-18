@@ -113,18 +113,15 @@ export const getColList = (cols) => {
   );
 };
 
-export const makeSVG = (DOMURL, html) => {
+export const makeSVG = (html) => {
   const data =
     `${'<svg xmlns="http://www.w3.org/2000/svg" width="2800" height="2800">' +
       '<foreignObject width="2800" height="2800">' +
       '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:15px">'}${html}</div>` +
     '</foreignObject>' +
     '</svg>';
-  return DOMURL.createObjectURL(
-    new Blob([data], {
-      type: 'image/svg+xml',
-    }),
-  );
+  // DOMURL.createObjectURL(new Blob([data], { type: 'image/svg+xml' }));
+  return data;
 };
 export const isItemInArray = (array, item) => {
   //eslint-disable-next-line

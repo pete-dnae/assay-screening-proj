@@ -13,54 +13,66 @@
         <!-- toolbar -->
         <div class="row mt-3 w-100">
             <!-- editor -->
-            <div id="editor" class="editor ql-editor" @keyup="editorChange"  
+            <div id="editor" class="editor ql-editor col" @keyup="editorChange"  
             @mouseout="handleMouseOut">
             </div>
             <!-- editor -->
-            <div class="mw-100">
+            <div class="mw-100 col">
                 <!-- hovervisualizer -->
-                <div class="row mt-3" v-if="!error">                    
-                    <hovervisualizer    :currentPlate="currentPlate"                               
-                                        :tableRowCount="tableRowCount"
-                                        :tableColCount="tableColCount"
-                                        :highlightedLineNumber="highlightedLineNumber"
-                                        :hoverHighlight="hoverHighlight"
-                                        :allocationMapping="allocationMapping"                                
-                                        @wellHovered="handleWellHover"
-                                        @hoverComplete="handleWellHoverComplete"
-                                        >
-                    </hovervisualizer>                    
-                    <div class="row w-100 mt-3">
-                        <div class="col-md-6">
-                            
+                <button type="button" @click="showPictures=!showPictures"
+                 class="btn btn-secondary btn-lg btn-block">
+                    <lable v-if="showPictures">Pictures</lable>
+                    <label v-else>Interactive</label></button>
+                <div v-if="!showPictures">
+                    <div  class="row mt-3" v-if="!error">                    
+                        <hovervisualizer    :currentPlate="currentPlate"                               
+                                            :tableRowCount="tableRowCount"
+                                            :tableColCount="tableColCount"
+                                            :highlightedLineNumber="highlightedLineNumber"
+                                            :hoverHighlight="hoverHighlight"
+                                            :allocationMapping="allocationMapping"                                
+                                            @wellHovered="handleWellHover"
+                                            @hoverComplete="handleWellHoverComplete"
+                                            >
+                        </hovervisualizer>                    
+                        <div class="row w-100 mt-3">
+                            <div class="col-md-6">
+                                
+                            </div>
+                            <div class="col">
+                                <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
+                                <label class="text-info">Hover over a well</label>
+                            </div>                
                         </div>
-                        <div class="col">
-                            <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
-                            <label class="text-info">Hover over a well</label>
-                        </div>                
+                    </div> 
+                    <!-- hovervisualizer -->
+                    <!-- wellcontents -->
+                    <div class="row mt-3" v-if="showWellContents&&!error">
+                        
+                        <wellcontents   :currentRow="currentRow" 
+                                        :currentCol="currentCol" 
+                                        :allocationData="allocationData[currentPlate]">
+                        </wellcontents>                  
                     </div>
-                </div> 
-                <!-- hovervisualizer -->
-                <!-- wellcontents -->
-                <div class="row mt-3" v-if="showWellContents&&!error">
+                    <!-- wellcontents -->
                     
-                    <wellcontents   :currentRow="currentRow" 
-                                    :currentCol="currentCol" 
-                                    :allocationData="allocationData[currentPlate]">
-                    </wellcontents>                  
-                </div>
-                <!-- wellcontents -->
-                <!-- error pane -->
-                <errorPane v-if="error"></errorPane>     
-                <!-- error pane -->   
-                <!-- suggestionslist -->             
-                <suggestionsList    v-show="showSuggestionList"
-                                    :suggestions="suggestions"
-                                    @autoComplete="handleAutoCompleteClick"
-                                    @hideSuggestion="hideSuggestion"
-                                    >
-                </suggestionsList>   
-                <!-- suggestionslist -->              
+                    <!-- error pane -->
+                    <errorPane v-if="error"></errorPane>     
+                    <!-- error pane -->   
+                    <!-- suggestionslist -->             
+                    <suggestionsList    v-show="showSuggestionList"
+                                        :suggestions="suggestions"
+                                        @autoComplete="handleAutoCompleteClick"
+                                        @hideSuggestion="hideSuggestion"
+                                        >
+                    </suggestionsList>   
+                    <!-- suggestionslist -->  
+                </div>     
+                <div v-else class="h-100">
+                    <!-- experimentImages -->
+                    <pictures  :experimentImages="experimentImages"></pictures>
+                    <!-- experimentImages -->
+                </div>       
             </div>
         <!-- suggestionToolTip -->        
             <suggestionToolTip  v-if="showSuggestionToolTip"
@@ -83,7 +95,7 @@
  <div id="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>
 </div>
-<div id ="lol" style="display:none"></div>
+
 </div>
 
 </template>
