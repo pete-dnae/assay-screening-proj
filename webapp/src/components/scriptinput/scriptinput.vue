@@ -83,6 +83,7 @@
  <div id="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>
 </div>
+<div id ="lol" style="display:none"></div>
 </div>
 
 </template>

@@ -115,9 +115,9 @@ export const getColList = (cols) => {
 
 export const makeSVG = (DOMURL, html) => {
   const data =
-    `${'<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1200">' +
-      '<foreignObject width="2000" height="1200">' +
-      '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:35px">'}${html}</div>` +
+    `${'<svg xmlns="http://www.w3.org/2000/svg" width="2800" height="2800">' +
+      '<foreignObject width="2800" height="2800">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:15px">'}${html}</div>` +
     '</foreignObject>' +
     '</svg>';
   return DOMURL.createObjectURL(
@@ -186,13 +186,17 @@ export const getReagentAllocationDict = (allocationMapping, plateName) => {
   const rowLength = Object.keys(plateAllocation)
     ? Object.keys(plateAllocation).length
     : null;
-  const colLength = _.reduce(plateAllocation, (acc, row) => {
-    const colPerRow = Object.keys(row).length;
-    if (colPerRow > acc) {
-      acc = colPerRow;
-    }
-    return acc;
-  }, 0);
+  const colLength = _.reduce(
+    plateAllocation,
+    (acc, row) => {
+      const colPerRow = Object.keys(row).length;
+      if (colPerRow > acc) {
+        acc = colPerRow;
+      }
+      return acc;
+    },
+    0,
+  );
   const reagentAllocationDict = {};
   _.range(1, rowLength + 1).forEach((rowNum) => {
     _.range(1, colLength + 1).forEach((colNum) => {
@@ -206,8 +210,7 @@ export const getReagentAllocationDict = (allocationMapping, plateName) => {
         );
         reagentList.forEach((reagent) => {
           if (reagentAllocationDict[reagent]) {
-            reagentAllocationDict[reagent].push(
-                  [rowNum, colNum]);
+            reagentAllocationDict[reagent].push([rowNum, colNum]);
           } else {
             reagentAllocationDict[reagent] = [[rowNum, colNum]];
           }

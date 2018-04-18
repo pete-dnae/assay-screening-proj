@@ -41,6 +41,7 @@ const postRes = (url, data) => axios.post(url, data, {
   },
 });
 
+
 export const getExperiment = expNo => fetchRes(`api/experiments/${expNo}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
 export const getRuleScript = url => fetchResPure(url);
@@ -56,3 +57,4 @@ export const getUnits = () => fetchRes('/api/units/');
 export const postNewExperiment = data =>
   postRes('/api/experiments/', data);
 export const getAvailableSuggestions = () => fetchRes('/api/allowed-names');
+export const getExperimentImages = experimetId => fetchRes(`/api/experiment-images/${experimetId}`);

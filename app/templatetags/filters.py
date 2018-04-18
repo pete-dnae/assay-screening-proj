@@ -10,11 +10,12 @@ def column(dict,key):
 @register.filter
 def row(dict_key,row):
     dict,column = dict_key
-    string = ''
     if row in dict[column] and dict[column][row]:
+        string = '<ul style="list-style-type: none">'
         for entity in dict[column][row]:
             reagent,conc,unit = entity
             string += '<li>%s at %s %s</li>' % (reagent,conc,unit)
+        string += '</ul>'
         return string
     else:
         return ''

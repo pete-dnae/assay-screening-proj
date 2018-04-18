@@ -12,7 +12,7 @@
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
     "build": "node build/build.js",
-    "dev-write" :"webpack --watch --config build/webpack.dev.conf.js"
+    "dev-write": "webpack --watch --config build/webpack.dev.conf.js"
   },
   "dependencies": {
     "animate.css": "^3.5.2",
@@ -37,6 +37,7 @@
     "cross-env": "^5.0.1",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
+    "dom-to-image": "^2.6.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.3.0",
     "eslint-friendly-formatter": "^3.0.0",
