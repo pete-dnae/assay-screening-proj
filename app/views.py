@@ -14,8 +14,24 @@ class RulesScriptViewSet(viewsets.ModelViewSet):
     serializer_class =  RulesScriptSerializer
 
 class ReagentViewSet(viewsets.ModelViewSet):
+    """
+    You can specify an optional name-search criteria for the reagent, like
+    this:
+
+        /api/reagents/?name=Titanium-Taq
+    """
     queryset = ReagentModel.objects.all()
     serializer_class =  ReagentSerializer
+
+    def get_queryset(self):
+        """
+        Overridden to provide the search functionality.
+        """
+        name_to_search_for = self.request.query_params.get('name', None)
+        if name_to_search_for:
+            matching = ReagentModel.objects.filter(name=name_to_search_for)
+            return matching
+        return ReagentModel.objects.all()
 
 class UnitViewSet(viewsets.ModelViewSet):
     queryset = UnitsModel.objects.all()
