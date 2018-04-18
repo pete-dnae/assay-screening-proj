@@ -17,7 +17,11 @@ export default {
     experimentImages: Object,
   },
   watch: {
-    selected() {
+    selected() { this.generateImage(); },
+    experimentImages() { this.generateImage(); },
+  },
+  methods: {
+    generateImage() {
       const html = this.experimentImages[this.selected];
       const template = document.createElement('div');
       template.innerHTML = makeSVG(html);

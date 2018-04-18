@@ -35,7 +35,6 @@ export default {
       msg: 'Welcome',
       suggestionIndex: 0,
       editor: null,
-      experimentImages: null,
       showPictures: false,
     };
   },
@@ -47,6 +46,7 @@ export default {
       units: 'getUnits',
       showBlur: 'getBlurFlag',
       plateBoundaries: 'getPlateBoundaries',
+      experimentImages: 'getExperimentImages',
       allocationMapping: 'getAllocationMap',
       suggestions: 'getSuggestions',
       showSpinner: 'getRuleIsScriptSaving',
@@ -273,9 +273,6 @@ export default {
     this.fetchAvailableSuggestions();
     this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
     this.fetchExperiment({ exptNo: 1 });
-    api.getExperimentImages(1).then((res) => {
-      this.experimentImages = res.experimentImages.results;
-    });
 
     // document.addEventListener(
     //   'contextmenu',

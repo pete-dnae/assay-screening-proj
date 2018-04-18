@@ -4,6 +4,7 @@ import Vue from 'vue';
 import ui from './modules/ui/index';
 import scriptparser from './modules/scriptparser/index';
 import suggestions from './modules/suggestions/index';
+import pictures from './modules/pictures/index';
 
 Vue.use(Vuex);
 
@@ -15,5 +16,6 @@ export default new Vuex.Store({
     ui,
     scriptparser,
     suggestions,
+    pictures,
   },
 });

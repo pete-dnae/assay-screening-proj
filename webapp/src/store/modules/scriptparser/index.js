@@ -50,7 +50,7 @@ export const state = {
   quillOptions: { debug: "warn", modules: { toolbar: false }, theme: "snow" }
 };
 const actions = {
-  saveToDb({ commit }, { text }) {
+  saveToDb({ commit, dispatch }, { text }) {
     commit(types.REQUEST_PUT_RULE_SCRIPT);
     commit(types.SAVE_SCRIPT, text);
     return new Promise(function(resolve, reject) {
@@ -62,7 +62,15 @@ const actions = {
         .then(({ data }) => {
           commit(types.PUT_RULE_SCRIPT_SUCCESS);
           delete data.text;
-          commit(types.LOAD_API_RESPONSE, data);          
+          commit(types.LOAD_API_RESPONSE, data);
+          if (
+            state.ruleScript.currentExperiment.data.interpretationResults
+              .parseError === null
+          )
+            dispatch(
+              "fetchExperimentImages",
+              state.experiment.currentExperiment.data.id
+            );
           commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
         })
@@ -121,7 +129,10 @@ const actions = {
         });
     });
   },
-  fetchExperiment({ commit }, { exptNo, referenceExperimentFlag = false }) {
+  fetchExperiment(
+    { commit, dispatch },
+    { exptNo, referenceExperimentFlag = false }
+  ) {
     commit(types.REQUEST_EXPERIMENT);
     return new Promise(function(resolve, reject) {
       api
@@ -139,6 +150,14 @@ const actions = {
                 commit(types.LOAD_API_RESPONSE, res);
                 commit(types.SAVE_SCRIPT, res.text);
                 commit(types.SET_MAX_ROW_COL, "currentExperiment");
+                if (
+                  state.ruleScript.currentExperiment.data.interpretationResults
+                    .parseError === null
+                )
+                  dispatch(
+                    "fetchExperimentImages",
+                    state.experiment.currentExperiment.data.id
+                  );
               }
               resolve("success");
             })
@@ -176,13 +195,12 @@ const mutations = {
   [types.LOAD_API_RESPONSE_REF_EXP](state, response) {
     state.ruleScript.referenceExperiment.data = response;
   },
-  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {    
+  [types.SET_MAX_ROW_COL](state, currentOrReferenceFlag) {
     state.ruleScript[
       currentOrReferenceFlag
     ].plateBoundaries = getMaxRowColPlate(
       state.ruleScript[currentOrReferenceFlag].data.interpretationResults.table
     );
-    
   },
   [types.PUT_RULE_SCRIPT_FAILURE](state) {
     state.ruleScript.isPosting = false;
