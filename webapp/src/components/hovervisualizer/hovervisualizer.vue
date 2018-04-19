@@ -5,20 +5,21 @@ td:hover {
 </style>
 <template>
 
-<div class="ml-5 border border-light rounded w-100" @mouseout="handleHoverLeave">
+<div class="ml-5 border border-light bg-light rounded w-100" @mouseout="handleHoverLeave">
     <div class="bg-light">
         <div class="row text-left full-width">
                 <div class="col-3">
                     <label class="m-3"><strong>{{currentPlate}}</strong></label>
                 </div>
                 <div class="col-9">
-                    <div class="row">
+                    <div class="row float-right">
                         <div class="col-1">
-                            <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>
+                            
                         </div>
-                        <div class="col-11">
+                        <div class="col-12">
+                            <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>
                             <tooltip effect="scale" placement="bottom" content="Click on a rule from your editor to highlight the area of impact for each rule">
-                                <label class="text-info">Click on a &lt;A&gt; or &lt;T&gt; line</label>
+                                <label class="text-info btn">Click on a &lt;A&gt; or &lt;T&gt; line</label>
                             </tooltip>    
                         </div>
                     </div>
@@ -57,8 +58,10 @@ td:hover {
                 
             </div>
             <div class="col">
-                <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
-                <label class="text-info">Hover over a well</label>
+                <div class="float-right">
+                    <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i>
+                    <label class="text-info">Hover over a well</label>
+                </div>
             </div>                
         </div>    
     
