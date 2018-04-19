@@ -21,10 +21,10 @@
             <!-- editor -->
             <div class="mw-100 col">
                 <!-- hovervisualizer -->
-                <!-- <button type="button" @click="showPictures=!showPictures"
-                 class="btn btn-secondary btn-lg btn-block">
+                <button type="button" @click="showPictures=!showPictures"
+                 class="btn btn-secondary btn-lg btn-block d-none">
                     <label v-if="showPictures">Pictures</label>
-                    <label v-else>Interactive</label></button> -->
+                    <label v-else>Interactive</label></button>
                 <div v-if="!showPictures">
                     <div  class="row mt-3" v-if="!error">                    
                         <hovervisualizer    :currentPlate="currentPlate" 
