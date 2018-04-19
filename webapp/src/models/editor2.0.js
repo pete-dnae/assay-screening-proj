@@ -30,11 +30,11 @@ export const getMaxRowCol = (lnums) => {
 export const getMaxRowColPlate = allocationInstructions =>
   _.reduce(allocationInstructions, (acc, plateInfo, plateName) => {
     const keys = Object.keys(plateInfo);
-    const colCount = keys ? keys.length : 0;
+    const colCount = keys ? Math.max(...keys) : 0;
     const rowCount = Math.max(
       ..._.map(plateInfo, (row) => {
         const rowKeys = Object.keys(row);
-        return rowKeys ? rowKeys.length : 0;
+        return rowKeys ? Math.max(...rowKeys) : 0;
       }),
     );
     acc[plateName] = {

@@ -10,7 +10,7 @@ def column(dict,key):
 @register.filter
 def row(dict_key,row):
     dict,column = dict_key
-    if row in dict[column] and dict[column][row]:
+    if  column in dict and row in dict[column]:
         string = '<ul style="list-style-type: none">'
         for entity in dict[column][row]:
             reagent,conc,unit = entity
