@@ -5,7 +5,7 @@ from app.models.reagent_group_model import ReagentGroupModel
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_recipe import ImageRecipe
 from app.images.image_renderer import ImageRenderer
-
+from django.shortcuts import get_object_or_404
 
 class ImageMaker:
     """
@@ -77,7 +77,7 @@ class ImageMaker:
         return None if not alloc_table else alloc_table.plate_info
 
     def _fetch_experiment(self):
-        return ExperimentModel.objects.get(pk=self.experiment_id)
+        return get_object_or_404(ExperimentModel,pk=self.experiment_id)
 
     @classmethod
     def _fetch_reagent_category_dict(cls):

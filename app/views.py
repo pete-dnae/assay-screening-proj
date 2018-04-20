@@ -55,9 +55,11 @@ class AllowedNamesView(APIView):
     def get(self, request, format=None):
         return Response(ViewHelpers.all_allowed_names())
 
+
 class ExperimentImagesView(APIView):
     """
-    Put a comment here.
+    Creates MakeImageSerializer with the experiment id which then provides the
+    resultant JSON data structure in data property of the object instance
     """
 
     def get(self,request,experiment_id):
