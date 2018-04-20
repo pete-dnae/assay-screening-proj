@@ -8,10 +8,20 @@ import { findSuggestions } from "@/models/editor2.0.js";
 export const state = {
   shortlistedSuggestions: [],
   avaliableSuggestions: {
-    data: null,
+    data: { reagents_and_groups: null, units: null },
     isFetching: false,
     fetched: false,
     didInvalidate: false
+  },
+  hotSettings: {
+    colHeaders: ["reagentName", "Concentration", "Unit"],
+    columns: [
+      { type: "dropdown", source: [] },
+      {},
+      { type: "dropdown", source: [] }
+    ],
+    startRows: 10,
+    startCols: 3
   }
 };
 
@@ -67,6 +77,8 @@ const mutations = {
   },
   [types.RECEIVED_AVAILABLE_SUGGESTIONS](state, data) {
     state.avaliableSuggestions.data = data;
+    state.hotSettings.columns[0].source = data.reagents_and_groups;
+    state.hotSettings.columns[2].source = data.untis;
     state.avaliableSuggestions.isFetching = false;
     state.avaliableSuggestions.fetched = true;
     state.avaliableSuggestions.didInvalidate = false;
@@ -83,6 +95,9 @@ const mutations = {
 const getters = {
   getSuggestions(state, getters, rootState) {
     return state.shortlistedSuggestions;
+  },
+  getHotSettings(state, getters, rootState) {
+    return state.hotSettings;
   }
 };
 
