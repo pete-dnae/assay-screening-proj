@@ -57,14 +57,14 @@ class ImageRecipe:
 
         return reduce(lambda x, y: set(x).intersection(set(y)), entity_list)
 
-    def _entity_criteria_check(self, entity):
+    def _reagent_criteria_check(self, reagent):
         """
         Function which decides whether a entity should be included or excluded
         """
-        name, conc, unit = entity
+        name, conc, unit = reagent
 
         if name in self.reagent_category:
-            if entity not in self.common_reagents:
+            if reagent not in self.common_reagents:
                 return True
         return False
 
@@ -84,6 +84,6 @@ class ImageRecipe:
             for row_no, well_contents in reagents.items():
                 reagents = row.setdefault(row_no, [])
                 for entity in well_contents:
-                    if self._entity_criteria_check(entity):
+                    if self._reagent_criteria_check(reagent):
                         reagents.append(entity)
         return table
