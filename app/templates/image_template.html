@@ -9,7 +9,7 @@
     </tr>
     {% for row_no in rows %}
     <tr>
-        <td style="min-width:50px; border: 1px solid black;">{{row_no}}</td>
+        <td style="min-width:50px; border: 1px solid black;">{{row_no|alphabet}}</td>
         {% for col_no in cols %}
 
         <td style="min-width:200px; border: 1px solid black;">
