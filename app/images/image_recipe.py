@@ -83,7 +83,7 @@ class ImageRecipe:
             row = table.setdefault(col_no, OrderedDict())
             for row_no, well_contents in reagents.items():
                 reagents = row.setdefault(row_no, [])
-                for entity in well_contents:
+                for reagent in well_contents:
                     if self._reagent_criteria_check(reagent):
-                        reagents.append(entity)
+                        reagents.append(reagent)
         return table
