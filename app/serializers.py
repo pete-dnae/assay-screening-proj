@@ -128,7 +128,7 @@ class MakeImageSerializer(serializers.Serializer):
     def get_experimentImages(self,experiment_id):
 
         image_maker = ImageMaker(experiment_id)
-        err,results = image_maker.prepare_images()
+        err,results = image_maker.make_images()
 
         return {
             'parseError':err,

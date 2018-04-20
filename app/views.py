@@ -56,6 +56,9 @@ class AllowedNamesView(APIView):
         return Response(ViewHelpers.all_allowed_names())
 
 class ExperimentImagesView(APIView):
+    """
+    Put a comment here.
+    """
 
     def get(self,request,experiment_id):
         results = MakeImageSerializer(experiment_id).data

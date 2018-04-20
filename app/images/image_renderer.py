@@ -14,7 +14,7 @@ class ImageRenderer:
         self._cols = None
         self._set_row_rol()
 
-    def prepare_html_viz(self):
+    def make_html(self):
         return render_to_string('image_template.html',
                                 {'image_spec': self.image_spec,
                                  'rows': self._rows, 'cols': self._cols})
@@ -26,8 +26,9 @@ class ImageRenderer:
     def _set_row_rol(self):
         """
         Calculates the max row , col attribute required to draw a complete table
-        max col is equal to the number of keys in image_spec as it is keyed by cols
-        max row is max key count in row dict, found through recursion on column keys
+        max col is equal to the number of keys in image_spec as it is keyed by
+        cols max row is max key count in row dict, found through recursion on
+        column keys
 
         Then prepares an array of rows and cols
         """
