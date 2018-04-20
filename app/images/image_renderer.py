@@ -9,10 +9,15 @@ class ImageRenderer:
     """
 
     def __init__(self, image_spec):
+        """
+        Provide a dictionary with plate columns as keys and a row dictionary
+        as values. row dictionary contains row number as keys and well
+        contents as values.
+        """
         self.image_spec = image_spec
         self._rows = None
         self._cols = None
-        self._set_row_rol()
+        self._set_rows_cols()
 
     def make_html(self):
         return render_to_string('image_template.html',
@@ -23,7 +28,7 @@ class ImageRenderer:
     # Private below.
     # -----------------------------------------------------------------------
 
-    def _set_row_rol(self):
+    def _set_rows_cols(self):
         """
         Calculates the max row , col attribute required to draw a complete table
         max col is equal to the number of keys in image_spec as it is keyed by
