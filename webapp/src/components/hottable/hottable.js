@@ -15,8 +15,9 @@ export default {
     HotTable,
   },
   methods: {
-    getData() {
-      this.data = HotTable.getData();
+    getData(event) {
+      console.log(event);
+      debugger;
     },
   },
 };
