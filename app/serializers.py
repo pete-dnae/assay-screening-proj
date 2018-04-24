@@ -34,6 +34,10 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
            'name',
            'category',
         )
+        lookup_field = 'name'
+        extra_kwargs={
+            'url':{'lookup_field':'name'}
+        }
 
 class UnitsSerializer(serializers.HyperlinkedModelSerializer):
 
