@@ -3,7 +3,8 @@ Django==2.0
 djangorestframework==3.7.3
 gunicorn==19.6.0
 psycopg2==2.7.3.2
-pytz==2017.3
+pytz==2018.4
 whitenoise==3.2
 Markdown==2.6.11
 django-cors-headers
+pandas=0.22
