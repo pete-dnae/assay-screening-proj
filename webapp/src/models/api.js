@@ -58,3 +58,4 @@ export const postNewExperiment = data =>
   postRes('/api/experiments/', data);
 export const getAvailableSuggestions = () => fetchRes('/api/allowed-names');
 export const getExperimentImages = experimetId => fetchRes(`/api/experiment-images/${experimetId}`);
+export const getAvailableReagentGroups = () => fetchRes('api/reagent-groups/list');
