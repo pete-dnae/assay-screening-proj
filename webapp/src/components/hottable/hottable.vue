@@ -1,8 +1,8 @@
 <template>
 <div>
-    <HotTable :root="root" :settings="hotSettings"></HotTable>
-    <button class="btn btn-info float-left mt-3" @click="getData">Save</button>
-    {{data}}
+    <strong>Create reagent pools below</strong>    
+    <div id="handsonTable"></div>
+    <button class="btn btn-info float-left mt-3" @click="getData">Save As</button>    
 </div>
 </template>
 <script src="./hottable.js"></script>

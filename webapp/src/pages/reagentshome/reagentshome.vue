@@ -26,8 +26,8 @@
         
         </nav>
     </div>
-    <div class="mt-3">
-        <h5>Create reagent pools below</h5>
+    <div class="mt-3">        
+        
         <div class="w-50 mt-3">            
             <hottable :hotSettings="hotSettings"></hottable>       
         </div>

@@ -1,4 +1,4 @@
-import HotTable from '@handsontable/vue';
+import Handsontable from 'handsontable';
 
 export default {
   name: 'reagentshome',
@@ -12,12 +12,15 @@ export default {
     hotSettings: Object,
   },
   components: {
-    HotTable,
+    Handsontable,
   },
   methods: {
-    getData(event) {
-      console.log(event);
-      debugger;
+    getData() {
+      this.data = this.handsonTable.getData();
     },
+  },
+  mounted() {
+    const container = document.getElementById('handsonTable');
+    this.handsonTable = new Handsontable(container, this.hotSettings);
   },
 };

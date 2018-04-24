@@ -25,7 +25,7 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class ReagentSerializer(serializers.HyperlinkedModelSerializer):
+class ReagentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReagentModel
@@ -34,6 +34,7 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
            'name',
            'category',
         )
+        depth = 1
 
 class UnitsSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -44,26 +45,26 @@ class UnitsSerializer(serializers.HyperlinkedModelSerializer):
            'abbrev',
         )
 
-class ReagentCategorySerializer(serializers.HyperlinkedModelSerializer):
+class ReagentCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReagentCategoryModel
         fields = (
-           'url',
            'name',
         )
+        depth = 1
 
-class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
+class ReagentGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReagentGroupModel
         fields = (
-           'url',
            'group_name',
            'reagent',
            'concentration',
            'units',
         )
+        depth = 2
 
     def validate(self, data):
         # Reagent names must not already exist in the group.
@@ -87,7 +88,6 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RulesScriptModel
         fields = (
-           'url',
            'text',
            'interpretationResults',
         )

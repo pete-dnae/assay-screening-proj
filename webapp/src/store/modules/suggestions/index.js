@@ -78,7 +78,7 @@ const mutations = {
   [types.RECEIVED_AVAILABLE_SUGGESTIONS](state, data) {
     state.avaliableSuggestions.data = data;
     state.hotSettings.columns[0].source = data.reagents_and_groups;
-    state.hotSettings.columns[2].source = data.untis;
+    state.hotSettings.columns[2].source = data.units;
     state.avaliableSuggestions.isFetching = false;
     state.avaliableSuggestions.fetched = true;
     state.avaliableSuggestions.didInvalidate = false;
