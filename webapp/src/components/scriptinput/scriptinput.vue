@@ -22,9 +22,15 @@
             <div class="mw-100 col">
                 <!-- hovervisualizer -->
                 <button type="button" @click="showPictures=!showPictures"
-                 class="btn btn-secondary btn-lg btn-block d-none">
-                    <label v-if="showPictures">Pictures</label>
-                    <label v-else>Interactive</label></button>
+                                  class="btn btn-secondary btn-lg btn-block">
+                    <label v-if="showPictures">Pictures view 
+                        <small>(click here to change to Interactive view)</small>
+                    </label>
+                    <label v-else>Interactive view 
+                        <small>(click here to change to Pictures view)</small>
+                    </label>
+                </button>
+
                 <div v-if="!showPictures">
                     <div  class="row mt-3" v-if="!error">                    
                         <hovervisualizer    :currentPlate="currentPlate" 
