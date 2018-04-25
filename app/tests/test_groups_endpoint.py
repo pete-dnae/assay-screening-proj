@@ -22,7 +22,8 @@ class GroupsEndPointTest(APITestCase):
 
         json = response.data
         self.assertEqual(json['group_name'], 'Pool_1')
-        self.assertEqual(json['reagent'], 'http://testserver/api/reagents/5/')
+        self.assertEqual(json['reagent'], 'http://testserver/api/'
+                                          'reagents/Efs_cpn60_1.x_Efs04_Efs01/')
         self.assertEqual(json['concentration'], 0.4)
         self.assertEqual(json['units'], 'http://testserver/api/units/3/')
 
@@ -30,7 +31,7 @@ class GroupsEndPointTest(APITestCase):
         client = APIClient()
         post_data = {
             'group_name': 'new name',
-            'reagent': '/api/reagents/1/',
+            'reagent': '/api/reagents/Titanium-Taq/',
             'concentration': 0.001,
             'units': '/api/units/1/',
         }
@@ -43,7 +44,7 @@ class GroupsEndPointTest(APITestCase):
         client = APIClient()
         post_data = {
             'group_name': 'new name',
-            'reagent': '/api/reagents/1/',
+            'reagent': '/api/reagents/Titanium-Taq/',
             'concentration': 0.001,
             'units': '/api/units/1/',
         }
@@ -51,7 +52,7 @@ class GroupsEndPointTest(APITestCase):
         # This second POST introduces a duplicate  reagent to the group.
         post_data = {
             'group_name': 'new name',
-            'reagent': '/api/reagents/1/',
+            'reagent': '/api/reagents/Titanium-Taq/',
             'concentration': 0.003,
             'units': '/api/units/2/',
         }

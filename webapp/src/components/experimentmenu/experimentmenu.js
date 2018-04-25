@@ -54,15 +54,15 @@ export default {
     },
     handleSave(experimentName) {
       this.saveExperimentAs(experimentName).then((data) => {
-        this.loadExperiment(data.id);
+        this.loadExperiment(data.experiment_name);
         this.showModal = false;
         this.fetchExperimentList().then(() => {
           this.mapData();
         });
       });
     },
-    loadExperiment(exptNo) {
-      this.fetchExperiment({ exptNo });
+    loadExperiment(experimentName) {
+      this.fetchExperiment({ experimentName });
     },
   },
   mounted() {

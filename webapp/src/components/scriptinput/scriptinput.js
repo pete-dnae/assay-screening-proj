@@ -271,8 +271,11 @@ export default {
     // Data Retreival
 
     this.fetchAvailableSuggestions();
-    this.fetchExperiment({ exptNo: 1, referenceExperimentFlag: true });
-    this.fetchExperiment({ exptNo: 1 });
+    this.fetchExperiment({
+      experimentName: 'Reference Experiment',
+      referenceExperimentFlag: true,
+    });
+    this.fetchExperiment({ experimentName: 'Reference Experiment' });
 
     // document.addEventListener(
     //   'contextmenu',

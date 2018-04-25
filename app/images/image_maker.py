@@ -24,13 +24,13 @@ class ImageMaker:
     plate name.
 
     """
-    def __init__(self, experiment_id):
+    def __init__(self, experiment_name):
         """
-        Provide experiment id to instantiate the class , allocation_results are
+        Provide experiment name to instantiate the class , allocation_results are
         generated after parsing experiments rule_script. reagents are fetched
         from db to make reagent_categories.
         """
-        self.experiment_id = experiment_id
+        self.experiment_name = experiment_name
         self.allocation_results = self._fetch_allocation_results()
         self.reagent_categories = self._fetch_reagent_category_dict()
         self.images = {}
@@ -77,7 +77,7 @@ class ImageMaker:
         return None if not alloc_table else alloc_table.plate_info
 
     def _fetch_experiment(self):
-        return get_object_or_404(ExperimentModel,pk=self.experiment_id)
+        return get_object_or_404(ExperimentModel,pk=self.experiment_name)
 
     @classmethod
     def _fetch_reagent_category_dict(cls):

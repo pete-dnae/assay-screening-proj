@@ -22,7 +22,7 @@ class ReagentViewSet(viewsets.ModelViewSet):
     """
     queryset = ReagentModel.objects.all()
     serializer_class =  ReagentSerializer
-    lookup_field = 'name'
+    lookup_value_regex = '[^/]+'
 
     def get_queryset(self):
         """

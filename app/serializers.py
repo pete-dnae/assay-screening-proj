@@ -19,7 +19,7 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
         model = ExperimentModel
         fields = (
            'url',
-           'id',
+           # 'id',
            'experiment_name',
            'rules_script',
         )
@@ -34,10 +34,7 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
            'name',
            'category',
         )
-        lookup_field = 'name'
-        extra_kwargs={
-            'url':{'lookup_field':'name'}
-        }
+
 
 class UnitsSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -68,6 +65,7 @@ class ReagentGroupSerializer(serializers.HyperlinkedModelSerializer):
            'concentration',
            'units',
         )
+
 
     def validate(self, data):
         # Reagent names must not already exist in the group.
