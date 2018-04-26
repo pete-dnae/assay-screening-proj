@@ -26,8 +26,8 @@ class ImageMaker:
     """
     def __init__(self, experiment_name):
         """
-        Provide experiment name to instantiate the class , allocation_results are
-        generated after parsing experiments rule_script.
+        Provide experiment name to instantiate the class , allocation_results
+        are generated after parsing experiments rule_script.
         """
         self.experiment_name = experiment_name
         self.allocation_results = self._fetch_allocation_results()

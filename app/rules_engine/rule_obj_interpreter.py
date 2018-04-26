@@ -91,7 +91,8 @@ class AllocationResults:
 class ThermalCyclingResults:
 
     """
-    Used by RulesObjInterpreter to deliver interpretation of thermal cycling rules
+    Used by RulesObjInterpreter to deliver interpretation of thermal cycling
+    rules
 
     Data structure skeleton below :
         .plate_info[plate_name]=[item1,item2]

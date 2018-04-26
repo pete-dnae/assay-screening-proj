@@ -59,7 +59,8 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
         """
         name_to_search_for = self.request.query_params.get('name', None)
         if name_to_search_for:
-            matching = ReagentGroupModel.objects.filter(group_name=name_to_search_for)
+            matching = ReagentGroupModel.objects.filter\
+                (group_name=name_to_search_for)
             return matching
         return ReagentGroupModel.objects.all()
 

@@ -54,6 +54,7 @@ class ReagentCategorySerializer(serializers.ModelSerializer):
         )
 
 class ReagentGroupSerializer(serializers.ModelSerializer):
+
     reagent = ReagentSerializer
     units = UnitsSerializer
     class Meta:
