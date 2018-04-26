@@ -28,7 +28,9 @@ urlpatterns = [
     re_path(r'^api/allowed-names/$', AllowedNamesView.as_view()),
     re_path(r'^api/experiment-images/(?P<experiment_id>[a-zA-Z0-9_ ]+)$',
             ExperimentImagesView.as_view()),
-    re_path(r'^api/reagent-groups/list',ReagentGroupListView.as_view())
+    re_path(r'^api/reagent-groups/list',ReagentGroupListView.as_view()),
+    re_path(r'api/available-reagents-category$',
+            AvailableReagentsCategoryView.as_view())
 ]
 
 # Automated config of URLs for the default ViewSet-derived views.

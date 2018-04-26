@@ -89,5 +89,13 @@ class ReagentGroupListView(APIView):
     """
 
     def get(self,request):
-        results = ReagentGroupModel.objects.values('group_name').distinct()
-        return Response(results)
+        return Response(Response(ViewHelpers.group_names()))
+
+class AvailableReagentsCategoryView(APIView):
+    """
+    Returns a json object keyed by reagent or reagent group name with their
+    respective category as value
+    """
+
+    def get(self,request):
+        return Response(ViewHelpers.available_reagents_category())

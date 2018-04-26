@@ -56,7 +56,7 @@ class ImageRecipe:
         """
         Function which decides whether a entity should be included or excluded
         """
-        name, conc, unit,category = reagent
+        name, conc, unit = reagent
         
         if reagent not in self.common_reagents:
             return True

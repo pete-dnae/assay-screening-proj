@@ -45,7 +45,7 @@ class RulesObjInterpreter:
     def _apply_alloc_rule(self, plate, rule):
         for row, col in rule.cells.all_cells():
             self._allocation_results.add(plate, row, col, rule.reagent_name,
-                    rule.conc, rule.units,rule.reagent_category)
+                    rule.conc, rule.units)
 
     def _apply_transfer_rule(self, plate, rule):
         for d_row, d_col in rule.d_cells.all_cells():
@@ -54,8 +54,7 @@ class RulesObjInterpreter:
             virtual_reagent_name = \
                 'Transfer %s:Col-%d:Row-%d' % (s_plate, s_col, s_row)
             self._allocation_results.add(plate, d_row, d_col, 
-                    virtual_reagent_name, rule.dilution_factor, 'dilution',
-                                         'transfer')
+                    virtual_reagent_name, rule.dilution_factor, 'dilution')
 
     def _apply_thermal_cycle_rule(self, plate, rule):
         self._thermal_cycling_results.add(plate,rule.todict())
@@ -83,11 +82,11 @@ class AllocationResults:
     def __init__(self):
         self.plate_info = OrderedDict()
 
-    def add(self, plate, row, col, reagent_name, conc, units,reagent_category):
+    def add(self, plate, row, col, reagent_name, conc, units):
         cols = self.plate_info.setdefault(plate, OrderedDict())
         rows = cols.setdefault(col, OrderedDict())
         reagents = rows.setdefault(row, [])
-        reagents.append((reagent_name, conc, units,reagent_category))
+        reagents.append((reagent_name, conc, units))
 
 
 class ThermalCyclingResults:

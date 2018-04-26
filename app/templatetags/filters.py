@@ -13,7 +13,7 @@ def row(dict_key,row):
     if column in dict and row in dict[column]:
         string = '<ul style="padding:0;list-style-type: none">'
         for entity in dict[column][row]:
-            reagent,conc,unit,category = entity
+            reagent,conc,unit = entity
             string += '<li>%s %s %s</li><hr>' % (conc,unit,reagent)
         string += '</ul>'
         return string
