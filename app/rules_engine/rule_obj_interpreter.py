@@ -70,8 +70,7 @@ class AllocationResults:
 
     Where an item looks like:
 
-        (reagent_name, concentration_value, concentration_units,
-        reagent_category)
+        (reagent_name, concentration_value, concentration_units)
 
     We use 1-based indices to make it easier to carry through users' ideas
     about how rows and columns are numbered.
