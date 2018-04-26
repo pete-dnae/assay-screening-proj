@@ -10,7 +10,7 @@ class ExperimentViewSet(viewsets.ModelViewSet):
 
     queryset = ExperimentModel.objects.all()
     serializer_class =  ExperimentSerializer
-
+    lookup_value_regex = '[a-zA-Z0-9_ ]+'
 
 class RulesScriptViewSet(viewsets.ModelViewSet):
     queryset = RulesScriptModel.objects.all()
