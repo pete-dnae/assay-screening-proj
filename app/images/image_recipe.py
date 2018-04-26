@@ -15,19 +15,14 @@ class ImageRecipe:
     """
 
 
-    def __init__(self, plate_info, reagent_category):
+    def __init__(self, plate_info):
         """
          Provide a dictionary keyed on column number ,with values that are
          dictionaries keyed on row number and well contents as values.
 
-         Also provide a dictionary keyed on reagent name with their
-         respective categories as values
-
-         Common reagents are derived from plate_info and reagent_category.
         """
 
         self.plate_info = plate_info
-        self.reagent_category = reagent_category
         self.common_reagents = self._get_common_reagents()
 
     def make_image_spec(self):
@@ -61,7 +56,7 @@ class ImageRecipe:
         """
         Function which decides whether a entity should be included or excluded
         """
-        name, conc, unit = reagent
+        name, conc, unit,category = reagent
         
         if reagent not in self.common_reagents:
             return True

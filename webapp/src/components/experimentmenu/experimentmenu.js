@@ -11,6 +11,7 @@ export default {
       showModal: false,
       experiment: null,
       invalidExpName: false,
+      experimentNameTaken: false,
     };
   },
   components: {
@@ -21,8 +22,11 @@ export default {
   watch: {
     experiment() {
       if (this.data.includes(this.experiment)) {
+        this.experimentNameTaken = true;
+      } else if (!this.experiment.match(/^[a-zA-Z0-9_ ]+$/)) {
         this.invalidExpName = true;
       } else {
+        this.experimentNameTaken = false;
         this.invalidExpName = false;
       }
     },
@@ -47,10 +51,7 @@ export default {
       this.data = this.experiments.map(expObject => expObject.experiment_name);
     },
     loadExperimentFromName(value) {
-      const exptNo = this.experiments.find(
-        expObject => expObject.experiment_name === value,
-      ).id;
-      this.loadExperiment(exptNo);
+      this.loadExperiment(value);
     },
     handleSave(experimentName) {
       this.saveExperimentAs(experimentName).then((data) => {

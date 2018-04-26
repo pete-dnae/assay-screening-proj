@@ -27,12 +27,10 @@ class ImageMaker:
     def __init__(self, experiment_name):
         """
         Provide experiment name to instantiate the class , allocation_results are
-        generated after parsing experiments rule_script. reagents are fetched
-        from db to make reagent_categories.
+        generated after parsing experiments rule_script.
         """
         self.experiment_name = experiment_name
         self.allocation_results = self._fetch_allocation_results()
-        self.reagent_categories = self._fetch_reagent_category_dict()
         self.images = {}
 
     def make_images(self):
@@ -43,7 +41,7 @@ class ImageMaker:
         """
         if self.allocation_results:
             for plate_name, plate_info in self.allocation_results.items():
-                recipe_maker = ImageRecipe(plate_info, self.reagent_categories)
+                recipe_maker = ImageRecipe(plate_info)
                 image_spec = recipe_maker.make_image_spec()
                 html_table = ImageRenderer(image_spec).make_html()
                 self.images[plate_name] = html_table
@@ -78,7 +76,3 @@ class ImageMaker:
 
     def _fetch_experiment(self):
         return get_object_or_404(ExperimentModel,pk=self.experiment_name)
-
-    @classmethod
-    def _fetch_reagent_category_dict(cls):
-        return {r.name: r.category.name for r in ReagentModel.objects.all()}
