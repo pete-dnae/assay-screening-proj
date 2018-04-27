@@ -8,3 +8,4 @@ whitenoise==3.2
 Markdown==2.6.11
 django-cors-headers
 pandas=0.22
+numpy=1.14
