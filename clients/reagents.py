@@ -1,7 +1,7 @@
 
 from clients.utils import get_object
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 DbReagent = List[str]
 Reagent = Dict[str, str]
 
@@ -15,7 +15,7 @@ def reformat_db_reagent(db_reagent: DbReagent) -> Reagent:
     API call)
     :return:
     """
-    r = {'reagent_name':  db_reagent[0],
+    r = {'reagent_name': db_reagent[0],
          'concentration': db_reagent[1],
          'unit': db_reagent[2]}
     if r['reagent_name'].startswith('Transfer'):
@@ -25,8 +25,9 @@ def reformat_db_reagent(db_reagent: DbReagent) -> Reagent:
     return r
 
 
-def cached_reformat_db_reagent(db_reagent: DbReagent,
-                               reagent_cache: Dict[str, Reagent]) -> Reagent:
+def cached_reformat_db_reagent(
+        db_reagent: DbReagent,
+        reagent_cache: Dict[Tuple[str], Reagent]) -> Reagent:
     """
     A convenience function that prevents multiple API calls for reagents that
     have already been returned.
@@ -44,12 +45,12 @@ def cached_reformat_db_reagent(db_reagent: DbReagent,
     Reagent instances
     :return:
     """
-    reagent_name = db_reagent[0]
-    if reagent_name in reagent_cache:
-        return reagent_cache[reagent_name]
+    reagent_key = tuple(db_reagent)
+    if reagent_key in reagent_cache:
+        return reagent_cache[reagent_key]
     else:
         r = reformat_db_reagent(db_reagent)
-        reagent_cache[r['reagent_name']] = r
+        reagent_cache[reagent_key] = r
         return r
 
 
@@ -128,5 +129,16 @@ def get_templates(reagents: List[Reagent]) -> List[Reagent]:
     :param reagents: a list of Reagent instances
     :return:
     """
-    templates = [r for r in reagents if 'templates' in r['reagent_category']]
+    templates = [r for r in reagents if 'template' in r['reagent_category']]
     return templates
+
+
+def disambiguate_templates(templates):
+    human = []
+    other = []
+    for t in templates:
+        if 'hgdna' in t['reagent_name'].lower():
+            human.append(t)
+        else:
+            other.append(t)
+    return human, other

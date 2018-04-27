@@ -1,7 +1,7 @@
 from typing import List
 
 from clients.reagents import Reagent
-from clients.vessels import row_col_to_well, Plates
+from hardware.plates import row_col_to_well, Plates
 
 
 def decode_transfer_to_plate_well(transfer_str: str):
@@ -74,6 +74,6 @@ def get_transferred_templates(reagents: List[Reagent], plates: Plates):
     transfers = [r['reagent_name'] for r in reagents
                  if 'transfer' in r['reagent_category']]
     for trans in transfers:
-        temps = filter_transferred_reagents(trans, plates, 'templates')
+        temps = filter_transferred_reagents(trans, plates, 'template')
         templates = templates + temps
     return templates
