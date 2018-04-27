@@ -1,7 +1,7 @@
 from typing import List
 
-from clients.reagents import Reagent
-from hardware.plates import row_col_to_well, Plates
+from clients.reagents import ObjReagent
+from hardware.plates import row_col_to_well, ExptPlates
 
 
 def decode_transfer_to_plate_well(transfer_str: str):
@@ -18,10 +18,10 @@ def decode_transfer_to_plate_well(transfer_str: str):
     return plate, well
 
 
-def get_transferred_reagents(transfer_str: str, plates: Plates):
+def get_transferred_reagents(transfer_str: str, plates: ExptPlates):
     """
-    Extracts a list of Reagent instance from a Plates dictionary as specified in
-    the transfer string
+    Extracts a list of ObjReagent instance from a Plates dictionary as
+    specified in the transfer string
     :param transfer_str: a transfer string
     :param plates: a Plates dictionary
     :return:
@@ -32,7 +32,7 @@ def get_transferred_reagents(transfer_str: str, plates: Plates):
 
 
 def filter_transferred_reagents(transfer_str: str,
-                                plates: Plates,
+                                plates: ExptPlates,
                                 reagent_category: str):
     """
     Filter transferred reagents by category.
@@ -47,10 +47,10 @@ def filter_transferred_reagents(transfer_str: str,
     return filtered_reagents
 
 
-def get_transferred_assays(reagents: List[Reagent], plates: Plates):
+def get_transferred_assays(reagents: List[ObjReagent], plates: ExptPlates):
     """
     Convenience function to get all transferred assays
-    :param reagents: a list of Reagent instances
+    :param reagents: a list of ObjReagent instances
     :param plates: a Plates dictionary
     :return:
     """
@@ -63,10 +63,10 @@ def get_transferred_assays(reagents: List[Reagent], plates: Plates):
     return assays
 
 
-def get_transferred_templates(reagents: List[Reagent], plates: Plates):
+def get_transferred_templates(reagents: List[ObjReagent], plates: ExptPlates):
     """
     Convenience function to get all transferred templates
-    :param reagents: a list of Reagent instances
+    :param reagents: a list of ObjReagent instances
     :param plates: a Plates dictionary
     :return:
     """

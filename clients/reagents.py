@@ -3,10 +3,10 @@ from clients.utils import get_object
 
 from typing import List, Dict, Tuple
 DbReagent = List[str]
-Reagent = Dict[str, str]
+ObjReagent = Dict[str, str]
 
 
-def reformat_db_reagent(db_reagent: DbReagent) -> Reagent:
+def db_reagent_2_obj_reagent(db_reagent: DbReagent) -> ObjReagent:
     """
     Converts a datatbase reagent entry (a list of strings) to a dictionary with
     verbose keys.
@@ -25,9 +25,9 @@ def reformat_db_reagent(db_reagent: DbReagent) -> Reagent:
     return r
 
 
-def cached_reformat_db_reagent(
+def cached_db_reagent_2_obj_reagent(
         db_reagent: DbReagent,
-        reagent_cache: Dict[Tuple[str], Reagent]) -> Reagent:
+        reagent_cache: Dict[Tuple[str], ObjReagent]) -> ObjReagent:
     """
     A convenience function that prevents multiple API calls for reagents that
     have already been returned.
@@ -42,14 +42,14 @@ def cached_reformat_db_reagent(
 
     :param db_reagent: an instance of a DbReagent
     :param reagent_cache: a dictionary that caches previously returned
-    Reagent instances
+    ObjReagent instances
     :return:
     """
     reagent_key = tuple(db_reagent)
     if reagent_key in reagent_cache:
         return reagent_cache[reagent_key]
     else:
-        r = reformat_db_reagent(db_reagent)
+        r = db_reagent_2_obj_reagent(db_reagent)
         reagent_cache[reagent_key] = r
         return r
 
@@ -113,20 +113,20 @@ def get_reagent_category(reagent_name: str) -> str:
     return category
 
 
-def get_assays(reagents: List[Reagent]) -> List[Reagent]:
+def get_assays(reagents: List[ObjReagent]) -> List[ObjReagent]:
     """
-    Extracts from a list of Reagent instances those that are assays
-    :param reagents: a list of Reagent instances
+    Extracts from a list of ObjReagent instances those that are assays
+    :param reagents: a list of ObjReagent instances
     :return:
     """
     assays = [r for r in reagents if 'assay' in r['reagent_category']]
     return assays
 
 
-def get_templates(reagents: List[Reagent]) -> List[Reagent]:
+def get_templates(reagents: List[ObjReagent]) -> List[ObjReagent]:
     """
-    Extracts from a list of Reagent instances those that are templates
-    :param reagents: a list of Reagent instances
+    Extracts from a list of ObjReagent instances those that are templates
+    :param reagents: a list of ObjReagent instances
     :return:
     """
     templates = [r for r in reagents if 'template' in r['reagent_category']]
