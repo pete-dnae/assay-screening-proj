@@ -2,13 +2,13 @@
 from typing import NewType, Dict, List
 from re import search
 
-from clients.reagents import Reagent
-from clients.reagents import cached_reformat_db_reagent
+from clients.reagents import ObjReagent
+from clients.reagents import cached_db_reagent_2_obj_reagent
 
-Contents = List[Reagent]
 WellName = NewType('WellName', str)
 PlateName = NewType('PlateName', str)
-Plates = Dict[PlateName, Dict[WellName, Contents]]
+Plate = Dict[WellName, List[ObjReagent]]
+ExptPlates = Dict[PlateName, Plate]
 
 
 def row_idx_to_plate_alpha(ridx) -> str:
@@ -20,13 +20,13 @@ def row_col_to_well(ridx, cidx) -> WellName:
     return well
 
 
-def sanitize_well_name(well_name) -> WellName :
+def sanitize_well_name(well_name) -> WellName:
     searched = search('([a-zA-Z]+)(\d+)', well_name).groups()
     well_name = '{}{:0>2}'.format(searched[0], searched[1])
     return well_name
 
 
-def create_plates_from_expt(allocation_table) -> Plates:
+def create_plates_from_expt(allocation_table) -> ExptPlates:
 
     plates = {}
     reagent_cache = {}
@@ -39,7 +39,7 @@ def create_plates_from_expt(allocation_table) -> Plates:
                 reagents = []
                 for r in plate[cidx][ridx]:
                     reagents.append(
-                        cached_reformat_db_reagent(r, reagent_cache))
+                        cached_db_reagent_2_obj_reagent(r, reagent_cache))
                 plates[pid][w] = reagents
 
     return plates
