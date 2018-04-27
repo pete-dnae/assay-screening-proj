@@ -7,7 +7,7 @@ from clients.reagents import get_assays, get_templates, disambiguate_templates
 from clients.transfers import get_transferred_assays, get_transferred_templates
 from hardware.plates import ExptPlates
 
-from clients.expt_templates.well_contents import WellConstituents
+from clients.expt_templates.well_constituents import WellConstituents
 from clients.expt_templates.results_interp import calc_mean_tm, get_tm_delta,\
     get_ntc_wells, get_mean_ct, get_delta_ct, get_ct, get_ct_call, get_tms, \
     get_product_labels_from_tms, SPECIFIC_PRODUCT, NON_SPECIFIC_PRODUCT, \

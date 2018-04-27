@@ -2,7 +2,11 @@
 from typing import List
 import numpy as np
 
-from clients.expt_templates.well_contents import WellContents
+from clients.expt_templates.well_constituents import WellConstituents
+
+SPECIFIC_PRODUCT = '_spec'
+NON_SPECIFIC_PRODUCT = '_non_spec'
+PRIMER_DIMER = '_primer_dimer'
 
 
 def get_ct(qpcr_data):
@@ -26,25 +30,17 @@ def get_tms(qpcr_data, tms=('tm1', 'tm2', 'tm3', 'tm4')):
     return tms
 
 
-def is_ntc(wc: WellContents):
+def is_ntc(wc: WellConstituents):
     templates = [v for k, v in wc.items() if 'templates' in k]
-    return not any(templates)
+    human = [v for k, v in wc.items() if 'human' in k]
+    return not any(templates + human)
 
 
-def get_max_conc_template_wells(well_contents: List[WellContents]):
-    templates = [wc['templates'] for wc in well_contents]
-    concs = [t['concentration'] for t in templates if t]
-    max_conc = max(concs)
-    max_conc_wells = [wc for wc, c in zip(well_contents, concs)
-                      if c == max_conc]
-    return max_conc_wells
-
-
-def get_ntc_wells(well_contents: List[WellContents]):
+def get_ntc_wells(well_contents: List[WellConstituents]):
     return [wc for wc in well_contents if is_ntc(wc)]
 
 
-def get_mean_ct(well_contents: List[WellContents],
+def get_mean_ct(well_contents: List[WellConstituents],
                 plate_data,
                 excl_nans=True):
     wells = [wc['well_name'] for wc in well_contents]
@@ -55,8 +51,7 @@ def get_mean_ct(well_contents: List[WellContents],
         return np.mean(cts)
 
 
-def get_delta_ct(qpcr_data, ntc_ct):
-    ct = get_ct(qpcr_data)
+def get_delta_ct(ct, ntc_ct):
     delta_ct = ntc_ct - ct
     return delta_ct
 
@@ -68,7 +63,7 @@ def get_ct_call(delta_ct, ntc_ct_threshold=1/3):
         return 'NEG'
 
 
-def calc_mean_tm(well_contents: List[WellContents],
+def calc_mean_tm(well_contents: List[WellConstituents],
                  plate_data,
                  tm='tm1'):
     wells = [wc['well_name'] for wc in well_contents]
@@ -78,12 +73,12 @@ def calc_mean_tm(well_contents: List[WellContents],
 
 def get_tm_delta(qpcr_data, max_conc_mean_tm):
     tms = get_tms(qpcr_data)
-    tm_delta = [tm - max_conc_mean_tm for tm in tms]
+    tm_delta = [abs(tm - max_conc_mean_tm) for tm in tms]
     return tm_delta
 
 
 def is_specific(tm, max_conc_mean_tm, tm_product_threshold):
-    if tm - max_conc_mean_tm < tm_product_threshold:
+    if abs(tm - max_conc_mean_tm) < tm_product_threshold:
         return True
     else:
         return False
@@ -114,14 +109,14 @@ def get_product_labels_from_tms(tms, tm_deltas,
     labels = set()
 
     if is_specific(tms[0], max_conc_mean_tm, tm_product_threshold):
-        labels.add('S')
+        labels.add(SPECIFIC_PRODUCT)
 
     for tm, tm_delta in zip(tms, tm_deltas):
         if is_primer_dimer(tm, tm_delta, tm_product_threshold,
                            tm_primer_dimer_threshold):
-            labels.add('PD')
+            labels.add(PRIMER_DIMER)
         if is_non_specific(tm, tm_delta, tm_product_threshold,
                            tm_primer_dimer_threshold):
-            labels.add('NS')
+            labels.add(NON_SPECIFIC_PRODUCT)
 
     return labels

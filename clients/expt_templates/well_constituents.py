@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 
-class WellContents(OrderedDict):
+class WellConstituents(OrderedDict):
 
     def __init__(self):
         super().__init__()
