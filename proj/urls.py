@@ -26,13 +26,17 @@ from app.views import *
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/allowed-names/$', AllowedNamesView.as_view()),
-    re_path(r'^api/experiment-images/(?P<experiment_id>\d+)$',ExperimentImagesView.as_view())
+    re_path(r'^api/experiment-images/(?P<experiment_id>[a-zA-Z0-9_ ]+)$',
+            ExperimentImagesView.as_view()),
+    re_path(r'^api/reagent-groups/list',ReagentGroupListView.as_view()),
+    re_path(r'api/available-reagents-category$',
+            AvailableReagentsCategoryView.as_view())
 ]
 
 # Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()
 
-router.register(r'api/experiments', ExperimentViewSet)
+router.register(r'api/experiments',ExperimentViewSet)
 router.register(r'api/rule-scripts', RulesScriptViewSet)
 router.register(r'api/reagents', ReagentViewSet)
 router.register(r'api/reagent-categories', ReagentCategoryViewSet)

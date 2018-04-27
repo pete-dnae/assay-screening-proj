@@ -21,17 +21,26 @@
             <!-- editor -->
             <div class="mw-100 col">
                 <!-- hovervisualizer -->
-                <button type="button" @click="showPictures=!showPictures"
-                                  class="btn btn-secondary btn-lg btn-block">
-                    <label v-if="showPictures">Pictures view 
-                        <small>(click here to change to Interactive view)</small>
-                    </label>
-                    <label v-else>Interactive view 
-                        <small>(click here to change to Pictures view)</small>
-                    </label>
-                </button>
+                <div class="d-flex justify-content-start">
+                    <ul class="nav nav-pills nav-fill">
+                        
+                        <li class="nav-item">
+                            <a :class="{'nav-link':'true','active':!showPictures}" 
+                                href="javascript:;"
+                                @click="showPictures=!showPictures"
+                            >Rules Feedback</a>
+                        </li>                       
+                        
+                        <li class="nav-item">
+                            <a :class="{'nav-link':'true','active':showPictures}" 
+                                href="javascript:;"
+                                @click="showPictures=!showPictures">Get Pictures</a>
+                        </li>
+                        
+                    </ul>
+                </div>
 
-                <div v-if="!showPictures">
+                <div v-show="!showPictures">
                     <div  class="row mt-3" v-if="!error">                    
                         <hovervisualizer    :currentPlate="currentPlate" 
                                             :plateBoundaries="plateBoundaries"                                                                   
@@ -67,7 +76,7 @@
                     </suggestionsList>   
                     <!-- suggestionslist -->  
                 </div>     
-                <div v-else class="h-100">
+                <div v-show="showPictures" class="h-100">
                     <!-- experimentImages -->
                     <pictures  :experimentImages="experimentImages"></pictures>
                     <!-- experimentImages -->

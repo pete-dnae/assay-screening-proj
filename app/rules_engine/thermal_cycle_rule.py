@@ -1,7 +1,8 @@
 class ThermalCycleRule:
     """
         Thermal cycle rule are specific to a entire plate ,
-        They contain instructions as temperature steps and number of repeat cycles
+        They contain instructions as temperature steps and number of repeat
+        cycles
         Note : they contain a unit field which is always 'x'
     """
 

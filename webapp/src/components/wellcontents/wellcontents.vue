@@ -2,7 +2,7 @@
 
 <template>
 
-<div class="w-100 ml-5 border border-light rounded bg-light" v-if="allocationData">
+<div class="w-100 border border-light rounded bg-light" v-if="allocationData">
     <div class="row">
         <label class="col text-left "><strong>Contents of </strong><strong>{{String.fromCharCode(currentRow+64)}}{{currentCol}} </strong></label>
         <div class="col">            

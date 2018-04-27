@@ -32,7 +32,8 @@ class HighLevelSystemSmokeTest(APITestCase):
             o  the url / view / serializer plumbing is set up right
         """
         client = APIClient()
-        experiment_response = client.get('/api/experiments/1/')
+        experiment_response = client.get('/api/experiments/Reference '
+                                         'Experiment/')
         rules_script_url = experiment_response.data['rules_script']
 
         rules_script_response = client.get(rules_script_url)
@@ -93,7 +94,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         resp = client.get('/api/reagents/?name=Titanium-Taq', format='json')
         reagents = resp.data
         self.assertEqual(reagents[0]['url'], 
-            'http://testserver/api/reagents/1/')
+            'http://testserver/api/reagents/Titanium-Taq/')
 
         # Now with a name that does not exist.
         resp = client.get('/api/reagents/?name=fried-rain', format='json')

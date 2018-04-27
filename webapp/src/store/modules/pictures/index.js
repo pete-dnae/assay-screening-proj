@@ -15,15 +15,15 @@ export const state = {
 };
 
 const actions = {
-  fetchExperimentImages({commit},experimentId){
+  fetchExperimentImages({ commit }, experimentName) {
     commit(types.REQUEST_EXPERIMENT_IMAGES);
     api
-      .getExperimentImages(experimentId)
+      .getExperimentImages(experimentName)
       .then(res => {
         commit(types.RECEIVED_EXPERIMENT_IMAGES, res.experimentImages.results);
       })
       .catch(e => {
-        commit(types.EXPERIMENT_IMAGES_FAILURE);                
+        commit(types.EXPERIMENT_IMAGES_FAILURE);
       });
   }
 };

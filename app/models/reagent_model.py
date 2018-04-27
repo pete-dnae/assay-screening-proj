@@ -7,7 +7,7 @@ class ReagentModel(models.Model):
     """
     The reagent's name, plus the category it belongs to.
     """
-    name = models.CharField(max_length=80, unique=True) 
+    name = models.CharField(max_length=80, unique=True,primary_key=True)
     category = models.ForeignKey(
             ReagentCategoryModel, on_delete=models.PROTECT)
 

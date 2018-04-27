@@ -142,7 +142,7 @@ class RuleScriptParserTest(unittest.TestCase):
         self.assertEqual(e.where_in_script, 0)
 
     def test_error_transfer_incompatible(self):
-        modified_script = REFERENCE_SCRIPT.replace('T Plate1 1', 'T Plate 1,2')
+        modified_script = REFERENCE_SCRIPT.replace('T Plate1 1', 'T Plate1 1,2')
         parser = RuleScriptParser(
             REFERENCE_ALLOWED_NAMES, REFERENCE_UNITS, modified_script)
         with self.assertRaises(ParseError) as cm:

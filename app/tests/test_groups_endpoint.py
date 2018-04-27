@@ -22,17 +22,17 @@ class GroupsEndPointTest(APITestCase):
 
         json = response.data
         self.assertEqual(json['group_name'], 'Pool_1')
-        self.assertEqual(json['reagent'], 'http://testserver/api/reagents/5/')
+        self.assertEqual(json['reagent'], 'Efs_cpn60_1.x_Efs04_Efs01')
         self.assertEqual(json['concentration'], 0.4)
-        self.assertEqual(json['units'], 'http://testserver/api/units/3/')
+        self.assertEqual(json['units'], 'uM')
 
     def test_post_group(self):
         client = APIClient()
         post_data = {
             'group_name': 'new name',
-            'reagent': '/api/reagents/1/',
+            'reagent': 'Efs_cpn60_1.x_Efs04_Efs01',
             'concentration': 0.001,
-            'units': '/api/units/1/',
+            'units': 'uM',
         }
         response = client.post('/api/reagent-groups/', post_data, format='json')
         json = response.data
@@ -43,17 +43,17 @@ class GroupsEndPointTest(APITestCase):
         client = APIClient()
         post_data = {
             'group_name': 'new name',
-            'reagent': '/api/reagents/1/',
+            'reagent': 'Titanium-Taq',
             'concentration': 0.001,
-            'units': '/api/units/1/',
+            'units': 'uM',
         }
         response = client.post('/api/reagent-groups/', post_data, format='json')
         # This second POST introduces a duplicate  reagent to the group.
         post_data = {
             'group_name': 'new name',
-            'reagent': '/api/reagents/1/',
+            'reagent': 'Titanium-Taq',
             'concentration': 0.003,
-            'units': '/api/units/2/',
+            'units': 'uM',
         }
         response = client.post('/api/reagent-groups/', post_data, format='json')
         err_report = response.data['non_field_errors'][0]
