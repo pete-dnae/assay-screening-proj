@@ -44,7 +44,7 @@ def sanitize_well_name(well_name: str) -> WellName:
     return well_name
 
 
-def create_plates_from_expt(allocation_table) -> ExptPlates:
+def create_plates_from_allocation_table(allocation_table) -> ExptPlates:
     """
     Creates a nested dictionary, indexed by plates and then wells. The values
     are reagent objects.
