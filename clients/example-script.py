@@ -14,7 +14,7 @@ in:
     docs/convenience-endpoints.md
 """
 
-from clients.utils import get_object
+from clients.utils import create_allocation_table
 
 
 if __name__ == '__main__':
@@ -22,16 +22,7 @@ if __name__ == '__main__':
     # Consider making some enquiries about the rules script in the reference
     # experiment in the database...
 
-    experiment = get_object(
-        'http://assay-screening.herokuapp.com/api/experiments/1/')
-
-    rules_script = get_object(experiment['rules_script'])
-
-    interp = rules_script['interpretationResults']
-    parse_err = interp['parseError']  # If there is a syntax error in script.
-    allocation_table = interp['table']  # Otherwise.
-    if parse_err:
-        print(parse_err)
-    else:
-        contents_of_well = allocation_table['Plate1']['1']['2']
-        print(contents_of_well)
+    experiment = '1'
+    allocation_table = create_allocation_table(experiment)
+    contents_of_well = allocation_table['Plate1']['1']['2']
+    print(contents_of_well)
