@@ -1,30 +1,35 @@
 
-from typing import List
+"""
+This module is responsible for the construction of nested assay screening
+experiments.
+"""
+
+
+from typing import List, Dict
+from hardware.plates import WellName, Plate, ExptPlates
+
 from collections import OrderedDict
 
 from clients.reagents import ObjReagent
 from clients.reagents import get_assays, get_templates, disambiguate_templates
 from clients.transfers import get_transferred_assays, get_transferred_templates
-from hardware.plates import ExptPlates
 
 from clients.expt_templates.well_constituents import WellConstituents
 from clients.expt_templates.results_interp import calc_mean_tm, get_tm_delta,\
     get_ntc_wells, get_mean_ct, get_delta_ct, get_ct, get_ct_call, get_tms, \
-    get_product_labels_from_tms, SPECIFIC_PRODUCT, NON_SPECIFIC_PRODUCT, \
-    PRIMER_DIMER
+    get_product_labels_from_tms
 
 
-class NestedIdConstituents(WellConstituents):
+class NestedIdWellConstituents(WellConstituents):
 
     def __init__(self):
         super().__init__()
 
     @classmethod
-    def create(cls, qpcr_well_id: str, reagents: List[ObjReagent],
-               expt_plates: ExptPlates) -> 'NestedIdConstituents':
+    def create(cls, reagents: List[ObjReagent], expt_plates: ExptPlates) -> \
+            'NestedIdWellConstituents':
 
         inst = cls()
-        inst['well_name'] = qpcr_well_id
         inst['assays'] = get_assays(reagents)
         inst['transferred_assays'] = \
             get_transferred_assays(reagents, expt_plates)
@@ -55,11 +60,10 @@ class NestedIdConstituents(WellConstituents):
         return self._get_item_attribute('transferred_human', attribute)
 
 
-class NestedIdData(OrderedDict):
+class NestedIdQpcrData(OrderedDict):
 
     def __init__(self):
         super().__init__()
-        self['well_name'] = None
         self['Ct'] = None
         self['∆NTC_Ct'] = None
         self['Ct_Call'] = None
@@ -72,10 +76,9 @@ class NestedIdData(OrderedDict):
         self['Tm PD'] = None
 
     @classmethod
-    def create_from_data(cls, qpcr_well, ct, delta_ct, ct_call, tms, spec,
-                         non_spec, pd) -> 'NestedIdData':
+    def create(cls, ct, delta_ct, ct_call, tms, spec, non_spec, pd) -> \
+            'NestedIdQpcrData':
         inst = cls()
-        inst['well_name'] = qpcr_well
         inst['Ct'] = ct
         inst['∆NTC_Ct'] = delta_ct
         inst['Ct_Call'] = ct_call
@@ -89,103 +92,214 @@ class NestedIdData(OrderedDict):
 
         return inst
 
+    @classmethod
+    def create_from_data(cls, well_name, raw_instrument_data, max_conc_mean_tm,
+                         mean_ntc_ct) -> 'NestedIdQpcrData':
+
+        tms = get_tms(raw_instrument_data[well_name])
+        tm_delta = get_tm_delta(raw_instrument_data[well_name],
+                                max_conc_mean_tm)
+        ct = get_ct(raw_instrument_data[well_name])
+        delta_ct = get_delta_ct(ct, mean_ntc_ct)
+        ct_call = get_ct_call(delta_ct)
+        spec, non_spec, pd = get_product_labels_from_tms(tms, tm_delta,
+                                                         max_conc_mean_tm)
+        inst = cls()
+        nid = inst.create(ct, delta_ct, ct_call, tms, spec, non_spec, pd)
+        return nid
+
     def is_populated(self):
         return all(v is not None for v in self.values())
 
 
-def build_id_nested_plates(expt_plates: ExptPlates):
-
+def get_id_plates(expt_plates: ExptPlates):
+    """
+    Extracts those plates in a nested experiment which are the id plates.
+    :param expt_plates: all plates used for an experiment
+    :return:
+    """
     id_plate_names = [p for p in expt_plates if p.endswith('_ID')]
-
-    id_plates = {}
-    for pn in id_plate_names:
-        id_plates[pn] = []
-        for w, reagents in expt_plates[pn].items():
-            id_plates[pn].append(
-                NestedIdConstituents.create(w, reagents, expt_plates))
-    return id_plates
+    return id_plate_names
 
 
-def group_nested_id_data(id_plate, instrument_data):
-
-    nested_id_data = []
-    id_grouped = group_by_id_assay(id_plate)
-    for id_assay, id_nics in id_grouped.items():
-        max_conc_mean_tm = \
-            calc_max_conc_mean_tm(id_nics, instrument_data)
-        pa_grouped = group_nested_by_pa_assay(id_nics)
-        for pa_assay, pa_nics in pa_grouped.items():
-            ntc_wells = get_ntc_wells(pa_nics)
-            mean_ntc_ct = get_mean_ct(ntc_wells, instrument_data)
-            for nic in pa_nics:
-                nid = build_nested_id_data(nic, instrument_data,
-                                           max_conc_mean_tm, mean_ntc_ct)
-                if nid.is_populated():
-                    nested_id_data.append(nid)
-                else:
-                    raise ValueError('Could not populate nested id data for '
-                                     'well: {}'.format(nic['well_name']))
-
-    return nested_id_data
+GroupedConstituents = Dict[WellName, NestedIdWellConstituents]
 
 
-def build_nested_id_data(nic, instrument_data, max_conc_mean_tm, mean_ntc_ct):
-    well = nic['well_name']
-    tms = get_tms(instrument_data[well])
-    tm_delta = get_tm_delta(instrument_data[well], max_conc_mean_tm)
-
-    ct = get_ct(instrument_data[well])
-    delta_ct = get_delta_ct(ct, mean_ntc_ct)
-    ct_call = get_ct_call(delta_ct)
-
-    labels = get_product_labels_from_tms(tms, tm_delta,
-                                         max_conc_mean_tm)
-    spec = SPECIFIC_PRODUCT in labels
-    non_spec = NON_SPECIFIC_PRODUCT in labels
-    pd = PRIMER_DIMER in labels
-
-    nid = NestedIdData.create_from_data(well, ct, delta_ct, ct_call, tms, spec,
-                                        non_spec, pd)
-    return nid
+def build_constituents(id_plate: Plate, expt_plates: ExptPlates) \
+        -> GroupedConstituents:
+    """
+    Builds a dictionary keyed by the well names. The values are instances of
+    `NestedIdWellConstituents`
+    :param id_plate:  a dictionary keyed by well name and valued by instances
+    of `NestedIdWellConstituents`
+    :param expt_plates: an instance of ExptPlates for this particular
+    experiment
+    :return:
+    """
+    well_constituents = {}
+    for w, reagents in id_plate.items():
+        well_constituents[w] = \
+            NestedIdWellConstituents.create(reagents, expt_plates)
+    return well_constituents
 
 
-def calc_max_conc_mean_tm(nested_contents, inst_data):
-    id_template_only_wells = get_id_template_only_wells(nested_contents)
-    max_conc_wells = get_max_conc_template_wells(id_template_only_wells)
-    max_conc_mean_tm = calc_mean_tm(max_conc_wells, inst_data)
-    return max_conc_mean_tm
+def create_nested_groupings(id_plate: GroupedConstituents):
+    """
+    Group nested wells based upon their constituents.
+    :param id_plate: a dictionary keyed by well name and valued by instances
+    of `NestedIdWellConstituents`
+    :return:
+    """
+    groups = {}
+    idgrp = group_by_id_assay(id_plate)
+    for id_assay, id_constits in idgrp.items():
+        groups[id_assay] = {}
+        pagrp = group_by_pa_assay(id_constits)
+        for pa_assay, pa_constits in pagrp.items():
+            groups[id_assay][pa_assay] = {}
+            tgrp = group_by_template_origin(pa_constits)
+            for t, t_constituents in tgrp.items():
+                groups[id_assay][pa_assay][t] = t_constituents
+    return groups
 
 
-def group_by_id_assay(nested_contents):
+def group_by_id_assay(constituents: GroupedConstituents):
+    """
+    Groups constituents by id assay.
+    :param constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdQpcrData`
+    :return:
+    """
     wells_by_id_assay = {}
-    for nc in nested_contents:
-        id_assay = nc.get_id_assay_attribute('reagent_name')
-        wells_by_id_assay.setdefault(id_assay, []).append(nc)
+    for w, c in constituents.items():
+        id_assay = c.get_id_assay_attribute('reagent_name')
+        inner = wells_by_id_assay.setdefault(id_assay, {})
+        inner[w] = c
     return wells_by_id_assay
 
 
-def group_nested_by_pa_assay(nested_contents):
+def group_by_pa_assay(constituents: GroupedConstituents):
+    """
+    Groups constituents by pa assay.
+    :param constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdQpcrData`
+    :return:
+    """
     wells_by_pa_assay = {}
-    for nc in nested_contents:
-        id_assay = nc.get_pa_assay_attribute('reagent_name')
-        wells_by_pa_assay.setdefault(id_assay, []).append(nc)
+    for w, c in constituents.items():
+        pa_assay = c.get_pa_assay_attribute('reagent_name')
+        inner = wells_by_pa_assay.setdefault(pa_assay, {})
+        inner[w] = c
     return wells_by_pa_assay
 
 
-def get_id_template_only_wells(nested_contents: List[NestedIdConstituents]):
-    id_template_only_wells = []
-    for nc in nested_contents:
-        if not nc.get_pa_template_attribute('reagent_name') and \
-                nc.get_id_template_attribute('reagent_name'):
-            id_template_only_wells.append(nc)
+def group_by_template_origin(constituents: GroupedConstituents):
+    """
+    Groups constituents by template origin.
+    :param constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdQpcrData`
+    :return:
+    """
+    wells_by_template = {}
+    for w, c in constituents.items():
+        pa_template = c.get_pa_template_attribute('reagent_name')
+        id_template = c.get_id_template_attribute('reagent_name')
+        if pa_template and not id_template:
+            inner = wells_by_template.setdefault('preamp', {})
+        elif id_template and not pa_template:
+            inner = wells_by_template.setdefault('id', {})
+        else:
+            inner = wells_by_template.setdefault('NTC', {})
+        inner[w] = c
+    return wells_by_template
+
+
+def build_qpcr_datas(id_plate: GroupedConstituents, raw_instrument_data):
+    """
+    Creates a dictionary keyed by well names and valued by instances of
+    `NestedIdQpcrData`.
+
+    Iterates over all the wells in a plates and initially groups them by the
+    id assay and then the preamp assay. At various stages in the grouping
+    process, intermediate values are calculated as they are required when
+    creating a `NestedIdQpcrData`.
+
+    :param id_plate: a dictionary keyed by well name and valued by instances
+    of `NestedIdWellConstituents`
+    :param raw_instrument_data: the python representation of qPCR results for
+    the well in question
+    :return:
+    """
+    nested_id_datas = {}
+    id_grouped = group_by_id_assay(id_plate)
+    for id_assay, id_constits in id_grouped.items():
+        max_conc_mean_tm = \
+            calc_max_conc_mean_tm(id_constits, raw_instrument_data)
+        pa_grouped = group_by_pa_assay(id_constits)
+        for pa_assay, pa_constits in pa_grouped.items():
+            ntc_wells = get_ntc_wells(pa_constits)
+            mean_ntc_ct = get_mean_ct(ntc_wells.keys(), raw_instrument_data)
+            for w, nic in pa_constits.items():
+                nested_id_datas[w] = \
+                    NestedIdQpcrData.create_from_data(w, raw_instrument_data,
+                                                      max_conc_mean_tm,
+                                                      mean_ntc_ct)
+    return nested_id_datas
+
+
+def calc_max_conc_mean_tm(constituents: GroupedConstituents,
+                          raw_instrument_data):
+    """
+    Calculates the melting temperature ("tm") for the wells that have
+    the maximum concentration of template.
+
+    For nested experiments, these are exclusively the id only template wells.
+
+    :param constituents: a dictionary keyed by well name and valued by instances
+    of `NestedIdWellConstituents`
+    :param raw_instrument_data:
+    :return:
+    """
+    id_template_only_wells = get_id_template_only_wells(constituents)
+    max_conc_wells = get_max_conc_template_from_id_wells(id_template_only_wells)
+    max_conc_mean_tm = calc_mean_tm(list(max_conc_wells.keys()),
+                                    raw_instrument_data)
+    return max_conc_mean_tm
+
+
+def get_id_template_only_wells(constituents: GroupedConstituents):
+    """
+    Gets a dictionary of those wells which only contain template introduced
+    at the id stage.
+
+    :param constituents: a dictionary keyed by id assay and valued by instances
+    of `NestedIdQpcrData`
+    :return:
+    """
+    id_template_only_wells = {}
+    for w, c in constituents.items():
+        if not c.get_pa_template_attribute('reagent_name') and \
+                c.get_id_template_attribute('reagent_name'):
+            id_template_only_wells[w] = c
     return id_template_only_wells
 
 
-def get_max_conc_template_wells(
-        id_template_only_wells: List[NestedIdConstituents]):
-    concs = [wc.get_id_template_attribute('concentration')
-             for wc in id_template_only_wells]
-    max_conc = max(concs)
-    max_conc_wells = [wc for wc, c in zip(id_template_only_wells, concs)
-                      if c == max_conc]
+def get_max_conc_template_from_id_wells(
+        id_template_only_wells: GroupedConstituents):
+    """
+    Get from the id wells, those wells that have the highest template
+    concentration.
+
+    :param id_template_only_wells: a dictionary keyed by well name and valued
+    by instances of `NestedIdWellConstituents`
+    :return:
+    """
+    concs = dict((w, wc.get_id_template_attribute('concentration'))
+                 for w, wc in id_template_only_wells.items())
+    max_conc = max(concs.values())
+
+    max_conc_wells = {}
+    for w, wc in id_template_only_wells.items():
+        if concs[w] == max_conc:
+            max_conc_wells[w] = wc
     return max_conc_wells

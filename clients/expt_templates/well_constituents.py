@@ -1,3 +1,4 @@
+
 from collections import OrderedDict
 
 
@@ -5,7 +6,6 @@ class WellConstituents(OrderedDict):
 
     def __init__(self):
         super().__init__()
-        self['well_name'] = None
         self['assays'] = None
         self['transferred_assays'] = None
         self['templates'] = None
