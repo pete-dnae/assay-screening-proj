@@ -26,7 +26,7 @@ def get_ct(qpcr_data: qPCRData):
 
 def get_tm(qpcr_data: qPCRData, tm) -> float:
     """
-
+    Gets a particular tm value from qPCR data.
     :param qpcr_data: an instance of qPCRData
     :param tm: the tm value to extract, usually one of ['tm1', 'tm2', 'tm3',
     'tm4']
@@ -42,7 +42,7 @@ def get_tm(qpcr_data: qPCRData, tm) -> float:
 def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4'))\
         -> List[float]:
     """
-
+    Gets all tm values from qPCR data.
     :param qpcr_data: an instance of qPCRData
     :param tms: the tms to extract
     :return:
@@ -73,20 +73,19 @@ def get_ntc_wells(well_contents: Dict[str, WellConstituents])\
 
 
 def get_mean_ct(well_names: List[str],
-                plate_data: Dict[WellName, qPCRData],
-                excl_nans: bool=True):
+                plate_data: Dict[WellName, qPCRData]):
     """
     Gets the mean ct value from a dictionary of WellConstituents
     :param well_names: well names to average across
     :param plate_data: a dictionary `qPCRData` instances
-    :param excl_nans: a boolean to exclude nans.
     :return:
     """
     cts = [get_ct(plate_data[w]) for w in well_names]
-    if excl_nans:
-        return np.nanmean(cts)
-    else:
+    cts = [ct for ct in cts if not np.isnan(ct)]
+    if cts:
         return np.mean(cts)
+    else:
+        return np.nan
 
 
 def calc_delta_ct(ct: float, ntc_ct: float) -> float:
