@@ -15,8 +15,8 @@ from clients.reagents import get_assays, get_templates, disambiguate_templates
 from clients.transfers import get_transferred_assays, get_transferred_templates
 
 from clients.expt_templates.well_constituents import WellConstituents
-from clients.expt_templates.results_interp import calc_mean_tm, get_tm_delta,\
-    get_ntc_wells, get_mean_ct, get_delta_ct, get_ct, get_ct_call, get_tms, \
+from clients.expt_templates.results_interp import calc_mean_tm, calc_tm_delta,\
+    get_ntc_wells, get_mean_ct, calc_delta_ct, get_ct, get_ct_call, get_tms, \
     get_product_labels_from_tms
 
 
@@ -97,10 +97,10 @@ class NestedIdQpcrData(OrderedDict):
                          mean_ntc_ct) -> 'NestedIdQpcrData':
 
         tms = get_tms(raw_instrument_data[well_name])
-        tm_delta = get_tm_delta(raw_instrument_data[well_name],
-                                max_conc_mean_tm)
+        tm_delta = calc_tm_delta(raw_instrument_data[well_name],
+                                 max_conc_mean_tm)
         ct = get_ct(raw_instrument_data[well_name])
-        delta_ct = get_delta_ct(ct, mean_ntc_ct)
+        delta_ct = calc_delta_ct(ct, mean_ntc_ct)
         ct_call = get_ct_call(delta_ct)
         spec, non_spec, pd = get_product_labels_from_tms(tms, tm_delta,
                                                          max_conc_mean_tm)
