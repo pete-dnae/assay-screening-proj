@@ -1,7 +1,7 @@
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_group_model import ReagentGroupModel
 from app.models.units_model import UnitsModel
-
+from collections import defaultdict
 class ViewHelpers:
     """
     A place to put non-trivial code needed to provide view functionality, so
@@ -49,3 +49,37 @@ class ViewHelpers:
         """
         abbrev = [u.abbrev for u in UnitsModel.objects.all()]
         return sorted(abbrev)
+
+    @classmethod
+    def reagents_category(cls):
+        """
+        Provides a dict with reagent names as keys and reagent category as
+        value
+        """
+        reagents_category = {r.name: r.category.name
+                           for r in ReagentModel.objects.all()}
+
+        return reagents_category
+    @classmethod
+    def reagent_groups_category(cls):
+        """
+        provides a dictionary with reagent group name as keys and reagent
+        group category as value
+        category of the first reagent in the group is assigned as the reagent
+        group's category
+        """
+        group_category = {}
+        group_names = cls.group_names()
+        for group_name in group_names:
+            group_record= ReagentGroupModel.objects.filter\
+                (group_name=group_name).first()
+            group_category[group_name] = group_record.reagent.category.name
+        return group_category
+
+    @classmethod
+    def available_reagents_category(cls):
+        """
+        Combines and returns reagents and reagent groups categories
+        """
+
+        return {**cls.reagents_category(), **cls.reagent_groups_category()}

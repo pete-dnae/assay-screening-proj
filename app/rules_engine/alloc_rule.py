@@ -1,3 +1,6 @@
+from app.models.reagent_model import ReagentModel
+from app.models.reagent_group_model import ReagentGroupModel
+
 class AllocRule:
     """
     A allocation rule specifies a reagent (name), the cells to which it

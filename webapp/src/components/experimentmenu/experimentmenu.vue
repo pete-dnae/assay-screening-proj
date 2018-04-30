@@ -40,14 +40,15 @@
     <modal effect="fade/zoom" :value="showModal">
       <div class="form-group mx-sm-3 mb-2 ">
         <label class="text-primary float-left">Experiment Name :</label>
-        <input type="text" :class="{'form-control':true,'is-invalid':invalidExpName}" v-model="experiment"/>
-         <div :class="{'invalid-feedback':invalidExpName,'float-left':true}">
-            Experiment name already taken
+        <input type="text" :class="{'form-control':true,'is-invalid':invalidExpName||experimentNameTaken}" v-model="experiment"/>
+         <div :class="{'invalid-feedback':invalidExpName||experimentNameTaken,'float-left':true}">
+            <label v-if="experimentNameTaken">Experiment name already taken</label>
+            <label v-if="invalidExpName">Experiment name should contain characters within 'a-z','A-Z','0-9','_',' '</label>
           </div>
       </div>
     <div slot="modal-footer" class="modal-footer">
       <button type="button" class="btn btn-default" @click="showModal = !showModal">Exit</button>
-      <button type="button" class="btn btn-success" @click="handleSave(experiment)" :disabled="invalidExpName"> Save</button>    
+      <button type="button" class="btn btn-success" @click="handleSave(experiment)" :disabled="invalidExpName||experimentNameTaken"> Save</button>    
     </div>
     </modal>
 </div>

@@ -15,7 +15,7 @@ class ImageMakerTest(unittest.TestCase):
         image_renderer = ImageRenderer(image_spec)
         html_string = image_renderer.make_html()
         table_row_count = html_string.count('<tr>')
-        reagent_element = "(Eco)-ATCC-BAA-2355 at 1.16 x"
+        reagent_element = "1.16 x (Eco)-ATCC-BAA-2355"
         reagent_element_count = html_string.count(reagent_element)
         self.assertIn(reagent_element,html_string)
         self.assertEquals(table_row_count,3)

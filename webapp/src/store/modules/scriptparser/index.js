@@ -69,7 +69,7 @@ const actions = {
           )
             dispatch(
               "fetchExperimentImages",
-              state.experiment.currentExperiment.data.id
+              state.experiment.currentExperiment.data.experiment_name
             );
           commit(types.SET_MAX_ROW_COL, "currentExperiment");
           resolve("success");
@@ -131,12 +131,12 @@ const actions = {
   },
   fetchExperiment(
     { commit, dispatch },
-    { exptNo, referenceExperimentFlag = false }
+    { experimentName, referenceExperimentFlag = false }
   ) {
     commit(types.REQUEST_EXPERIMENT);
     return new Promise(function(resolve, reject) {
       api
-        .getExperiment(exptNo)
+        .getExperiment(experimentName)
         .then(res => {
           commit(types.EXPERIMENT_SUCCESS, res);
           api
@@ -156,7 +156,7 @@ const actions = {
                 )
                   dispatch(
                     "fetchExperimentImages",
-                    state.experiment.currentExperiment.data.id
+                    state.experiment.currentExperiment.data.experiment_name
                   );
               }
               resolve("success");

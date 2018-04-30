@@ -19,7 +19,6 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
         model = ExperimentModel
         fields = (
            'url',
-           'id',
            'experiment_name',
            'rules_script',
         )
@@ -36,7 +35,8 @@ class ReagentSerializer(serializers.ModelSerializer):
         )
         depth = 1
 
-class UnitsSerializer(serializers.HyperlinkedModelSerializer):
+
+class UnitsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UnitsModel
@@ -56,6 +56,8 @@ class ReagentCategorySerializer(serializers.ModelSerializer):
 
 class ReagentGroupSerializer(serializers.ModelSerializer):
 
+    reagent = ReagentSerializer
+    units = UnitsSerializer
     class Meta:
         model = ReagentGroupModel
         fields = (
@@ -65,6 +67,7 @@ class ReagentGroupSerializer(serializers.ModelSerializer):
            'units',
         )
         depth = 2
+
 
     def validate(self, data):
         # Reagent names must not already exist in the group.
@@ -108,7 +111,8 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
         err = None if not parse_error else parse_error.__dict__
         table = None if not alloc_table else alloc_table.plate_info
         lnums = None if not line_num_mapping else line_num_mapping
-        thermal_cycling = None if not thermal_cycling_results else thermal_cycling_results.plate_info
+        thermal_cycling = None if not thermal_cycling_results else \
+            thermal_cycling_results.plate_info
         return {
             'parseError': err,
             'table': table,

@@ -5,7 +5,7 @@ td:hover {
 </style>
 <template>
 
-<div class="ml-5 border border-light bg-light rounded w-100" @mouseout="handleHoverLeave">
+<div class="border border-light bg-light rounded w-100" @mouseout="handleHoverLeave">
     <div class="bg-light">
         <div class="row text-left full-width">
                 <div class="col-3">

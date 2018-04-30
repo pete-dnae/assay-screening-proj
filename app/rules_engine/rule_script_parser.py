@@ -184,7 +184,8 @@ class RuleScriptParser:
         m = _THERMAL_CYCLING_STEPS_RE.match(steps)
 
         if m is None:
-            self._err('Incorrect format for steps expected time@temp,time@temp...', steps)
+            self._err('Incorrect format for steps expected time@temp,time@temp'
+                      '...', steps)
 
         steps_as_list = steps.split(',')
         steps_as_instructions = ''
@@ -246,7 +247,8 @@ class RuleScriptParser:
         try:
             t_rule = TransferRule(s_plate,
                                   RowColIntersections(s_rows, s_cols),
-                                  RowColIntersections(d_rows, d_cols), conc_value)
+                                  RowColIntersections(d_rows, d_cols),
+                                  conc_value)
         except IncompatibleTransferError:
             self._err('Shape of source rows/columns is incompatible with ' + \
                       'that of destination.')
@@ -376,7 +378,8 @@ class RuleScriptParser:
         """
         for item in seq:
             if not item:
-                self._err('Empty item in rows specification Hint: do not leave trailing commas',
+                self._err('Empty item in rows specification Hint: do not leave '
+                          'trailing commas',
                           source_string)
             if item not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
                 self._err('Only uppercase letters allowed in rows specification.',
