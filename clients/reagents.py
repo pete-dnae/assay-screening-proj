@@ -133,7 +133,13 @@ def get_templates(reagents: List[ObjReagent]) -> List[ObjReagent]:
     return templates
 
 
-def disambiguate_templates(templates):
+def disambiguate_templates(templates: List[ObjReagent]):
+    """
+    Separate templates into human and other categories.
+    :param templates: a list of reagent objects that have been pre-filtered to
+    only those that are of category type: `template`
+    :return:
+    """
     human = []
     other = []
     for t in templates:
