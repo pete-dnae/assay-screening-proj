@@ -1,8 +1,12 @@
+
 import os
 import pandas as pd
 import numpy as np
 import re
-from hardware.plates import sanitize_well_name
+from typing import NewType, Dict
+qPCRData = NewType('qPCRData', Dict)
+
+from hardware.plates import WellName, sanitize_well_name
 
 
 class StepOneExcel:
@@ -189,7 +193,7 @@ class StepOneExcel:
                 df_dict[key] = df[df.index.isin(self.valid_wells)]
             return df_dict
 
-    def get_data_by_well(self):
+    def get_data_by_well(self) -> Dict[WellName, qPCRData]:
         """
         For all columns in all dataframes, convert columns into dict keys.
         Create a list of dictionaires for easy insertion into MongoDB.
