@@ -33,7 +33,7 @@ class ReagentSerializer(serializers.ModelSerializer):
            'name',
            'category',
         )
-        depth = 1
+
 
 
 class UnitsSerializer(serializers.ModelSerializer):
@@ -52,7 +52,7 @@ class ReagentCategorySerializer(serializers.ModelSerializer):
         fields = (
            'name',
         )
-        depth = 1
+
 
 class ReagentGroupSerializer(serializers.ModelSerializer):
 
@@ -66,7 +66,7 @@ class ReagentGroupSerializer(serializers.ModelSerializer):
            'concentration',
            'units',
         )
-        depth = 2
+
 
 
     def validate(self, data):

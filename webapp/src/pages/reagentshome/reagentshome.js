@@ -1,26 +1,51 @@
 
 import { mapGetters, mapActions } from 'vuex';
-import hottable from '@/components/hottable/hottable.vue';
+import Handsontable from 'handsontable';
 
 export default {
   name: 'reagentshome',
   data() {
-    return {};
-  },
-  components: {
-    hottable,
+    return {
+      currentReagentGroup: null,
+    };
   },
   computed: {
     ...mapGetters({
-      hotSettings: 'getHotSettings',
+      hotSettings: 'getTableSettings',
+      reagentGroupList: 'getReagentGroupList',
+      currentGroupReagents: 'getCurrentGroupReagents',
     }),
   },
   methods: {
     ...mapActions([
-      'fetchAvailableSuggestions',
+      'fetchReagents',
+      'fetchUnits',
+      'fetchAvailableReagentGroups',
+      'fetchSelectedReagentGroup',
     ]),
+    handleReagentGroupSelection() {
+      this.fetchSelectedReagentGroup({
+        reagentGroupName: this.currentReagentGroup,
+      });
+    },
+    getData() {
+      this.data = this.handsonTable.getData();
+      debugger;
+    },
+  },
+  watch: {
+    hotSettings: {
+      handler(val, oldVal) {
+        this.handsonTable.updateSettings(val);
+      },
+      deep: true,
+    },
   },
   mounted() {
-    this.fetchAvailableSuggestions();
+    this.fetchReagents();
+    this.fetchUnits();
+    this.fetchAvailableReagentGroups();
+    const container = document.getElementById('handsonTable');
+    this.handsonTable = new Handsontable(container, this.hotSettings);
   },
 };

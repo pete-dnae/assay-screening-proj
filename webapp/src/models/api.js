@@ -35,26 +35,42 @@ const putRes = (url, data) =>
     },
   });
 
-const postRes = (url, data) => axios.post(url, data, {
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const postRes = (url, data) =>
+  axios.post(url, data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
+const fetchResWithParam = (url, params) =>
+  new Promise((resolve, reject) => {
+    axios.get(url, { params }).then(
+      ({ data }) => {
+        const response = _.isEmpty(data) ? null : data;
+        resolve(response);
+      },
+      (err) => {
+        reject(err);
+      },
+    );
+  });
 
-export const getExperiment = experimentName => fetchRes(`api/experiments/${experimentName}/`);
+export const getExperiment = experimentName =>
+  fetchRes(`api/experiments/${experimentName}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
 export const getRuleScript = url => fetchResPure(url);
-export const postRuleScript = data =>
-  postRes('/api/rule-scripts/', data);
+export const postRuleScript = data => postRes('/api/rule-scripts/', data);
 export const getExperimentList = () => fetchRes('api/experiments/');
-export const putRuleSCript = ({ ruleScriptUrl, text }) => putRes(
-           ruleScriptUrl,
-           { text },
-         );
+export const putRuleSCript = ({ ruleScriptUrl, text }) =>
+  putRes(ruleScriptUrl, { text });
 export const getReagents = () => fetchRes('/api/reagents/');
 export const getUnits = () => fetchRes('/api/units/');
-export const postNewExperiment = data =>
-  postRes('/api/experiments/', data);
+export const postNewExperiment = data => postRes('/api/experiments/', data);
 export const getAvailableSuggestions = () => fetchRes('/api/allowed-names');
-export const getExperimentImages = experimentName => fetchRes(`/api/experiment-images/${experimentName}`);
+export const getExperimentImages = experimentName =>
+  fetchRes(`/api/experiment-images/${experimentName}`);
+export const getAvailableReagentGroups = () =>
+  fetchRes('/api/reagent-groups/list');
+export const getSelectedReagentGroup = reagentGroupName =>
+  fetchResWithParam('/api/reagent-groups/', { name: reagentGroupName });
+export const postReagentGroup = reagentGroup => postRes('/api/reagent-groups/', reagentGroup);
