@@ -7,9 +7,9 @@
                 <option v-for="(value,key) in experimentImages"  v-bind:key="key">{{key}}</option>
             </select>
         </div>
-        <div class="col-4">
+        <div class="col-4" v-show="selected">
             <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>       
-            <label class="text-info">Select a plate to visualize</label>
+            <label class="text-info">Right click to save image</label>
         </div>
     </div>
 <img :src="image" class="mt-3" style='height: 100%; width: 100%; object-fit: contain'/>
