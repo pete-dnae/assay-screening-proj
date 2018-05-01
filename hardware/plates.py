@@ -47,7 +47,7 @@ def sanitize_well_name(well_name: str) -> WellName:
 def create_plates_from_allocation_table(allocation_table) -> ExptPlates:
     """
     Creates a nested dictionary, indexed by plates and then wells. The values
-    are reagent objects.
+    are instances of `ObjReagent`.
     :param allocation_table: the python object returned from calling
     `create_allocation_table`
     :return:

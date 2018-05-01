@@ -3,13 +3,14 @@ import os
 import pandas as pd
 import numpy as np
 import re
-from typing import NewType, Dict
+from typing import NewType, Dict, List
+
 qPCRData = NewType('qPCRData', Dict)
 
 from hardware.plates import WellName, sanitize_well_name
 
 
-class StepOneExcel:
+class QpcrDataFile:
     """
     A class to hande StepOne Excel files.
     """
@@ -239,3 +240,45 @@ class StepOneExcel:
                 docs_by_well[well] = docs_by_well[well].copy()
 
         return docs_by_well
+
+
+def get_ct(qpcr_data: qPCRData):
+    """
+    Gets the ct value from qPCR data.
+    :param qpcr_data: an instance of qPCRData
+    :return:
+    """
+    ct = qpcr_data['results']['results']['ct']
+    if ct:
+        return ct
+    else:
+        return np.nan
+
+
+def get_tm(qpcr_data: qPCRData, tm) -> float:
+    """
+    Gets a particular tm value from qPCR data.
+    :param qpcr_data: an instance of qPCRData
+    :param tm: the tm value to extract, usually one of ['tm1', 'tm2', 'tm3',
+    'tm4']
+    :return:
+    """
+    tm = qpcr_data['results']['results'][tm]
+    if tm:
+        return tm
+    else:
+        return np.nan
+
+
+def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
+        List[float]:
+    """
+    Gets all tm values from qPCR data.
+    :param qpcr_data: an instance of qPCRData
+    :param tms: the tms to extract
+    :return:
+    """
+    tms = [get_tm(qpcr_data, tm) for tm in tms]
+    return tms
+
+
