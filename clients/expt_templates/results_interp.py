@@ -39,8 +39,8 @@ def get_tm(qpcr_data: qPCRData, tm) -> float:
         return np.nan
 
 
-def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4'))\
-        -> List[float]:
+def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
+        List[float]:
     """
     Gets all tm values from qPCR data.
     :param qpcr_data: an instance of qPCRData
@@ -62,14 +62,14 @@ def is_ntc(wc: WellConstituents) -> bool:
     return not any(templates + human)
 
 
-def get_ntc_wells(well_contents: Dict[str, WellConstituents])\
+def get_ntc_wells(wcs: Dict[str, WellConstituents])\
         -> Dict[str, WellConstituents]:
     """
     Gets the ntc wells from a dictionary of WellConstituents
-    :param well_contents: dictionary of WellConstituents
+    :param wcs: dictionary of WellConstituents
     :return:
     """
-    return dict((w, wc) for w, wc in well_contents.items() if is_ntc(wc))
+    return dict((w, wc) for w, wc in wcs.items() if is_ntc(wc))
 
 
 def get_mean_ct(well_names: List[str],
@@ -77,7 +77,7 @@ def get_mean_ct(well_names: List[str],
     """
     Gets the mean ct value from a dictionary of WellConstituents
     :param well_names: well names to average across
-    :param plate_data: a dictionary `qPCRData` instances
+    :param plate_data: a dictionary of `qPCRData` instances
     :return:
     """
     cts = [get_ct(plate_data[w]) for w in well_names]
@@ -127,7 +127,7 @@ def calc_mean_tm(well_names: List[str],
     return mean_tm
 
 
-def calc_tm_delta(qpcr_data: qPCRData, max_conc_mean_tm: float):
+def calc_tm_deltas(qpcr_data: qPCRData, max_conc_mean_tm: float):
     """
     Calculate the tm deltas given the average melting temperature from the
     maximum template concentration wells.
@@ -157,8 +157,8 @@ def is_specific(tm: float, max_conc_mean_tm: float,
         return False
 
 
-def is_non_specific(tm, tm_delta, tm_product_threshold,
-                    tm_primer_dimer_threshold):
+def is_non_specific(tm: float, tm_delta: float, tm_product_threshold: float,
+                    tm_primer_dimer_threshold: float):
     """
     Determines whether a melting temperature is non-specific.
     :param tm: a melting temperature
@@ -174,8 +174,8 @@ def is_non_specific(tm, tm_delta, tm_product_threshold,
             return False
 
 
-def is_primer_dimer(tm, tm_delta, tm_product_threshold,
-                    tm_primer_dimer_threshold):
+def is_primer_dimer(tm: float, tm_delta: float, tm_product_threshold: float,
+                    tm_primer_dimer_threshold: float):
     """
     Determines whether a melting temperature is a primer dimer.
 
@@ -193,10 +193,10 @@ def is_primer_dimer(tm, tm_delta, tm_product_threshold,
             return False
 
 
-def get_product_labels_from_tms(tms, tm_deltas,
-                                max_conc_mean_tm,
-                                tm_product_threshold=1,
-                                tm_primer_dimer_threshold=80):
+def get_product_labels_from_tms(tms: List[float], tm_deltas: List[float],
+                                max_conc_mean_tm: float,
+                                tm_product_threshold: float=1,
+                                tm_primer_dimer_threshold: float=80):
     """
     Get a tuple of booleans indicating if a set of melting temperatures
     is one of, or a combination thereof of the following:
