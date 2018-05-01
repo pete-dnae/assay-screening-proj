@@ -1,35 +1,13 @@
-
 from typing import List, Dict
+
 import numpy as np
 
-from clients.expt_recipes.well_constituents import WellConstituents
 from hardware.plates import WellName
-from hardware.qpcr import qPCRData, get_tm, get_tms, get_ct
+from hardware.qpcr import qPCRData, get_ct, get_tm
 
 SPECIFIC_PRODUCT = '_spec'
 NON_SPECIFIC_PRODUCT = '_non_spec'
 PRIMER_DIMER = '_primer_dimer'
-
-
-def is_ntc(wc: WellConstituents) -> bool:
-    """
-    Inspects a WellConstituents instances and determines whether it's an ntc.
-    :param wc: a WellConstituents instance
-    :return:
-    """
-    templates = [v for k, v in wc.items() if 'templates' in k]
-    human = [v for k, v in wc.items() if 'human' in k]
-    return not any(templates + human)
-
-
-def get_ntc_wells(wcs: Dict[str, WellConstituents])\
-        -> Dict[str, WellConstituents]:
-    """
-    Gets the ntc wells from a dictionary of WellConstituents
-    :param wcs: dictionary of WellConstituents
-    :return:
-    """
-    return dict((w, wc) for w, wc in wcs.items() if is_ntc(wc))
 
 
 def get_mean_ct(well_names: List[str],
@@ -85,21 +63,6 @@ def calc_mean_tm(well_names: List[str],
     mean_tm = np.mean([get_tm(plate_data[w], tm)
                        for w in well_names])
     return mean_tm
-
-
-def calc_tm_deltas(qpcr_data: qPCRData, max_conc_mean_tm: float):
-    """
-    Calculate the tm deltas given the average melting temperature from the
-    maximum template concentration wells.
-
-    :param qpcr_data: an instance of `qPCRData`
-    :param max_conc_mean_tm: average of the maximum template concentration wells
-    melting temperatures
-    :return:
-    """
-    tms = get_tms(qpcr_data)
-    tm_delta = [abs(tm - max_conc_mean_tm) for tm in tms]
-    return tm_delta
 
 
 def is_specific(tm: float, max_conc_mean_tm: float,

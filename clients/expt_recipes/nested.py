@@ -16,10 +16,11 @@ from clients.reagents import get_assays, get_templates, disambiguate_templates
 from clients.transfers import get_transferred_assays, get_transferred_templates
 
 from clients.expt_recipes.well_constituents import WellConstituents
-from clients.expt_recipes.results_interp import calc_mean_tm, calc_tm_deltas, \
-    get_ntc_wells, get_ct_call, \
-    get_product_labels_from_tms, get_mean_ct, calc_delta_ct
-from hardware.qpcr import get_ct, get_tms
+from clients.expt_recipes.results_interpretation.constituents import \
+    get_ntc_wells
+from clients.expt_recipes.results_interpretation.qpcr import get_mean_ct, \
+    calc_delta_ct, get_ct_call, calc_mean_tm, get_product_labels_from_tms
+from hardware.qpcr import get_ct, get_tms, calc_tm_deltas
 
 
 class NestedIdWellConstituents(WellConstituents):
@@ -339,40 +340,3 @@ def get_labchip_plates(all_expt_plates: ExptPlates):
         if searched:
             lc_plate_names.append(searched.group())
     return lc_plate_names
-
-
-
-def _isspecific(amplicon_length, bp, specificpeakthreshold):
-    """function to find is a peak is specific ,In multiplex
-     assays if amplicon length is within 10% of any of the
-     target bp then its considered specific.Single plex if
-     amplicon len is within 10% of targ bp then specific"""
-    for bp_len in amplicon_length.values():
-        error = np.abs((bp_len - bp) / bp_len)
-        if error < specificpeakthreshold:
-            return True
-    return False
-
-
-
-def calc_smth(lc_peak_data, dilution, max_legal_length=1400,
-              min_legal_length=10, specific_peak_threshold=0.1,
-              primer_dimer_length_threshold=80, specific_purity=0):
-
-    for peak, data in lc_peak_data.items():
-        bp = data['size_[bp]']
-        purity = data['%_purity']
-        conc = get_concentration(data, dilution)
-        # With the help of threshold limits find weather a sample is Specific,Non Specific or PD
-        if bp != '' and min_legal_length < bp < max_legal_length:
-            is_specific = _isspecific(assays, bp, specific_peak_threshold)
-            is_primerdimer = (bp < primer_dimer_length_threshold)
-            if is_specific and purity > specific_purity:
-                specific_purity += purity
-                specific_conc += conc
-            elif is_primerdimer:
-                primer_dimer_purity += purity
-                primer_dimer_conc += conc
-            else:
-                non_specific_purity += purity
-                non_specific_conc += conc

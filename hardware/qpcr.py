@@ -282,3 +282,16 @@ def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
     return tms
 
 
+def calc_tm_deltas(qpcr_data: qPCRData, max_conc_mean_tm: float):
+    """
+    Calculate the tm deltas given the average melting temperature from the
+    maximum template concentration wells.
+
+    :param qpcr_data: an instance of `qPCRData`
+    :param max_conc_mean_tm: average of the maximum template concentration wells
+    melting temperatures
+    :return:
+    """
+    tms = get_tms(qpcr_data)
+    tm_delta = [abs(tm - max_conc_mean_tm) for tm in tms]
+    return tm_delta
