@@ -2,53 +2,13 @@
 from typing import List, Dict
 import numpy as np
 
-from clients.expt_templates.well_constituents import WellConstituents
+from clients.expt_recipes.well_constituents import WellConstituents
 from hardware.plates import WellName
-from hardware.step_one import qPCRData
+from hardware.qpcr import qPCRData, get_tm, get_tms, get_ct
 
 SPECIFIC_PRODUCT = '_spec'
 NON_SPECIFIC_PRODUCT = '_non_spec'
 PRIMER_DIMER = '_primer_dimer'
-
-
-def get_ct(qpcr_data: qPCRData):
-    """
-    Gets the ct value from qPCR data.
-    :param qpcr_data: an instance of qPCRData
-    :return:
-    """
-    ct = qpcr_data['results']['results']['ct']
-    if ct:
-        return ct
-    else:
-        return np.nan
-
-
-def get_tm(qpcr_data: qPCRData, tm) -> float:
-    """
-    Gets a particular tm value from qPCR data.
-    :param qpcr_data: an instance of qPCRData
-    :param tm: the tm value to extract, usually one of ['tm1', 'tm2', 'tm3',
-    'tm4']
-    :return:
-    """
-    tm = qpcr_data['results']['results'][tm]
-    if tm:
-        return tm
-    else:
-        return np.nan
-
-
-def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
-        List[float]:
-    """
-    Gets all tm values from qPCR data.
-    :param qpcr_data: an instance of qPCRData
-    :param tms: the tms to extract
-    :return:
-    """
-    tms = [get_tm(qpcr_data, tm) for tm in tms]
-    return tms
 
 
 def is_ntc(wc: WellConstituents) -> bool:

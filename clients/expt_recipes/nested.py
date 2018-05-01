@@ -7,6 +7,7 @@ experiments.
 
 from typing import List, Dict
 from hardware.plates import WellName, Plate, ExptPlates
+import re
 
 from collections import OrderedDict
 
@@ -14,10 +15,11 @@ from clients.reagents import ObjReagent
 from clients.reagents import get_assays, get_templates, disambiguate_templates
 from clients.transfers import get_transferred_assays, get_transferred_templates
 
-from clients.expt_templates.well_constituents import WellConstituents
-from clients.expt_templates.results_interp import calc_mean_tm, calc_tm_deltas,\
-    get_ntc_wells, get_mean_ct, calc_delta_ct, get_ct, get_ct_call, get_tms, \
-    get_product_labels_from_tms
+from clients.expt_recipes.well_constituents import WellConstituents
+from clients.expt_recipes.results_interp import calc_mean_tm, calc_tm_deltas, \
+    get_ntc_wells, get_ct_call, \
+    get_product_labels_from_tms, get_mean_ct, calc_delta_ct
+from hardware.qpcr import get_ct, get_tms
 
 
 class NestedIdWellConstituents(WellConstituents):
@@ -26,18 +28,18 @@ class NestedIdWellConstituents(WellConstituents):
         super().__init__()
 
     @classmethod
-    def create(cls, reagents: List[ObjReagent], expt_plates: ExptPlates) -> \
-            'NestedIdWellConstituents':
+    def create(cls, reagents: List[ObjReagent],
+               all_expt_plates: ExptPlates) -> 'NestedIdWellConstituents':
 
         inst = cls()
         inst['assays'] = get_assays(reagents)
         inst['transferred_assays'] = \
-            get_transferred_assays(reagents, expt_plates)
+            get_transferred_assays(reagents, all_expt_plates)
         inst['human'], inst['templates'] = \
             disambiguate_templates(get_templates(reagents))
         inst['transferred_human'], inst['transferred_templates'] = \
             disambiguate_templates(get_transferred_templates(reagents,
-                                                             expt_plates))
+                                                             all_expt_plates))
 
         return inst
 
@@ -112,34 +114,54 @@ class NestedIdQpcrData(OrderedDict):
         return all(v is not None for v in self.values())
 
 
-def get_id_plates(expt_plates: ExptPlates):
+class NestedLabChipData(OrderedDict):
+
+    def __init__(self):
+        super().__init__()
+        self['Specif ng/ul'] = None
+        self['NS ng/ul'] = None
+        self['PD ng/ul'] = None
+
+    @classmethod
+    def create(cls, spec, non_spec, pd):
+        inst = cls()
+        inst['Specif ng/ul'] = spec
+        inst['NS ng/ul'] = non_spec
+        inst['PD ng/ul'] = pd
+
+    @classmethod
+    def create_from_data(cls):
+        return
+
+
+def get_id_plates(all_expt_plates: ExptPlates):
     """
     Extracts those plates in a nested experiment which are the id plates.
-    :param expt_plates: all plates used for an experiment
+    :param all_expt_plates: all plates used for an experiment
     :return:
     """
-    id_plate_names = [p for p in expt_plates if p.endswith('_ID')]
+    id_plate_names = [p for p in all_expt_plates if p.endswith('_ID')]
     return id_plate_names
 
 
 GroupedConstituents = Dict[WellName, NestedIdWellConstituents]
 
 
-def build_constituents(id_plate: Plate, expt_plates: ExptPlates) \
+def build_constituents(id_plate: Plate, all_expt_plates: ExptPlates) \
         -> GroupedConstituents:
     """
     Builds a dictionary keyed by the well names. The values are instances of
     `NestedIdWellConstituents`
     :param id_plate:  a dictionary keyed by well name and valued by instances
     of `NestedIdWellConstituents`
-    :param expt_plates: an instance of ExptPlates for this particular
+    :param all_expt_plates: an instance of ExptPlates for this particular
     experiment
     :return:
     """
     well_constituents = {}
     for w, reagents in id_plate.items():
         well_constituents[w] = \
-            NestedIdWellConstituents.create(reagents, expt_plates)
+            NestedIdWellConstituents.create(reagents, all_expt_plates)
     return well_constituents
 
 
@@ -304,3 +326,53 @@ def get_max_conc_template_from_id_wells(
         if concs[w] == max_conc:
             max_conc_wells[w] = wc
     return max_conc_wells
+
+def get_labchip_plates(all_expt_plates: ExptPlates):
+    """
+    Extracts those plates in a nested experiment which are the labchip plates.
+    :param all_expt_plates: all plates used for an experiment
+    :return:
+    """
+    lc_plate_names = []
+    for p in all_expt_plates:
+        searched = re.search('\d{8}_\w', p)
+        if searched:
+            lc_plate_names.append(searched.group())
+    return lc_plate_names
+
+
+
+def _isspecific(amplicon_length, bp, specificpeakthreshold):
+    """function to find is a peak is specific ,In multiplex
+     assays if amplicon length is within 10% of any of the
+     target bp then its considered specific.Single plex if
+     amplicon len is within 10% of targ bp then specific"""
+    for bp_len in amplicon_length.values():
+        error = np.abs((bp_len - bp) / bp_len)
+        if error < specificpeakthreshold:
+            return True
+    return False
+
+
+
+def calc_smth(lc_peak_data, dilution, max_legal_length=1400,
+              min_legal_length=10, specific_peak_threshold=0.1,
+              primer_dimer_length_threshold=80, specific_purity=0):
+
+    for peak, data in lc_peak_data.items():
+        bp = data['size_[bp]']
+        purity = data['%_purity']
+        conc = get_concentration(data, dilution)
+        # With the help of threshold limits find weather a sample is Specific,Non Specific or PD
+        if bp != '' and min_legal_length < bp < max_legal_length:
+            is_specific = _isspecific(assays, bp, specific_peak_threshold)
+            is_primerdimer = (bp < primer_dimer_length_threshold)
+            if is_specific and purity > specific_purity:
+                specific_purity += purity
+                specific_conc += conc
+            elif is_primerdimer:
+                primer_dimer_purity += purity
+                primer_dimer_conc += conc
+            else:
+                non_specific_purity += purity
+                non_specific_conc += conc
