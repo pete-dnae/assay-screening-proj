@@ -15,7 +15,7 @@ from clients.reagents import get_assays, get_templates, disambiguate_templates
 from clients.transfers import get_transferred_assays, get_transferred_templates
 
 from clients.expt_templates.well_constituents import WellConstituents
-from clients.expt_templates.results_interp import calc_mean_tm, calc_tm_delta,\
+from clients.expt_templates.results_interp import calc_mean_tm, calc_tm_deltas,\
     get_ntc_wells, get_mean_ct, calc_delta_ct, get_ct, get_ct_call, get_tms, \
     get_product_labels_from_tms
 
@@ -97,8 +97,8 @@ class NestedIdQpcrData(OrderedDict):
                          mean_ntc_ct) -> 'NestedIdQpcrData':
 
         tms = get_tms(raw_instrument_data[well_name])
-        tm_delta = calc_tm_delta(raw_instrument_data[well_name],
-                                 max_conc_mean_tm)
+        tm_delta = calc_tm_deltas(raw_instrument_data[well_name],
+                                  max_conc_mean_tm)
         ct = get_ct(raw_instrument_data[well_name])
         delta_ct = calc_delta_ct(ct, mean_ntc_ct)
         ct_call = get_ct_call(delta_ct)
@@ -238,7 +238,8 @@ def build_qpcr_datas(id_plate: GroupedConstituents, raw_instrument_data):
         pa_grouped = group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pa_grouped.items():
             ntc_wells = get_ntc_wells(pa_constits)
-            mean_ntc_ct = get_mean_ct(ntc_wells.keys(), raw_instrument_data)
+            mean_ntc_ct = get_mean_ct(list(ntc_wells.keys()),
+                                      raw_instrument_data)
             for w, nic in pa_constits.items():
                 nested_id_datas[w] = \
                     NestedIdQpcrData.create_from_data(w, raw_instrument_data,
