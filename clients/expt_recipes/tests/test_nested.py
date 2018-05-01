@@ -11,7 +11,7 @@ from clients.expt_recipes.nested import build_constituents, build_qpcr_datas
 
 class TestNested(unittest.TestCase):
 
-    EXPT_NAME = '36'
+    EXPT_NAME = 'A81_E214'
     CURRENT_DIR = op.dirname(op.abspath(__file__))
     NAV_ROOT = op.abspath(op.join(CURRENT_DIR, op.pardir, op.pardir, op.pardir))
     DATA_DIR = op.join(NAV_ROOT, 'hardware', 'tests', 'data')
