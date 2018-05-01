@@ -1,36 +1,38 @@
 
-import os
+import os.path as op
 import unittest
 import numpy as np
 
 from clients.utils import create_allocation_table
-from hardware.step_one import StepOneExcel
+from hardware.qpcr import QpcrDataFile
 from hardware.plates import create_plates_from_allocation_table
-from clients.expt_templates.nested import build_constituents, build_qpcr_datas
+from clients.expt_recipes.nested import build_constituents, build_qpcr_datas
 
 
 class TestNested(unittest.TestCase):
 
     EXPT_NAME = '36'
-    CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+    CURRENT_DIR = op.dirname(op.abspath(__file__))
+    NAV_ROOT = op.abspath(op.join(CURRENT_DIR, op.pardir, op.pardir, op.pardir))
+    DATA_DIR = op.join(NAV_ROOT, 'hardware', 'tests', 'data')
     DATA_FILE = 'A81_E214_1_ID.xls'
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
 
         allocation_table = create_allocation_table(TestNested.EXPT_NAME)
         plate_allocation_data = \
             create_plates_from_allocation_table(allocation_table)
         plate_id = TestNested.DATA_FILE.split('.')[0]
-        self.plate_constituents = \
+        cls.plate_constituents = \
             build_constituents(plate_allocation_data[plate_id],
                                plate_allocation_data)
 
-        f = os.path.join(TestNested.CURRENT_DIR, 'data',
-                         TestNested.DATA_FILE)
-        s1 = StepOneExcel(f)
-        self.plate_results = s1.get_data_by_well()
+        f = op.join(TestNested.DATA_DIR, TestNested.DATA_FILE)
+        qpcr_data = QpcrDataFile(f)
+        cls.plate_results = qpcr_data.get_data_by_well()
 
-    def test_build_constituents(self):
+    def test_constituents(self):
 
         wc = self.plate_constituents['A01']
 
