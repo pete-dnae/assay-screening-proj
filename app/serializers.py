@@ -23,18 +23,6 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
            'rules_script',
         )
 
-
-class ReagentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ReagentModel
-        fields = (
-           'url',
-           'name',
-           'category',
-        )
-
-
 class UnitsSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -49,8 +37,16 @@ class ReagentCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ReagentCategoryModel
         fields = (
-           'url',
            'name',
+        )
+
+class ReagentSerializer(serializers.ModelSerializer):
+    category = ReagentCategorySerializer
+    class Meta:
+        model = ReagentModel
+        fields = (
+           'name',
+           'category',
         )
 
 class ReagentGroupSerializer(serializers.ModelSerializer):
