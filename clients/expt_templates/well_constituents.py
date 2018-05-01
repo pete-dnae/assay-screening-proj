@@ -1,5 +1,6 @@
 
 from collections import OrderedDict
+import abc
 
 
 class WellConstituents(OrderedDict):
@@ -12,6 +13,12 @@ class WellConstituents(OrderedDict):
         self['transferred_templates'] = None
         self['human'] = None
         self['transferred_human'] = None
+
+    @classmethod
+    @abc.abstractmethod
+    def create(cls, *args, **kwargs):
+        inst = cls()
+        return inst
 
     def _get_item_attribute(self, key, attribute):
         item = self[key]
