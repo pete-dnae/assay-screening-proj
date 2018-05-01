@@ -65,7 +65,7 @@ def get_single_reagent_category(reagent_name: str) -> str:
         .format(reagent_name))
     if len(obj) == 1:
         obj = obj[0]
-        category = get_object(obj['category'])['name']
+        category = obj['category']
         return category
     else:
         raise ValueError('Could not determine reagent category for: {}'
@@ -83,9 +83,7 @@ def get_group_reagent_category(reagent_name: str) -> str:
         .format(reagent_name))
     categories = set()
     for obj in objs:
-        r = get_object(obj['reagent'])
-        c = get_object(r['category'])
-        categories.add(c['name'])
+        categories.add(get_single_reagent_category(obj['reagent']))
     if len(categories) == 1:
         return list(categories)[0]
     else:
