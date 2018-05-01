@@ -15,7 +15,9 @@ export const state = {
     data: null,
     isFetching: false,
     fetched: false,
-    didInvalidate: false
+    didInvalidate: false,
+    isPosting:false,
+    posted:false,    
   },
   reagents: {
     data: null,
@@ -29,29 +31,6 @@ export const state = {
     fetched: false,
     didInvalidate: false
   },
-  settings: {
-    data:null,
-    colHeaders: ["ReagentName", "Concentration", "Unit"],
-    columns: [
-      {
-        type: "dropdown",
-        source: function(query, process) {
-          process(_.map(state.reagents.data, "name"));
-        },
-        strict: true
-      },
-      {},
-      {
-        type: "dropdown",
-        source: function(query, process) {
-          process(_.map(state.units.data, "abbrev"));
-        },
-        strict: true
-      }
-    ],
-    startRows: 10,
-    startCols: 3
-  }
 };
 
 const actions = {
@@ -77,8 +56,7 @@ const actions = {
       api
         .getSelectedReagentGroup(reagentGroupName)
         .then(res => {
-          commit(types.RECEIVED_SELECTED_REAGENT_GROUPS, res);
-          commit(types.LOAD_REAGENTS)
+          commit(types.RECEIVED_SELECTED_REAGENT_GROUPS, res);          
           resolve("success");
         })
         .catch(e => {
@@ -121,7 +99,20 @@ const actions = {
     });
   },
   saveReagents({commit},reagents){
-
+    commit(types.REQUEST_SAVE_REAGENT_GROUP);
+    return new Promise((resolve, reject) => {      
+      api
+        .postReagentGroup(reagents)
+        .then(res => {
+          commit(types.SAVE_REAGENT_GROUP_SUCCESS, res);
+          resolve("success");
+        })
+        .catch(e => {
+          reject(e);
+          commit(ui.SHOW_BLUR);
+          commit(types.SAVE_REAGENT_GROUP_FAILURE);
+        });
+    });
   }
 };
 const mutations = {
@@ -188,12 +179,21 @@ const mutations = {
     state.units.isFetching = false;
     state.units.fetched = false;
     state.units.didInvalidate = true;
+  },  
+  [types.REQUEST_SAVE_REAGENT_GROUP](state, data) {
+    state.currentGroupReagents.isPosting = true;
+    state.currentGroupReagents.posted = false;
+    state.currentGroupReagents.didInvalidate = false;
   },
-  [types.LOAD_REAGENTS](state,data) {
-    
-    state.settings.data=_.map(state.currentGroupReagents.data,reagentObj=>{
-      return [reagentObj.reagent.name,reagentObj.concentration,reagentObj.units.abbrev]
-    })
+  [types.SAVE_REAGENT_GROUP_SUCCESS](state, data) {
+    state.currentGroupReagents.isPosting = false;
+    state.currentGroupReagents.posted = true;
+    state.currentGroupReagents.didInvalidate = false;
+  },
+  [types.SAVE_REAGENT_GROUP_FAILURE](state, data) {
+    state.currentGroupReagents.isPosting = false;
+    state.currentGroupReagents.posted = false;
+    state.currentGroupReagents.didInvalidate = true;
   }
 };
 const getters = {
@@ -203,8 +203,11 @@ const getters = {
   getCurrentGroupReagents(state, getters, rootState) {
     return state.currentGroupReagents.data;
   },
-  getTableSettings(state, getters, rootState) {
-    return state.settings;
+  getReagents(state, getters, rootState) {
+    return state.reagents.data;
+  },
+  getUnits(state, getters, rootState) {
+    return state.units.data;
   }
 };
 

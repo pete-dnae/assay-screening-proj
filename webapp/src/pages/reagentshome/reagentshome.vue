@@ -17,7 +17,7 @@
                 <a class="nav-link" href="#">Create</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Save-As</a>
+                <a class="nav-link" href="#" @click="show=!show">Save-As</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Delete</a>
@@ -32,6 +32,20 @@
             <div id="handsonTable"></div>       
         </div>
     </div>
+    <modal v-model="show" @ok="show=!show">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title">
+                <b>Provide Group Name</b>
+            </h4>
+        </div>
+        <div class="form-group">
+            <label class="float-left">Group Name :</label><input class="form-control" v-model="groupName"  type="text"/>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="show=!show">Exit</button>
+            <button type="button" class="btn btn-success" @click="getData();show=!show">Custom Save</button>            
+        </div>
+    </modal>
 </div>
 </template>
 <script src="./reagentshome.js"></script>
