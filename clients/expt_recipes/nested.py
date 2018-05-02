@@ -261,8 +261,8 @@ def build_qpcr_datas(id_plate: GroupedConstituents, raw_instrument_data):
         pa_grouped = group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pa_grouped.items():
             ntc_wells = get_ntc_wells(pa_constits)
-            mean_ntc_ct = get_mean_ct(list(ntc_wells.keys()),
-                                      raw_instrument_data)
+            qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
+            mean_ntc_ct = get_mean_ct(qpcr_datas)
             for w, nic in pa_constits.items():
                 nested_id_datas[w] = \
                     NestedIdQpcrData.create_from_data(w, raw_instrument_data,
@@ -286,8 +286,8 @@ def calc_max_conc_mean_tm(constituents: GroupedConstituents,
     """
     id_template_only_wells = get_id_template_only_wells(constituents)
     max_conc_wells = get_max_conc_template_from_id_wells(id_template_only_wells)
-    max_conc_mean_tm = calc_mean_tm(list(max_conc_wells.keys()),
-                                    raw_instrument_data)
+    qpcr_datas = [raw_instrument_data[w] for w in max_conc_wells]
+    max_conc_mean_tm = calc_mean_tm(qpcr_datas)
     return max_conc_mean_tm
 
 

@@ -64,8 +64,7 @@ def get_single_reagent_category(reagent_name: str) -> str:
         'https://assay-screening.herokuapp.com/api/reagents/?name={}'
         .format(reagent_name))
     if len(obj) == 1:
-        obj = obj[0]
-        category = obj['category']
+        category = obj[0]['category']
         return category
     else:
         raise ValueError('Could not determine reagent category for: {}'
