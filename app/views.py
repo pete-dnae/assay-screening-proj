@@ -1,10 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.db import transaction
 from .serializers import *
 from .view_helpers import ViewHelpers
-
+from rest_framework import status
+from rest_framework.exceptions import ValidationError, ParseError
 
 class ExperimentViewSet(viewsets.ModelViewSet):
 
@@ -69,16 +70,24 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
         """
         create a list of reagent group instances if a list is provided or a
         single instance otherwise
+
+        deletes existing instances under the same reagent group name
         """
 
         data = request.data
         if isinstance(data,list):
-            serializer = self.get_serializer(data=request.data,many=True)
+            group_name = data[0]['group_name']
+            serializer = self.get_serializer(data=request.data, many=True)
         else:
+            group_name = data['group_name']
             serializer = self.get_serializer(data=request.data)
 
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        with transaction.atomic():
+            ReagentGroupModel.objects.filter(group_name=group_name).delete()
+            serializer = self.get_serializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
         return Response(serializer.data)
 
 
@@ -110,6 +119,16 @@ class ReagentGroupListView(APIView):
     def get(self,request):
         return Response(ViewHelpers.group_names())
 
+    def delete(self, request):
+        try:
+            group_name = request.data['group_name']
+            with transaction.atomic():
+                ReagentGroupModel.objects.filter(group_name=group_name).delete()
+        except KeyError:
+            raise ValidationError('Invalid request;Please mention a group name')
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class AvailableReagentsCategoryView(APIView):
     """
     Returns a json object keyed by reagent or reagent group name with their
@@ -118,3 +137,4 @@ class AvailableReagentsCategoryView(APIView):
 
     def get(self,request):
         return Response(ViewHelpers.available_reagents_category())
+

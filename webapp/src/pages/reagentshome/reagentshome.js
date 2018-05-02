@@ -12,19 +12,12 @@ export default {
       groupName: null,
       settings: {
         data: null,
+        stretchH: 'all',
         colHeaders: ['ReagentName', 'Concentration', 'Unit'],
         columns: [
-          {
-            type: 'dropdown',
-            source: [],
-            strict: true,
-          },
+          { type: 'dropdown', source: [], strict: true },
           {},
-          {
-            type: 'dropdown',
-            source: [],
-            strict: true,
-          },
+          { type: 'dropdown', source: [], strict: true },
         ],
         startRows: 10,
         startCols: 3,
@@ -49,35 +42,63 @@ export default {
       'fetchAvailableReagentGroups',
       'fetchSelectedReagentGroup',
       'saveReagents',
+      'deleteReagentGroup',
     ]),
     handleReagentGroupSelection() {
+      this.loadSelectedReagentGroup(this.currentReagentGroup);
+    },
+    handleCreateNew() {
+      this.updateTableData(null);
+      this.currentReagentGroup = null;
+    },
+    loadSelectedReagentGroup(reagentGroupName) {
       this.fetchSelectedReagentGroup({
-        reagentGroupName: this.currentReagentGroup,
+        reagentGroupName,
       }).then(() => {
-        this.settings.data = this.currentGroupReagents.map(reagentObj => [
+        const data = this.currentGroupReagents.map(reagentObj => [
           reagentObj.reagent,
           reagentObj.concentration,
           reagentObj.units,
         ]);
-        this.handsonTable.updateSettings(this.settings);
+        this.updateTableData(data);
       });
     },
-    getData() {
+    updateTableData(data) {
+      this.settings.data = data;
+      this.handsonTable.updateSettings(this.settings);
+    },
+    loadSettings() {
+      return Promise.all([this.fetchReagents(), this.fetchUnits()]).then(() => {
+        this.settings.columns[0].source = _.map(this.reagents, 'name');
+        this.settings.columns[2].source = _.map(this.units, 'abbrev');
+      });
+    },
+    handleReagentGroupDelete() {
+      this.deleteReagentGroup(this.currentReagentGroup).then(() => {
+        this.fetchAvailableReagentGroups();
+        this.updateTableData(null);
+      });
+    },
+    saveData() {
       const dataArray = this.handsonTable.getData();
       const groupName = this.groupName;
-      const reagentGroupObjectList = dataArray.map(row => ({
-        group_name: groupName,
-        reagent: row[0],
-        concentration: row[1],
-        units: row[2],
-      }));
-      this.saveReagents(reagentGroupObjectList);
+      const reagentGroupObjectList = dataArray
+        .filter(row => !row.includes(''))
+        .map(row => ({
+          group_name: groupName,
+          reagent: row[0],
+          concentration: row[1],
+          units: row[2],
+        }));
+      this.saveReagents(reagentGroupObjectList).then(() => {
+        this.fetchAvailableReagentGroups();
+        this.currentReagentGroup = groupName;
+        this.loadSelectedReagentGroup(this.currentReagentGroup);
+      });
     },
   },
   mounted() {
-    Promise.all([this.fetchReagents(), this.fetchUnits()]).then(() => {
-      this.settings.columns[0].source = _.map(this.reagents, 'name');
-      this.settings.columns[2].source = _.map(this.units, 'abbrev');
+    this.loadSettings().then(() => {
       const container = document.getElementById('handsonTable');
       this.handsonTable = new Handsontable(container, this.settings);
     });

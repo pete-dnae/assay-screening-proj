@@ -30,7 +30,8 @@ urlpatterns = [
             ExperimentImagesView.as_view()),
     re_path(r'^api/reagent-groups/list',ReagentGroupListView.as_view()),
     re_path(r'api/available-reagents-category$',
-            AvailableReagentsCategoryView.as_view())
+            AvailableReagentsCategoryView.as_view()),
+
 ]
 
 # Automated config of URLs for the default ViewSet-derived views.

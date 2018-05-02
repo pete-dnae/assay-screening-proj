@@ -55,6 +55,17 @@ const fetchResWithParam = (url, params) =>
     );
   });
 
+const deleteRes = (url, data) =>
+  axios.delete(
+    url,
+    { data },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
 export const getExperiment = experimentName =>
   fetchRes(`api/experiments/${experimentName}/`);
 export const getPlate = plateId => fetchRes(`api/plates/${plateId}/`);
@@ -74,3 +85,4 @@ export const getAvailableReagentGroups = () =>
 export const getSelectedReagentGroup = reagentGroupName =>
   fetchResWithParam('/api/reagent-groups/', { name: reagentGroupName });
 export const postReagentGroup = reagentGroup => postRes('/api/reagent-groups/', reagentGroup);
+export const deleteReagentGroup = reagentGroupName => deleteRes('/api/reagent-groups/list', { group_name: reagentGroupName });

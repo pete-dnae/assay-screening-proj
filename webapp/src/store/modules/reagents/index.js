@@ -18,6 +18,8 @@ export const state = {
     didInvalidate: false,
     isPosting:false,
     posted:false,    
+    isDeleting:false,
+    deleted:false,    
   },
   reagents: {
     data: null,
@@ -56,7 +58,7 @@ const actions = {
       api
         .getSelectedReagentGroup(reagentGroupName)
         .then(res => {
-          commit(types.RECEIVED_SELECTED_REAGENT_GROUPS, res);          
+          commit(types.RECEIVED_SELECTED_REAGENT_GROUPS, res);
           resolve("success");
         })
         .catch(e => {
@@ -98,9 +100,9 @@ const actions = {
         });
     });
   },
-  saveReagents({commit},reagents){
+  saveReagents({ commit }, reagents) {
     commit(types.REQUEST_SAVE_REAGENT_GROUP);
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       api
         .postReagentGroup(reagents)
         .then(res => {
@@ -111,6 +113,22 @@ const actions = {
           reject(e);
           commit(ui.SHOW_BLUR);
           commit(types.SAVE_REAGENT_GROUP_FAILURE);
+        });
+    });
+  },
+  deleteReagentGroup({ commit }, reagentGroupName) {
+    commit(types.REQUEST_DELETE_REAGENT_GROUP);    
+    return new Promise((resolve, reject) => {
+      api
+        .deleteReagentGroup(reagentGroupName)
+        .then(res => {
+          commit(types.DELETE_REAGENT_GROUP_SUCCESS, res);
+          resolve("success");
+        })
+        .catch(e => {
+          reject(e);
+          commit(ui.SHOW_BLUR);
+          commit(types.DELETE_REAGENT_GROUP_FAILURE);
         });
     });
   }
@@ -179,7 +197,7 @@ const mutations = {
     state.units.isFetching = false;
     state.units.fetched = false;
     state.units.didInvalidate = true;
-  },  
+  },
   [types.REQUEST_SAVE_REAGENT_GROUP](state, data) {
     state.currentGroupReagents.isPosting = true;
     state.currentGroupReagents.posted = false;
@@ -193,6 +211,21 @@ const mutations = {
   [types.SAVE_REAGENT_GROUP_FAILURE](state, data) {
     state.currentGroupReagents.isPosting = false;
     state.currentGroupReagents.posted = false;
+    state.currentGroupReagents.didInvalidate = true;
+  },
+  [types.REQUEST_DELETE_REAGENT_GROUP](state, data) {
+    state.currentGroupReagents.isDeleting = true;
+    state.currentGroupReagents.eleted = false;
+    state.currentGroupReagents.didInvalidate = false;
+  },
+  [types.DELETE_REAGENT_GROUP_SUCCESS](state, data) {
+    state.currentGroupReagents.isDeleting = false;
+    state.currentGroupReagents.eleted = true;
+    state.currentGroupReagents.didInvalidate = false;
+  },
+  [types.DELETE_REAGENT_GROUP_FAILURE](state, data) {
+    state.currentGroupReagents.isDeleting = false;
+    state.currentGroupReagents.eleted = false;
     state.currentGroupReagents.didInvalidate = true;
   }
 };
