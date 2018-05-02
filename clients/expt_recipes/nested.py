@@ -328,6 +328,7 @@ def get_max_conc_template_from_id_wells(
             max_conc_wells[w] = wc
     return max_conc_wells
 
+
 def get_labchip_plates(all_expt_plates: ExptPlates):
     """
     Extracts those plates in a nested experiment which are the labchip plates.

@@ -1,7 +1,11 @@
 
+
+from typing import NewType, Dict
 import pandas as pd
 from hardware.plates import sanitize_well_name
 
+LabChipData = NewType('LabChipData', Dict)
+from hardware.plates import WellName
 
 class LabChip:
     """
@@ -65,7 +69,7 @@ class LabChip:
 
         return dataframes
 
-    def get_data_by_well(self):
+    def get_data_by_well(self) -> Dict[WellName, LabChipData]:
         """
         Generate a dictionary keyed by well and valued by all the data
         contained with in the "lab_chip_files"
@@ -249,3 +253,21 @@ class LabChip:
         df.columns = columns
 
         return df
+
+
+def get_peaks(labchip_data):
+    peaks = labchip_data['peak']
+    peaks = dict((k, v) for k, v in peaks.items() if k.startswith('Peak'))
+    return peaks
+
+
+def get_peak_concentration(peak_data):
+    return peak_data['conc_(ng/ul)']
+
+
+def get_peak_bp_size(peak_data):
+    return peak_data['size_[bp]']
+
+
+def get_peak_purity(peak_data):
+    return peak_data['%_purity']

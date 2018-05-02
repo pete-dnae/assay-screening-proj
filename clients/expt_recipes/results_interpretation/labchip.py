@@ -1,14 +1,16 @@
 
 import numpy as np
+from hardware.labchip import get_peaks, get_peak_bp_size, get_peak_concentration
 
-def is_specific(amplicon_length, bp, specific_hreshold):
+
+def is_specific(amplicon_lengths, bp, threshold=0.1):
     """function to find is a peak is specific ,In multiplex
      assays if amplicon length is within 10% of any of the
      target bp then its considered specific.Single plex if
      amplicon len is within 10% of targ bp then specific"""
-    for bp_len in amplicon_length.values():
-        error = np.abs((bp_len - bp) / bp_len)
-        if error < specific_hreshold:
+    for amp in amplicon_lengths:
+        error = np.abs((amp - bp) / amp)
+        if error < threshold:
             return True
     return False
 
@@ -20,31 +22,22 @@ def is_primer_dimer(amplicon_length, primer_dimer_threshold=80):
         return False
 
 
-def calc_smth(lc_peak_data, dilution, max_legal_length=1400,
-              min_legal_length=10, specific_peak_threshold=0.1,
-              primer_dimer_length_threshold=80):
+def get_product_label_from_labchip(labchip_data, amplicon_lengths, dilution,
+                                   min_legal_length=10, max_legal_length=1400,
+                                   pd_threshold=80):
+    spec = 0
+    pd = 0
+    non_spec = 0
 
-    specific_purity = 0
-    specific_conc = 0
-    primer_dimer_purity = 0
-    primer_dimer_conc = 0
-    non_specific_purity = 0
-    non_specific_conc = 0
-
-    for peak, data in lc_peak_data.items():
-        bp = data['size_[bp]']
-        purity = data['%_purity']
-        conc = get_concentration(data, dilution)
-        # With the help of threshold limits find weather a sample is Specific,Non Specific or PD
-        if bp != '' and min_legal_length < bp < max_legal_length:
-            is_specific = _isspecific(assays, bp, specific_peak_threshold)
-            is_primerdimer = (bp < primer_dimer_length_threshold)
-            if is_specific and purity > specific_purity:
-                specific_purity += purity
-                specific_conc += conc
-            elif is_primerdimer:
-                primer_dimer_purity += purity
-                primer_dimer_conc += conc
+    peaks = get_peaks(labchip_data)
+    for peak, peak_data in peaks.items():
+        bp = get_peak_bp_size(peak_data)
+        conc = get_peak_concentration(peak_data) * dilution
+        if min_legal_length < bp < max_legal_length:
+            if is_specific(amplicon_lengths, bp):
+                spec += conc
+            elif bp < pd_threshold:
+                pd += conc
             else:
-                non_specific_purity += purity
-                non_specific_conc += conc
+                non_spec += conc
+    return spec, non_spec, pd
