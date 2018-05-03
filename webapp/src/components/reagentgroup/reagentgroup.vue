@@ -27,7 +27,15 @@
                             </nav>            
                         
                         </nav>
-                    </div>                    
+                    </div> 
+                    <hr/>
+                        <div class="alert alert-danger alert-dismissible" v-if="errors" role="alert">
+                            <ul>
+                                <li v-for="(message,value) in errors" v-bind:key="message">
+                                   {{value}} {{message}}    
+                                </li>
+                              </ul>  
+                        </div>                   
                     <div class="m-3">            
                         <div id="handsonTable">
                     </div>   
@@ -45,7 +53,7 @@
                 </div>
                 <div slot="modal-footer" class="modal-footer">
                     <button type="button" class="btn btn-default" @click="show=!show">Exit</button>
-                    <button type="button" class="btn btn-success" @click="saveData();show=!show">Custom Save</button>            
+                    <button type="button" class="btn btn-success" @click="saveData();show=!show">Save</button>            
                 </div>
             </modal>
     </div>

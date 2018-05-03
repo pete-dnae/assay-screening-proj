@@ -14,11 +14,17 @@ export const state = {
     posted: false,
     isDeleting: false,
     deleted: false,
-    isPutting:false,
-    put:false
+    isPutting: false,
+    put: false
   },
-  errors:{
-    data:null
+  reagentCategories: {
+    data: null,
+    isFetching: false,
+    fetched: false,
+    didInvalidate: false
+  },
+  errors: {
+    data: null
   },
   units: { data: null, isFetching: false, fetched: false, didInvalidate: false }
 };
@@ -40,18 +46,36 @@ const actions = {
         });
     });
   },
-  addReagent({ commit },data) {
+  fetchReagentCategories({ commit }) {
+    commit(types.REQUEST_REAGENT_CATEGORIES);
+    return new Promise((resolve, reject) => {
+      api
+        .getReagentCategories()
+        .then(res => {
+          commit(types.RECEIVED_REAGENT_CATEGORIES, res);
+          resolve("success");
+        })
+        .catch(e => {
+          reject(e);
+          commit(ui.SHOW_BLUR);
+          commit(types.REAGENT_CATEGORIES_FAILURE);
+        });
+    });
+  },
+  addReagent({ commit }, data) {
     commit(types.REQUEST_REAGENT_ADD);
     return new Promise((resolve, reject) => {
       api
         .addReagent(data)
-        .then(res => {          
-          commit(types.REAGENT_ADD_SUCCESS);
-          resolve("success");
-        },({response:{data}})=>{
-          
-          commit(types.ADD_ERROR_MESSAGE, data);
-        })
+        .then(
+          res => {
+            commit(types.REAGENT_ADD_SUCCESS);
+            resolve("success");
+          },
+          ({ response: { data } }) => {
+            commit(types.ADD_ERROR_MESSAGE, data);
+          }
+        )
         .catch(e => {
           reject(e);
           commit(ui.SHOW_BLUR);
@@ -59,7 +83,7 @@ const actions = {
         });
     });
   },
-  removeReagent({ commit },reagentName) {
+  removeReagent({ commit }, reagentName) {
     commit(types.REQUEST_REAGENT_REMOVE);
     return new Promise((resolve, reject) => {
       api
@@ -69,7 +93,7 @@ const actions = {
             commit(types.REAGENT_REMOVE_SUCCESS);
             resolve("success");
           },
-          ({ response: { data } })=>{
+          ({ response: { data } }) => {
             commit(types.ADD_ERROR_MESSAGE, data);
           }
         )
@@ -80,7 +104,7 @@ const actions = {
         });
     });
   },
-  editReagent({ commit },args) {
+  editReagent({ commit }, args) {
     commit(types.REQUEST_REAGENT_EDIT);
     return new Promise((resolve, reject) => {
       api
@@ -90,7 +114,7 @@ const actions = {
             commit(types.REAGENT_EDIT_SUCCESS);
             resolve("success");
           },
-          ({ response: { data } })=>{
+          ({ response: { data } }) => {
             commit(types.ADD_ERROR_MESSAGE, data);
           }
         )
@@ -135,12 +159,28 @@ const mutations = {
     state.reagents.fetched = false;
     state.reagents.didInvalidate = true;
   },
+  [types.REQUEST_REAGENT_CATEGORIES](state) {
+    state.reagentCategories.isFetching = true;
+    state.reagentCategories.fetched = false;
+    state.reagentCategories.didInvalidate = false;
+  },
+  [types.RECEIVED_REAGENT_CATEGORIES](state, data) {
+    state.reagentCategories.data = data;
+    state.reagentCategories.isFetching = false;
+    state.reagentCategories.fetched = true;
+    state.reagentCategories.didInvalidate = false;
+  },
+  [types.REAGENT_CATEGORIES_FAILURE](state) {
+    state.reagentCategories.isFetching = false;
+    state.reagentCategories.fetched = false;
+    state.reagentCategories.didInvalidate = true;
+  },
   [types.REQUEST_REAGENT_ADD](state) {
     state.reagents.isPosting = true;
     state.reagents.posted = false;
     state.reagents.didInvalidate = false;
   },
-  [types.REAGENT_ADD_SUCCESS](state) {    
+  [types.REAGENT_ADD_SUCCESS](state) {
     state.reagents.isPosting = false;
     state.reagents.posted = true;
     state.reagents.didInvalidate = false;
@@ -155,7 +195,7 @@ const mutations = {
     state.reagents.deleted = false;
     state.reagents.didInvalidate = false;
   },
-  [types.REAGENT_REMOVE_SUCCESS](state) {    
+  [types.REAGENT_REMOVE_SUCCESS](state) {
     state.reagents.isDeleting = false;
     state.reagents.deleted = true;
     state.reagents.didInvalidate = false;
@@ -170,7 +210,7 @@ const mutations = {
     state.reagents.put = false;
     state.reagents.didInvalidate = false;
   },
-  [types.REAGENT_EDIT_SUCCESS](state) {    
+  [types.REAGENT_EDIT_SUCCESS](state) {
     state.reagents.isPutting = false;
     state.reagents.put = true;
     state.reagents.didInvalidate = false;
@@ -196,8 +236,8 @@ const mutations = {
     state.units.fetched = false;
     state.units.didInvalidate = true;
   },
-  [types.ADD_ERROR_MESSAGE](state,data){
-    state.errors.data = data
+  [types.ADD_ERROR_MESSAGE](state, data) {
+    state.errors.data = data;
   }
 };
 const getters = {
@@ -209,6 +249,9 @@ const getters = {
   },
   getReagentErrors(state, getters, rootState) {
     return state.errors.data;
+  },
+  getReagentCategories(state, getters, rootState) {
+    return state.reagentCategories.data;
   }
 };
 

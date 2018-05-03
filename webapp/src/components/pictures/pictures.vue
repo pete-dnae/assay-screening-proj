@@ -12,7 +12,11 @@
             <label class="text-info">Right click to save image</label>
         </div>
     </div>
+    <small class="form-text text-muted text-right">
+        Downloadable picture , Right click for options
+    </small>
 <img :src="image" class="mt-3" style='height: 100%; width: 100%; object-fit: contain'/>
+
 </div>
 </template>
 <script src="./pictures.js"></script>
