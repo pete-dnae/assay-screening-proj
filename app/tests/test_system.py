@@ -93,8 +93,8 @@ class HighLevelSystemSmokeTest(APITestCase):
         # First with a name that does exist.
         resp = client.get('/api/reagents/?name=Titanium-Taq', format='json')
         reagents = resp.data
-        self.assertEqual(reagents[0]['url'], 
-            'http://testserver/api/reagents/Titanium-Taq/')
+        self.assertEqual(reagents[0]['name'],
+            'Titanium-Taq')
 
         # Now with a name that does not exist.
         resp = client.get('/api/reagents/?name=fried-rain', format='json')

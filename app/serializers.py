@@ -23,19 +23,6 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
            'rules_script',
         )
 
-
-class ReagentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ReagentModel
-        fields = (
-           'url',
-           'name',
-           'category',
-        )
-
-
-
 class UnitsSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -53,6 +40,14 @@ class ReagentCategorySerializer(serializers.ModelSerializer):
            'name',
         )
 
+class ReagentSerializer(serializers.ModelSerializer):
+    category = ReagentCategorySerializer
+    class Meta:
+        model = ReagentModel
+        fields = (
+           'name',
+           'category',
+        )
 
 class ReagentGroupSerializer(serializers.ModelSerializer):
 
@@ -61,12 +56,12 @@ class ReagentGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReagentGroupModel
         fields = (
+           'url',
            'group_name',
            'reagent',
            'concentration',
            'units',
         )
-
 
 
     def validate(self, data):
@@ -91,6 +86,7 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RulesScriptModel
         fields = (
+           'url',
            'text',
            'interpretationResults',
         )
@@ -138,4 +134,3 @@ class MakeImageSerializer(serializers.Serializer):
             'parseError':err,
             'results':results
         }
-
