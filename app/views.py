@@ -6,6 +6,7 @@ from .serializers import *
 from .view_helpers import ViewHelpers
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, ParseError
+from django.db.models.deletion import ProtectedError
 
 class ExperimentViewSet(viewsets.ModelViewSet):
 
@@ -38,6 +39,21 @@ class ReagentViewSet(viewsets.ModelViewSet):
             matching = ReagentModel.objects.filter(name=name_to_search_for)
             return matching
         return ReagentModel.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Overridden to handle issues with foreign key constraints
+        """
+
+        try:
+            pk = kwargs['pk']
+            ReagentModel.objects.filter(pk=pk).delete()
+        except ProtectedError:
+            raise ValidationError('The Reagent is a part of reagent group '
+                                  'hence it cannot be deleted')
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UnitViewSet(viewsets.ModelViewSet):
     queryset = UnitsModel.objects.all()

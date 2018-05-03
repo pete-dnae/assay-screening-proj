@@ -9,6 +9,13 @@
                 <div class="card-body">
                     <h5 class="card-title">Reagents</h5>        
                         <hr/>
+                        <div class="alert alert-danger alert-dismissible" v-if="errors" role="alert">
+                            <ul>
+                                <li v-for="(message,value) in errors" v-bind:key="message">
+                                   {{value}} {{message}}    
+                                </li>
+                              </ul>  
+                        </div>
                         <div class="m-3">            
                             <div v-if="reagents">
                                 <div class="row text-left">
@@ -38,20 +45,17 @@
                                             <i class="fa fa-trash-o btn" aria-hidden="true" @click="handleReagentDelete(reagent)"></i>
                                         </td> 
                                         <td>
-                                            <i class="fa fa-pencil btn" aria-hidden="true" @click="handleReagentEdit(reagent)"></i>
+                                            <i class="fa fa-pencil btn" aria-hidden="true" @click="prepReagentEdit(reagent)"></i>
                                         </td>                                 
                                     </tr>
                                     <tr>
-                                        <td>
-                                            <input/>
-                                        </td>
-                                        <td>
-                                            <input/>
-                                        </td>
+                                        <td v-for="key in Object.keys(reagents[0])" v-bind:key="key">
+                                            <input v-model="addReagentData[key]"/>
+                                        </td>                                      
                                         <td>                                            
                                         </td>
                                         <td>
-                                            <i class="fa fa-plus btn" aria-hidden="true"></i>
+                                            <i class="fa fa-plus btn" aria-hidden="true" @click="handleReagentAdd"></i>
                                         </td>
                                     </tr>
                                 </table>
@@ -69,7 +73,7 @@
         
         
     </div>
-<modal v-model="showEditForm" @ok="showEditForm = false">
+<modal v-model="showEditForm">
     <div slot="modal-header" class="modal-header">
         <h4 class="modal-title">
             Edit Reagent
@@ -78,9 +82,13 @@
     <div class="row">        
         <div class="col form-group text-left" v-for="(value,key) in selectedReagentData" v-bind:key="key">
             <label>{{key}}</label>
-            <input type="text" v-model="selectedReagentData[key]">
+            <input type="text" v-model="selectedReagentData[key]" :disabled="key==='name'">
         </div>    
     </div>
+    <div slot="modal-footer" class="modal-footer">
+        <button type="button" class="btn btn-default" @click="showEditForm = false">Cancel</button>
+        <button type="button" class="btn btn-success" @click="handleReagentEdit();showEditForm = false">Save</button>        
+  </div>
 </modal>
 </div>
 </template>
