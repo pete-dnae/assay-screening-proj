@@ -22,7 +22,7 @@ export const state = {
     deleted:false,    
   },
   reagents: {
-    data: null,
+    data: null,    
     isFetching: false,
     fetched: false,
     didInvalidate: false
