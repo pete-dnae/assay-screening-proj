@@ -84,5 +84,12 @@ export const getAvailableReagentGroups = () =>
   fetchRes('/api/reagent-groups/list');
 export const getSelectedReagentGroup = reagentGroupName =>
   fetchResWithParam('/api/reagent-groups/', { name: reagentGroupName });
-export const postReagentGroup = reagentGroup => postRes('/api/reagent-groups/', reagentGroup);
-export const deleteReagentGroup = reagentGroupName => deleteRes('/api/reagent-groups/list', { group_name: reagentGroupName });
+export const postReagentGroup = reagentGroup =>
+  postRes('/api/reagent-groups/', reagentGroup);
+export const deleteReagentGroup = reagentGroupName =>
+  deleteRes('/api/reagent-groups/list', { group_name: reagentGroupName });
+export const addReagent = data => postRes('/api/reagents/', data);
+export const removeReagent = reagentName =>
+  deleteRes(`/api/reagents/${reagentName}/`);
+export const editReagent = ({ data, reagentName }) =>
+  putRes(`/api/reagents/${reagentName}/`, data);

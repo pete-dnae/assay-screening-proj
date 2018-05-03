@@ -12,11 +12,12 @@ export default {
       showEditForm: false,
       selectedReagentData: {},
       selectedReagent: null,
+      addReagentData: {},
     };
   },
   components: { reagentGroup, modal },
   computed: {
-    ...mapGetters({ reagents: 'getReagents' }),
+    ...mapGetters({ reagents: 'getReagents', errors: 'getReagentErrors' }),
     filteredReagents() {
       if (this.searchField && !_.isEmpty(this.searchText)) {
         return this.reagents.filter(reagent =>
@@ -27,17 +28,31 @@ export default {
     },
   },
   methods: {
-    ...mapActions([]),
-    handleReagentEdit(value) {
-      this.selectedReagentData = this.reagents.find(reagent => reagent === value);
-      this.selectedReagent = value.name;
-      this.showEditForm = true;
+    ...mapActions([
+      'addReagent',
+      'removeReagent',
+      'editReagent',
+      'fetchReagents',
+    ]),
+    handleReagentEdit() {
+      this.editReagent({
+        data: this.selectedReagentData,
+        reagentName: this.selectedReagent,
+      }).then(() => this.fetchReagents());
     },
     handleReagentDelete(value) {
       this.selectedReagent = value.name;
+      this.removeReagent(this.selectedReagent).then(() => this.fetchReagents());
     },
     handleReagentAdd() {
-
+      this.addReagent(this.addReagentData).then(() => this.fetchReagents());
+    },
+    prepReagentEdit(value) {
+      this.selectedReagentData = _.clone(
+        this.reagents.find(reagent => reagent === value),
+      );
+      this.selectedReagent = value.name;
+      this.showEditForm = true;
     },
   },
   mounted() {},

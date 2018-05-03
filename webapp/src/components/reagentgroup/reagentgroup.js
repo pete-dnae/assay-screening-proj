@@ -35,6 +35,14 @@ export default {
       currentGroupReagents: 'getCurrentGroupReagents',
     }),
   },
+  watch: {
+    reagents() {
+      if (this.handsonTable) {
+        this.settings.columns[0].source = _.map(this.reagents, 'name');
+        this.handsonTable.updateSettings(this.settings);
+      }
+    },
+  },
   methods: {
     ...mapActions([
       'fetchReagents',

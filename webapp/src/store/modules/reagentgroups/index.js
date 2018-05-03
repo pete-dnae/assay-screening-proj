@@ -21,18 +21,6 @@ export const state = {
     isDeleting:false,
     deleted:false,    
   },
-  reagents: {
-    data: null,    
-    isFetching: false,
-    fetched: false,
-    didInvalidate: false
-  },
-  units: {
-    data: null,
-    isFetching: false,
-    fetched: false,
-    didInvalidate: false
-  },
 };
 
 const actions = {
@@ -65,38 +53,6 @@ const actions = {
           reject(e);
           commit(ui.SHOW_BLUR);
           commit(types.SELECTED_REAGENT_GROUPS_FAILURE);
-        });
-    });
-  },
-  fetchReagents({ commit }) {
-    commit(types.REQUEST_REAGENTS);
-    return new Promise((resolve, reject) => {
-      api
-        .getReagents()
-        .then(res => {
-          commit(types.RECEIVED_REAGENTS, res);
-          resolve("success");
-        })
-        .catch(e => {
-          reject(e);
-          commit(ui.SHOW_BLUR);
-          commit(types.REAGENTS_FAILURE);
-        });
-    });
-  },
-  fetchUnits({ commit }) {
-    commit(types.REQUEST_UNITS);
-    return new Promise((resolve, reject) => {
-      api
-        .getUnits()
-        .then(res => {
-          commit(types.RECEIVED_UNITS, res);
-          resolve("success");
-        })
-        .catch(e => {
-          reject(e);
-          commit(ui.SHOW_BLUR);
-          commit(types.UNITS_FAILURE);
         });
     });
   },
@@ -165,39 +121,7 @@ const mutations = {
     state.currentGroupReagents.isFetching = false;
     state.currentGroupReagents.fetched = false;
     state.currentGroupReagents.didInvalidate = true;
-  },
-  [types.REQUEST_REAGENTS](state) {
-    state.reagents.isFetching = true;
-    state.reagents.fetched = false;
-    state.reagents.didInvalidate = false;
-  },
-  [types.RECEIVED_REAGENTS](state, data) {
-    state.reagents.data = data;
-    state.reagents.isFetching = false;
-    state.reagents.fetched = true;
-    state.reagents.didInvalidate = false;
-  },
-  [types.REAGENTS_FAILURE](state) {
-    state.reagents.isFetching = false;
-    state.reagents.fetched = false;
-    state.reagents.didInvalidate = true;
-  },
-  [types.REQUEST_UNITS](state) {
-    state.units.isFetching = true;
-    state.units.fetched = false;
-    state.units.didInvalidate = false;
-  },
-  [types.RECEIVED_UNITS](state, data) {
-    state.units.data = data;
-    state.units.isFetching = false;
-    state.units.fetched = true;
-    state.units.didInvalidate = false;
-  },
-  [types.UNITS_FAILURE](state) {
-    state.units.isFetching = false;
-    state.units.fetched = false;
-    state.units.didInvalidate = true;
-  },
+  },  
   [types.REQUEST_SAVE_REAGENT_GROUP](state, data) {
     state.currentGroupReagents.isPosting = true;
     state.currentGroupReagents.posted = false;
@@ -236,12 +160,6 @@ const getters = {
   getCurrentGroupReagents(state, getters, rootState) {
     return state.currentGroupReagents.data;
   },
-  getReagents(state, getters, rootState) {
-    return state.reagents.data;
-  },
-  getUnits(state, getters, rootState) {
-    return state.units.data;
-  }
 };
 
 export default {
