@@ -16,11 +16,13 @@ export default {
         colHeaders: ['ReagentName', 'Concentration', 'Unit'],
         columns: [
           { type: 'dropdown', source: [], strict: true },
-          {},
+          { validator: 'numeric', allowInvalid: true },
           { type: 'dropdown', source: [], strict: true },
         ],
         startRows: 10,
         startCols: 3,
+        minSpareRows: 1,
+        contextMenu: true,
       },
     };
   },
@@ -33,6 +35,7 @@ export default {
       units: 'getUnits',
       reagentGroupList: 'getReagentGroupList',
       currentGroupReagents: 'getCurrentGroupReagents',
+      errors: 'getReagentGroupsErrors',
     }),
   },
   watch: {

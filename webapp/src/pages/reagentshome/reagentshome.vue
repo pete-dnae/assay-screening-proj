@@ -33,7 +33,7 @@
                                         
                                     </div>
                                 </div>
-                                <table class="text-left table table-striped pre-scrollable">
+                                <table class="text-left table table-striped table-responsive-sm">
                                     <th v-for="key in Object.keys(reagents[0])" v-bind:key="key">
                                         {{key}}
                                     </th>
@@ -42,20 +42,25 @@
                                             {{property}}
                                         </td>     
                                         <td>
-                                            <i class="fa fa-trash-o btn" aria-hidden="true" @click="handleReagentDelete(reagent)"></i>
+                                            <i class="fa fa-trash-o btn btn-primary" aria-hidden="true" @click="handleReagentDelete(reagent)"></i>
                                         </td> 
                                         <td>
-                                            <i class="fa fa-pencil btn" aria-hidden="true" @click="prepReagentEdit(reagent)"></i>
+                                            <i class="fa fa-pencil btn btn-primary" aria-hidden="true" @click="prepReagentEdit(reagent)"></i>
                                         </td>                                 
                                     </tr>
+                                    <tr v-if="filteredReagents.length==0"><td></td><td>No Results to show</td></tr>
                                     <tr>
                                         <td v-for="key in Object.keys(reagents[0])" v-bind:key="key">
-                                            <input v-model="addReagentData[key]"/>
+                                            <select v-if="key==='category'" v-model="addReagentData[key]">
+                                                <option value="null">Please select a category</option>
+                                                <option v-for="category in reagentCategories" v-bind:key="category.name">{{category.name}}</option>
+                                            </select>
+                                            <input v-model="addReagentData[key]" placeholder="Reagent Name" v-else/>
                                         </td>                                      
                                         <td>                                            
                                         </td>
                                         <td>
-                                            <i class="fa fa-plus btn" aria-hidden="true" @click="handleReagentAdd"></i>
+                                            <i class="fa fa-plus btn btn-primary" aria-hidden="true" @click="handleReagentAdd"></i>
                                         </td>
                                     </tr>
                                 </table>
@@ -81,8 +86,12 @@
     </div>
     <div class="row">        
         <div class="col form-group text-left" v-for="(value,key) in selectedReagentData" v-bind:key="key">
-            <label>{{key}}</label>
-            <input type="text" v-model="selectedReagentData[key]" :disabled="key==='name'">
+            <label>{{key}}</label>            
+             <select v-if="key==='category'" v-model="selectedReagentData[key]">
+                <option value="null">Please select a category</option>
+                <option v-for="category in reagentCategories" v-bind:key="category.name">{{category.name}}</option>
+            </select>
+            <input type="text" v-model="selectedReagentData[key]" :disabled="key==='name'" v-else>
         </div>    
     </div>
     <div slot="modal-footer" class="modal-footer">

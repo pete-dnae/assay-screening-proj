@@ -21,6 +21,9 @@ export const state = {
     isDeleting:false,
     deleted:false,    
   },
+  errors:{
+    data:null
+  }
 };
 
 const actions = {
@@ -62,9 +65,11 @@ const actions = {
       api
         .postReagentGroup(reagents)
         .then(res => {
-          commit(types.SAVE_REAGENT_GROUP_SUCCESS, res);
-          resolve("success");
-        })
+            commit(types.SAVE_REAGENT_GROUP_SUCCESS, res);
+            resolve("success");
+          }, ({ response: { data } }) => {
+            commit(types.ADD_ERROR_MESSAGE_REAGENT_GROUP, data);
+          })
         .catch(e => {
           reject(e);
           commit(ui.SHOW_BLUR);
@@ -78,9 +83,11 @@ const actions = {
       api
         .deleteReagentGroup(reagentGroupName)
         .then(res => {
-          commit(types.DELETE_REAGENT_GROUP_SUCCESS, res);
-          resolve("success");
-        })
+            commit(types.DELETE_REAGENT_GROUP_SUCCESS, res);
+            resolve("success");
+          }, ({ response: { data } }) => {
+            commit(types.ADD_ERROR_MESSAGE_REAGENT_GROUP, data);
+          })
         .catch(e => {
           reject(e);
           commit(ui.SHOW_BLUR);
@@ -121,7 +128,7 @@ const mutations = {
     state.currentGroupReagents.isFetching = false;
     state.currentGroupReagents.fetched = false;
     state.currentGroupReagents.didInvalidate = true;
-  },  
+  },
   [types.REQUEST_SAVE_REAGENT_GROUP](state, data) {
     state.currentGroupReagents.isPosting = true;
     state.currentGroupReagents.posted = false;
@@ -151,6 +158,9 @@ const mutations = {
     state.currentGroupReagents.isDeleting = false;
     state.currentGroupReagents.eleted = false;
     state.currentGroupReagents.didInvalidate = true;
+  },
+  [types.ADD_ERROR_MESSAGE_REAGENT_GROUP](state, data) {
+    state.errors.data = data;
   }
 };
 const getters = {
@@ -160,6 +170,9 @@ const getters = {
   getCurrentGroupReagents(state, getters, rootState) {
     return state.currentGroupReagents.data;
   },
+  getReagentGroupsErrors(state, getters, rootState) {
+    return state.errors.data;
+  }
 };
 
 export default {

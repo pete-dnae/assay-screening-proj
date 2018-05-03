@@ -17,7 +17,11 @@ export default {
   },
   components: { reagentGroup, modal },
   computed: {
-    ...mapGetters({ reagents: 'getReagents', errors: 'getReagentErrors' }),
+    ...mapGetters({
+      reagents: 'getReagents',
+      errors: 'getReagentErrors',
+      reagentCategories: 'getReagentCategories',
+    }),
     filteredReagents() {
       if (this.searchField && !_.isEmpty(this.searchText)) {
         return this.reagents.filter(reagent =>
@@ -33,6 +37,7 @@ export default {
       'removeReagent',
       'editReagent',
       'fetchReagents',
+      'fetchReagentCategories',
     ]),
     handleReagentEdit() {
       this.editReagent({
@@ -45,7 +50,10 @@ export default {
       this.removeReagent(this.selectedReagent).then(() => this.fetchReagents());
     },
     handleReagentAdd() {
-      this.addReagent(this.addReagentData).then(() => this.fetchReagents());
+      this.addReagent(this.addReagentData).then(() => {
+        this.fetchReagents();
+        this.addReagentData = {};
+      });
     },
     prepReagentEdit(value) {
       this.selectedReagentData = _.clone(
@@ -55,5 +63,7 @@ export default {
       this.showEditForm = true;
     },
   },
-  mounted() {},
+  mounted() {
+    this.fetchReagentCategories();
+  },
 };

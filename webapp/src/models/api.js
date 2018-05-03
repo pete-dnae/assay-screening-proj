@@ -93,3 +93,4 @@ export const removeReagent = reagentName =>
   deleteRes(`/api/reagents/${reagentName}/`);
 export const editReagent = ({ data, reagentName }) =>
   putRes(`/api/reagents/${reagentName}/`, data);
+export const getReagentCategories = () => fetchRes('/api/reagent-categories/');
