@@ -9,13 +9,14 @@
                 <div class="card-body">
                     <h5 class="card-title">Reagents</h5>        
                         <hr/>
-                        <div class="alert alert-danger alert-dismissible" v-if="errors" role="alert">
+                        <alert :value="showErrors" placement="top" duration="3000" type="danger" width="400px" dismissable>
+                            <span class="icon-info-circled alert-icon-float-left"></span>
                             <ul>
-                                <li v-for="(message,value) in errors" v-bind:key="message">
+                                <li v-for="(message,value) in errors" v-bind:key="value">
                                    {{value}} {{message}}    
                                 </li>
                               </ul>  
-                        </div>
+                        </alert>    
                         <div class="m-3">            
                             <div v-if="reagents">
                                 <div class="row text-left">
@@ -33,37 +34,40 @@
                                         
                                     </div>
                                 </div>
-                                <table class="text-left table table-striped table-responsive-sm">
-                                    <th v-for="key in Object.keys(reagents[0])" v-bind:key="key">
-                                        {{key}}
-                                    </th>
-                                    <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
-                                        <td v-for="property in reagent" v-bind:key="property">
-                                            {{property}}
-                                        </td>     
-                                        <td>
-                                            <i class="fa fa-trash-o btn btn-primary" aria-hidden="true" @click="handleReagentDelete(reagent)"></i>
-                                        </td> 
-                                        <td>
-                                            <i class="fa fa-pencil btn btn-primary" aria-hidden="true" @click="prepReagentEdit(reagent)"></i>
-                                        </td>                                 
-                                    </tr>
-                                    <tr v-if="filteredReagents.length==0"><td></td><td>No Results to show</td></tr>
-                                    <tr>
-                                        <td v-for="key in Object.keys(reagents[0])" v-bind:key="key">
-                                            <select v-if="key==='category'" v-model="addReagentData[key]">
-                                                <option value="null">Please select a category</option>
-                                                <option v-for="category in reagentCategories" v-bind:key="category.name">{{category.name}}</option>
-                                            </select>
-                                            <input v-model="addReagentData[key]" placeholder="Reagent Name" v-else/>
-                                        </td>                                      
-                                        <td>                                            
-                                        </td>
-                                        <td>
-                                            <i class="fa fa-plus btn btn-primary" aria-hidden="true" @click="handleReagentAdd"></i>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <div class="pre-scrollable">
+                                    <table class="text-left table table-striped">
+                                        <th v-for="key in Object.keys(reagents[0])" v-bind:key="key">
+                                            {{key}}
+                                        </th>
+                                        <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
+                                            <td v-for="property in reagent" v-bind:key="property">
+                                                {{property}}
+                                            </td>     
+                                            <td>
+                                                <i class="fa fa-trash-o btn btn-primary" aria-hidden="true" @click="handleReagentDelete(reagent)"></i>
+                                            </td> 
+                                            <td>
+                                                <i class="fa fa-pencil btn btn-primary" aria-hidden="true" @click="prepReagentEdit(reagent)"></i>
+                                            </td>                                 
+                                        </tr>
+                                        <tr v-if="filteredReagents.length==0"><td></td><td>No Results to show</td></tr>
+                                        <tr>
+                                            <td v-for="key in Object.keys(reagents[0])" v-bind:key="key">
+                                                <select v-if="key==='category'" v-model="addReagentData[key]">
+                                                    <option value="null">Please select a category</option>
+                                                    <option v-for="category in reagentCategories" v-bind:key="category.name">{{category.name}}</option>
+                                                </select>
+                                                <input v-model="addReagentData[key]" placeholder="Reagent Name" v-else/>
+                                            </td>                                      
+                                            <td>                                            
+                                            </td>
+                                            <td>                                            
+                                                <i :class="{'fa':true, 'fa-plus':true,'btn':true,'btn-primary':!reagentAddEmpty,'btn-secondary':reagentAddEmpty}" 
+                                                aria-hidden="true" @click="handleReagentAdd"></i>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                             <div v-else>
                                 No Reagents to Display

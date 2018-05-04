@@ -1,6 +1,6 @@
 import { mapGetters, mapActions } from 'vuex';
 import Handsontable from 'handsontable';
-import { modal } from 'vue-strap';
+import { modal, alert } from 'vue-strap';
 import _ from 'lodash';
 
 export default {
@@ -28,6 +28,7 @@ export default {
   },
   components: {
     modal,
+    alert,
   },
   computed: {
     ...mapGetters({
@@ -37,6 +38,9 @@ export default {
       currentGroupReagents: 'getCurrentGroupReagents',
       errors: 'getReagentGroupsErrors',
     }),
+    showErrors() {
+      return !_.isEmpty(this.errors);
+    },
   },
   watch: {
     reagents() {
@@ -94,13 +98,15 @@ export default {
       const dataArray = this.handsonTable.getData();
       const groupName = this.groupName;
       const reagentGroupObjectList = dataArray
-        .filter(row => !row.includes(''))
+        .filter(row => !row.includes('') && !row.includes(null))
         .map(row => ({
           group_name: groupName,
           reagent: row[0],
           concentration: row[1],
           units: row[2],
         }));
+
+
       this.saveReagents(reagentGroupObjectList).then(() => {
         this.fetchAvailableReagentGroups();
         this.currentReagentGroup = groupName;
