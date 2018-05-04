@@ -28,14 +28,15 @@
                         
                         </nav>
                     </div> 
-                    <hr/>
-                        <div class="alert alert-danger alert-dismissible" v-if="errors" role="alert">
+                    <hr/>             
+                        <alert :value="showErrors" placement="top" duration="3000" type="danger" width="400px" dismissable>
+                            <span class="icon-info-circled alert-icon-float-left"></span>
                             <ul>
-                                <li v-for="(message,value) in errors" v-bind:key="message">
+                                <li v-for="(message,value) in errors" v-bind:key="value">
                                    {{value}} {{message}}    
                                 </li>
                               </ul>  
-                        </div>                   
+                        </alert>                  
                     <div class="m-3">            
                         <div id="handsonTable">
                     </div>   

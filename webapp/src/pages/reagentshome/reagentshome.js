@@ -1,7 +1,8 @@
 import { mapGetters, mapActions } from 'vuex';
-import { modal } from 'vue-strap';
+import { modal, alert } from 'vue-strap';
 import reagentGroup from '@/components/reagentgroup/reagentgroup.vue';
 import _ from 'lodash';
+import { O_NONBLOCK } from 'constants';
 
 export default {
   name: 'reagentshome',
@@ -12,10 +13,10 @@ export default {
       showEditForm: false,
       selectedReagentData: {},
       selectedReagent: null,
-      addReagentData: {},
+      addReagentData: { category: null },
     };
   },
-  components: { reagentGroup, modal },
+  components: { reagentGroup, modal, alert },
   computed: {
     ...mapGetters({
       reagents: 'getReagents',
@@ -29,6 +30,19 @@ export default {
         );
       }
       return this.reagents;
+    },
+    showErrors() {
+      return !_.isEmpty(this.errors);
+    },
+    reagentAddEmpty() {
+      const keys = Object.keys(this.addReagentData);
+      for (let i = 0; i < keys.length; i += 1) {
+        const property = keys[i];
+        if (!this.addReagentData[property]) {
+          return true;
+        }
+      }
+      return false;
     },
   },
   methods: {
