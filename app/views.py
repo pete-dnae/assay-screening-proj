@@ -76,16 +76,21 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
 
         data = request.data
         if isinstance(data,list):
-            group_name = data[0]['group_name']
-            serializer = self.get_serializer(data=request.data, many=True)
+            if len(data)>0:
+                serializer = self.get_serializer(data=request.data, many=True)
+                serializer.is_valid(raise_exception=True)
+                group_name = data[0]['group_name']
+            else:
+                raise ValidationError('Invalid request;Please check if '
+                                      'reaquest data list has at least one '
+                                      'element in it')
         else:
-            group_name = data['group_name']
             serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            group_name = data['group_name']
 
         with transaction.atomic():
             ReagentGroupModel.objects.filter(group_name=group_name).delete()
-            serializer = self.get_serializer(data=request.data, many=True)
-            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
 
         return Response(serializer.data)
@@ -120,11 +125,12 @@ class ReagentGroupListView(APIView):
         return Response(ViewHelpers.group_names())
 
     def delete(self, request):
+
         try:
             group_name = request.data['group_name']
             with transaction.atomic():
                 ReagentGroupModel.objects.filter(group_name=group_name).delete()
-        except KeyError:
+        except:
             raise ValidationError('Invalid request;Please mention a group name')
 
         return Response(status=status.HTTP_204_NO_CONTENT)
