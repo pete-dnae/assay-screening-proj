@@ -4,16 +4,14 @@
                 <div class="card-body">        
                     <h5 class="card-title">Pools</h5>            
                     <div class="d-flex justify-content-start  bg-dark">
-                        <nav class="navbar navbar-dark">
-                            <form class="form-inline">
-                                <div class="input-group">   
-                                    {{reagentGroupList}}     
-                                <select v-model="currentReagentGroup" @change="handleReagentGroupSelection">
-                                    <option value="null">Please select a pool name</option>
-                                    <option v-for="reagentGroup in reagentGroupList" v-bind:key="reagentGroup">{{reagentGroup}}</option>                    
-                                </select>
-                                </div>
-                            </form>
+                        <div class="form-inline my-2 my-lg-0">                   
+                            <typeahead 
+                                :data="reagentGroupList" placeholder="Reagent Group Name"
+                                :on-hit="handleReagentGroupSelection"
+                                :value="currentText"></typeahead>
+                        </div>                        
+                        <nav class="navbar navbar-dark">         
+                            
                             <nav class="nav nav-pills flex-column flex-sm-row">
                             <li class="nav-item active">
                                 <a class="nav-link" href="#" @click="handleCreateNew">Create New</a>
@@ -28,16 +26,18 @@
                         
                         </nav>
                     </div> 
-                    <hr/>             
-                        <alert :value="showErrors" placement="top" duration="3000" type="danger" width="400px" dismissable>
-                            <span class="icon-info-circled alert-icon-float-left"></span>
-                            <ul>
-                                <li v-for="(message,value) in errors" v-bind:key="value">
-                                   {{value}} {{message}}    
-                                </li>
-                              </ul>  
-                        </alert>                  
-                    <div class="m-3">            
+                    <hr/>                              
+                         
+                    
+                    <div class="row">                            
+                        <div class="col text-left">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                            <small>
+                                Treat the below component as a online spreadsheet . Right click on spreadsheet for options
+                            </small>
+                        </div>
+                    </div>          
+                    <div class="m-3">   
                         <div id="handsonTable">
                     </div>   
                 </div>    
@@ -57,6 +57,10 @@
                     <button type="button" class="btn btn-success" @click="saveData();show=!show">Save</button>            
                 </div>
             </modal>
+            <alert :value="showErrors" placement="top" type="danger" width="400px" @close="showErrors=!showErrors" dismissable>
+                            <span class="icon-info-circled alert-icon-float-left"></span>
+                         {{errors}}
+            </alert>     
     </div>
 </template>
 <script src='./reagentgroup.js'></script>

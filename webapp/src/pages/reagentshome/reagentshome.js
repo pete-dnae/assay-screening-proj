@@ -1,8 +1,8 @@
 import { mapGetters, mapActions } from 'vuex';
-import { modal, alert } from 'vue-strap';
+import { modal } from 'vue-strap';
 import reagentGroup from '@/components/reagentgroup/reagentgroup.vue';
 import _ from 'lodash';
-import { O_NONBLOCK } from 'constants';
+import alert from '@/components/alert/Alert.vue';
 
 export default {
   name: 'reagentshome',
@@ -11,6 +11,7 @@ export default {
       searchField: null,
       searchText: null,
       showEditForm: false,
+      showErrors: false,
       selectedReagentData: {},
       selectedReagent: null,
       addReagentData: { category: null },
@@ -25,24 +26,32 @@ export default {
     }),
     filteredReagents() {
       if (this.searchField && !_.isEmpty(this.searchText)) {
-        return this.reagents.filter(reagent =>
+        const filter = this.reagents.filter(reagent =>
           reagent[this.searchField].includes(this.searchText),
         );
+        return filter;
       }
+
       return this.reagents;
-    },
-    showErrors() {
-      return !_.isEmpty(this.errors);
     },
     reagentAddEmpty() {
       const keys = Object.keys(this.addReagentData);
       for (let i = 0; i < keys.length; i += 1) {
         const property = keys[i];
-        if (!this.addReagentData[property]) {
+
+        if (
+          !this.addReagentData[property] ||
+          this.addReagentData[property] === 'null'
+        ) {
           return true;
         }
       }
       return false;
+    },
+  },
+  watch: {
+    errors() {
+      if (this.errors) this.showErrors = true;
     },
   },
   methods: {
@@ -64,10 +73,16 @@ export default {
       this.removeReagent(this.selectedReagent).then(() => this.fetchReagents());
     },
     handleReagentAdd() {
-      this.addReagent(this.addReagentData).then(() => {
-        this.fetchReagents();
-        this.addReagentData = {};
-      });
+      if (this.reagentAddEmpty) {
+        this.$store.commit('ADD_ERROR_MESSAGE', [
+          'Please fill in Reagent Name as well as category',
+        ]);
+      } else {
+        this.addReagent(this.addReagentData).then(() => {
+          this.fetchReagents();
+          this.addReagentData = {};
+        });
+      }
     },
     prepReagentEdit(value) {
       this.selectedReagentData = _.clone(
