@@ -9,11 +9,11 @@
                 <div class="card-body">
                     <h5 class="card-title">Reagents</h5>        
                         <hr/>
-                        <alert :value="showErrors" placement="top" duration="3000" type="danger" width="400px" dismissable>
+                        <alert :value="showErrors" placement="top" type="danger" width="400px" @close="showErrors=!showErrors" dismissable>
                             <span class="icon-info-circled alert-icon-float-left"></span>
-                            <ul>
+                            <ul style="padding:0;list-style-type: none">
                                 <li v-for="(message,value) in errors" v-bind:key="value">
-                                   {{value}} {{message}}    
+                                   {{message}}    
                                 </li>
                               </ul>  
                         </alert>    
@@ -37,7 +37,7 @@
                                 <div class="pre-scrollable">
                                     <table class="text-left table table-striped">
                                         <th v-for="key in Object.keys(reagents[0])" v-bind:key="key">
-                                            {{key}}
+                                            {{key}}                                                                                        
                                         </th>
                                         <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
                                             <td v-for="property in reagent" v-bind:key="property">

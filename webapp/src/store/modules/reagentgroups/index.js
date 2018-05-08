@@ -161,6 +161,9 @@ const mutations = {
   },
   [types.ADD_ERROR_MESSAGE_REAGENT_GROUP](state, data) {
     state.errors.data = data;
+  },
+  [types.CLEAR_ERROR_MESSAGE_REAGENT_GROUP](state) {
+    state.errors.data = null;
   }
 };
 const getters = {
