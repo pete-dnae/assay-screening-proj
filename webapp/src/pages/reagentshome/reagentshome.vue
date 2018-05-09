@@ -20,18 +20,20 @@
                         <div class="m-3">            
                             <div v-if="reagents">
                                 <div class="row text-left">
-                                    <div class="col-5">
+                                    <div class="col-4">
                                         <label>Search</label>
                                         <input v-model="searchText"/>
                                     </div>
-                                    <div class="col-3">
-                                        <select v-model="searchField" >
+                                    <div class="col-4">
+                                        <select v-model="searchField" class="btn btn-primary" >
                                             <option value="null">Please select a Search Criteria</option>
                                             <option v-for="key in Object.keys(reagents[0])" v-bind:key="key">{{key}}</option>                    
                                         </select>
                                     </div>
                                     <div class="col-4">
-                                        
+                                         <i class="fa fa-plus btn btn-primary" 
+                                                aria-hidden="true" @click="showAddForm=true"></i>
+                                                <label>Add new reagent</label>
                                     </div>
                                 </div>
                                 <div class="pre-scrollable">
@@ -40,7 +42,7 @@
                                             {{key}}                                                                                        
                                         </th>
                                         <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
-                                            <td v-for="property in reagent" v-bind:key="property">
+                                            <td v-for="(property,index) in reagent" v-bind:key="index">
                                                 {{property}}
                                             </td>     
                                             <td>
@@ -50,22 +52,7 @@
                                                 <i class="fa fa-pencil btn btn-primary" aria-hidden="true" @click="prepReagentEdit(reagent)"></i>
                                             </td>                                 
                                         </tr>
-                                        <tr v-if="filteredReagents.length==0"><td></td><td>No Results to show</td></tr>
-                                        <tr>
-                                            <td v-for="key in Object.keys(reagents[0])" v-bind:key="key">
-                                                <select v-if="key==='category'" v-model="addReagentData[key]">
-                                                    <option value="null">Please select a category</option>
-                                                    <option v-for="category in reagentCategories" v-bind:key="category.name">{{category.name}}</option>
-                                                </select>
-                                                <input v-model="addReagentData[key]" placeholder="Reagent Name" v-else/>
-                                            </td>                                      
-                                            <td>                                            
-                                            </td>
-                                            <td>                                            
-                                                <i :class="{'fa':true, 'fa-plus':true,'btn':true,'btn-primary':!reagentAddEmpty,'btn-secondary':reagentAddEmpty}" 
-                                                aria-hidden="true" @click="handleReagentAdd"></i>
-                                            </td>
-                                        </tr>
+                                        <tr v-if="filteredReagents.length==0"><td></td><td>No Results to show</td></tr>                 
                                     </table>
                                 </div>
                             </div>
@@ -101,6 +88,19 @@
     <div slot="modal-footer" class="modal-footer">
         <button type="button" class="btn btn-default" @click="showEditForm = false">Cancel</button>
         <button type="button" class="btn btn-success" @click="handleReagentEdit();showEditForm = false">Save</button>        
+  </div>
+</modal>
+<modal v-model="showAddForm" large>
+    <div slot="modal-header" class="modal-header">
+        <h4 class="modal-title">
+            Add Reagent
+        </h4>
+    </div>
+    <div>        
+        <reagentCreateFrom :categoryOptions="reagentCategories" 
+        @reagentSubmit="handleReagentAdd"></reagentCreateFrom>
+    </div>
+    <div slot="modal-footer" class="modal-footer">        
   </div>
 </modal>
 </div>

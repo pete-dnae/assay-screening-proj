@@ -3,6 +3,7 @@ import { modal } from 'vue-strap';
 import reagentGroup from '@/components/reagentgroup/reagentgroup.vue';
 import _ from 'lodash';
 import alert from '@/components/alert/Alert.vue';
+import reagentCreateFrom from '@/components/addreagent/addreagent.vue';
 
 export default {
   name: 'reagentshome',
@@ -14,10 +15,10 @@ export default {
       showErrors: false,
       selectedReagentData: {},
       selectedReagent: null,
-      addReagentData: { category: null },
+      showAddForm: true,
     };
   },
-  components: { reagentGroup, modal, alert },
+  components: { reagentGroup, modal, alert, reagentCreateFrom },
   computed: {
     ...mapGetters({
       reagents: 'getReagents',
@@ -33,20 +34,6 @@ export default {
       }
 
       return this.reagents;
-    },
-    reagentAddEmpty() {
-      const keys = Object.keys(this.addReagentData);
-      for (let i = 0; i < keys.length; i += 1) {
-        const property = keys[i];
-
-        if (
-          !this.addReagentData[property] ||
-          this.addReagentData[property] === 'null'
-        ) {
-          return true;
-        }
-      }
-      return false;
     },
   },
   watch: {
@@ -72,13 +59,18 @@ export default {
       this.selectedReagent = value.name;
       this.removeReagent(this.selectedReagent).then(() => this.fetchReagents());
     },
-    handleReagentAdd() {
-      if (this.reagentAddEmpty) {
+    handleReagentAdd(reagentData) {
+      this.showAddForm = false;
+      if (
+        _.isEmpty(reagentData.name) ||
+        _.isEmpty(reagentData.category) ||
+        reagentData.categpry === 'null'
+      ) {
         this.$store.commit('ADD_ERROR_MESSAGE', [
           'Please fill in Reagent Name as well as category',
         ]);
       } else {
-        this.addReagent(this.addReagentData).then(() => {
+        this.addReagent(reagentData).then(() => {
           this.fetchReagents();
           this.addReagentData = {};
         });
