@@ -130,18 +130,11 @@ def get_templates(reagents: List[ObjReagent]) -> List[ObjReagent]:
     return templates
 
 
-def disambiguate_templates(templates: List[ObjReagent]):
+def get_humans(reagents: List[ObjReagent]) -> List[ObjReagent]:
     """
-    Separate templates into human and other categories.
-    :param templates: a list of reagent objects that have been pre-filtered to
-    only those that are of category type: `template`
+    Extracts from a list of ObjReagent instances those that are templates
+    :param reagents: a list of ObjReagent instances
     :return:
     """
-    human = []
-    other = []
-    for t in templates:
-        if 'hgdna' in t['reagent_name'].lower():
-            human.append(t)
-        else:
-            other.append(t)
-    return human, other
+    humans = [r for r in reagents if 'human' in r['reagent_category']]
+    return humans

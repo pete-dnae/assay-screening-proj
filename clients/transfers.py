@@ -77,3 +77,19 @@ def get_transferred_templates(reagents: List[ObjReagent], plates: ExptPlates):
         temps = filter_transferred_reagents(trans, plates, 'template')
         templates = templates + temps
     return templates
+
+
+def get_transferred_humans(reagents: List[ObjReagent], plates: ExptPlates):
+    """
+    Convenience function to get all transferred templates
+    :param reagents: a list of ObjReagent instances
+    :param plates: a Plates dictionary
+    :return:
+    """
+    humans = []
+    transfers = [r['reagent_name'] for r in reagents
+                 if 'transfer' in r['reagent_category']]
+    for trans in transfers:
+        hums = filter_transferred_reagents(trans, plates, 'human')
+        humans = humans + hums
+    return humans
