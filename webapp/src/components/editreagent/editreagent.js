@@ -12,11 +12,7 @@ export default {
     return {
       msg: 'Welcome',
       category: null,
-      metaObject: [
-        {
-          key: null,
-          value: null,
-        },
+      metaObject: [{},
       ],
     };
   },
@@ -37,18 +33,14 @@ export default {
     handleRemoveProperty(value) {
       this.metaObject.splice(value, 1);
       if (_.isEmpty(this.metaObject)) {
-        this.metaObject = [{ key: null, value: null }];
+        this.metaObject = [{}];
       }
     },
     handleAddProperty() {
       if (!_.isEmpty(this.metaObject)) {
         this.metaObject.push({ key: null, value: null });
       } else {
-        this.metaObject = [
-          {
-            key: null,
-            value: null,
-          },
+        this.metaObject = [{},
         ];
       }
     },
