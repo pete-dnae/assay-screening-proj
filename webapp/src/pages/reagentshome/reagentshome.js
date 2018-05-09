@@ -17,6 +17,11 @@ export default {
       selectedReagentData: {},
       selectedReagent: null,
       showAddForm: false,
+      tableHeaders: {
+        name: 'Name',
+        category: 'Category',
+        opaque_payload: 'Meta Data',
+      },
     };
   },
   components: {

@@ -31,15 +31,17 @@
                                         </select>
                                     </div>
                                     <div class="col-4">
-                                         <i class="fa fa-plus btn btn-primary" 
+                                        <button class="btn btn-primary">
+                                         <i class="fa fa-plus" 
                                                 aria-hidden="true" @click="showAddForm=true"></i>
-                                                <label>Add new reagent</label>
+                                                Add new reagent
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="pre-scrollable">
                                     <table class="text-left table table-striped">
                                         <th v-for="key in Object.keys(reagents[0])" v-bind:key="key">
-                                            {{key}}                                                                                        
+                                            {{tableHeaders[key]}}                                                                                        
                                         </th>
                                         <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
                                             <td v-for="(property,index) in reagent" v-bind:key="index">
