@@ -93,3 +93,20 @@ def get_transferred_humans(reagents: List[ObjReagent], plates: ExptPlates):
         hums = filter_transferred_reagents(trans, plates, 'human')
         humans = humans + hums
     return humans
+
+
+def get_parent_wells(reagents):
+    parents = []
+    for r in reagents:
+        if r['reagent_name'].startswith('Transfer'):
+            plate, well = decode_transfer_to_plate_well(r['reagent_name'])
+            parents.append((plate, well))
+    return parents
+
+
+def get_dilutions(reagents):
+    dilutions = []
+    for r in reagents:
+        if r['reagent_name'].startswith('Transfer'):
+            dilutions.append(r['concentration'])
+    return dilutions
