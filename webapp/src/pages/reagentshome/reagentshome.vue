@@ -31,9 +31,9 @@
                                         </select>
                                     </div>
                                     <div class="col-4">
-                                        <button class="btn btn-primary">
+                                        <button class="btn btn-primary" @click="showAddForm=true">
                                          <i class="fa fa-plus" 
-                                                aria-hidden="true" @click="showAddForm=true"></i>
+                                                aria-hidden="true" ></i>
                                                 Add new reagent
                                         </button>
                                     </div>
