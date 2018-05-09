@@ -3,7 +3,8 @@ import { modal } from 'vue-strap';
 import reagentGroup from '@/components/reagentgroup/reagentgroup.vue';
 import _ from 'lodash';
 import alert from '@/components/alert/Alert.vue';
-import reagentCreateFrom from '@/components/addreagent/addreagent.vue';
+import reagentCreateForm from '@/components/addreagent/addreagent.vue';
+import reagentEditForm from '@/components/editreagent/editreagent.vue';
 
 export default {
   name: 'reagentshome',
@@ -15,10 +16,16 @@ export default {
       showErrors: false,
       selectedReagentData: {},
       selectedReagent: null,
-      showAddForm: true,
+      showAddForm: false,
     };
   },
-  components: { reagentGroup, modal, alert, reagentCreateFrom },
+  components: {
+    reagentGroup,
+    modal,
+    alert,
+    reagentCreateForm,
+    reagentEditForm,
+  },
   computed: {
     ...mapGetters({
       reagents: 'getReagents',
@@ -49,9 +56,10 @@ export default {
       'fetchReagents',
       'fetchReagentCategories',
     ]),
-    handleReagentEdit() {
+    handleReagentEdit(data) {
+      this.showEditForm = false;
       this.editReagent({
-        data: this.selectedReagentData,
+        data,
         reagentName: this.selectedReagent,
       }).then(() => this.fetchReagents());
     },
@@ -82,6 +90,11 @@ export default {
       );
       this.selectedReagent = value.name;
       this.showEditForm = true;
+    },
+    stringToList(string) {
+      const obj = JSON.parse(string);
+      const list = _.map(obj, (value, key) => ({ key, value }));
+      return list;
     },
   },
   mounted() {
