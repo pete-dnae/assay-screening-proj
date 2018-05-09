@@ -43,7 +43,13 @@
                                         </th>
                                         <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
                                             <td v-for="(property,index) in reagent" v-bind:key="index">
-                                                {{property}}
+                                                <ul v-if="index==='opaque_payload'" style="padding:0;list-style-type: none">
+                                                    <li v-for="item in  stringToList(property)" v-bind:key="item.key">
+                                                        {{item.key}}-{{item.value}}
+                                                        
+                                                    </li>
+                                                </ul>
+                                                <label v-else>{{property}}</label>
                                             </td>     
                                             <td>
                                                 <i class="fa fa-trash-o btn btn-primary" aria-hidden="true" @click="handleReagentDelete(reagent)"></i>
@@ -69,25 +75,22 @@
         
         
     </div>
-<modal v-model="showEditForm">
+<modal v-model="showEditForm" large>
     <div slot="modal-header" class="modal-header">
         <h4 class="modal-title">
             Edit Reagent
         </h4>
     </div>
     <div class="row">        
-        <div class="col form-group text-left" v-for="(value,key) in selectedReagentData" v-bind:key="key">
-            <label>{{key}}</label>            
-             <select v-if="key==='category'" v-model="selectedReagentData[key]">
-                <option value="null">Please select a category</option>
-                <option v-for="category in reagentCategories" v-bind:key="category.name">{{category.name}}</option>
-            </select>
-            <input type="text" v-model="selectedReagentData[key]" :disabled="key==='name'" v-else>
-        </div>    
+        <reagentEditForm    :categoryOptions="reagentCategories" 
+                            :currentReagent="selectedReagentData.name"
+                            :currentCategory="selectedReagentData.category"
+                            :opaquePayload="selectedReagentData.opaque_payload"
+                            @reagentEdited="handleReagentEdit"
+                            ></reagentEditForm>
     </div>
     <div slot="modal-footer" class="modal-footer">
-        <button type="button" class="btn btn-default" @click="showEditForm = false">Cancel</button>
-        <button type="button" class="btn btn-success" @click="handleReagentEdit();showEditForm = false">Save</button>        
+        
   </div>
 </modal>
 <modal v-model="showAddForm" large>
@@ -97,8 +100,8 @@
         </h4>
     </div>
     <div>        
-        <reagentCreateFrom :categoryOptions="reagentCategories" 
-        @reagentSubmit="handleReagentAdd"></reagentCreateFrom>
+        <reagentCreateForm :categoryOptions="reagentCategories" 
+        @reagentSubmit="handleReagentAdd"></reagentCreateForm>
     </div>
     <div slot="modal-footer" class="modal-footer">        
   </div>
