@@ -39,13 +39,13 @@ class ReferenceExperiment():
 
         # Reagent categories, and reagents
         categories = {}
-        for reagent, cat_name in REFERENCE_REAGENTS_DATA:
+        for reagent, cat_name,opaque_payload in REFERENCE_REAGENTS_DATA:
             # Have to avoid creating duplicate category objects.
             cat = categories.get(cat_name, None)
             if cat is None:
                 cat = ReagentCategoryModel.make(cat_name)
                 categories[cat_name] = cat
-            ReagentModel.make(reagent, cat)
+            ReagentModel.make(reagent, cat,opaque_payload)
 
         # Make a primer group with two of the primers in.
         group_name = REFERENCE_GROUP['name']

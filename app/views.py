@@ -109,6 +109,7 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
             ReagentGroupModel.objects.filter(group_name=group_name).delete()
             self.perform_create(serializer)
 
+
         return Response(serializer.data)
 
 
@@ -141,12 +142,11 @@ class ReagentGroupListView(APIView):
         return Response(ViewHelpers.group_names())
 
     def delete(self, request):
-
         try:
             group_name = request.data['group_name']
             with transaction.atomic():
                 ReagentGroupModel.objects.filter(group_name=group_name).delete()
-        except:
+        except :
             raise ValidationError('Invalid request;Please mention a group name')
 
         return Response(status=status.HTTP_204_NO_CONTENT)
