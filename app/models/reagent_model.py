@@ -11,12 +11,15 @@ class ReagentModel(models.Model):
     name = models.CharField(max_length=80, unique=True,primary_key=True)
     category = models.ForeignKey(
             ReagentCategoryModel, on_delete=models.PROTECT)
-    opaque_payload = models.CharField(max_length=200,null=True)
+    # This field is to contain miscellaneous data as an opaque black box
+    # which the reagent objects will take no interest in itself , its exists
+    # solely for the benefit of downstream api clients
+    opaque_json_payload = models.TextField(null=True)
 
     @classmethod
-    def make(cls, name, category,opaque_payload=None):
+    def make(cls, name, category,opaque_json_payload=None):
         return ReagentModel.objects.create(
             name = name,
             category=category,
-            opaque_payload = opaque_payload
+            opaque_json_payload = opaque_json_payload
         )

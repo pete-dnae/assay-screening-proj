@@ -48,19 +48,19 @@ class ReagentSerializer(serializers.ModelSerializer):
         fields = (
            'name',
            'category',
-            'opaque_payload'
+            'opaque_json_payload'
         )
-
-    def validate(self, data):
+    ##TODO Try and see if it gets called automatically, validates only
+    # opaque_payload
+    def validate_opaque_payload(self, data):
         # opaque payload should be json.
-        if 'opaque_payload' in data:
-            opaque_payload = data['opaque_payload']
+        if 'opaque_json_payload' in data:
+            opaque_json_payload = data['opaque_json_payload']
             try:
-                json_object = json.loads(opaque_payload)
+                json_object = json.loads(opaque_json_payload)
             except ValueError:
                 raise serializers.ValidationError('Opaque payload is not a '
                                                   'valid json')
-
         return data
 
 

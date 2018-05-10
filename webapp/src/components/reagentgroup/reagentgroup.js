@@ -17,11 +17,11 @@ export default {
       settings: {
         data: null,
         stretchH: 'all',
-        colHeaders: ['ReagentName', 'Concentration', 'Unit'],
+        colHeaders: ['Reagent Name', 'Concentration', 'Unit'],
         columns: [
           { validator: 'reagent', type: 'dropdown', source: [], strict: true },
           { validator: 'numeric', allowInvalid: true },
-          { type: 'dropdown', source: [], strict: true },
+          { type: 'dropdown', source: [], strict: true, allowInvalid: false },
         ],
         startRows: 10,
         startCols: 3,
@@ -65,7 +65,15 @@ export default {
       'deleteReagentGroup',
     ]),
     handleReagentGroupSelection(value) {
-      this.loadSelectedReagentGroup(value);
+      if (!this.reagentGroupList.includes(value)) {
+        this.$store.commit(
+          'ADD_ERROR_MESSAGE_REAGENT_GROUP',
+          'Reagent Group Name not recogonized',
+        );
+      } else {
+        this.loadSelectedReagentGroup(value);
+      }
+
       this.currentText = value;
     },
     handleCreateNew() {
@@ -149,15 +157,25 @@ export default {
     this.loadSettings().then(() => {
       const container = document.getElementById('handsonTable');
       this.handsonTable = new Handsontable(container, this.settings);
-      Handsontable.hooks.add('afterValidate', (success, value, row, prop, source) => {
-        if (success) this.$store.commit('CLEAR_ERROR_MESSAGE_REAGENT_GROUP');
-        if (prop === 1 && !success) {
-          this.$store.commit('ADD_ERROR_MESSAGE_REAGENT_GROUP', 'Concentration should be numeric');
-        }
-        if (prop === 2 && !success) {
-          this.$store.commit('ADD_ERROR_MESSAGE_REAGENT_GROUP', 'Unit Not Recogonized');
-        }
-      }, this.handsonTable);
+      Handsontable.hooks.add(
+        'afterValidate',
+        (success, value, row, prop, source) => {
+          if (success) this.$store.commit('CLEAR_ERROR_MESSAGE_REAGENT_GROUP');
+          if (prop === 1 && !success) {
+            this.$store.commit(
+              'ADD_ERROR_MESSAGE_REAGENT_GROUP',
+              'Concentration should be numeric',
+            );
+          }
+          if (prop === 2 && !success) {
+            this.$store.commit(
+              'ADD_ERROR_MESSAGE_REAGENT_GROUP',
+              'Unit Not Recogonized',
+            );
+          }
+        },
+        this.handsonTable,
+      );
     });
     this.fetchAvailableReagentGroups();
   },

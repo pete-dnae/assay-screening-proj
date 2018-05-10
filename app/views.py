@@ -109,7 +109,6 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
             ReagentGroupModel.objects.filter(group_name=group_name).delete()
             self.perform_create(serializer)
 
-
         return Response(serializer.data)
 
 
@@ -142,9 +141,13 @@ class ReagentGroupListView(APIView):
         return Response(ViewHelpers.group_names())
 
     def delete(self, request):
+        # Its easier to implement this explicitly rather than trying to use
+        # the serializer , because serializer demands all the fields whereas
+        # we only need group name
         try:
             group_name = request.data['group_name']
             with transaction.atomic():
+                #TODO raise an exception when group name does not exists
                 ReagentGroupModel.objects.filter(group_name=group_name).delete()
         except :
             raise ValidationError('Invalid request;Please mention a group name')

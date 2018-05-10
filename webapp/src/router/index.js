@@ -13,12 +13,7 @@ export default new Router({
       redirect: '/experiment',
     },
     {
-      path: '/reagents',
-      name: 'reagentHome',
-      component: reagents,
-    },
-    {
-      path: '/pools',
+      path: '/maintenance',
       name: 'reagentHome',
       component: reagents,
     },

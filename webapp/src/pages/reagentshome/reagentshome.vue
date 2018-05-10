@@ -7,7 +7,10 @@
         <div class="col-6 h-100">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Reagents</h5>        
+                    <div class="card-title">
+                        <h5>Reagents <small class="fa fa-plus btn btn-primary" aria-hidden="true" ></small></h5>
+                        
+                    </div>                                    
                         <hr/>
                         <alert :value="showErrors" placement="top" type="danger" width="400px" @close="showErrors=!showErrors" dismissable>
                             <span class="icon-info-circled alert-icon-float-left"></span>
@@ -31,11 +34,7 @@
                                         </select>
                                     </div>
                                     <div class="col-4">
-                                        <button class="btn btn-primary" @click="showAddForm=true">
-                                         <i class="fa fa-plus" 
-                                                aria-hidden="true" ></i>
-                                                Add new reagent
-                                        </button>
+                                        
                                     </div>
                                 </div>
                                 <div class="pre-scrollable">
@@ -45,7 +44,7 @@
                                         </th>
                                         <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
                                             <td v-for="(property,index) in reagent" v-bind:key="index">
-                                                <ul v-if="index==='opaque_payload'" style="padding:0;list-style-type: none">
+                                                <ul v-if="index==='opaque_json_payload'" style="padding:0;list-style-type: none">
                                                     <li v-for="item in  stringToList(property)" v-bind:key="item.key">
                                                         {{item.key}}-{{item.value}}
                                                         
@@ -87,7 +86,7 @@
         <reagentEditForm    :categoryOptions="reagentCategories" 
                             :currentReagent="selectedReagentData.name"
                             :currentCategory="selectedReagentData.category"
-                            :opaquePayload="selectedReagentData.opaque_payload"
+                            :opaquePayload="selectedReagentData.opaque_json_payload"
                             @reagentEdited="handleReagentEdit"
                             ></reagentEditForm>
     </div>

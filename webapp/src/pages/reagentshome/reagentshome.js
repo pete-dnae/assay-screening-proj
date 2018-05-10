@@ -20,7 +20,7 @@ export default {
       tableHeaders: {
         name: 'Name',
         category: 'Category',
-        opaque_payload: 'Meta Data',
+        opaque_json_payload: 'Metadata',
       },
     };
   },

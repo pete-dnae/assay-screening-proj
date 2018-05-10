@@ -46,7 +46,7 @@ export default {
       );
       opaquePayload = JSON.stringify(opaquePayload);
       this.$emit('reagentSubmit', {
-        opaque_payload: opaquePayload,
+        opaque_json_payload: opaquePayload,
         name: this.name,
         category: this.category,
       });

@@ -55,7 +55,7 @@ export default {
       );
       opaquePayload = JSON.stringify(opaquePayload);
       this.$emit('reagentEdited', {
-        opaque_payload: opaquePayload,
+        opaque_json_payload: opaquePayload,
         category: this.category,
         name: this.currentReagent,
       });
