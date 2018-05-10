@@ -1,6 +1,9 @@
 
 from collections import OrderedDict
 import abc
+from typing import Dict
+
+from hardware.plates import WellName
 
 
 class WellConstituents(OrderedDict):
@@ -8,11 +11,9 @@ class WellConstituents(OrderedDict):
     def __init__(self):
         super().__init__()
         self['assays'] = None
-        self['transferred_assays'] = None
         self['templates'] = None
-        self['transferred_templates'] = None
         self['human'] = None
-        self['transferred_human'] = None
+
 
     @classmethod
     @abc.abstractmethod

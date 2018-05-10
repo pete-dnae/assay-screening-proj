@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Tuple
 
 from clients.reagents import ObjReagent
 from hardware.plates import row_col_to_well, ExptPlates
 
 
-def decode_transfer_to_plate_well(transfer_str: str):
+def decode_transfer_to_plate_well(transfer_str: str) -> Tuple[str, str]:
     """
     Decodes a transfer string to plate and well value
     :param transfer_str: a transfer string
@@ -18,7 +18,8 @@ def decode_transfer_to_plate_well(transfer_str: str):
     return plate, well
 
 
-def get_transferred_reagents(transfer_str: str, plates: ExptPlates):
+def get_transferred_reagents(transfer_str: str,
+                             plates: ExptPlates) -> List[ObjReagent]:
     """
     Extracts a list of ObjReagent instance from a Plates dictionary as
     specified in the transfer string
@@ -33,7 +34,7 @@ def get_transferred_reagents(transfer_str: str, plates: ExptPlates):
 
 def filter_transferred_reagents(transfer_str: str,
                                 plates: ExptPlates,
-                                reagent_category: str):
+                                reagent_category: str) -> List[ObjReagent]:
     """
     Filter transferred reagents by category.
     :param transfer_str: a transfer string
@@ -47,7 +48,8 @@ def filter_transferred_reagents(transfer_str: str,
     return filtered_reagents
 
 
-def get_transferred_assays(reagents: List[ObjReagent], plates: ExptPlates):
+def get_transferred_assays(reagents: List[ObjReagent],
+                           plates: ExptPlates) -> List[ObjReagent]:
     """
     Convenience function to get all transferred assays
     :param reagents: a list of ObjReagent instances
@@ -63,7 +65,8 @@ def get_transferred_assays(reagents: List[ObjReagent], plates: ExptPlates):
     return assays
 
 
-def get_transferred_templates(reagents: List[ObjReagent], plates: ExptPlates):
+def get_transferred_templates(reagents: List[ObjReagent],
+                              plates: ExptPlates) -> List[ObjReagent]:
     """
     Convenience function to get all transferred templates
     :param reagents: a list of ObjReagent instances
@@ -79,7 +82,8 @@ def get_transferred_templates(reagents: List[ObjReagent], plates: ExptPlates):
     return templates
 
 
-def get_transferred_humans(reagents: List[ObjReagent], plates: ExptPlates):
+def get_transferred_humans(reagents: List[ObjReagent],
+                           plates: ExptPlates) -> List[ObjReagent]:
     """
     Convenience function to get all transferred templates
     :param reagents: a list of ObjReagent instances
@@ -95,7 +99,7 @@ def get_transferred_humans(reagents: List[ObjReagent], plates: ExptPlates):
     return humans
 
 
-def get_parent_wells(reagents):
+def get_parent_wells(reagents) -> List[Tuple[str, str]]:
     parents = []
     for r in reagents:
         if r['reagent_name'].startswith('Transfer'):
@@ -104,7 +108,7 @@ def get_parent_wells(reagents):
     return parents
 
 
-def get_dilutions(reagents):
+def get_dilutions(reagents) -> List[float]:
     dilutions = []
     for r in reagents:
         if r['reagent_name'].startswith('Transfer'):

@@ -5,9 +5,10 @@ import numpy as np
 import re
 from typing import NewType, Dict, List
 
-qPCRData = NewType('qPCRData', Dict)
-
 from hardware.plates import WellName, sanitize_well_name
+
+qPCRInstWell = NewType('qPCRInstWell', Dict)
+qPCRInstPlate = Dict[WellName, qPCRInstWell]
 
 
 class QpcrDataFile:
@@ -194,7 +195,7 @@ class QpcrDataFile:
                 df_dict[key] = df[df.index.isin(self.valid_wells)]
             return df_dict
 
-    def get_data_by_well(self) -> Dict[WellName, qPCRData]:
+    def get_data_by_well(self) -> qPCRInstPlate:
         """
         For all columns in all dataframes, convert columns into dict keys.
         Create a list of dictionaires for easy insertion into MongoDB.
@@ -242,10 +243,10 @@ class QpcrDataFile:
         return docs_by_well
 
 
-def get_ct(qpcr_data: qPCRData):
+def get_ct(qpcr_data: qPCRInstWell):
     """
     Gets the ct value from qPCR data.
-    :param qpcr_data: an instance of qPCRData
+    :param qpcr_data: an instance of qPCRInstWell
     :return:
     """
     ct = qpcr_data['results']['results']['ct']
@@ -255,10 +256,10 @@ def get_ct(qpcr_data: qPCRData):
         return np.nan
 
 
-def get_tm(qpcr_data: qPCRData, tm) -> float:
+def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
     """
     Gets a particular tm value from qPCR data.
-    :param qpcr_data: an instance of qPCRData
+    :param qpcr_data: an instance of qPCRInstWell
     :param tm: the tm value to extract, usually one of ['tm1', 'tm2', 'tm3',
     'tm4']
     :return:
@@ -270,11 +271,11 @@ def get_tm(qpcr_data: qPCRData, tm) -> float:
         return np.nan
 
 
-def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
+def get_tms(qpcr_data: qPCRInstWell, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
         List[float]:
     """
     Gets all tm values from qPCR data.
-    :param qpcr_data: an instance of qPCRData
+    :param qpcr_data: an instance of qPCRInstWell
     :param tms: the tms to extract
     :return:
     """
@@ -282,12 +283,12 @@ def get_tms(qpcr_data: qPCRData, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
     return tms
 
 
-def calc_tm_deltas(qpcr_data: qPCRData, max_conc_mean_tm: float):
+def calc_tm_deltas(qpcr_data: qPCRInstWell, max_conc_mean_tm: float):
     """
     Calculate the tm deltas given the average melting temperature from the
     maximum template concentration wells.
 
-    :param qpcr_data: an instance of `qPCRData`
+    :param qpcr_data: an instance of `qPCRInstWell`
     :param max_conc_mean_tm: average of the maximum template concentration wells
     melting temperatures
     :return:
@@ -295,3 +296,29 @@ def calc_tm_deltas(qpcr_data: qPCRData, max_conc_mean_tm: float):
     tms = get_tms(qpcr_data)
     tm_delta = [abs(tm - max_conc_mean_tm) for tm in tms]
     return tm_delta
+
+
+def get_mean_ct(qpcr_datas: List[qPCRInstWell]):
+    """
+    Gets the mean ct value from a dictionary of WellConstituents
+    :param qpcr_datas: a list of qPCRInstWell instances
+    :return:
+    """
+    cts = [get_ct(qpcr) for qpcr in qpcr_datas]
+    cts = [ct for ct in cts if not np.isnan(ct)]
+    if cts:
+        return np.mean(cts)
+    else:
+        return np.nan
+
+
+def calc_mean_tm(qpcr_datas: List[qPCRInstWell],
+                 tm: str='tm1'):
+    """
+    Calculate the mean tm for a set of wells and a particular tm value.
+    :param qpcr_datas: a list of qPCRInstWell instances
+    :param tm: a dictionary `qPCRInstWell` instances
+    :return:
+    """
+    mean_tm = np.mean([get_tm(qpcr, tm) for qpcr in qpcr_datas])
+    return mean_tm

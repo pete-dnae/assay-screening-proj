@@ -4,8 +4,11 @@ from typing import NewType, Dict
 import pandas as pd
 from hardware.plates import sanitize_well_name
 
-LabChipData = NewType('LabChipData', Dict)
 from hardware.plates import WellName
+
+LabChipInstWell = NewType('LabChipInstWell', Dict)
+LabChipInstPlate = Dict[WellName, LabChipInstWell]
+
 
 class LabChip:
     """
@@ -69,7 +72,7 @@ class LabChip:
 
         return dataframes
 
-    def get_data_by_well(self) -> Dict[WellName, LabChipData]:
+    def get_data_by_well(self) -> LabChipInstPlate:
         """
         Generate a dictionary keyed by well and valued by all the data
         contained with in the "lab_chip_files"
@@ -255,8 +258,8 @@ class LabChip:
         return df
 
 
-def get_peaks(labchip_data):
-    peaks = labchip_data['peak']
+def get_peaks(labchip_well: LabChipInstWell):
+    peaks = labchip_well['peak']
     peaks = dict((k, v) for k, v in peaks.items() if k.startswith('Peak'))
     return peaks
 
