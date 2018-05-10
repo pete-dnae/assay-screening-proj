@@ -1,6 +1,9 @@
 
 from collections import OrderedDict
 import abc
+from typing import Dict
+
+from hardware.plates import WellName
 
 
 class WellConstituents(OrderedDict):
