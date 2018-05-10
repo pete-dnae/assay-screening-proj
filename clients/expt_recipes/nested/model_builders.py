@@ -1,7 +1,7 @@
 from typing import Dict
 
-from clients.expt_recipes.nested.models import IdQpcrConstituents, \
-    IdQpcrData, LabChipData
+from clients.expt_recipes.nested.models import IdQpcrConstituents
+from clients.expt_recipes.common.models import IdQpcrData, LabChipData
 import clients.expt_recipes.interp.constituents as intc
 from hardware.plates import ExptPlates, WellName, Plate
 import hardware.qpcr as hwq
