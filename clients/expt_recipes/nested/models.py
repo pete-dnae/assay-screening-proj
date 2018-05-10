@@ -15,13 +15,11 @@ from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
 from clients.transfers import get_transferred_assays, \
     get_transferred_templates, get_transferred_humans
 
-from hardware.labchip import LabChipInstWell, get_peaks
 from clients.expt_recipes.well_constituents import WellConstituents
-from clients.expt_recipes.interp.qpcr import calc_delta_ct,\
-    get_ct_call, get_product_labels_from_tms
+import clients.expt_recipes.interp.qpcr as intq
+import clients.expt_recipes.interp.labchip as intlc
 import hardware.qpcr as hwq
-from clients.expt_recipes.interp.labchip import \
-    get_product_label_from_labchip
+import hardware.labchip as hwlc
 
 
 class NestedIdWellConstituents(WellConstituents):
@@ -105,10 +103,10 @@ class NestedIdQpcrData(OrderedDict):
         tms = hwq.get_tms(qpcr_data)
         tm_delta = hwq.calc_tm_deltas(qpcr_data, max_conc_mean_tm)
         ct = hwq.get_ct(qpcr_data)
-        delta_ct = calc_delta_ct(ct, mean_ntc_ct)
-        ct_call = get_ct_call(delta_ct)
-        spec, non_spec, pd = get_product_labels_from_tms(tms, tm_delta,
-                                                         max_conc_mean_tm)
+        delta_ct = intq.calc_delta_ct(ct, mean_ntc_ct)
+        ct_call = intq.get_ct_call(delta_ct)
+        spec, non_spec, pd = intq.get_product_labels_from_tms(tms, tm_delta,
+                                                              max_conc_mean_tm)
         inst = cls()
         return inst.create(ct, delta_ct, ct_call, tms, spec, non_spec, pd)
 
@@ -133,11 +131,11 @@ class NestedLabChipData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_inst_data(cls, labchip_well: LabChipInstWell,
+    def create_from_inst_data(cls, labchip_well: hwlc.LabChipInstWell,
                               expected_amp_lens, dilution):
-        peaks = get_peaks(labchip_well)
+        peaks = hwlc.get_peaks(labchip_well)
         spec, non_spec, pd = \
-            get_product_label_from_labchip(peaks, expected_amp_lens,
-                                           dilution)
+            intlc.get_product_label_from_labchip(peaks, expected_amp_lens,
+                                                 dilution)
         inst = cls()
         return inst.create(spec, non_spec, pd)

@@ -6,27 +6,27 @@ from clients.transfers import get_parent_wells, get_dilutions
 from hardware.plates import ExptPlates, Plate
 
 
-def get_id_qpcr_plate_names(all_expt_plates: ExptPlates) -> List[str]:
+def get_id_qpcr_plate_names(expt_plates: ExptPlates) -> List[str]:
     """
     Extracts those plates in a nested experiment which are the id plates.
-    :param all_expt_plates: all plates used for an experiment
+    :param expt_plates: all plates used for an experiment
     :return:
     """
-    id_plate_names = [p for p in all_expt_plates if p.endswith('_ID')]
+    id_plate_names = [p for p in expt_plates if p.endswith('_ID')]
     if not id_plate_names:
         raise ValueError('No id plates detected.')
     else:
         return id_plate_names
 
 
-def get_labchip_plate_names(all_expt_plates: ExptPlates) -> List[str]:
+def get_labchip_plate_names(expt_plates: ExptPlates) -> List[str]:
     """
     Extracts those plates in a nested experiment which are the labchip plates.
-    :param all_expt_plates: all plates used for an experiment
+    :param expt_plates: all plates used for an experiment
     :return:
     """
     lc_plate_names = []
-    for p in all_expt_plates:
+    for p in expt_plates:
         searched = re.search('\d{8}_\w', p)
         if searched:
             lc_plate_names.append(searched.group())
