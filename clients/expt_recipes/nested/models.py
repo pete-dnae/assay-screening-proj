@@ -72,7 +72,7 @@ class NestedTableRow(OrderedDict):
         self['LC well'] = None
         self['PA Assay Name'] = None
         self['PA Assay Conc.'] = None
-        self['PA template Name'] = None
+        self['PA Template Name'] = None
         self['PA Template Conc.'] = None
         self['PA Human Name'] = None
         self['PA Human Conc.'] = None
