@@ -16,8 +16,8 @@ from clients.reagents import get_assays, get_templates, get_humans
 from clients.transfers import get_transferred_assays, \
     get_transferred_templates, get_transferred_humans
 
-from hardware.qpcr import qPCRData
-from hardware.labchip import LabChipData
+from hardware.qpcr import qPCRInstWell
+from hardware.labchip import LabChipInstWell, get_peaks
 from clients.expt_recipes.well_constituents import WellConstituents
 from clients.expt_recipes.results_interpretation.qpcr import calc_delta_ct,\
     get_ct_call, get_product_labels_from_tms
@@ -100,8 +100,8 @@ class NestedIdQpcrData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_data(cls, qpcr_data: qPCRData, max_conc_mean_tm,
-                         mean_ntc_ct) -> 'NestedIdQpcrData':
+    def create_from_inst_data(cls, qpcr_data: qPCRInstWell, max_conc_mean_tm,
+                              mean_ntc_ct) -> 'NestedIdQpcrData':
 
         tms = get_tms(qpcr_data)
         tm_delta = calc_tm_deltas(qpcr_data, max_conc_mean_tm)
@@ -134,10 +134,11 @@ class NestedLabChipData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_data(cls, labchip_data: LabChipData,
-                         expected_amp_lens, dilution):
+    def create_from_inst_data(cls, labchip_well: LabChipInstWell,
+                              expected_amp_lens, dilution):
+        peaks = get_peaks(labchip_well)
         spec, non_spec, pd = \
-            get_product_label_from_labchip(labchip_data, expected_amp_lens,
+            get_product_label_from_labchip(peaks, expected_amp_lens,
                                            dilution)
         inst = cls()
         return inst.create(spec, non_spec, pd)

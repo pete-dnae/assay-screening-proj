@@ -1,26 +1,9 @@
 
 from typing import List
-import numpy as np
-
-from hardware.qpcr import qPCRData, get_ct, get_tm
 
 SPECIFIC_PRODUCT = '_spec'
 NON_SPECIFIC_PRODUCT = '_non_spec'
 PRIMER_DIMER = '_primer_dimer'
-
-
-def get_mean_ct(qpcr_datas: List[qPCRData]):
-    """
-    Gets the mean ct value from a dictionary of WellConstituents
-    :param qpcr_datas: a list of qPCRData instances
-    :return:
-    """
-    cts = [get_ct(qpcr) for qpcr in qpcr_datas]
-    cts = [ct for ct in cts if not np.isnan(ct)]
-    if cts:
-        return np.mean(cts)
-    else:
-        return np.nan
 
 
 def calc_delta_ct(ct: float, ntc_ct: float) -> float:
@@ -45,18 +28,6 @@ def get_ct_call(delta_ct: float, ntc_ct_threshold: float=1/3) -> str:
         return 'POS'
     else:
         return 'NEG'
-
-
-def calc_mean_tm(qpcr_datas: List[qPCRData],
-                 tm: str='tm1'):
-    """
-    Calculate the mean tm for a set of wells and a particular tm value.
-    :param qpcr_datas: a list of qPCRData instances
-    :param tm: a dictionary `qPCRData` instances
-    :return:
-    """
-    mean_tm = np.mean([get_tm(qpcr, tm) for qpcr in qpcr_datas])
-    return mean_tm
 
 
 def is_specific(tm: float, max_conc_mean_tm: float,

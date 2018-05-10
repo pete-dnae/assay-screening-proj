@@ -6,14 +6,15 @@ from clients.expt_recipes.nested.models import NestedIdWellConstituents, \
     NestedIdQpcrData, NestedLabChipData
 from clients.expt_recipes.results_interpretation.constituents import \
     get_ntc_wells
-from clients.expt_recipes.results_interpretation.qpcr import get_mean_ct, \
-    calc_mean_tm
 from hardware.plates import ExptPlates, WellName, Plate
+import hardware.qpcr as hwq
 
 GroupedConstituents = Dict[WellName, NestedIdWellConstituents]
 
 
-def build_id_qpcr_datas(id_plate: GroupedConstituents, raw_instrument_data):
+def build_id_qpcr_datas_from_inst_data(
+        id_plate_constituents: GroupedConstituents,
+        raw_instrument_data: hwq.qPCRInstPlate):
     """
     Creates a dictionary keyed by well names and valued by instances of
     `NestedIdQpcrData`.
@@ -23,28 +24,26 @@ def build_id_qpcr_datas(id_plate: GroupedConstituents, raw_instrument_data):
     process, intermediate values are calculated as they are required when
     creating a `NestedIdQpcrData`.
 
-    :param id_plate: a dictionary keyed by well name and valued by instances
-    of `NestedIdWellConstituents`
+    :param id_plate_constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdWellConstituents`
     :param raw_instrument_data: the python representation of qPCR results for
     the well in question
     :return:
     """
     id_qpcr_datas = {}
-    id_grouped = group_by_id_assay(id_plate)
+    id_grouped = group_by_id_assay(id_plate_constituents)
     for id_assay, id_constits in id_grouped.items():
         max_conc_mean_tm = \
             calc_max_conc_mean_tm(id_constits, raw_instrument_data)
         pa_grouped = group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pa_grouped.items():
-            ntc_wells = get_ntc_wells(pa_constits)
-            qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
-            mean_ntc_ct = get_mean_ct(qpcr_datas)
+            mean_ntc_ct = calc_mean_ntc_ct(pa_constits, raw_instrument_data)
             for w, nic in pa_constits.items():
                 well_data = raw_instrument_data[w]
                 id_qpcr_datas[w] = \
-                    NestedIdQpcrData.create_from_data(well_data,
-                                                      max_conc_mean_tm,
-                                                      mean_ntc_ct)
+                    NestedIdQpcrData.create_from_inst_data(well_data,
+                                                           max_conc_mean_tm,
+                                                           mean_ntc_ct)
     return id_qpcr_datas
 
 
@@ -53,7 +52,7 @@ def build_id_qpcr_constituents(id_plate: Plate, all_expt_plates: ExptPlates) \
     """
     Builds a dictionary keyed by the well names. The values are instances of
     `NestedIdWellConstituents`
-    :param id_plate:  a dictionary keyed by well name and valued by instances
+    :param id_plate: a dictionary keyed by well name and valued by instances
     of `NestedIdWellConstituents`
     :param all_expt_plates: an instance of ExptPlates for this particular
     experiment
@@ -151,7 +150,7 @@ def group_by_template_origin(constituents: GroupedConstituents):
 
 
 def calc_max_conc_mean_tm(constituents: GroupedConstituents,
-                          raw_instrument_data):
+                          raw_instrument_data: hwq.qPCRInstPlate):
     """
     Calculates the melting temperature ("tm") for the wells that have
     the maximum concentration of template.
@@ -166,8 +165,16 @@ def calc_max_conc_mean_tm(constituents: GroupedConstituents,
     id_template_only_wells = get_id_template_only_wells(constituents)
     max_conc_wells = get_max_conc_template_from_id_wells(id_template_only_wells)
     qpcr_datas = [raw_instrument_data[w] for w in max_conc_wells]
-    max_conc_mean_tm = calc_mean_tm(qpcr_datas)
+    max_conc_mean_tm = hwq.calc_mean_tm(qpcr_datas)
     return max_conc_mean_tm
+
+
+def calc_mean_ntc_ct(constituents: GroupedConstituents,
+                     raw_instrument_data: hwq.qPCRInstPlate):
+    ntc_wells = get_ntc_wells(constituents)
+    qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
+    mean_ntc_ct = hwq.get_mean_ct(qpcr_datas)
+    return mean_ntc_ct
 
 
 def get_id_template_only_wells(constituents: GroupedConstituents):
@@ -249,14 +256,14 @@ def get_lc_dilutions(lc_plate):
     return lc_dilutions
 
 
-def build_labchip_results_by_id_well(id_plate_constituents, lc_data_wells, mapping, assays,
-                                     dilutions):
+def build_labchip_results_by_id_well(id_plate_constituents, lc_data_wells,
+                                     mapping, assays, dilutions):
     lc_plate_results = {}
     for idw, constits in id_plate_constituents.items():
         lcp, lcw = mapping[idw]
         ass = constits.get_id_assay_attribute('reagent_name')
         lc_plate_results[idw] = \
-            NestedLabChipData.create_from_data(lc_data_wells[lcw],
-                                               [assays[a] for a in ass],
-                                               dilutions[lcw])
+            NestedLabChipData.create_from_inst_data(lc_data_wells[lcw],
+                                                    [assays[a] for a in ass],
+                                                    dilutions[lcw])
     return lc_plate_results
