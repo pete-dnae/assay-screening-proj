@@ -32,7 +32,7 @@ def build_id_qpcr_constituents(
 
 
 def build_id_qpcr_datas_from_inst_data(
-        id_plate_constituents: Constituents,
+        id_qpcr_constituents: Constituents,
         instrument_data: hwq.qPCRInstPlate) -> qPCRDatas:
     """
     Creates a dictionary keyed by well names and valued by instances of
@@ -43,14 +43,14 @@ def build_id_qpcr_datas_from_inst_data(
     process, intermediate values are calculated as they are required when
     creating a `NestedIdQpcrData`.
 
-    :param id_plate_constituents: a dictionary keyed by well name and valued by
+    :param id_qpcr_constituents: a dictionary keyed by well name and valued by
     instances of `NestedIdWellConstituents`
     :param instrument_data: the python representation of qPCR results for
     the well in question
     :return:
     """
     id_qpcr_datas = {}
-    id_grouped = group_by_id_assay(id_plate_constituents)
+    id_grouped = group_by_id_assay(id_qpcr_constituents)
     for id_assay, id_constits in id_grouped.items():
         max_conc_mean_tm = \
             calc_max_conc_mean_tm(id_constits, instrument_data)
@@ -76,8 +76,8 @@ def build_labchip_datas_from_inst_data(
     Build a dictioanry of `NestedLabchipData` instances keyed on their parent
     qPCR well.
 
-    :param id_qpcr_constituents: the well constituents of the upstream qPCR
-    wells
+    :param id_qpcr_constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdWellConstituents`
     :param lc_plate: the Labchip instrument data
     :param mapping: a dictioanry that maps between qPCR and labchip wells
     :param assays: a dictionary that maps between an assay and it's expected
@@ -96,15 +96,35 @@ def build_labchip_datas_from_inst_data(
     return lc_datas
 
 
-def create_nested_groupings(id_plate: Constituents):
+def get_wells_by_id_assay(id_qpcr_constituents: Constituents):
+    """
+    Creates a dictionary keyed by id assay and valued by associated well names.
+    :param id_qpcr_constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdWellConstituents`
+    :return:
+    """
+    groupings = create_nested_groupings(id_qpcr_constituents)
+
+    wells_by_id_assay = {}
+    for id_assay in groupings:
+        wells_by_id_assay[id_assay] = []
+        for pa_assay in groupings[id_assay]:
+            for template in groupings[id_assay][pa_assay]:
+                wells_by_id_assay[id_assay] = \
+                    wells_by_id_assay[id_assay] + list(
+                        groupings[id_assay][pa_assay][template].keys())
+    return wells_by_id_assay
+
+
+def create_nested_groupings(id_qpcr_constituents: Constituents):
     """
     Group nested wells based upon their constituents.
-    :param id_plate: a dictionary keyed by well name and valued by instances
-    of `NestedIdWellConstituents`
+    :param id_qpcr_constituents: a dictionary keyed by well name and valued
+    by instances of `NestedIdWellConstituents`
     :return:
     """
     groups = {}
-    idgrp = group_by_id_assay(id_plate)
+    idgrp = group_by_id_assay(id_qpcr_constituents)
     for id_assay, id_constits in idgrp.items():
         groups[id_assay] = {}
         pagrp = group_by_pa_assay(id_constits)
