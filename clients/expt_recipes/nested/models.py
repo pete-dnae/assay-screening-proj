@@ -11,18 +11,16 @@ from hardware.plates import ExptPlates
 
 from collections import OrderedDict
 
-from clients.reagents import ObjReagent
-from clients.reagents import get_assays, get_templates, get_humans
+from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
 from clients.transfers import get_transferred_assays, \
     get_transferred_templates, get_transferred_humans
 
-from hardware.qpcr import qPCRInstWell
 from hardware.labchip import LabChipInstWell, get_peaks
 from clients.expt_recipes.well_constituents import WellConstituents
-from clients.expt_recipes.results_interpretation.qpcr import calc_delta_ct,\
+from clients.expt_recipes.interp.qpcr import calc_delta_ct,\
     get_ct_call, get_product_labels_from_tms
-from hardware.qpcr import get_ct, get_tms, calc_tm_deltas
-from clients.expt_recipes.results_interpretation.labchip import \
+import hardware.qpcr as hwq
+from clients.expt_recipes.interp.labchip import \
     get_product_label_from_labchip
 
 
@@ -100,12 +98,13 @@ class NestedIdQpcrData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_inst_data(cls, qpcr_data: qPCRInstWell, max_conc_mean_tm,
+    def create_from_inst_data(cls, qpcr_data: hwq.qPCRInstWell,
+                              max_conc_mean_tm,
                               mean_ntc_ct) -> 'NestedIdQpcrData':
 
-        tms = get_tms(qpcr_data)
-        tm_delta = calc_tm_deltas(qpcr_data, max_conc_mean_tm)
-        ct = get_ct(qpcr_data)
+        tms = hwq.get_tms(qpcr_data)
+        tm_delta = hwq.calc_tm_deltas(qpcr_data, max_conc_mean_tm)
+        ct = hwq.get_ct(qpcr_data)
         delta_ct = calc_delta_ct(ct, mean_ntc_ct)
         ct_call = get_ct_call(delta_ct)
         spec, non_spec, pd = get_product_labels_from_tms(tms, tm_delta,
