@@ -8,9 +8,9 @@ from clients.expt_recipes.well_constituents import WellConstituents
 from hardware.qpcr import QpcrDataFile, get_ct, get_tms, calc_tm_deltas, \
     get_mean_ct, calc_mean_tm
 
-from clients.expt_recipes.results_interpretation.qpcr import calc_delta_ct, get_ct_call, \
+from clients.expt_recipes.interp.qpcr import calc_delta_ct, get_ct_call, \
     get_product_labels_from_tms
-from clients.expt_recipes.results_interpretation.constituents import is_ntc, \
+from clients.expt_recipes.interp.constituents import is_ntc, \
     get_ntc_wells
 
 CURRENT_DIR = op.dirname(op.abspath(__file__))
