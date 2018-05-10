@@ -33,7 +33,7 @@
                         <div class="col text-left">
                             <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
                             <small>
-                                Treat the below component as a online spreadsheet . Right click on spreadsheet for options
+                                Treat the below table as a spreadsheet . Right click for options
                             </small>
                         </div>
                     </div>          

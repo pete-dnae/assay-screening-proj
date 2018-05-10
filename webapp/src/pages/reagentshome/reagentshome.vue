@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="card-title">
-                        <h5>Reagents <small class="fa fa-plus btn btn-primary" aria-hidden="true" ></small></h5>
+                        <h5>Reagents <small class="fa fa-plus btn btn-primary" aria-hidden="true" @click="showAddForm=!showAddForm"></small></h5>
                         
                     </div>                                    
                         <hr/>
@@ -43,8 +43,8 @@
                                             {{tableHeaders[key]}}                                                                                        
                                         </th>
                                         <tr v-for="reagent in filteredReagents" v-bind:key="reagent.name">
-                                            <td v-for="(property,index) in reagent" v-bind:key="index">
-                                                <ul v-if="index==='opaque_json_payload'" style="padding:0;list-style-type: none">
+                                            <td v-for="(property,index) in reagent" v-bind:key="index">                                                
+                                                <ul v-if="index==='opaque_json_payload'" style="padding:0;list-style-type: none">                                                    
                                                     <li v-for="item in  stringToList(property)" v-bind:key="item.key">
                                                         {{item.key}}-{{item.value}}
                                                         

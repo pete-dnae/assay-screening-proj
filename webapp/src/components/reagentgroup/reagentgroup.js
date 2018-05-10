@@ -107,6 +107,7 @@ export default {
         this.fetchAvailableReagentGroups();
         this.updateTableData(null);
       });
+      this.currentText = null;
     },
     validateReagents(reagentName) {
       const usedReagents = this.handsonTable.getData().map(row => row[0]);

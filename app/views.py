@@ -133,11 +133,10 @@ class ExperimentImagesView(APIView):
         return Response(results)
 
 class ReagentGroupListView(APIView):
-    """
-    Returns list of unique reagent group names in db
-    """
+
 
     def get(self,request):
+        # Returns list of unique reagent group names in db
         return Response(ViewHelpers.group_names())
 
     def delete(self, request):

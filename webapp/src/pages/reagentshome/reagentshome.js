@@ -98,7 +98,8 @@ export default {
     },
     stringToList(string) {
       const obj = JSON.parse(string);
-      const list = _.map(obj, (value, key) => ({ key, value }));
+      let list = _.map(obj, (value, key) => ({ key, value }));
+      if (_.isEmpty(list)) list = [{ key: 'Empty', value: 'field' }];
       return list;
     },
   },

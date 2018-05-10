@@ -20,7 +20,7 @@
   opacity: 0;
 }
 .alert.top {
-  position: fixed;
+  position: absolute;
   top: 30px;
   margin: 0 auto;
   left: 0;
@@ -28,7 +28,7 @@
   z-index: 1050;
 }
 .alert.top-right {
-  position: fixed;
+  position: absolute;
   top: 30px;
   right: 50px;
   z-index: 1050;
