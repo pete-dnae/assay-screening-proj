@@ -9,7 +9,7 @@ import hardware.labchip as hwlc
 
 Constituents = Dict[WellName, NestedIdWellConstituents]
 qPCRDatas = Dict[WellName, NestedIdQpcrData]
-qLabChipDatas = Dict[WellName, NestedLabChipData]
+LabChipDatas = Dict[WellName, NestedLabChipData]
 
 
 def build_id_qpcr_constituents(
@@ -71,7 +71,7 @@ def build_labchip_datas_from_inst_data(
         lc_plate: hwlc.LabChipInstPlate,
         mapping: Dict[str, str],
         assays: Dict[str, int],
-        dilutions: Dict[str, float]) -> qLabChipDatas:
+        dilutions: Dict[str, float]) -> LabChipDatas:
     """
     Build a dictioanry of `NestedLabchipData` instances keyed on their parent
     qPCR well.
