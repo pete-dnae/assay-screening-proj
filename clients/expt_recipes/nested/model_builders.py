@@ -8,6 +8,8 @@ import hardware.qpcr as hwq
 import hardware.labchip as hwlc
 
 Constituents = Dict[WellName, NestedIdWellConstituents]
+qPCRDatas = Dict[WellName, NestedIdQpcrData]
+qLabChipDatas = Dict[WellName, NestedLabChipData]
 
 
 def build_id_qpcr_constituents(
@@ -31,7 +33,7 @@ def build_id_qpcr_constituents(
 
 def build_id_qpcr_datas_from_inst_data(
         id_plate_constituents: Constituents,
-        instrument_data: hwq.qPCRInstPlate):
+        instrument_data: hwq.qPCRInstPlate) -> qPCRDatas:
     """
     Creates a dictionary keyed by well names and valued by instances of
     `NestedIdQpcrData`.
@@ -64,11 +66,12 @@ def build_id_qpcr_datas_from_inst_data(
     return id_qpcr_datas
 
 
-def build_labchip_datas_from_inst_data(id_qpcr_constituents: Constituents,
-                                       lc_plate: hwlc.LabChipInstPlate,
-                                       mapping: Dict[str, str],
-                                       assays: Dict[str, int],
-                                       dilutions: Dict[str, float]):
+def build_labchip_datas_from_inst_data(
+        id_qpcr_constituents: Constituents,
+        lc_plate: hwlc.LabChipInstPlate,
+        mapping: Dict[str, str],
+        assays: Dict[str, int],
+        dilutions: Dict[str, float]) -> qLabChipDatas:
     """
     Build a dictioanry of `NestedLabchipData` instances keyed on their parent
     qPCR well.
@@ -165,7 +168,7 @@ def group_by_template_origin(constituents: Constituents):
 
 
 def calc_max_conc_mean_tm(constituents: Constituents,
-                          instrument_data: hwq.qPCRInstPlate):
+                          instrument_data: hwq.qPCRInstPlate) -> float:
     """
     Calculates the melting temperature ("tm") for the wells that have
     the maximum concentration of template.
@@ -185,7 +188,7 @@ def calc_max_conc_mean_tm(constituents: Constituents,
 
 
 def calc_mean_ntc_ct(constituents: Constituents,
-                     raw_instrument_data: hwq.qPCRInstPlate):
+                     raw_instrument_data: hwq.qPCRInstPlate) -> float:
     """
 
     :param constituents: a dictionary keyed by well name and valued by
@@ -199,7 +202,7 @@ def calc_mean_ntc_ct(constituents: Constituents,
     return mean_ntc_ct
 
 
-def get_id_template_only_wells(constituents: Constituents):
+def get_id_template_only_wells(constituents: Constituents) -> Constituents:
     """
     Gets a dictionary of those wells which only contain template introduced
     at the id stage.
@@ -217,7 +220,7 @@ def get_id_template_only_wells(constituents: Constituents):
 
 
 def get_max_conc_template_from_id_wells(
-        id_template_only_wells: Constituents):
+        id_template_only_wells: Constituents) -> Constituents:
     """
     Get from the id wells, those wells that have the highest template
     concentration.
@@ -231,7 +234,7 @@ def get_max_conc_template_from_id_wells(
     max_conc = max(concs.values())
 
     max_conc_wells = {}
-    for w, wc in id_template_only_wells.items():
+    for w, c in id_template_only_wells.items():
         if concs[w] == max_conc:
-            max_conc_wells[w] = wc
+            max_conc_wells[w] = c
     return max_conc_wells
