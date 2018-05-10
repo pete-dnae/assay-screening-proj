@@ -19,7 +19,7 @@ from clients.transfers import get_transferred_assays, \
 from clients.expt_recipes.well_constituents import WellConstituents
 
 
-class IdQpcrConstituents(WellConstituents):
+class IdConstituents(WellConstituents):
 
     def __init__(self):
         super().__init__()
@@ -29,7 +29,7 @@ class IdQpcrConstituents(WellConstituents):
 
     @classmethod
     def create(cls, reagents: List[ObjReagent],
-               all_expt_plates: ExptPlates) -> 'IdQpcrConstituents':
+               all_expt_plates: ExptPlates) -> 'IdConstituents':
 
         inst = cls()
         inst['assays'] = get_assays(reagents)
@@ -98,7 +98,7 @@ class NestedTableRow(OrderedDict):
 
     @classmethod
     def create_from_models(cls, qpcr_well: WellName, lc_well: WellName,
-                           id_constit: IdQpcrConstituents,
+                           id_constit: IdConstituents,
                            id_qpcr_data: IdQpcrData,
                            lc_data: LabChipData):
         inst = cls()
@@ -157,7 +157,7 @@ class NestedMasterTable:
             qpcr_plate: str,
             lc_wells: List[WellName],
             lc_plate: str,
-            id_constits: Dict[WellName, IdQpcrConstituents],
+            id_constits: Dict[WellName, IdConstituents],
             id_qpcr_datas: IdQpcrData,
             lc_datas: LabChipData):
 
