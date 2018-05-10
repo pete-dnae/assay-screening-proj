@@ -2,8 +2,7 @@ from typing import List
 
 import re
 
-from hardware.plates import ExptPlates
-
+from hardware.plates import ExptPlates, Plate
 
 def get_id_qpcr_plate_names(expt_plates: ExptPlates) -> List[str]:
     """
@@ -11,7 +10,8 @@ def get_id_qpcr_plate_names(expt_plates: ExptPlates) -> List[str]:
     :param expt_plates: all plates used for an experiment
     :return:
     """
-    id_plate_names = [p for p in expt_plates if p.endswith('_ID')]
+    lc_plate_names = get_labchip_plate_names(expt_plates)
+    id_plate_names = list(set(expt_plates.keys) - set(lc_plate_names))
     if not id_plate_names:
         raise ValueError('No id plates detected.')
     else:
