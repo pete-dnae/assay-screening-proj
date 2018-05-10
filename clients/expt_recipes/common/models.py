@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from typing import Dict
 
 from clients.expt_recipes.interp import qpcr as intq, labchip as intlc
 from hardware import qpcr as hwq, labchip as hwlc
+from hardware.plates import WellName
 
 
 class IdQpcrData(OrderedDict):
@@ -80,3 +82,7 @@ class LabChipData(OrderedDict):
                                                  dilution)
         inst = cls()
         return inst.create(spec, non_spec, pd)
+
+
+LabChipDatas = Dict[WellName, LabChipData]
+qPCRDatas = Dict[WellName, IdQpcrData]
