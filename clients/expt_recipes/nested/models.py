@@ -22,14 +22,17 @@ import hardware.qpcr as hwq
 import hardware.labchip as hwlc
 
 
-class NestedIdWellConstituents(WellConstituents):
+class IdQpcrConstituents(WellConstituents):
 
     def __init__(self):
         super().__init__()
+        self['transferred_assays'] = None
+        self['transferred_templates'] = None
+        self['transferred_human'] = None
 
     @classmethod
     def create(cls, reagents: List[ObjReagent],
-               all_expt_plates: ExptPlates) -> 'NestedIdWellConstituents':
+               all_expt_plates: ExptPlates) -> 'IdQpcrConstituents':
 
         inst = cls()
         inst['assays'] = get_assays(reagents)
@@ -63,7 +66,7 @@ class NestedIdWellConstituents(WellConstituents):
         return self._get_item_attribute('transferred_human', attribute)
 
 
-class NestedIdQpcrData(OrderedDict):
+class IdQpcrData(OrderedDict):
 
     def __init__(self):
         super().__init__()
@@ -80,7 +83,7 @@ class NestedIdQpcrData(OrderedDict):
 
     @classmethod
     def create(cls, ct, delta_ct, ct_call, tms, spec, non_spec, pd) -> \
-            'NestedIdQpcrData':
+            'IdQpcrData':
         inst = cls()
         inst['Ct'] = ct
         inst['∆NTC_Ct'] = delta_ct
@@ -98,7 +101,7 @@ class NestedIdQpcrData(OrderedDict):
     @classmethod
     def create_from_inst_data(cls, qpcr_data: hwq.qPCRInstWell,
                               max_conc_mean_tm,
-                              mean_ntc_ct) -> 'NestedIdQpcrData':
+                              mean_ntc_ct) -> 'IdQpcrData':
 
         tms = hwq.get_tms(qpcr_data)
         tm_delta = hwq.calc_tm_deltas(qpcr_data, max_conc_mean_tm)
@@ -114,7 +117,7 @@ class NestedIdQpcrData(OrderedDict):
         return all(v is not None for v in self.values())
 
 
-class NestedLabChipData(OrderedDict):
+class LabChipData(OrderedDict):
 
     def __init__(self):
         super().__init__()
@@ -176,9 +179,9 @@ class NestedTableRow(OrderedDict):
 
     @classmethod
     def create_from_models(cls, qpcr_well: WellName, lc_well: WellName,
-                           id_constit: NestedIdWellConstituents,
-                           id_qpcr_data: NestedIdQpcrData,
-                           lc_data: NestedLabChipData):
+                           id_constit: IdQpcrConstituents,
+                           id_qpcr_data: IdQpcrData,
+                           lc_data: LabChipData):
         inst = cls()
         inst['qPCR well'] = qpcr_well
         inst['LC well'] = lc_well
@@ -235,9 +238,9 @@ class NestedMasterTable:
             qpcr_plate: str,
             lc_wells: List[WellName],
             lc_plate: str,
-            id_constits: Dict[WellName, NestedIdWellConstituents],
-            id_qpcr_datas: NestedIdQpcrData,
-            lc_datas: NestedLabChipData):
+            id_constits: Dict[WellName, IdQpcrConstituents],
+            id_qpcr_datas: IdQpcrData,
+            lc_datas: LabChipData):
 
         rows = []
         for qw, lw in zip(qpcr_wells, lc_wells):

@@ -1,15 +1,15 @@
 from typing import Dict
 
-from clients.expt_recipes.nested.models import NestedIdWellConstituents, \
-    NestedIdQpcrData, NestedLabChipData
+from clients.expt_recipes.nested.models import IdQpcrConstituents, \
+    IdQpcrData, LabChipData
 import clients.expt_recipes.interp.constituents as intc
 from hardware.plates import ExptPlates, WellName, Plate
 import hardware.qpcr as hwq
 import hardware.labchip as hwlc
 
-Constituents = Dict[WellName, NestedIdWellConstituents]
-qPCRDatas = Dict[WellName, NestedIdQpcrData]
-LabChipDatas = Dict[WellName, NestedLabChipData]
+Constituents = Dict[WellName, IdQpcrConstituents]
+qPCRDatas = Dict[WellName, IdQpcrData]
+LabChipDatas = Dict[WellName, LabChipData]
 
 
 def build_id_qpcr_constituents(
@@ -17,7 +17,7 @@ def build_id_qpcr_constituents(
         expt_plates: ExptPlates) -> Constituents:
     """
     Builds a dictionary keyed by the well names. The values are instances of
-    `NestedIdWellConstituents`
+    `IdQpcrConstituents`
     :param id_plate_reagents: a dictionary keyed by well name and valued by
     instances of List[ObjReagent]
     :param expt_plates: an instance of ExptPlates for this particular
@@ -27,7 +27,7 @@ def build_id_qpcr_constituents(
     id_qpcr_constituents = {}
     for w, reagents in id_plate_reagents.items():
         id_qpcr_constituents[w] = \
-            NestedIdWellConstituents.create(reagents, expt_plates)
+            IdQpcrConstituents.create(reagents, expt_plates)
     return id_qpcr_constituents
 
 
@@ -36,15 +36,15 @@ def build_id_qpcr_datas_from_inst_data(
         instrument_data: hwq.qPCRInstPlate) -> qPCRDatas:
     """
     Creates a dictionary keyed by well names and valued by instances of
-    `NestedIdQpcrData`.
+    `IdQpcrData`.
 
     Iterates over all the wells in a plates and initially groups them by the
     id assay and then the preamp assay. At various stages in the grouping
     process, intermediate values are calculated as they are required when
-    creating a `NestedIdQpcrData`.
+    creating a `IdQpcrData`.
 
     :param id_qpcr_constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdWellConstituents`
+    instances of `IdQpcrConstituents`
     :param instrument_data: the python representation of qPCR results for
     the well in question
     :return:
@@ -60,9 +60,9 @@ def build_id_qpcr_datas_from_inst_data(
             for w, nic in pa_constits.items():
                 well_data = instrument_data[w]
                 id_qpcr_datas[w] = \
-                    NestedIdQpcrData.create_from_inst_data(well_data,
-                                                           max_conc_mean_tm,
-                                                           mean_ntc_ct)
+                    IdQpcrData.create_from_inst_data(well_data,
+                                                     max_conc_mean_tm,
+                                                     mean_ntc_ct)
     return id_qpcr_datas
 
 
@@ -77,7 +77,7 @@ def build_labchip_datas_from_inst_data(
     qPCR well.
 
     :param id_qpcr_constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdWellConstituents`
+    instances of `IdQpcrConstituents`
     :param lc_plate: the Labchip instrument data
     :param mapping: a dictioanry that maps between qPCR and labchip wells
     :param assays: a dictionary that maps between an assay and it's expected
@@ -90,9 +90,9 @@ def build_labchip_datas_from_inst_data(
         lcw = mapping[idw]
         ass = constits.get_id_assay_attribute('reagent_name')
         lc_datas[idw] = \
-            NestedLabChipData.create_from_inst_data(lc_plate[lcw],
-                                                    [assays[a] for a in ass],
-                                                    dilutions[lcw])
+            LabChipData.create_from_inst_data(lc_plate[lcw],
+                                              [assays[a] for a in ass],
+                                              dilutions[lcw])
     return lc_datas
 
 
@@ -100,7 +100,7 @@ def get_wells_by_id_assay(id_qpcr_constituents: Constituents):
     """
     Creates a dictionary keyed by id assay and valued by associated well names.
     :param id_qpcr_constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdWellConstituents`
+    instances of `IdQpcrConstituents`
     :return:
     """
     groupings = create_nested_groupings(id_qpcr_constituents)
@@ -120,7 +120,7 @@ def create_nested_groupings(id_qpcr_constituents: Constituents):
     """
     Group nested wells based upon their constituents.
     :param id_qpcr_constituents: a dictionary keyed by well name and valued
-    by instances of `NestedIdWellConstituents`
+    by instances of `IdQpcrConstituents`
     :return:
     """
     groups = {}
@@ -140,7 +140,7 @@ def group_by_id_assay(constituents: Constituents):
     """
     Groups constituents by id assay.
     :param constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdQpcrData`
+    instances of `IdQpcrData`
     :return:
     """
     wells_by_id_assay = {}
@@ -155,7 +155,7 @@ def group_by_pa_assay(constituents: Constituents):
     """
     Groups constituents by pa assay.
     :param constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdQpcrData`
+    instances of `IdQpcrData`
     :return:
     """
     wells_by_pa_assay = {}
@@ -170,7 +170,7 @@ def group_by_template_origin(constituents: Constituents):
     """
     Groups constituents by template origin.
     :param constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdQpcrData`
+    instances of `IdQpcrData`
     :return:
     """
     wells_by_template = {}
@@ -196,7 +196,7 @@ def calc_max_conc_mean_tm(constituents: Constituents,
     For nested experiments, these are exclusively the id only template wells.
 
     :param constituents: a dictionary keyed by well name and valued by instances
-    of `NestedIdWellConstituents`
+    of `IdQpcrConstituents`
     :param instrument_data: qPCR instrument data
     :return:
     """
@@ -212,7 +212,7 @@ def calc_mean_ntc_ct(constituents: Constituents,
     """
 
     :param constituents: a dictionary keyed by well name and valued by
-    instances of `NestedIdWellConstituents`
+    instances of `IdQpcrConstituents`
     :param raw_instrument_data: qPCR instrument data
     :return:
     """
@@ -228,7 +228,7 @@ def get_id_template_only_wells(constituents: Constituents) -> Constituents:
     at the id stage.
 
     :param constituents: a dictionary keyed by id assay and valued by instances
-    of `NestedIdQpcrData`
+    of `IdQpcrData`
     :return:
     """
     id_template_only_wells = {}
@@ -246,7 +246,7 @@ def get_max_conc_template_from_id_wells(
     concentration.
 
     :param id_template_only_wells: a dictionary keyed by well name and valued
-    by instances of `NestedIdWellConstituents`
+    by instances of `IdQpcrConstituents`
     :return:
     """
     concs = dict((w, wc.get_id_template_attribute('concentration'))
