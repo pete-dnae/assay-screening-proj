@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict
 
 from clients.expt_recipes.nested.models import NestedIdWellConstituents, \
     NestedIdQpcrData, NestedLabChipData
@@ -66,9 +66,22 @@ def build_id_qpcr_datas_from_inst_data(
 
 def build_labchip_datas_from_inst_data(id_qpcr_constituents: Constituents,
                                        lc_plate: hwlc.LabChipInstPlate,
-                                       mapping,
+                                       mapping: Dict[str, str],
                                        assays: Dict[str, int],
-                                       dilutions):
+                                       dilutions: Dict[str, float]):
+    """
+    Build a dictioanry of `NestedLabchipData` instances keyed on their parent
+    qPCR well.
+
+    :param id_qpcr_constituents: the well constituents of the upstream qPCR
+    wells
+    :param lc_plate: the Labchip instrument data
+    :param mapping: a dictioanry that maps between qPCR and labchip wells
+    :param assays: a dictionary that maps between an assay and it's expected
+    amplicon length
+    :param dilutions: a dictionary of labchip wells and their dilution factors
+    :return:
+    """
     lc_datas = {}
     for idw, constits in id_qpcr_constituents.items():
         lcw = mapping[idw]
@@ -161,7 +174,7 @@ def calc_max_conc_mean_tm(constituents: Constituents,
 
     :param constituents: a dictionary keyed by well name and valued by instances
     of `NestedIdWellConstituents`
-    :param instrument_data:
+    :param instrument_data: qPCR instrument data
     :return:
     """
     id_template_only_wells = get_id_template_only_wells(constituents)
@@ -173,6 +186,13 @@ def calc_max_conc_mean_tm(constituents: Constituents,
 
 def calc_mean_ntc_ct(constituents: Constituents,
                      raw_instrument_data: hwq.qPCRInstPlate):
+    """
+
+    :param constituents: a dictionary keyed by well name and valued by
+    instances of `NestedIdWellConstituents`
+    :param raw_instrument_data: qPCR instrument data
+    :return:
+    """
     ntc_wells = get_ntc_wells(constituents)
     qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
     mean_ntc_ct = hwq.get_mean_ct(qpcr_datas)
