@@ -1,10 +1,12 @@
 
 from typing import Dict
 from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
-from clients.expt_recipes.common.models import WellName, IdQpcrData, qPCRDatas
+from clients.expt_recipes.common.models import WellName, IdQpcrData, \
+    qPCRDatas, LabChipDatas, LabChipData
 from clients.expt_recipes.nested.models import IdConstituents
 from clients.expt_recipes.interp import qpcr as intq
 import hardware.qpcr as hwq
+from hardware import labchip as hwlc
 
 ConstituentsByWell = Dict[WellName, IdConstituents]
 
@@ -43,6 +45,36 @@ def build_id_qpcr_datas_from_inst_data(
                                                      max_conc_mean_tm,
                                                      mean_ntc_ct)
     return id_qpcr_datas
+
+
+def build_labchip_datas_from_inst_data(
+        id_qpcr_constituents: ConstituentsByWell,
+        lc_plate: hwlc.LabChipInstPlate,
+        mapping: Dict[str, str],
+        assays: Dict[str, int],
+        dilutions: Dict[str, float]) -> LabChipDatas:
+    """
+    Build a dictioanry of `NestedLabchipData` instances keyed on their parent
+    qPCR well.
+
+    :param id_qpcr_constituents: a dictionary keyed by well name and valued by
+    instances of `IdConstituents`
+    :param lc_plate: the Labchip instrument data
+    :param mapping: a dictioanry that maps between qPCR and labchip wells
+    :param assays: a dictionary that maps between an assay and it's expected
+    amplicon length
+    :param dilutions: a dictionary of labchip wells and their dilution factors
+    :return:
+    """
+    lc_datas = {}
+    for idw, constits in id_qpcr_constituents.items():
+        lcw = mapping[idw]
+        ass = constits.get_id_assay_attribute('reagent_name')
+        lc_datas[idw] = \
+            LabChipData.create_from_inst_data(lc_plate[lcw],
+                                              [assays[a] for a in ass],
+                                              dilutions[lcw])
+    return lc_datas
 
 
 def get_wells_by_id_assay(id_qpcr_constituents: ConstituentsByWell):
