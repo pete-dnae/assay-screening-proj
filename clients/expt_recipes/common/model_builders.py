@@ -1,8 +1,8 @@
 from typing import Dict
 
+from clients.expt_recipes.common.utils import get_ntc_wells
 from clients.expt_recipes.common.models import LabChipDatas, LabChipData, \
     WellConstituents, ConstituentsByWell
-from clients.expt_recipes.interp import constituents as intc
 from hardware import labchip as hwlc, qpcr as hwq
 from hardware.plates import Plate, ExptPlates
 
@@ -69,7 +69,7 @@ def calc_mean_ntc_ct(constituents: ConstituentsByWell,
     :param raw_instrument_data: qPCR instrument data
     :return:
     """
-    ntc_wells = intc.get_ntc_wells(constituents)
+    ntc_wells = get_ntc_wells(constituents)
     qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
     mean_ntc_ct = hwq.get_mean_ct(qpcr_datas)
     return mean_ntc_ct
