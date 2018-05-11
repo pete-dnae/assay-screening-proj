@@ -232,3 +232,45 @@ pass :kTaDN5RV
 On successful login you will be provided with a list of tables
 available in the current DB.
 Click on change button to proceed to editing.
+
+
+Resetting Production DB:
+    
+    Take a copy of existing rulescripts and note their experimetn name
+    Take a copy of existing units
+
+    Log in to https://dashboard.heroku.com using below credentials
+    pete.howard@dnae.com
+    Pass: qa3ZU5Q7
+
+    Under Installed add-ons click on Heroku Postgres:
+        Go to durablity tab to take a manual backup of db in case of
+        emergency
+        Go to settings tab and click on reset database , enter project
+        name when prompted.
+
+    In app dashboard(https://dashboard.heroku.com/apps/assay-screening)
+    Run a web console by clicking on 'Run Console' option from 'More^'
+    dropdown
+    Type 'bash' to open a bash console when prompted.
+    on bash prompt type in the following commands from project root:
+        hint:bash defaults to project root
+
+        # Remove the migration files if there are any.       
+        rm -rf app/migrations
+
+        # Make the Django migrations and run them to create the db and tables.
+        python manage.py makemigrations app
+        python manage.py migrate
+
+        # Further populate the database with the reference experiment.
+        python manage.py pop_with_ref_exp
+
+        # Now bulk load reagents and groups
+        python manage.py bulk_load_reagents app/model_builders/customers-seed-data/reagents.csv
+
+        python manage.py bulk_load_groups app/model_builders/customers-seed-data/pools.csv
+
+        # populate units manually from http://assay-screening.herokuapp.com/api/units/
+
+        re-enter rulescripts on front end 
