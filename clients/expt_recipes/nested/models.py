@@ -72,8 +72,8 @@ class NestedTableRow(OrderedDict):
         self['ID Human Name'] = None
         self['ID Human Conc.'] = None
         self['Ct'] = None
-        self['∆NTC_Ct'] = None
-        self['Ct_Call'] = None
+        self['∆NTC Ct'] = None
+        self['Ct Call'] = None
         self['Tm1'] = None
         self['Tm2'] = None
         self['Tm3'] = None

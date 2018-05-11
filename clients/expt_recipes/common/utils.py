@@ -22,10 +22,6 @@ def create_id_qpcr_lc_mapping(lc_plate: Plate) -> Dict[str, str]:
     return id_qpcr_lc_mapping
 
 
-def get_assay_amplicon_lengths():
-    return None
-
-
 def get_lc_dilutions(lc_plate: Plate) -> Dict[str, float]:
     """
     Get the dilution factors for each labchip well.
