@@ -6,17 +6,15 @@ experiments.
 
 
 from typing import List, Dict
-
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData
-from hardware.plates import ExptPlates, WellName
-
 from collections import OrderedDict
+
+from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
+    WellConstituents
+from hardware.plates import ExptPlates, WellName
 
 from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
 from clients.transfers import get_transferred_assays, \
     get_transferred_templates, get_transferred_humans
-
-from clients.expt_recipes.well_constituents import WellConstituents
 
 
 class IdConstituents(WellConstituents):
@@ -44,17 +42,8 @@ class IdConstituents(WellConstituents):
 
         return inst
 
-    def get_id_assay_attribute(self, attribute):
-        return self._get_item_attribute('assays', attribute)
-
     def get_pa_assay_attribute(self, attribute):
         return self._get_item_attribute('transferred_assays', attribute)
-
-    def get_id_template_attribute(self, attribute):
-        return self._get_item_attribute('templates', attribute)
-
-    def get_id_human_attribute(self, attribute):
-        return self._get_item_attribute('human', attribute)
 
     def get_pa_template_attribute(self, attribute):
         return self._get_item_attribute('transferred_templates', attribute)
@@ -72,7 +61,7 @@ class NestedTableRow(OrderedDict):
         self['LC well'] = None
         self['PA Assay Name'] = None
         self['PA Assay Conc.'] = None
-        self['PA template Name'] = None
+        self['PA Template Name'] = None
         self['PA Template Conc.'] = None
         self['PA Human Name'] = None
         self['PA Human Conc.'] = None
@@ -83,8 +72,8 @@ class NestedTableRow(OrderedDict):
         self['ID Human Name'] = None
         self['ID Human Conc.'] = None
         self['Ct'] = None
-        self['∆NTC_Ct'] = None
-        self['Ct_Call'] = None
+        self['∆NTC Ct'] = None
+        self['Ct Call'] = None
         self['Tm1'] = None
         self['Tm2'] = None
         self['Tm3'] = None

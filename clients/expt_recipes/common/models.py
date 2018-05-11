@@ -1,9 +1,45 @@
+import abc
 from collections import OrderedDict
 from typing import Dict
 
 from clients.expt_recipes.interp import qpcr as intq, labchip as intlc
 from hardware import qpcr as hwq, labchip as hwlc
 from hardware.plates import WellName
+
+
+class WellConstituents(OrderedDict):
+
+    def __init__(self):
+        super().__init__()
+        self['assays'] = None
+        self['templates'] = None
+        self['human'] = None
+
+    @classmethod
+    @abc.abstractmethod
+    def create(cls, *args, **kwargs):
+        inst = cls()
+        return inst
+
+    def _get_item_attribute(self, key, attribute):
+        item = self[key]
+        attributes = tuple(i[attribute] for i in item)
+        return attributes
+
+    def get_id_assay_attribute(self, attribute):
+        return self._get_item_attribute('assays', attribute)
+
+    def get_id_template_attribute(self, attribute):
+        return self._get_item_attribute('templates', attribute)
+
+    def get_id_human_attribute(self, attribute):
+        return self._get_item_attribute('human', attribute)
+
+    def is_populated(self):
+        return all(v is not None for v in self.values())
+
+
+ConstituentsByWell = Dict[WellName, WellConstituents]
 
 
 class IdQpcrData(OrderedDict):

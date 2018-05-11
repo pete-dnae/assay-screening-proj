@@ -1,7 +1,8 @@
 
 from clients.utils import get_object
+import json
 
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 DbReagent = List[str]
 ObjReagent = Dict[str, str]
 
@@ -68,6 +69,24 @@ def get_single_reagent_category(reagent_name: str) -> str:
         return category
     else:
         raise ValueError('Could not determine reagent category for: {}'
+                         .format(reagent_name))
+
+
+def get_single_reagent_opaque_payload(reagent_name: str) -> Dict[str, Any]:
+    """
+    Get the category for a given reagent.
+    :param reagent_name: name of reagent
+    :return:
+    """
+    obj = get_object(
+        'https://assay-screening.herokuapp.com/api/reagents/?name={}'
+        .format(reagent_name))
+    if len(obj) == 1:
+        opaque_payload = obj[0]['opaque_json_payload']
+        opaque_payload = json.loads(opaque_payload)
+        return opaque_payload
+    else:
+        raise ValueError('Could not determine reagent payload for: {}'
                          .format(reagent_name))
 
 
@@ -138,3 +157,7 @@ def get_humans(reagents: List[ObjReagent]) -> List[ObjReagent]:
     """
     humans = [r for r in reagents if 'human' in r['reagent_category']]
     return humans
+
+def get_assay_amplicon_length(assay_name: str):
+    payload = get_single_reagent_opaque_payload(assay_name)
+    return payload['amplicon_length']

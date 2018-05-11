@@ -1,18 +1,18 @@
+
 from typing import Dict
-
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
-    LabChipDatas, qPCRDatas
-import clients.expt_recipes.interp.constituents as intc
+from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
+from clients.expt_recipes.common.models import WellName, IdQpcrData, \
+    qPCRDatas, LabChipDatas, LabChipData
 from clients.expt_recipes.nested.models import IdConstituents
-from hardware.plates import WellName
+from clients.expt_recipes.interp import qpcr as intq
 import hardware.qpcr as hwq
-import hardware.labchip as hwlc
+from hardware import labchip as hwlc
 
-Constituents = Dict[WellName, IdConstituents]
+ConstituentsByWell = Dict[WellName, IdConstituents]
 
 
 def build_id_qpcr_datas_from_inst_data(
-        id_qpcr_constituents: Constituents,
+        id_qpcr_constituents: ConstituentsByWell,
         instrument_data: hwq.qPCRInstPlate) -> qPCRDatas:
     """
     Creates a dictionary keyed by well names and valued by instances of
@@ -37,6 +37,7 @@ def build_id_qpcr_datas_from_inst_data(
         pa_grouped = group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pa_grouped.items():
             mean_ntc_ct = calc_mean_ntc_ct(pa_constits, instrument_data)
+            mean_ntc_ct = intq.default_ct_if_nan(mean_ntc_ct)
             for w, nic in pa_constits.items():
                 well_data = instrument_data[w]
                 id_qpcr_datas[w] = \
@@ -46,37 +47,7 @@ def build_id_qpcr_datas_from_inst_data(
     return id_qpcr_datas
 
 
-def build_labchip_datas_from_inst_data(
-        id_qpcr_constituents: Constituents,
-        lc_plate: hwlc.LabChipInstPlate,
-        mapping: Dict[str, str],
-        assays: Dict[str, int],
-        dilutions: Dict[str, float]) -> LabChipDatas:
-    """
-    Build a dictioanry of `NestedLabchipData` instances keyed on their parent
-    qPCR well.
-
-    :param id_qpcr_constituents: a dictionary keyed by well name and valued by
-    instances of `IdConstituents`
-    :param lc_plate: the Labchip instrument data
-    :param mapping: a dictioanry that maps between qPCR and labchip wells
-    :param assays: a dictionary that maps between an assay and it's expected
-    amplicon length
-    :param dilutions: a dictionary of labchip wells and their dilution factors
-    :return:
-    """
-    lc_datas = {}
-    for idw, constits in id_qpcr_constituents.items():
-        lcw = mapping[idw]
-        ass = constits.get_id_assay_attribute('reagent_name')
-        lc_datas[idw] = \
-            LabChipData.create_from_inst_data(lc_plate[lcw],
-                                              [assays[a] for a in ass],
-                                              dilutions[lcw])
-    return lc_datas
-
-
-def get_wells_by_id_assay(id_qpcr_constituents: Constituents):
+def get_wells_by_id_assay(id_qpcr_constituents: ConstituentsByWell):
     """
     Creates a dictionary keyed by id assay and valued by associated well names.
     :param id_qpcr_constituents: a dictionary keyed by well name and valued by
@@ -96,7 +67,7 @@ def get_wells_by_id_assay(id_qpcr_constituents: Constituents):
     return wells_by_id_assay
 
 
-def create_nested_groupings(id_qpcr_constituents: Constituents):
+def create_nested_groupings(id_qpcr_constituents: ConstituentsByWell):
     """
     Group nested wells based upon their constituents.
     :param id_qpcr_constituents: a dictionary keyed by well name and valued
@@ -116,7 +87,7 @@ def create_nested_groupings(id_qpcr_constituents: Constituents):
     return groups
 
 
-def group_by_id_assay(constituents: Constituents):
+def group_by_id_assay(constituents: ConstituentsByWell):
     """
     Groups constituents by id assay.
     :param constituents: a dictionary keyed by well name and valued by
@@ -131,7 +102,7 @@ def group_by_id_assay(constituents: Constituents):
     return wells_by_id_assay
 
 
-def group_by_pa_assay(constituents: Constituents):
+def group_by_pa_assay(constituents: ConstituentsByWell):
     """
     Groups constituents by pa assay.
     :param constituents: a dictionary keyed by well name and valued by
@@ -146,7 +117,7 @@ def group_by_pa_assay(constituents: Constituents):
     return wells_by_pa_assay
 
 
-def group_by_template_origin(constituents: Constituents):
+def group_by_template_origin(constituents: ConstituentsByWell):
     """
     Groups constituents by template origin.
     :param constituents: a dictionary keyed by well name and valued by
@@ -167,7 +138,7 @@ def group_by_template_origin(constituents: Constituents):
     return wells_by_template
 
 
-def calc_max_conc_mean_tm(constituents: Constituents,
+def calc_max_conc_mean_tm(constituents: ConstituentsByWell,
                           instrument_data: hwq.qPCRInstPlate) -> float:
     """
     Calculates the melting temperature ("tm") for the wells that have
@@ -187,22 +158,8 @@ def calc_max_conc_mean_tm(constituents: Constituents,
     return max_conc_mean_tm
 
 
-def calc_mean_ntc_ct(constituents: Constituents,
-                     raw_instrument_data: hwq.qPCRInstPlate) -> float:
-    """
-
-    :param constituents: a dictionary keyed by well name and valued by
-    instances of `IdConstituents`
-    :param raw_instrument_data: qPCR instrument data
-    :return:
-    """
-    ntc_wells = intc.get_ntc_wells(constituents)
-    qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
-    mean_ntc_ct = hwq.get_mean_ct(qpcr_datas)
-    return mean_ntc_ct
-
-
-def get_id_template_only_wells(constituents: Constituents) -> Constituents:
+def get_id_template_only_wells(constituents: ConstituentsByWell) \
+        -> ConstituentsByWell:
     """
     Gets a dictionary of those wells which only contain template introduced
     at the id stage.
@@ -220,7 +177,7 @@ def get_id_template_only_wells(constituents: Constituents) -> Constituents:
 
 
 def get_max_conc_template_from_id_wells(
-        id_template_only_wells: Constituents) -> Constituents:
+        id_template_only_wells: ConstituentsByWell) -> ConstituentsByWell:
     """
     Get from the id wells, those wells that have the highest template
     concentration.
