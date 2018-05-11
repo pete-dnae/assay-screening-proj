@@ -18,9 +18,9 @@ class BatchCreatorTest(unittest.TestCase):
     def test_add_some_reagents_with_no_duplicates_present(self):
         submitter = BatchReagentEntry()
         reagents = (
-            ('reagent_1', 'category_A'),
-            ('reagent_2', 'category_A'),
-            ('reagent_3', 'category_B'),
+            ('reagent_1', 'category_A','null'),
+            ('reagent_2', 'category_A','null'),
+            ('reagent_3', 'category_B','null'),
         )
         next_index = len(list(ReagentModel.objects.all()))
         submitter.load_db(reagents)

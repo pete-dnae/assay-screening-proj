@@ -1,0 +1,89 @@
+(Eco)-ATCC-BAA-2355,Strain,
+(Eco)-ATCC-BAA-9999,Strain,
+Titanium-Taq,mastermix,
+Titanium-PCR-Buffer,mastermix,
+KCl,mastermix,
+MgCl2,mastermix,
+KOH,mastermix,
+Triton,mastermix,
+SYBRgreen,mastermix,
+dNTPs,mastermix,
+BSA,mastermix,
+Ab_pgaD_2.x_Aba26_Aba28,assay,"{""amplicon_length"": 403}"
+Ea_hdc_1.x_Eae06_Eae01,assay,"{""amplicon_length"": 335}"
+Ecc_pyrH_1.x_Ecc36_Ecc42,assay,"{""amplicon_length"": 384}"
+Ec_uidA_6.x_Eco63_Eco60,assay,"{""amplicon_length"": 421}"
+Ko_pehX_1.x_Kox05_Kox02,assay,"{""amplicon_length"": 378}"
+Kp_khe_2.x_Kpn13_Kpn01,assay,"{""amplicon_length"": 419}"
+Pa_algD_4.x_Pae38_Pae54,assay,"{""amplicon_length"": 321}"
+Efs_cpn60_1.x_Efs04_Efs01,assay,"{""amplicon_length"": 411}"
+Efm_ddl_5.x_Efm01_Efm18,assay,"{""amplicon_length"": 414}"
+Sa_nuc_2.x_Sau01_Sau07,assay,"{""amplicon_length"": 481}"
+Ca_rpb7_2.x_Cal05_Cal01,assay,"{""amplicon_length"": 306}"
+Ct_cdr4_10.x_Ctr52_Ctr01,assay,"{""amplicon_length"": 310}"
+Cg_rps0_1.x_Cgl02_Cgl06,assay,"{""amplicon_length"": 309}"
+Ck_PDC6_3.x_Ckr52_Ckr56,assay,"{""amplicon_length"": 399}"
+Sa_mecA_1.x_mec44_mec13,assay,"{""amplicon_length"": 331}"
+Sa_mecC_3.x_mec51_mec53,assay,"{""amplicon_length"": 304}"
+Efm_vanA_1.x_van05_van01,assay,"{""amplicon_length"": 313}"
+Efs_vanB_1.x_van10_van06,assay,"{""amplicon_length"": 352}"
+Kp_KPC_1.x_KPC10_KPC03,assay,"{""amplicon_length"": 325}"
+Spo_gp_1.x_Spo09_Spo13,assay,"{""amplicon_length"": 400}"
+Ab_pgaD_x.10_Aba38_Aba42,assay,"{""amplicon_length"": 225}"
+Ea_hdc_x.1_Eae03_Eae02,assay,"{""amplicon_length"": 206}"
+Ecc_pyrH_x.1_Ecc37_Ecc41,assay,"{""amplicon_length"": 224}"
+Ec_uidA_x.2_Eco64_Eco66,assay,"{""amplicon_length"": 240}"
+Ko_pehX_x.1_Kox04_Kox03,assay,"{""amplicon_length"": 206}"
+Kp_khe_x.1_Kpn03_Kpn02,assay,"{""amplicon_length"": 207}"
+Pa_algD_x.9_Pae58_Pae41,assay,"{""amplicon_length"": 212}"
+Efs_cpn60_x.1_Efs03_Efs02,assay,"{""amplicon_length"": 215}"
+Efm_ddl_x.3_Efm20_Efm23,assay,"{""amplicon_length"": 166}"
+Sa_nuc_x.1_Sau04_Sau06,assay,"{""amplicon_length"": 220}"
+Ca_rpb7_x.1_Cal04_Cal03,assay,"{""amplicon_length"": 215}"
+Ct_cdr4_x.5_Ctr53_Ctr04,assay,"{""amplicon_length"": 176}"
+Cg_rps0_x.1_Cgl03_Cgl04,assay,"{""amplicon_length"": 217}"
+Ck_PDC6_x.3_Ckr53_Ckr55,assay,"{""amplicon_length"": 237}"
+Sa_mecA_x.1_mec23_mec16,assay,"{""amplicon_length"": 215}"
+Sa_mecC_x.1_mec50_mec48,assay,"{""amplicon_length"": 220}"
+Efm_vanA_x.1_van04_van02,assay,"{""amplicon_length"": 219}"
+Efs_vanB_x.3_van30_van33,assay,"{""amplicon_length"": 177}"
+Kp_KPC_x.7_KPC09_KPC17,assay,"{""amplicon_length"": 216}"
+Spo_gp_x.1_Spo03_Spo05,assay,"{""amplicon_length"": 207}"
+A.baumannii_1605,template,
+C.albicans_10231,template,
+C.glabrata_15545,template,
+C.krusei_3953,template,
+C.parapsilosis_22019,template,
+C.tropicalis_750,template,
+E.aerogenes_15038,template,
+E.cloacae_13047,template,
+E.faecalis-vanB_700802,template,
+E.faecium-vanA_700221,template,
+E.coli-CTXM9_2355,template,
+E.coli-CTXM15_13353,template,
+K.oxytoca_700324,template,
+K.pneumoniae-KPC_1705,template,
+K.pneumoniae-NDM_2146,template,
+K.pneumoniae-VIM1_13440,template,
+P.mirabilis_12453,template,
+P.aeruginosa_47085,template,
+S.pombe_26189,template,
+S.marcescens_27137,template,
+S.aureus-mecA_1717,template,
+S.aureus-mecC_13552,template,
+S.epidermidis_35984,template,
+S.haemolyticus_29970,template,
+S.mitis_49456,template,
+S.pneumoniae_255,template,
+S.pyogenes_700294,template,
+S.aureus-mecC_2312,template,
+E.faecium-vanA_2317,template,
+E.faecium-vanB_51858,template,
+E.faecalis-vanB_2573,template,
+Kp_KPC_x.9_KPC26_KPC28,assay,"{""amplicon_length"": 172}"
+Kp_KPC_x.10_KPC26_KPC29,assay,"{""amplicon_length"": 199}"
+Kp_KPC_3.x_KPC19_KPC22,assay,"{""amplicon_length"": 343}"
+Kp_KPC_4.x_KPC19_KPC23,assay,"{""amplicon_length"": 352}"
+Kp_KPC_5.x_KPC19_KPC24,assay,"{""amplicon_length"": 396}"
+Kp_KPC_6.x_KPC20_KPC22,assay,"{""amplicon_length"": 332}"
+HgDNA_Promega287320,human,
