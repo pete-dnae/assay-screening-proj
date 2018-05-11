@@ -3,8 +3,7 @@ import os.path as op
 import unittest
 import numpy as np
 
-
-from clients.expt_recipes.well_constituents import WellConstituents
+from clients.expt_recipes.common.models import WellConstituents
 from hardware.qpcr import QpcrDataFile, get_ct, get_tms, calc_tm_deltas, \
     get_mean_ct, calc_mean_tm
 

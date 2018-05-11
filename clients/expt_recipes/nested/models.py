@@ -7,7 +7,8 @@ experiments.
 
 from typing import List, Dict
 
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData
+from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
+    WellConstituents
 from hardware.plates import ExptPlates, WellName
 
 from collections import OrderedDict
@@ -15,8 +16,6 @@ from collections import OrderedDict
 from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
 from clients.transfers import get_transferred_assays, \
     get_transferred_templates, get_transferred_humans
-
-from clients.expt_recipes.well_constituents import WellConstituents
 
 
 class IdConstituents(WellConstituents):
@@ -44,17 +43,8 @@ class IdConstituents(WellConstituents):
 
         return inst
 
-    def get_id_assay_attribute(self, attribute):
-        return self._get_item_attribute('assays', attribute)
-
     def get_pa_assay_attribute(self, attribute):
         return self._get_item_attribute('transferred_assays', attribute)
-
-    def get_id_template_attribute(self, attribute):
-        return self._get_item_attribute('templates', attribute)
-
-    def get_id_human_attribute(self, attribute):
-        return self._get_item_attribute('human', attribute)
 
     def get_pa_template_attribute(self, attribute):
         return self._get_item_attribute('transferred_templates', attribute)

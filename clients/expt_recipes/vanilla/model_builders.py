@@ -1,6 +1,7 @@
 
 from typing import Dict
 
+from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
 from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
     LabChipDatas, qPCRDatas
 import clients.expt_recipes.interp.constituents as intc
@@ -36,6 +37,8 @@ def build_id_qpcr_datas_from_inst_data(
         max_conc_mean_tm = \
             calc_max_conc_mean_tm(id_constits, instrument_data)
         mean_ntc_ct = calc_mean_ntc_ct(id_constits, instrument_data)
+        #if id_assay == 'Kp_KPC_5.x_KPC19_KPC24':
+        import pdb; pdb.set_trace()
         for w, nic in id_constits.items():
             well_data = instrument_data[w]
             id_qpcr_datas[w] = \
@@ -125,21 +128,6 @@ def calc_max_conc_mean_tm(constituents: Constituents,
     qpcr_datas = [instrument_data[w] for w in max_conc_wells]
     max_conc_mean_tm = hwq.calc_mean_tm(qpcr_datas)
     return max_conc_mean_tm
-
-
-def calc_mean_ntc_ct(constituents: Constituents,
-                     raw_instrument_data: hwq.qPCRInstPlate) -> float:
-    """
-
-    :param constituents: a dictionary keyed by well name and valued by
-    instances of `IdConstituents`
-    :param raw_instrument_data: qPCR instrument data
-    :return:
-    """
-    ntc_wells = intc.get_ntc_wells(constituents)
-    qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
-    mean_ntc_ct = hwq.get_mean_ct(qpcr_datas)
-    return mean_ntc_ct
 
 
 def get_max_conc_template_from_id_wells(

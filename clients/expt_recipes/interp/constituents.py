@@ -1,7 +1,7 @@
 
 from typing import Dict
 
-from clients.expt_recipes.well_constituents import WellConstituents
+from clients.expt_recipes.common.models import WellConstituents
 
 
 def is_ntc(wc: WellConstituents) -> bool:

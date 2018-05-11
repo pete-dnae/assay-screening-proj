@@ -1,9 +1,9 @@
 from typing import Dict
 
-from clients.expt_recipes.common.models import LabChipDatas, LabChipData
-from clients.expt_recipes.nested.model_builders import Constituents
-from clients.expt_recipes.well_constituents import WellConstituents
-from hardware import labchip as hwlc
+from clients.expt_recipes.common.models import LabChipDatas, LabChipData, \
+    WellConstituents, ConstituentsByWell
+from clients.expt_recipes.interp import constituents as intc
+from hardware import labchip as hwlc, qpcr as hwq
 from hardware.plates import Plate, ExptPlates
 
 
@@ -18,6 +18,9 @@ def build_id_qpcr_constituents(
     instances of List[ObjReagent]
     :param expt_plates: an instance of ExptPlates for this particular
     experiment
+    :param constituent_template: The constituent template for the given well
+    for a given experiment. For example a vanilla or nested constituents
+    template.
     :return:
     """
     id_qpcr_constituents = {}
@@ -28,7 +31,7 @@ def build_id_qpcr_constituents(
 
 
 def build_labchip_datas_from_inst_data(
-        id_qpcr_constituents: Constituents,
+        id_qpcr_constituents: ConstituentsByWell,
         lc_plate: hwlc.LabChipInstPlate,
         mapping: Dict[str, str],
         assays: Dict[str, int],
@@ -55,3 +58,18 @@ def build_labchip_datas_from_inst_data(
                                               [assays[a] for a in ass],
                                               dilutions[lcw])
     return lc_datas
+
+
+def calc_mean_ntc_ct(constituents: ConstituentsByWell,
+                     raw_instrument_data: hwq.qPCRInstPlate) -> float:
+    """
+
+    :param constituents: a dictionary keyed by well name and valued by
+    instances of `IdConstituents`
+    :param raw_instrument_data: qPCR instrument data
+    :return:
+    """
+    ntc_wells = intc.get_ntc_wells(constituents)
+    qpcr_datas = [raw_instrument_data[w] for w in ntc_wells]
+    mean_ntc_ct = hwq.get_mean_ct(qpcr_datas)
+    return mean_ntc_ct

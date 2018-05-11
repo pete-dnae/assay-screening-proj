@@ -1,14 +1,13 @@
 
 from typing import List
 
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData
+from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
+    WellConstituents
 from hardware.plates import ExptPlates, WellName
 
 from collections import OrderedDict
 
 from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
-
-from clients.expt_recipes.well_constituents import WellConstituents
 
 
 class IdConstituents(WellConstituents):
