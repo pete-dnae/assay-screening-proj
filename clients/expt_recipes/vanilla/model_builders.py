@@ -2,19 +2,17 @@
 from typing import Dict
 
 from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
-    LabChipDatas, qPCRDatas
+from clients.expt_recipes.common.models import IdQpcrData, qPCRDatas
 from clients.expt_recipes.vanilla.models import IdConstituents
 from hardware.plates import WellName
 from clients.expt_recipes.interp import qpcr as intq
 import hardware.qpcr as hwq
-import hardware.labchip as hwlc
 
-Constituents = Dict[WellName, IdConstituents]
+ConstituentsByWell = Dict[WellName, IdConstituents]
 
 
 def build_id_qpcr_datas_from_inst_data(
-        id_qpcr_constituents: Constituents,
+        id_qpcr_constituents: ConstituentsByWell,
         instrument_data: hwq.qPCRInstPlate) -> qPCRDatas:
     """
     Creates a dictionary keyed by well names and valued by instances of
@@ -47,7 +45,7 @@ def build_id_qpcr_datas_from_inst_data(
     return id_qpcr_datas
 
 
-def get_wells_by_id_assay(id_qpcr_constituents: Constituents):
+def get_wells_by_id_assay(id_qpcr_constituents: ConstituentsByWell):
     """
     Creates a dictionary keyed by id assay and valued by associated well names.
     :param id_qpcr_constituents: a dictionary keyed by well name and valued by
@@ -77,7 +75,7 @@ def create_vanilla_groupings(id_qpcr_constituents):
     return groups
 
 
-def group_by_id_assay(constituents: Constituents):
+def group_by_id_assay(constituents: ConstituentsByWell):
     """
     Groups constituents by id assay.
     :param constituents: a dictionary keyed by well name and valued by
@@ -92,7 +90,7 @@ def group_by_id_assay(constituents: Constituents):
     return wells_by_id_assay
 
 
-def group_by_template_origin(constituents: Constituents):
+def group_by_template_origin(constituents: ConstituentsByWell):
     """
     Groups constituents by template origin.
     :param constituents: a dictionary keyed by well name and valued by
@@ -110,7 +108,7 @@ def group_by_template_origin(constituents: Constituents):
     return wells_by_template
 
 
-def calc_max_conc_mean_tm(constituents: Constituents,
+def calc_max_conc_mean_tm(constituents: ConstituentsByWell,
                           instrument_data: hwq.qPCRInstPlate) -> float:
     """
     Calculates the melting temperature ("tm") for the wells that have
@@ -130,7 +128,7 @@ def calc_max_conc_mean_tm(constituents: Constituents,
 
 
 def get_max_conc_template_from_id_wells(
-        constituents: Constituents) -> Constituents:
+        constituents: ConstituentsByWell) -> ConstituentsByWell:
     """
     Get from the id wells, those wells that have the highest template
     concentration.
