@@ -1,9 +1,23 @@
 
 from typing import List
+from numpy import isnan
 
 SPECIFIC_PRODUCT = '_spec'
 NON_SPECIFIC_PRODUCT = '_non_spec'
 PRIMER_DIMER = '_primer_dimer'
+
+
+def default_ct_if_nan(ct: float, default: float=40):
+    """
+    Converts a unknown (i.e. nan) ct value to an appropriate default.
+    :param ct: ct value to inspect
+    :param default: default value to replace a nan
+    :return:
+    """
+    if isnan(ct):
+        return default
+    else:
+        return ct
 
 
 def calc_delta_ct(ct: float, ntc_ct: float) -> float:
@@ -17,7 +31,7 @@ def calc_delta_ct(ct: float, ntc_ct: float) -> float:
     return delta_ct
 
 
-def get_ct_call(delta_ct: float, ntc_ct_threshold: float=1/3) -> str:
+def get_ct_call(delta_ct: float, ntc_ct_threshold: float=1/3) -> bool:
     """
     Get ct call given a delta ct and a relative ntc threshold ct value.
     :param delta_ct: a delta ct value
@@ -25,9 +39,9 @@ def get_ct_call(delta_ct: float, ntc_ct_threshold: float=1/3) -> str:
     :return:
     """
     if delta_ct > ntc_ct_threshold:
-        return 'POS'
+        return True
     else:
-        return 'NEG'
+        return False
 
 
 def is_specific(tm: float, max_conc_mean_tm: float,

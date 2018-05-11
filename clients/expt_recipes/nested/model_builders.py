@@ -3,6 +3,7 @@ from typing import Dict
 from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
 from clients.expt_recipes.common.models import WellName, IdQpcrData, qPCRDatas
 from clients.expt_recipes.nested.models import IdConstituents
+from clients.expt_recipes.interp import qpcr as intq
 import hardware.qpcr as hwq
 
 ConstituentsByWell = Dict[WellName, IdConstituents]
@@ -34,6 +35,7 @@ def build_id_qpcr_datas_from_inst_data(
         pa_grouped = group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pa_grouped.items():
             mean_ntc_ct = calc_mean_ntc_ct(pa_constits, instrument_data)
+            mean_ntc_ct = intq.default_ct_if_nan(mean_ntc_ct)
             for w, nic in pa_constits.items():
                 well_data = instrument_data[w]
                 id_qpcr_datas[w] = \

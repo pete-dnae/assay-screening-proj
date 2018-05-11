@@ -6,12 +6,11 @@ experiments.
 
 
 from typing import List, Dict
+from collections import OrderedDict
 
 from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
     WellConstituents
 from hardware.plates import ExptPlates, WellName
-
-from collections import OrderedDict
 
 from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
 from clients.transfers import get_transferred_assays, \
