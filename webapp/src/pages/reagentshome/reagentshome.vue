@@ -30,7 +30,7 @@
                                     <div class="col-4">
                                         <select v-model="searchField" class="btn btn-primary" >
                                             <option value="null">Please select a Search Criteria</option>
-                                            <option v-for="key in Object.keys(reagents[0])" v-bind:key="key">{{key}}</option>                    
+                                            <option v-for="(key,value) in tableHeaders" v-bind:key="key" :value="value">{{key}}</option>                    
                                         </select>
                                     </div>
                                     <div class="col-4">
@@ -46,7 +46,7 @@
                                             <td v-for="(property,index) in reagent" v-bind:key="index">                                                
                                                 <ul v-if="index==='opaque_json_payload'" style="padding:0;list-style-type: none">                                                    
                                                     <li v-for="item in  stringToList(property)" v-bind:key="item.key">
-                                                        {{item.key}}-{{item.value}}
+                                                        {{item.key}} {{item.value}}
                                                         
                                                     </li>
                                                 </ul>

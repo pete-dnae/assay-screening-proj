@@ -59,7 +59,7 @@ class ReagentSerializer(serializers.ModelSerializer):
             except ValueError:
                 raise serializers.ValidationError('Opaque payload is not a '
                                                   'valid json')
-
+        return opaque_json_payload
 
 
 

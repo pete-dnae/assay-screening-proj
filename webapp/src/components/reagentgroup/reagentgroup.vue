@@ -2,7 +2,7 @@
 <div>
   <div class="card">
                 <div class="card-body">        
-                    <h5 class="card-title">Pools</h5>            
+                    <h5 class="card-title">Reagent Groups</h5>            
                     <div class="d-flex justify-content-start  bg-dark">
                         <div class="form-inline my-2 my-lg-0">                   
                             <typeahead 
