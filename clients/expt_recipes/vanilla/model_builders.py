@@ -4,9 +4,9 @@ from typing import Dict
 from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
 from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
     LabChipDatas, qPCRDatas
-import clients.expt_recipes.interp.constituents as intc
 from clients.expt_recipes.vanilla.models import IdConstituents
 from hardware.plates import WellName
+from clients.expt_recipes.interp import qpcr as intq
 import hardware.qpcr as hwq
 import hardware.labchip as hwlc
 
@@ -37,8 +37,7 @@ def build_id_qpcr_datas_from_inst_data(
         max_conc_mean_tm = \
             calc_max_conc_mean_tm(id_constits, instrument_data)
         mean_ntc_ct = calc_mean_ntc_ct(id_constits, instrument_data)
-        #if id_assay == 'Kp_KPC_5.x_KPC19_KPC24':
-        import pdb; pdb.set_trace()
+        mean_ntc_ct = intq.default_ct_if_nan(mean_ntc_ct)
         for w, nic in id_constits.items():
             well_data = instrument_data[w]
             id_qpcr_datas[w] = \
