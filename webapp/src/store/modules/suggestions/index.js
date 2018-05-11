@@ -8,7 +8,7 @@ import { findSuggestions } from "@/models/editor2.0.js";
 export const state = {
   shortlistedSuggestions: [],
   avaliableSuggestions: {
-    data: null,
+    data: { reagents_and_groups: null, units: null },
     isFetching: false,
     fetched: false,
     didInvalidate: false
@@ -83,7 +83,7 @@ const mutations = {
 const getters = {
   getSuggestions(state, getters, rootState) {
     return state.shortlistedSuggestions;
-  }
+  },
 };
 
 export default {

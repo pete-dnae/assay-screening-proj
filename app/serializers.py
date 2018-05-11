@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from pdb import set_trace as st
 
@@ -47,7 +48,20 @@ class ReagentSerializer(serializers.ModelSerializer):
         fields = (
            'name',
            'category',
+            'opaque_json_payload'
         )
+
+    def validate_opaque_json_payload(self, opaque_json_payload):
+        # opaque payload should be json.
+        if opaque_json_payload:
+            try:
+                json_object = json.loads(opaque_json_payload)
+            except ValueError:
+                raise serializers.ValidationError('Opaque payload is not a '
+                                                  'valid json')
+        return opaque_json_payload
+
+
 
 class ReagentGroupSerializer(serializers.ModelSerializer):
 

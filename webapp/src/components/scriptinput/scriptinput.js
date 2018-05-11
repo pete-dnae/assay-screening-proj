@@ -2,9 +2,8 @@ import Quill from 'quill';
 // require styles
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
-import _ from 'lodash';
 import { modal, tooltip } from 'vue-strap';
-import { formatText, makeSVG } from '@/models/visualizer';
+import { formatText } from '@/models/visualizer';
 import hovervisualizer from '@/components/hovervisualizer/hovervisualizer.vue';
 import { mapGetters, mapActions } from 'vuex';
 import wellcontents from '@/components/wellcontents/wellcontents.vue';
@@ -13,8 +12,6 @@ import errorPane from '@/components/scripterrorpane/scripterrorpane';
 import suggestionsList from '@/components/suggestionslist/suggestionslist.vue';
 import suggestionToolTip from '@/components/suggestionstooltip/suggestionstooltip.vue';
 import pictures from '@/components/pictures/pictures.vue';
-// import { validateText } from '@/models/editor';
-import * as api from '@/models/api';
 import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
 
 export default {
@@ -42,8 +39,6 @@ export default {
     ...mapGetters({
       options: 'getQuillOptions',
       error: 'getError',
-      reagents: 'getReagents',
-      units: 'getUnits',
       showBlur: 'getBlurFlag',
       plateBoundaries: 'getPlateBoundaries',
       experimentImages: 'getExperimentImages',

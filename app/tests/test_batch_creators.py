@@ -16,9 +16,9 @@ class BatchCreatorTest(unittest.TestCase):
     def test_add_some_reagents(self):
         submitter = BatchReagentEntry()
         reagents = (
-            ('reagent_1', 'category_A'),
-            ('reagent_2', 'category_A'),
-            ('reagent_3', 'category_B'),
+            ('reagent_1', 'category_A','null'),
+            ('reagent_2', 'category_A','null'),
+            ('reagent_3', 'category_B','null'),
         )
         submitter.load_db(reagents)
         sample_reagent = ReagentModel.objects.get(name='reagent_2')

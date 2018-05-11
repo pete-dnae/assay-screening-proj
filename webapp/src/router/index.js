@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import experimenthome from '@/pages/experimenthome/experimenthome.vue';
-import reagents from '@/pages/reagents';
+import reagents from '@/pages/reagentshome/reagentshome.vue';
 
 Vue.use(Router);
 
@@ -13,12 +13,7 @@ export default new Router({
       redirect: '/experiment',
     },
     {
-      path: '/reagents',
-      name: 'reagentHome',
-      component: reagents,
-    },
-    {
-      path: '/pools',
+      path: '/maintenance',
       name: 'reagentHome',
       component: reagents,
     },
