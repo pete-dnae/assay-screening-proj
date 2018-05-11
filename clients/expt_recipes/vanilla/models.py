@@ -1,5 +1,5 @@
 
-from typing import List
+from typing import List, Dict
 
 from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
     WellConstituents
@@ -93,4 +93,37 @@ class VanillaTableRow(OrderedDict):
         for k, v in lc_data.items():
             inst[k] = v
 
+        return inst
+
+
+class VanillaMasterTable:
+
+    def __init__(self):
+
+        self.rows = []
+
+    @classmethod
+    def create_from_models(
+            cls,
+            qpcr_wells: List[WellName],
+            qpcr_plate: str,
+            lc_wells: List[WellName],
+            lc_plate: str,
+            id_constits: Dict[WellName, IdConstituents],
+            id_qpcr_datas: IdQpcrData,
+            lc_datas: LabChipData):
+
+        rows = []
+        for qw, lw in zip(qpcr_wells, lc_wells):
+            qwell = '{}_{}'.format(qpcr_plate, qw)
+            lcwell = '{}_{}'.format(lc_plate, lw)
+            constits = id_constits[qw]
+            id_qpcr_data = id_qpcr_datas[qw]
+            lc_data = lc_datas[qw]
+            r = VanillaTableRow.create_from_models(qwell, lcwell, constits,
+                                                   id_qpcr_data, lc_data)
+            rows.append(r)
+
+        inst = cls()
+        inst.rows = rows
         return inst
