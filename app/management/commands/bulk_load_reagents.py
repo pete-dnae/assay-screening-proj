@@ -1,5 +1,5 @@
 import re
-
+import json
 from app.model_builders.batch_reagent_entry import BatchReagentEntry
 
 """
@@ -43,10 +43,16 @@ class Loader():
             if len(line) == 0:
                 continue
             fields = line.split(',')
-            cls._assert_two_fields(fields, line, lnum)
+            cls._assert_three_fields(fields, line, lnum)
             fields = [f.strip() for f in fields]
-            for field in fields:
+            for index,field in enumerate(fields):
                 cls._assert_no_spaces(field, line, lnum)
+                if index == 2:
+                    if field !='null':
+                        fields[2] = json.dumps({'amplicon_length':field})
+                    else:
+                        fields[2] = None
+
             rows.append(fields) # reagent, category
             
         # Use loader to load.
@@ -54,11 +60,11 @@ class Loader():
         loader.load_db(rows)
 
     @classmethod
-    def _assert_two_fields(cls, fields, line, lnum):
-        if len(fields) == 2:
+    def _assert_three_fields(cls, fields, line, lnum):
+        if len(fields) == 3:
             return
         raise RuntimeError(
-            'Line <%d> (%s), does not have 2 fields.' % (lnum, line))
+            'Line <%d> (%s), does not have 3 fields.' % (lnum, line))
 
     @classmethod
     def _assert_no_spaces(cls, field, line, lnum):

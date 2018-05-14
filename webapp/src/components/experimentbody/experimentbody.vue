@@ -1,6 +1,5 @@
 <template>
-  <div class="m-2">
-    <!-- <languageSpec></languageSpec> -->
+  <div class="m-2">    
     <scriptinput></scriptinput>
   </div>
 </template>

@@ -6,7 +6,7 @@ class ReagentCategoryModel(models.Model):
     A reagent must belong to a category (like Primer or hDNA). This table
     defines what categories are available.
     """
-    name = models.CharField(max_length=40, unique=True) 
+    name = models.CharField(max_length=40, unique=True,primary_key=True)
 
     @classmethod
     def make(cls, name):

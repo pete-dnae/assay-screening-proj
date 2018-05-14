@@ -1,10 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.db import transaction
 from .serializers import *
 from .view_helpers import ViewHelpers
-
+from rest_framework import status
+from rest_framework.exceptions import ValidationError, ParseError
+from django.db.models.deletion import ProtectedError
 
 class ExperimentViewSet(viewsets.ModelViewSet):
 
@@ -38,6 +40,21 @@ class ReagentViewSet(viewsets.ModelViewSet):
             return matching
         return ReagentModel.objects.all()
 
+    def destroy(self, request, *args, **kwargs):
+        """
+        Overridden to handle issues with foreign key constraints
+        """
+
+        try:
+            pk = kwargs['pk']
+            ReagentModel.objects.filter(pk=pk).delete()
+        except ProtectedError:
+            raise ValidationError('The Reagent is a part of reagent group '
+                                  'hence it cannot be deleted')
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class UnitViewSet(viewsets.ModelViewSet):
     queryset = UnitsModel.objects.all()
     serializer_class = UnitsSerializer
@@ -53,6 +70,7 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
     queryset = ReagentGroupModel.objects.all()
     serializer_class = ReagentGroupSerializer
 
+
     def get_queryset(self):
         """
         Overridden to provide the search functionality.
@@ -63,6 +81,36 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
                 (group_name=name_to_search_for)
             return matching
         return ReagentGroupModel.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        create a list of reagent group instances if a list is provided or a
+        single instance otherwise
+
+        deletes existing instances under the same reagent group name
+        """
+
+        data = request.data
+        if isinstance(data,list):
+            if len(data)>0:
+                serializer = self.get_serializer(data=request.data, many=True)
+                serializer.is_valid(raise_exception=True)
+                group_name = data[0]['group_name']
+            else:
+                raise ValidationError('Invalid request;Please check if '
+                                      'reaquest data list has at least one '
+                                      'element in it')
+        else:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            group_name = data['group_name']
+
+        with transaction.atomic():
+            ReagentGroupModel.objects.filter(group_name=group_name).delete()
+            self.perform_create(serializer)
+
+        return Response(serializer.data)
+
 
 #-------------------------------------------------------------------------
 # Some convenience (non-model) views.
@@ -85,12 +133,25 @@ class ExperimentImagesView(APIView):
         return Response(results)
 
 class ReagentGroupListView(APIView):
-    """
-    Returns list of unique reagent group names in db
-    """
+
 
     def get(self,request):
-        return Response(Response(ViewHelpers.group_names()))
+        # Returns list of unique reagent group names in db
+        return Response(ViewHelpers.group_names())
+
+    def delete(self, request):
+        # Its easier to implement this explicitly rather than trying to use
+        # the serializer , because serializer demands all the fields whereas
+        # we only need group name
+        try:
+            group_name = request.data['group_name']
+            with transaction.atomic():
+                #TODO raise an exception when group name does not exists
+                ReagentGroupModel.objects.filter(group_name=group_name).delete()
+        except :
+            raise ValidationError('Invalid request;Please mention a group name')
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class AvailableReagentsCategoryView(APIView):
     """
@@ -100,3 +161,4 @@ class AvailableReagentsCategoryView(APIView):
 
     def get(self,request):
         return Response(ViewHelpers.available_reagents_category())
+

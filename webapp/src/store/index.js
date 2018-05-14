@@ -5,6 +5,8 @@ import ui from './modules/ui/index';
 import scriptparser from './modules/scriptparser/index';
 import suggestions from './modules/suggestions/index';
 import pictures from './modules/pictures/index';
+import reagentgroups from './modules/reagentgroups/index';
+import reagents from './modules/reagents/index';
 
 Vue.use(Vuex);
 
@@ -17,5 +19,7 @@ export default new Vuex.Store({
     scriptparser,
     suggestions,
     pictures,
+    reagentgroups,
+    reagents,
   },
 });

@@ -18,22 +18,16 @@
         </div>
         <div class="d-flex flex-row-reverse">
           <ul class="nav nav-pills nav-fill">
-            <tooltip effect="scale" placement="bottom" content="Not sure what to say">
+            <tooltip effect="scale" placement="bottom" content="Create and edit experiments">
             <li class="nav-item">
               <a class="nav-link active" href="#/">Experiment</a>
             </li>
             </tooltip>
-            <tooltip effect="scale" placement="bottom" content="Coming soon">
+            <tooltip effect="scale" placement="bottom" content="Edit database entities here">
             <li class="nav-item">
-              <a class="nav-link" href="#/pools">Pools</a>
+              <a class="nav-link" href="#/maintenance">Maintenance</a>
             </li>
-            </tooltip>
-            <tooltip effect="scale" placement="bottom" content="Coming soon">
-            <li class="nav-item">
-              <a class="nav-link" href="#/reagents">Reagents</a>
-            </li>
-            </tooltip>
-       
+            </tooltip>      
           </ul>
         </div>
     </div>
