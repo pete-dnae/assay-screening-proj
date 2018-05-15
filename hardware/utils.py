@@ -1,6 +1,7 @@
 from re import search
+from typing import NewType
 
-from clients.expt_recipes.interp.plates import WellName
+WellName = NewType('WellName', str)
 
 
 def sanitize_well_name(well_name: str) -> WellName:
