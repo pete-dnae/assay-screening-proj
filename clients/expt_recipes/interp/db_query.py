@@ -3,7 +3,6 @@ from clients.utils import get_object
 import json
 
 from typing import List, Dict, Tuple, Any
-
 from hardware.plates import row_col_to_well, ExptPlates
 
 DbReagent = List[str]
@@ -161,7 +160,13 @@ def get_humans(reagents: List[ObjReagent]) -> List[ObjReagent]:
     humans = [r for r in reagents if 'human' in r['reagent_category']]
     return humans
 
+
 def get_assay_amplicon_length(assay_name: str):
+    """
+    Gets the amplicon length value for a given assay.
+    :param assay_name: asssay name
+    :return:
+    """
     payload = get_single_reagent_opaque_payload(assay_name)
     return payload['amplicon_length']
 
