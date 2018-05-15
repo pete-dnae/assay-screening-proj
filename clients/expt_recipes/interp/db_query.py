@@ -2,11 +2,61 @@
 from clients.utils import get_object
 import json
 
-from typing import List, Dict, Tuple, Any
-from hardware.plates import row_col_to_well, ExptPlates
+from typing import List, Dict, Tuple, Any, Union, NewType
 
 DbReagent = List[str]
 ObjReagent = Dict[str, str]
+
+WellName = NewType('WellName', str)
+PlateName = NewType('PlateName', str)
+Plate = Dict[WellName, List[ObjReagent]]
+ExptPlates = Dict[PlateName, Plate]
+
+
+def row_idx_to_plate_alpha(ridx: Union[str, int]) -> str:
+    """
+    Converts a numerical row index to an alpha value.
+    :param ridx: row index to convert to alpha
+    :return:
+    """
+    return chr(int(ridx)+64)
+
+
+def row_col_to_well(ridx: Union[str, int], cidx: Union[str, int]) -> WellName:
+    """
+    Converts row and column indices to standard well names i.e. a single
+    alpha followed by two numerals.
+    :param ridx: row index to convert to alpha
+    :param cidx: col index to convert to standard double numeral
+    :return:
+    """
+    well_name = '{}{:0>2}'.format(row_idx_to_plate_alpha(ridx), cidx)
+    return well_name
+
+
+def create_plates_from_allocation_table(allocation_table) -> ExptPlates:
+    """
+    Creates a nested dictionary, indexed by plates and then wells. The values
+    are instances of `ObjReagent`.
+    :param allocation_table: the python object returned from calling
+    `create_allocation_table`
+    :return:
+    """
+    plates = {}
+    reagent_cache = {}
+
+    for pid, plate in allocation_table.items():
+        plates[pid] = {}
+        for cidx in plate:
+            for ridx in plate[cidx]:
+                w = row_col_to_well(ridx, cidx)
+                reagents = []
+                for r in plate[cidx][ridx]:
+                    reagents.append(
+                        cached_db_reagent_2_obj_reagent(r, reagent_cache))
+                plates[pid][w] = reagents
+
+    return plates
 
 
 def db_reagent_2_obj_reagent(db_reagent: DbReagent) -> ObjReagent:
