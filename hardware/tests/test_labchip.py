@@ -1,7 +1,6 @@
 
 import unittest
 import os
-import numpy as np
 
 from hardware.labchip import LabChip, extract_bp_conc_pairs
 
@@ -12,7 +11,6 @@ class TestLabChip(unittest.TestCase):
     PEAK = '2018-01-03_11-08-50_A81_20180103_A_PeakTable.csv'
     RAW = '2018-01-03_11-08-50_A81_20180103_A_RawTable.csv'
     WELL = '2018-01-03_11-08-50_A81_20180103_A_WellTable.csv'
-
 
     @classmethod
     def setUpClass(cls):
