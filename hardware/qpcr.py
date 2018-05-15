@@ -331,3 +331,37 @@ def calc_mean_tm(qpcr_datas: List[qPCRInstWell],
     """
     mean_tm = np.mean([get_tm(qpcr, tm) for qpcr in qpcr_datas])
     return mean_tm
+
+
+def get_amplification_data(qpcr_datas: qPCRInstWell)->Dict:
+    """
+    Gets the amplification cycle and amplification delta_rn value arrays from a
+    dictionary of WellConstituents
+    """
+    amplification_cycle = qPCRInstWell['results']['amplification_data']['cycle']
+    amplification_delta_rn = qPCRInstWell['results']['amplification_data'][
+        'delta_rn']
+    
+    return {'amplification_cycle':amplification_cycle,'amplification_delta_rn':
+        amplification_delta_rn}
+
+
+def get_melt_data(qpcr_datas: qPCRInstWell)->Dict:
+    """
+        Gets the melt temperature and derivative value arrays from a
+        dictionary of WellConstituents
+    """
+
+    if 'melt_curve_raw_data' in qPCRInstWell['results']:
+        melt_temperature = qPCRInstWell['results']['melt_curve_raw_data'][
+            'temperature']
+        melt_derivative = qPCRInstWell['results']['melt_curve_raw_data'][
+            'derivative']
+    else:
+        melt_temperature = qPCRInstWell['results']['melt_region_temperature_' \
+                                                   'data']['value']
+        melt_derivative = qPCRInstWell['results']['melt_region_derivative_' \
+                                                   'data']['value']
+
+    return {'melt_temperature':melt_temperature,
+            'melt_derivative':melt_derivative}
