@@ -31,9 +31,8 @@ urlpatterns = [
     re_path(r'^api/reagent-groups/list',ReagentGroupListView.as_view()),
     re_path(r'api/available-reagents-category$',
             AvailableReagentsCategoryView.as_view()),
-
+    re_path(r'api/experiment-results$',FileUploadView.as_view()),
 ]
-
 # Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()
 

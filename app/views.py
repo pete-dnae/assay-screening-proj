@@ -7,7 +7,7 @@ from .view_helpers import ViewHelpers
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, ParseError
 from django.db.models.deletion import ProtectedError
-
+from app.model_builders.experiment_results_entry import ExperimentResultsEntry
 class ExperimentViewSet(viewsets.ModelViewSet):
 
     queryset = ExperimentModel.objects.all()
@@ -146,7 +146,6 @@ class ReagentGroupListView(APIView):
         try:
             group_name = request.data['group_name']
             with transaction.atomic():
-                #TODO raise an exception when group name does not exists
                 ReagentGroupModel.objects.filter(group_name=group_name).delete()
         except :
             raise ValidationError('Invalid request;Please mention a group name')
@@ -162,3 +161,15 @@ class AvailableReagentsCategoryView(APIView):
     def get(self,request):
         return Response(ViewHelpers.available_reagents_category())
 
+class FileUploadView(APIView):
+    """
+    Accepts experiment results excel files and processes them into database
+    """
+    http_method_names = ['post','options']
+
+    def post(self,request):
+        file = request.FILES['file']
+        file_name = request.POST['fileName']
+        results_importer=ExperimentResultsEntry(plate_name=file_name)
+        results=results_importer.process_qpcr(file)
+        return Response(results)
