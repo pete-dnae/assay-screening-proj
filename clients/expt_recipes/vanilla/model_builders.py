@@ -3,44 +3,10 @@
 # Todo: This doc...
 """
 
-
-import re
-
 from clients.expt_recipes.common.models import IdQpcrData
-from clients.expt_recipes.common.utils import get_ntc_wells
+from clients.expt_recipes.common.model_builders import get_ntc_wells
 from clients.expt_recipes.interp.qpcr import default_ct_if_nan
 from hardware.qpcr import get_mean_ct, calc_mean_tm
-
-
-def get_id_qpcr_plate_names(all_expt_plates):
-    """
-    Extracts those plates in a nested experiment which are the id plates.
-    :param all_expt_plates: all plates used for an experiment
-    :return:
-    """
-    lc_plate_names = get_labchip_plate_names(all_expt_plates)
-    id_plate_names = list(set(all_expt_plates.keys) - set(lc_plate_names))
-    if not id_plate_names:
-        raise ValueError('No id plates detected.')
-    else:
-        return id_plate_names
-
-
-def get_labchip_plate_names(all_expt_plates):
-    """
-    Extracts those plates in a nested experiment which are the labchip plates.
-    :param all_expt_plates: all plates used for an experiment
-    :return:
-    """
-    lc_plate_names = []
-    for p in all_expt_plates:
-        searched = re.search('\d{8}_\w', p)
-        if searched:
-            lc_plate_names.append(searched.group())
-    if not lc_plate_names:
-        raise ValueError('No LabChip plates detected!')
-    else:
-        return lc_plate_names
 
 
 def build_id_qpcr_datas_from_inst_data(id_qconsts, qinst_plate):
@@ -65,7 +31,7 @@ def build_id_qpcr_datas_from_inst_data(id_qconsts, qinst_plate):
         qpcr_datas = [qinst_plate[w] for w in ntc_wells]
         mean_ntc_ct = default_ct_if_nan(get_mean_ct(qpcr_datas))
 
-        for w, nic in id_constits.items():
+        for w in id_constits:
             well_data = qinst_plate[w]
             id_qpcr_datas[w] = \
                 IdQpcrData.create_from_inst_data(well_data,
@@ -74,7 +40,7 @@ def build_id_qpcr_datas_from_inst_data(id_qconsts, qinst_plate):
     return id_qpcr_datas
 
 
-def _get_wells_by_id_assay(id_qconsts):
+def get_wells_by_id_assay(id_qconsts):
     """
     Creates a dictionary keyed by id assay and valued by associated well names.
     :param id_qconsts: a dictionary of wells containing constituents

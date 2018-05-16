@@ -2,39 +2,12 @@
 from typing import List, Dict
 import numpy as np
 
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
-    WellConstituents
+from clients.expt_recipes.common.models import IdQpcrData, LabChipData
+from clients.expt_recipes.vanilla.constituents import IdConstituents
 
 from collections import OrderedDict
 
-from clients.expt_recipes.interp.db_query import ObjReagent, get_assays, \
-    get_templates, get_humans, WellName, PlateName, ExptPlates
-
-
-class IdConstituents(WellConstituents):
-
-    def __init__(self):
-        super().__init__()
-
-    @classmethod
-    def create(cls, reagents: List[ObjReagent],
-               all_expt_plates: ExptPlates) -> 'IdConstituents':
-
-        inst = cls()
-        inst['assays'] = get_assays(reagents)
-        inst['templates'] = get_templates(reagents)
-        inst['human'] = get_humans(reagents)
-
-        return inst
-
-    def get_id_assay_attribute(self, attribute):
-        return self._get_item_attribute('assays', attribute)
-
-    def get_id_template_attribute(self, attribute):
-        return self._get_item_attribute('templates', attribute)
-
-    def get_id_human_attribute(self, attribute):
-        return self._get_item_attribute('human', attribute)
+from clients.expt_recipes.interp.db_query import WellName, PlateName
 
 
 class VanillaTableRow(OrderedDict):
