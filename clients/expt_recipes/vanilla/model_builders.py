@@ -3,9 +3,9 @@
 # Todo: This doc...
 """
 
-from clients.expt_recipes.common.models import IdQpcrData
-from clients.expt_recipes.common.model_builders import get_ntc_wells
-from clients.expt_recipes.interp.qpcr import default_ct_if_nan
+from clients.expt_recipes.inst_data.data_models import IdQpcrData
+from clients.expt_recipes.lost import get_ntc_wells
+from clients.expt_recipes.inst_data.qpcr import default_ct_if_nan
 from hardware.qpcr import get_mean_ct, calc_mean_tm
 
 
