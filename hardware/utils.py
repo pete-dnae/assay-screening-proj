@@ -1,10 +1,6 @@
 from re import search
-from typing import NewType
 
-WellName = NewType('WellName', str)
-
-
-def sanitize_well_name(well_name: str) -> WellName:
+def sanitize_well_name(well_name):
     """
     Sanitize non-standard well names to a standard nomenclature.
     :param well_name: a potentially non-standard well name i.e. a single alpha
