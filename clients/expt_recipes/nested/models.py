@@ -8,48 +8,10 @@ experiments.
 from typing import List, Dict
 from collections import OrderedDict
 
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
-    WellConstituents
-from hardware.plates import ExptPlates, WellName
+from clients.expt_recipes.inst_data.data_models import IdQpcrData, LabChipData
 
-from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
-from clients.transfers import get_transferred_assays, \
-    get_transferred_templates, get_transferred_humans
-
-
-class IdConstituents(WellConstituents):
-
-    def __init__(self):
-        super().__init__()
-        self['transferred_assays'] = None
-        self['transferred_templates'] = None
-        self['transferred_human'] = None
-
-    @classmethod
-    def create(cls, reagents: List[ObjReagent],
-               all_expt_plates: ExptPlates) -> 'IdConstituents':
-
-        inst = cls()
-        inst['assays'] = get_assays(reagents)
-        inst['transferred_assays'] = \
-            get_transferred_assays(reagents, all_expt_plates)
-        inst['templates'] = get_templates(reagents)
-        inst['human'] = get_humans(reagents)
-        inst['transferred_human'] = \
-            get_transferred_humans(reagents, all_expt_plates)
-        inst['transferred_templates'] =\
-            get_transferred_templates(reagents, all_expt_plates)
-
-        return inst
-
-    def get_pa_assay_attribute(self, attribute):
-        return self._get_item_attribute('transferred_assays', attribute)
-
-    def get_pa_template_attribute(self, attribute):
-        return self._get_item_attribute('transferred_templates', attribute)
-
-    def get_pa_human_attribute(self, attribute):
-        return self._get_item_attribute('transferred_human', attribute)
+from clients.expt_recipes.db_query import WellName, PlateName
+from clients.expt_recipes.nested.constituents import IdConstituents
 
 
 class NestedTableRow(OrderedDict):
@@ -57,8 +19,10 @@ class NestedTableRow(OrderedDict):
     def __init__(self):
         super().__init__()
 
-        self['qPCR well'] = None
-        self['LC well'] = None
+        self['qPCR Plate'] = None
+        self['qPCR Well'] = None
+        self['LC Plate'] = None
+        self['LC Well'] = None
         self['PA Assay Name'] = None
         self['PA Assay Conc.'] = None
         self['PA Template Name'] = None
@@ -86,13 +50,18 @@ class NestedTableRow(OrderedDict):
         self['PD ng/ul'] = None
 
     @classmethod
-    def create_from_models(cls, qpcr_well: WellName, lc_well: WellName,
+    def create_from_models(cls, qpcr_well: WellName,
+                           qpcr_plate: PlateName,
+                           lc_well: WellName,
+                           lc_plate: PlateName,
                            id_constit: IdConstituents,
                            id_qpcr_data: IdQpcrData,
                            lc_data: LabChipData):
         inst = cls()
-        inst['qPCR well'] = qpcr_well
-        inst['LC well'] = lc_well
+        inst['qPCR Well'] = qpcr_well
+        inst['qPCR Plate'] = qpcr_plate
+        inst['LC Well'] = lc_well
+        inst['LC Plate'] = lc_plate
 
         inst['PA Assay Name'] = \
             id_constit.get_pa_assay_attribute('reagent_name')
@@ -152,12 +121,11 @@ class NestedMasterTable:
 
         rows = []
         for qw, lw in zip(qpcr_wells, lc_wells):
-            qwell = '{}_{}'.format(qpcr_plate, qw)
-            lcwell = '{}_{}'.format(lc_plate, lw)
             constits = id_constits[qw]
             id_qpcr_data = id_qpcr_datas[qw]
             lc_data = lc_datas[qw]
-            r = NestedTableRow.create_from_models(qwell, lcwell, constits,
+            r = NestedTableRow.create_from_models(qw, qpcr_plate, lw,
+                                                  lc_plate, constits,
                                                   id_qpcr_data, lc_data)
             rows.append(r)
 

@@ -1,6 +1,6 @@
 
 from collections import OrderedDict
-from clients.expt_recipes.interp.db_query import get_assays, \
+from clients.expt_recipes.db_query import get_assays, \
     get_transferred_assays, get_templates, get_humans, \
     get_transferred_humans, get_transferred_templates
 
