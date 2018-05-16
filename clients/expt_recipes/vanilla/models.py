@@ -4,11 +4,11 @@ import numpy as np
 
 from clients.expt_recipes.common.models import IdQpcrData, LabChipData, \
     WellConstituents
-from hardware.plates import ExptPlates, WellName, PlateName
 
 from collections import OrderedDict
 
-from clients.reagents import ObjReagent, get_assays, get_templates, get_humans
+from clients.expt_recipes.interp.db_query import ObjReagent, get_assays, \
+    get_templates, get_humans, WellName, PlateName, ExptPlates
 
 
 class IdConstituents(WellConstituents):
@@ -42,8 +42,10 @@ class VanillaTableRow(OrderedDict):
     def __init__(self):
         super().__init__()
 
-        self['qPCR well'] = None
-        self['LC well'] = None
+        self['qPCR Plate'] = None
+        self['qPCR Well'] = None
+        self['LC Plate'] = None
+        self['LC Well'] = None
         self['ID Assay Name'] = None
         self['ID Assay Conc.'] = None
         self['ID Template Name'] = None
@@ -65,13 +67,18 @@ class VanillaTableRow(OrderedDict):
         self['PD ng/ul'] = None
 
     @classmethod
-    def create_from_models(cls, qpcr_well: WellName, lc_well: WellName,
+    def create_from_models(cls, qpcr_well: WellName,
+                           qpcr_plate: PlateName,
+                           lc_well: WellName,
+                           lc_plate: PlateName,
                            id_constit: IdConstituents,
                            id_qpcr_data: IdQpcrData,
                            lc_data: LabChipData):
         inst = cls()
-        inst['qPCR well'] = qpcr_well
-        inst['LC well'] = lc_well
+        inst['qPCR Plate'] = qpcr_plate
+        inst['qPCR Well'] = qpcr_well
+        inst['LC Plate'] = lc_plate
+        inst['LC Well'] = lc_well
 
         inst['ID Assay Name'] = \
             id_constit.get_id_assay_attribute('reagent_name')
@@ -116,12 +123,11 @@ class VanillaMasterTable:
 
         rows = []
         for qw, lw in zip(qpcr_wells, lc_wells):
-            qwell = '{}_{}'.format(qpcr_plate, qw)
-            lcwell = '{}_{}'.format(lc_plate, lw)
             constits = id_constits[qw]
             id_qpcr_data = id_qpcr_datas[qw]
             lc_data = lc_datas[qw]
-            r = VanillaTableRow.create_from_models(qwell, lcwell, constits,
+            r = VanillaTableRow.create_from_models(qw, qpcr_plate, lw,
+                                                   lc_plate, constits,
                                                    id_qpcr_data, lc_data)
             rows.append(r)
 
@@ -160,12 +166,10 @@ class VanillaSummaryRow(OrderedDict):
         self['Mean PD ng/ul'] = None
 
     @classmethod
-    def create_from_table_rows(cls, qpcr_plate: PlateName,
-                               lc_plate: PlateName,
-                               rows):
+    def create_from_table_rows(cls, rows):
         inst = cls()
-        inst['qPCR Plate'] = qpcr_plate
-        inst['LC Plate'] = lc_plate
+        inst['qPCR Plate'] = cls._reduce('qPCR Plate', rows)
+        inst['LC Plate'] = cls._reduce('LC Plate', rows)
         inst['ID Assay Name'] = cls._reduce('ID Assay Name', rows)
         inst['ID Assay Conc.'] = cls._reduce('ID Assay Conc.', rows)
         inst['ID Template Name'] = cls._reduce('ID Template Name', rows)
@@ -192,7 +196,8 @@ class VanillaSummaryRow(OrderedDict):
 
     @staticmethod
     def _reduce(key, rows):
-        val = list(set([r[key] for r in rows]))
+        vals = [r[key] for r in rows if r[key] is not None]
+        val = list(set(vals))
         if len(val) != 1:
             raise ValueError('{} does not return common value'.format(key))
         else:
@@ -200,21 +205,41 @@ class VanillaSummaryRow(OrderedDict):
 
     @staticmethod
     def _count(key, rows):
-        return len([r[key] for r in rows if r])
+        vals = [r[key] for r in rows if r[key] is not None]
+        return vals.count(True)
 
     @staticmethod
     def _mean(key, rows):
-        return np.nanmean([r[key] for r in rows])
+        vals = [r[key] for r in rows if r[key] is not None]
+        if all(np.isnan(vals)):
+            return np.nan
+        else:
+            return np.nanmean(vals)
 
     @staticmethod
     def _min(key, rows):
-        return np.nanmin([r[key] for r in rows])
+        vals = [r[key] for r in rows if r[key] is not None]
+        if all(np.isnan(vals)):
+            return np.nan
+        else:
+            return np.nanmin(vals)
 
     @staticmethod
     def _max(key, rows):
-        return np.nanmax([r[key] for r in rows])
+        vals = [r[key] for r in rows if r[key] is not None]
+        if all(np.isnan(vals)):
+            return np.nan
+        else:
+            return np.nanmax(vals)
+
 
 class VanillaSummaryTable:
 
     def __init__(self):
         self.rows = []
+
+    @classmethod
+    def create_from_summary_rows(cls, rows):
+        inst = cls()
+        inst.rows = rows
+        return inst
