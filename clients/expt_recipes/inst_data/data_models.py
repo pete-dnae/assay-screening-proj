@@ -1,11 +1,7 @@
 from collections import OrderedDict
 
-from clients.expt_recipes.interp.labchip import \
-    get_product_label_from_peak_bp_concs
-from clients.expt_recipes.interp.qpcr import calc_delta_ct, get_ct_call, \
-    get_product_labels_from_tms
-from hardware.labchip import extract_bp_conc_pairs
-from hardware.qpcr import get_tms, calc_tm_deltas, get_ct
+from clients.expt_recipes.inst_data import qpcr
+from clients.expt_recipes.inst_data import labchip
 
 
 class IdQpcrData(OrderedDict):
@@ -40,16 +36,9 @@ class IdQpcrData(OrderedDict):
 
     @classmethod
     def create_from_inst_data(cls, qinst_data, max_conc_mean_tm, mean_ntc_ct):
-
-        tms = get_tms(qinst_data)
-        tm_delta = calc_tm_deltas(qinst_data, max_conc_mean_tm)
-        ct = get_ct(qinst_data)
-        delta_ct = calc_delta_ct(ct, mean_ntc_ct)
-        ct_call = get_ct_call(delta_ct)
-        spec, non_spec, pd = get_product_labels_from_tms(tms, tm_delta,
-                                                         max_conc_mean_tm)
+        payload = qpcr.create_payload(qinst_data, max_conc_mean_tm, mean_ntc_ct)
         inst = cls()
-        return inst.create(ct, delta_ct, ct_call, tms, spec, non_spec, pd)
+        return inst.create(*payload)
 
 
 class LabChipData(OrderedDict):
@@ -70,13 +59,10 @@ class LabChipData(OrderedDict):
 
     @classmethod
     def create_from_inst_data(cls, linst_data, expected_amp_lens, dilution):
-        bp_concs = extract_bp_conc_pairs(linst_data)
-        spec, non_spec, pd = \
-            get_product_label_from_peak_bp_concs(bp_concs,
-                                                 expected_amp_lens,
-                                                 dilution)
+        payload = labchip.create_payload(linst_data, expected_amp_lens,
+                                         dilution)
         inst = cls()
-        return inst.create(spec, non_spec, pd)
+        return inst.create(*payload)
 
 
 def build_qpcr_constituents(qwell_reagents, constituent_template):

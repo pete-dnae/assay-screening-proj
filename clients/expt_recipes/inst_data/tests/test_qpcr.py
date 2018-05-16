@@ -3,21 +3,16 @@ import os.path as op
 import unittest
 import numpy as np
 
-from clients.expt_recipes.common.models import WellConstituents
+from collections import OrderedDict
 from hardware.qpcr import QpcrDataFile, get_ct, get_tms, calc_tm_deltas, \
     get_mean_ct, calc_mean_tm
 
-from clients.expt_recipes.interp.qpcr import calc_delta_ct, get_ct_call, \
-    get_product_labels_from_tms
-from clients.expt_recipes.common.utils import is_ntc, get_ntc_wells
-
-CURRENT_DIR = op.dirname(op.abspath(__file__))
-NAV_ROOT = op.abspath(op.join(CURRENT_DIR, op.pardir, op.pardir, op.pardir))
-DATA_DIR = op.join(NAV_ROOT, 'hardware', 'tests', 'data')
-DATA_FILE = 'A81_E214_1_ID.xls'
+from clients.expt_recipes.inst_data.qpcr import _calc_delta_ct, \
+    _get_ct_call, _get_product_labels_from_tms
+from clients.expt_recipes.inst_data.data_models import is_ntc, get_ntc_wells
 
 
-class DummyWellConstituents(WellConstituents):
+class DummyWellConstituents(OrderedDict):
 
     def __init__(self):
         super().__init__()
@@ -31,9 +26,15 @@ class DummyWellConstituents(WellConstituents):
 
 class TestResults(unittest.TestCase):
 
+    CURRENT_DIR = op.dirname(op.abspath(__file__))
+    NAV_ROOT = op.abspath(op.join(CURRENT_DIR, op.pardir, op.pardir,
+                                  op.pardir, op.pardir))
+    DATA_DIR = op.join(NAV_ROOT, 'hardware', 'tests', 'data')
+    DATA_FILE = 'A81_E214_1_ID.xls'
+
     @classmethod
     def setUpClass(cls):
-        f = op.join(DATA_DIR, DATA_FILE)
+        f = op.join(TestResults.DATA_DIR, TestResults.DATA_FILE)
         qpcr_data_file = QpcrDataFile(f)
         cls.plate_results = qpcr_data_file.get_data_by_well()
         cls.qpcr_data = cls.plate_results['A01']
@@ -44,10 +45,10 @@ class TestResults(unittest.TestCase):
         mean_ct = get_mean_ct(qpcr_datas)
         self.assertEqual(mean_ct, 6.884355783462524)
         ct = get_ct(self.qpcr_data)
-        delta_ct = calc_delta_ct(ct, 0)
+        delta_ct = _calc_delta_ct(ct, 0)
         self.assertEqual(delta_ct, -ct)
-        call = get_ct_call(delta_ct)
-        self.assertEqual(call, 'NEG')
+        call = _get_ct_call(delta_ct)
+        self.assertEqual(call, False)
 
     def test_tm_funcs(self):
         qpcr_datas = [self.plate_results[w] for w in ['A01', 'A02']]
@@ -61,7 +62,7 @@ class TestResults(unittest.TestCase):
 
         tms = get_tms(self.qpcr_data)
         tm_deltas = calc_tm_deltas(self.qpcr_data, 0)
-        spec, non_spec, pd = get_product_labels_from_tms(tms, tm_deltas, 0)
+        spec, non_spec, pd = _get_product_labels_from_tms(tms, tm_deltas, 0)
         self.assertEqual([spec, non_spec, pd], [False, False, True])
 
 
