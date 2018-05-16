@@ -1,9 +1,27 @@
 
+from clients.expt_recipes.nested.constituents import IdConstituents
 from clients.expt_recipes.inst_data.qpcr import default_ct_if_nan
 from clients.expt_recipes.inst_data.data_models import IdQpcrData
 from clients.expt_recipes.lost import get_ntc_wells
 # todo: this import needs to be removed (maybe the above too)
 from hardware.qpcr import get_mean_ct, calc_mean_tm
+
+
+def build_qpcr_constituents(qwell_reagents, all_expt_plates):
+    """
+    Builds a dictionary keyed by the well names. The values are instances of
+    `IdConstituents`
+    :param qwell_reagents: a dictionary keyed by well name and valued by
+    instances of List[ObjReagent]
+    :param all_expt_plates: a dictioanry containing all the allocations for
+    all wells for all plates used in the experiment
+    :return:
+    """
+    id_qpcr_constituents = {}
+    for w, reagents in qwell_reagents.items():
+        id_qpcr_constituents[w] = IdConstituents.create(reagents,
+                                                        all_expt_plates)
+    return id_qpcr_constituents
 
 
 def build_id_qpcr_datas_from_inst_data(id_qconsts, qinst_data):
@@ -137,7 +155,8 @@ def _calc_max_conc_mean_tm(id_qconsts, qinst_plate):
     :return:
     """
     id_template_only_wells = _get_id_template_only_wells(id_qconsts)
-    max_conc_wells = _get_max_conc_template_from_id_wells(id_template_only_wells)
+    max_conc_wells = \
+        _get_max_conc_template_from_id_wells(id_template_only_wells)
     qpcr_datas = [qinst_plate[w] for w in max_conc_wells]
     max_conc_mean_tm = calc_mean_tm(qpcr_datas)
     return max_conc_mean_tm

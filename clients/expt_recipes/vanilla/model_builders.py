@@ -3,11 +3,26 @@
 # Todo: This doc...
 """
 
+from clients.expt_recipes.vanilla.constituents import IdConstituents
 from clients.expt_recipes.inst_data.data_models import IdQpcrData
 from clients.expt_recipes.lost import get_ntc_wells
 from clients.expt_recipes.inst_data.qpcr import default_ct_if_nan
 # todo: this import needs to be removed (maybe the above too)
 from hardware.qpcr import get_mean_ct, calc_mean_tm
+
+
+def build_qpcr_constituents(qwell_reagents):
+    """
+    Builds a dictionary keyed by the well names. The values are instances of
+    `IdConstituents`
+    :param qwell_reagents: a dictionary keyed by well name and valued by
+    instances of List[ObjReagent]
+    :return:
+    """
+    id_qpcr_constituents = {}
+    for w, reagents in qwell_reagents.items():
+        id_qpcr_constituents[w] = IdConstituents.create(reagents)
+    return id_qpcr_constituents
 
 
 def build_id_qpcr_datas_from_inst_data(id_qconsts, qinst_plate):

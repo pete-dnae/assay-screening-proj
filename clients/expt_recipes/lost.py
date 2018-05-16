@@ -1,23 +1,6 @@
 from clients.expt_recipes.inst_data.data_models import LabChipData
 
 
-def build_qpcr_constituents(qwell_reagents, constituent_template):
-    """
-    Builds a dictionary keyed by the well names. The values are instances of
-    `IdConstituents`
-    :param qwell_reagents: a dictionary keyed by well name and valued by
-    instances of List[ObjReagent]
-    :param constituent_template: The constituent template for the given well
-    for a given experiment. For example a vanilla or nested constituents
-    template.
-    :return:
-    """
-    id_qpcr_constituents = {}
-    for w, reagents in qwell_reagents.items():
-        id_qpcr_constituents[w] = constituent_template.create(reagents)
-    return id_qpcr_constituents
-
-
 def build_labchip_datas_from_inst_data(id_qconsts, linst_plate, ql_mapping,
                                        assays, dilutions):
     """
