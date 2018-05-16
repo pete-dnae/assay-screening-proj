@@ -6,6 +6,7 @@
 from clients.expt_recipes.inst_data.data_models import IdQpcrData
 from clients.expt_recipes.lost import get_ntc_wells
 from clients.expt_recipes.inst_data.qpcr import default_ct_if_nan
+# todo: this import needs to be removed (maybe the above too)
 from hardware.qpcr import get_mean_ct, calc_mean_tm
 
 
