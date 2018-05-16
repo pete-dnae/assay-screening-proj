@@ -275,10 +275,10 @@ def get_peak_purity(peak_data):
 
 
 def extract_bp_conc_pairs(labchip_well: LabChipInstWell):
-    bp_conc = []
+    bp_concs = []
     peaks = get_peaks(labchip_well)
     for p in peaks:
         bp = get_peak_bp_size(peaks[p])
         conc = get_peak_concentration(peaks[p])
-        bp_conc.append((bp, conc))
-    return bp_conc
+        bp_concs.append((bp, conc))
+    return bp_concs
