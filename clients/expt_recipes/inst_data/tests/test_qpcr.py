@@ -9,7 +9,7 @@ from hardware.qpcr import QpcrDataFile, get_ct, get_tms, calc_tm_deltas, \
 
 from clients.expt_recipes.inst_data.qpcr import _calc_delta_ct, \
     _get_ct_call, _get_product_labels_from_tms
-from clients.expt_recipes.inst_data.data_models import is_ntc, get_ntc_wells
+from clients.expt_recipes.lost import is_ntc, get_ntc_wells
 
 
 class DummyWellConstituents(OrderedDict):
