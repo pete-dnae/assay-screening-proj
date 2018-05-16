@@ -1,8 +1,7 @@
 import unittest
 import os
 from django.test import Client
-from app.model_builders.experiment_results_entry import ExperimentResultsEntry
-from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 class ExperitmentResultsTest(unittest.TestCase):
 

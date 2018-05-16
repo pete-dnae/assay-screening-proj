@@ -262,7 +262,7 @@ def get_ct(qpcr_data: qPCRInstWell):
     if ct:
         return ct
     else:
-        return np.nan
+        return None
 
 
 def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
@@ -277,7 +277,7 @@ def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
     if tm:
         return tm
     else:
-        return np.nan
+        return None
 
 
 def get_tms(qpcr_data: qPCRInstWell, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
@@ -338,10 +338,10 @@ def get_amplification_data(qpcr_datas: qPCRInstWell)->Dict:
     Gets the amplification cycle and amplification delta_rn value arrays from a
     dictionary of WellConstituents
     """
-    amplification_cycle = qPCRInstWell['results']['amplification_data']['cycle']
-    amplification_delta_rn = qPCRInstWell['results']['amplification_data'][
+    amplification_cycle = qpcr_datas['results']['amplification_data']['cycle']
+    amplification_delta_rn = qpcr_datas['results']['amplification_data'][
         'delta_rn']
-    
+
     return {'amplification_cycle':amplification_cycle,'amplification_delta_rn':
         amplification_delta_rn}
 
@@ -352,15 +352,15 @@ def get_melt_data(qpcr_datas: qPCRInstWell)->Dict:
         dictionary of WellConstituents
     """
 
-    if 'melt_curve_raw_data' in qPCRInstWell['results']:
-        melt_temperature = qPCRInstWell['results']['melt_curve_raw_data'][
+    if 'melt_curve_raw_data' in qpcr_datas['results']:
+        melt_temperature = qpcr_datas['results']['melt_curve_raw_data'][
             'temperature']
-        melt_derivative = qPCRInstWell['results']['melt_curve_raw_data'][
+        melt_derivative = qpcr_datas['results']['melt_curve_raw_data'][
             'derivative']
     else:
-        melt_temperature = qPCRInstWell['results']['melt_region_temperature_' \
+        melt_temperature = qpcr_datas['results']['melt_region_temperature_' \
                                                    'data']['value']
-        melt_derivative = qPCRInstWell['results']['melt_region_derivative_' \
+        melt_derivative = qpcr_datas['results']['melt_region_derivative_' \
                                                    'data']['value']
 
     return {'melt_temperature':melt_temperature,
