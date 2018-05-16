@@ -1,6 +1,6 @@
 
 import numpy as np
-from hardware.labchip import get_peak_bp_size, get_peak_concentration
+import hardware.labchip as hl
 
 
 def is_specific(amplicon_lengths, bp, threshold=0.1):
@@ -21,7 +21,8 @@ def is_primer_dimer(amplicon_length, primer_dimer_threshold=80):
     else:
         return False
 
-
+# Todo: change contract of this function to accept only bps and concs: [(bp1,
+#  conc1), (..., ...), ...]
 def get_product_label_from_labchip(peaks, amplicon_lengths, dilution,
                                    min_legal_length=10, max_legal_length=1400,
                                    pd_threshold=80):
@@ -30,8 +31,8 @@ def get_product_label_from_labchip(peaks, amplicon_lengths, dilution,
     non_spec = 0
 
     for peak, peak_data in peaks.items():
-        bp = get_peak_bp_size(peak_data)
-        conc = get_peak_concentration(peak_data) * dilution
+        bp = hl.get_peak_bp_size(peak_data)
+        conc = hl.get_peak_concentration(peak_data) * dilution
         if min_legal_length < bp < max_legal_length:
             if is_specific(amplicon_lengths, bp):
                 spec += conc
