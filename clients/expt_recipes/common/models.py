@@ -1,10 +1,12 @@
 import abc
 from collections import OrderedDict
-from typing import Dict
 
-from clients.expt_recipes.interp import qpcr as intq, labchip as intlc
-from hardware import qpcr as hq, labchip as hl
-from clients.expt_recipes.interp.db_query import WellName
+from clients.expt_recipes.interp.qpcr import calc_delta_ct, get_ct_call, \
+    get_product_labels_from_tms
+from clients.expt_recipes.interp.labchip import \
+    get_product_label_from_peak_bp_concs
+from hardware.qpcr import get_tms, calc_tm_deltas, get_ct
+from hardware.labchip import extract_bp_conc_pairs
 
 
 class WellConstituents(OrderedDict):
@@ -39,9 +41,6 @@ class WellConstituents(OrderedDict):
         return all(v is not None for v in self.values())
 
 
-ConstituentsByWell = Dict[WellName, WellConstituents]
-
-
 class IdQpcrData(OrderedDict):
 
     def __init__(self):
@@ -58,8 +57,7 @@ class IdQpcrData(OrderedDict):
         self['Tm PD'] = None
 
     @classmethod
-    def create(cls, ct, delta_ct, ct_call, tms, spec, non_spec, pd) -> \
-            'IdQpcrData':
+    def create(cls, ct, delta_ct, ct_call, tms, spec, non_spec, pd):
         inst = cls()
         inst['Ct'] = ct
         inst['∆NTC Ct'] = delta_ct
@@ -75,17 +73,15 @@ class IdQpcrData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_inst_data(cls, qpcr_data: hq.qPCRInstWell,
-                              max_conc_mean_tm,
-                              mean_ntc_ct) -> 'IdQpcrData':
+    def create_from_inst_data(cls, qinst_data, max_conc_mean_tm, mean_ntc_ct):
 
-        tms = hq.get_tms(qpcr_data)
-        tm_delta = hq.calc_tm_deltas(qpcr_data, max_conc_mean_tm)
-        ct = hq.get_ct(qpcr_data)
-        delta_ct = intq.calc_delta_ct(ct, mean_ntc_ct)
-        ct_call = intq.get_ct_call(delta_ct)
-        spec, non_spec, pd = intq.get_product_labels_from_tms(tms, tm_delta,
-                                                              max_conc_mean_tm)
+        tms = get_tms(qinst_data)
+        tm_delta = calc_tm_deltas(qinst_data, max_conc_mean_tm)
+        ct = get_ct(qinst_data)
+        delta_ct = calc_delta_ct(ct, mean_ntc_ct)
+        ct_call = get_ct_call(delta_ct)
+        spec, non_spec, pd = get_product_labels_from_tms(tms, tm_delta,
+                                                         max_conc_mean_tm)
         inst = cls()
         return inst.create(ct, delta_ct, ct_call, tms, spec, non_spec, pd)
 
@@ -110,15 +106,11 @@ class LabChipData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_inst_data(cls, labchip_well: hl.LabChipInstWell,
-                              expected_amp_lens, dilution):
-        peaks = hl.get_peaks(labchip_well)
+    def create_from_inst_data(cls, linst_data, expected_amp_lens, dilution):
+        bp_concs = extract_bp_conc_pairs(linst_data)
         spec, non_spec, pd = \
-            intlc.get_product_label_from_labchip(peaks, expected_amp_lens,
+            get_product_label_from_peak_bp_concs(bp_concs,
+                                                 expected_amp_lens,
                                                  dilution)
         inst = cls()
         return inst.create(spec, non_spec, pd)
-
-
-LabChipDatas = Dict[WellName, LabChipData]
-qPCRDatas = Dict[WellName, IdQpcrData]
