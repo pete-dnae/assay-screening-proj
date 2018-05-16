@@ -1,16 +1,10 @@
 
-from typing import List, Dict
+
 import numpy as np
-
-from clients.expt_recipes.common.models import IdQpcrData, LabChipData
-from clients.expt_recipes.vanilla.constituents import IdConstituents
-
 from collections import OrderedDict
 
-from clients.expt_recipes.interp.db_query import WellName, PlateName
 
-
-class VanillaTableRow(OrderedDict):
+class VanillaMasterTableRow(OrderedDict):
 
     def __init__(self):
         super().__init__()
@@ -40,18 +34,13 @@ class VanillaTableRow(OrderedDict):
         self['PD ng/ul'] = None
 
     @classmethod
-    def create_from_models(cls, qpcr_well: WellName,
-                           qpcr_plate: PlateName,
-                           lc_well: WellName,
-                           lc_plate: PlateName,
-                           id_constit: IdConstituents,
-                           id_qpcr_data: IdQpcrData,
-                           lc_data: LabChipData):
+    def create_from_models(cls, qwell_name, qplate_name, lwell_name,
+                           lplate_name, id_constit, id_qdata, ldata):
         inst = cls()
-        inst['qPCR Plate'] = qpcr_plate
-        inst['qPCR Well'] = qpcr_well
-        inst['LC Plate'] = lc_plate
-        inst['LC Well'] = lc_well
+        inst['qPCR Plate'] = qplate_name
+        inst['qPCR Well'] = qwell_name
+        inst['LC Plate'] = lplate_name
+        inst['LC Well'] = lwell_name
 
         inst['ID Assay Name'] = \
             id_constit.get_id_assay_attribute('reagent_name')
@@ -68,10 +57,10 @@ class VanillaTableRow(OrderedDict):
         inst['ID Human Conc.'] = \
             id_constit.get_id_human_attribute('concentration')
 
-        for k, v in id_qpcr_data.items():
+        for k, v in id_qdata.items():
             inst[k] = v
 
-        for k, v in lc_data.items():
+        for k, v in ldata.items():
             inst[k] = v
 
         return inst
@@ -84,24 +73,17 @@ class VanillaMasterTable:
         self.rows = []
 
     @classmethod
-    def create_from_models(
-            cls,
-            qpcr_wells: List[WellName],
-            qpcr_plate: str,
-            lc_wells: List[WellName],
-            lc_plate: str,
-            id_constits: Dict[WellName, IdConstituents],
-            id_qpcr_datas: IdQpcrData,
-            lc_datas: LabChipData):
+    def create_from_models(cls, qwells, qplate_name, lwells, lplate_name,
+                           id_constits, id_qdatas, ldatas):
 
         rows = []
-        for qw, lw in zip(qpcr_wells, lc_wells):
+        for qw, lw in zip(qwells, lwells):
             constits = id_constits[qw]
-            id_qpcr_data = id_qpcr_datas[qw]
-            lc_data = lc_datas[qw]
-            r = VanillaTableRow.create_from_models(qw, qpcr_plate, lw,
-                                                   lc_plate, constits,
-                                                   id_qpcr_data, lc_data)
+            id_qdata = id_qdatas[qw]
+            ldata = ldatas[qw]
+            r = VanillaMasterTableRow.create_from_models(qw, qplate_name, lw,
+                                                         lplate_name, constits,
+                                                         id_qdata, ldata)
             rows.append(r)
 
         inst = cls()
@@ -139,7 +121,7 @@ class VanillaSummaryRow(OrderedDict):
         self['Mean PD ng/ul'] = None
 
     @classmethod
-    def create_from_table_rows(cls, rows):
+    def create_from_master_table_rows(cls, rows):
         inst = cls()
         inst['qPCR Plate'] = cls._reduce('qPCR Plate', rows)
         inst['LC Plate'] = cls._reduce('LC Plate', rows)
