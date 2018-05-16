@@ -4,7 +4,7 @@ from clients.expt_recipes.common.utils import get_ntc_wells
 from clients.expt_recipes.common.models import WellConstituents, \
     ConstituentsByWell, LabChipDatas, LabChipData
 from hardware import qpcr as hwq, labchip as hwlc
-from hardware.plates import Plate, ExptPlates
+from clients.expt_recipes.interp.db_query import Plate, ExptPlates
 
 
 def build_id_qpcr_constituents(

@@ -3,8 +3,8 @@ from collections import OrderedDict
 from typing import Dict
 
 from clients.expt_recipes.interp import qpcr as intq, labchip as intlc
-from hardware import qpcr as hwq, labchip as hwlc
-from hardware.plates import WellName
+from hardware import qpcr as hq, labchip as hl
+from clients.expt_recipes.interp.db_query import WellName
 
 
 class WellConstituents(OrderedDict):
@@ -47,8 +47,8 @@ class IdQpcrData(OrderedDict):
     def __init__(self):
         super().__init__()
         self['Ct'] = None
-        self['∆NTC_Ct'] = None
-        self['Ct_Call'] = None
+        self['∆NTC Ct'] = None
+        self['Ct Call'] = None
         self['Tm1'] = None
         self['Tm2'] = None
         self['Tm3'] = None
@@ -62,8 +62,8 @@ class IdQpcrData(OrderedDict):
             'IdQpcrData':
         inst = cls()
         inst['Ct'] = ct
-        inst['∆NTC_Ct'] = delta_ct
-        inst['Ct_Call'] = ct_call
+        inst['∆NTC Ct'] = delta_ct
+        inst['Ct Call'] = ct_call
         inst['Tm1'] = tms[0]
         inst['Tm2'] = tms[1]
         inst['Tm3'] = tms[2]
@@ -75,13 +75,13 @@ class IdQpcrData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_inst_data(cls, qpcr_data: hwq.qPCRInstWell,
+    def create_from_inst_data(cls, qpcr_data: hq.qPCRInstWell,
                               max_conc_mean_tm,
                               mean_ntc_ct) -> 'IdQpcrData':
 
-        tms = hwq.get_tms(qpcr_data)
-        tm_delta = hwq.calc_tm_deltas(qpcr_data, max_conc_mean_tm)
-        ct = hwq.get_ct(qpcr_data)
+        tms = hq.get_tms(qpcr_data)
+        tm_delta = hq.calc_tm_deltas(qpcr_data, max_conc_mean_tm)
+        ct = hq.get_ct(qpcr_data)
         delta_ct = intq.calc_delta_ct(ct, mean_ntc_ct)
         ct_call = intq.get_ct_call(delta_ct)
         spec, non_spec, pd = intq.get_product_labels_from_tms(tms, tm_delta,
@@ -110,9 +110,9 @@ class LabChipData(OrderedDict):
         return inst
 
     @classmethod
-    def create_from_inst_data(cls, labchip_well: hwlc.LabChipInstWell,
+    def create_from_inst_data(cls, labchip_well: hl.LabChipInstWell,
                               expected_amp_lens, dilution):
-        peaks = hwlc.get_peaks(labchip_well)
+        peaks = hl.get_peaks(labchip_well)
         spec, non_spec, pd = \
             intlc.get_product_label_from_labchip(peaks, expected_amp_lens,
                                                  dilution)

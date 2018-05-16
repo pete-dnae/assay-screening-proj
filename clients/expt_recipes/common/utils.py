@@ -1,8 +1,8 @@
 from typing import Dict
 
 from clients.expt_recipes.common.models import WellConstituents
-from clients.transfers import get_parent_wells, get_dilutions
-from hardware.plates import Plate
+from clients.expt_recipes.interp.db_query import get_parent_wells, \
+    get_dilutions, Plate
 
 
 def create_id_qpcr_lc_mapping(lc_plate: Plate) -> Dict[str, str]:
