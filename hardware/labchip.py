@@ -2,8 +2,9 @@
 
 from typing import NewType, Dict
 import pandas as pd
-from hardware.utils import WellName, sanitize_well_name
+from hardware.utils import sanitize_well_name
 
+WellName = NewType('WellName', str)
 LabChipInstWell = NewType('LabChipInstWell', Dict)
 LabChipInstPlate = Dict[WellName, LabChipInstWell]
 

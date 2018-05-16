@@ -5,8 +5,9 @@ import numpy as np
 import re
 from typing import NewType, Dict, List
 
-from hardware.utils import WellName, sanitize_well_name
+from hardware.utils import sanitize_well_name
 
+WellName = NewType('WellName', str)
 qPCRInstWell = NewType('qPCRInstWell', Dict)
 qPCRInstPlate = Dict[WellName, qPCRInstWell]
 
