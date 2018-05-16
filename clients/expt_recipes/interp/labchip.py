@@ -23,16 +23,16 @@ def is_primer_dimer(amplicon_length, primer_dimer_threshold=80):
 
 # Todo: change contract of this function to accept only bps and concs: [(bp1,
 #  conc1), (..., ...), ...]
-def get_product_label_from_labchip(peaks, amplicon_lengths, dilution,
-                                   min_legal_length=10, max_legal_length=1400,
-                                   pd_threshold=80):
+def get_product_label_from_peak_bp_concs(bp_concs, amplicon_lengths, dilution,
+                                         min_legal_length=10, max_legal_length=1400,
+                                         pd_threshold=80):
     spec = 0
     pd = 0
     non_spec = 0
 
-    for peak, peak_data in peaks.items():
-        bp = hl.get_peak_bp_size(peak_data)
-        conc = hl.get_peak_concentration(peak_data) * dilution
+    for bp_conc in bp_concs:
+        bp = bp_conc[0]
+        conc = bp_conc[1] * dilution
         if min_legal_length < bp < max_legal_length:
             if is_specific(amplicon_lengths, bp):
                 spec += conc
