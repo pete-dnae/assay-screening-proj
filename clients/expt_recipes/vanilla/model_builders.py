@@ -4,7 +4,7 @@ from typing import Dict
 from clients.expt_recipes.common.model_builders import calc_mean_ntc_ct
 from clients.expt_recipes.common.models import IdQpcrData, qPCRDatas
 from clients.expt_recipes.vanilla.models import IdConstituents
-from hardware.plates import WellName
+from clients.expt_recipes.interp.db_query import WellName
 from clients.expt_recipes.interp import qpcr as intq
 import hardware.qpcr as hwq
 

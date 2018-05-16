@@ -2,7 +2,8 @@ from typing import List
 
 import re
 
-from hardware.plates import ExptPlates, Plate
+from clients.expt_recipes.interp.db_query import ExptPlates
+
 
 def get_id_qpcr_plate_names(expt_plates: ExptPlates) -> List[str]:
     """
