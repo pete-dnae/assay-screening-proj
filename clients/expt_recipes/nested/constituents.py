@@ -42,3 +42,12 @@ class IdConstituents(OrderedDict):
 
     def get_pa_human_attribute(self, attribute):
         return self._get_item_attribute('transferred_human', attribute)
+
+    def get_id_assay_attribute(self, attribute):
+        return self._get_item_attribute('assays', attribute)
+
+    def get_id_template_attribute(self, attribute):
+        return self._get_item_attribute('templates', attribute)
+
+    def get_id_human_attribute(self, attribute):
+        return self._get_item_attribute('human', attribute)
