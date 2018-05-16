@@ -1,8 +1,6 @@
 from hardware.qpcr import QpcrDataFile
 from hardware.qpcr import get_amplification_data,get_ct,get_melt_data,get_tms
-from app.models.qpcr_results_model import QpcrResultsModel
-from app.models.experiment_model import ExperimentModel
-from django.shortcuts import get_object_or_404
+
 
 class QpcrResultsProcessor():
     """
@@ -28,13 +26,27 @@ class QpcrResultsProcessor():
         results =[]
 
         for well_id,qpcr_well in qpcr_results.items():
-            temperatures = get_tms(qpcr_well)
-            cycle_threshold = get_ct(qpcr_well)
-            amplification_data = get_amplification_data(qpcr_well)
-            melt_data = get_melt_data(qpcr_well)
-            well = qpcr_well['well']
-            experiment = qpcr_well['expt']
-            results.append({
+            refined_well = self._refine_qpcr_well(qpcr_well)
+            results.append(refined_well)
+        return results
+
+    # -----------------------------------------------------------------------
+    # Private below.
+    # -----------------------------------------------------------------------
+
+    def _refine_qpcr_well(self,qpcr_well):
+        """
+        Extracts well properties that are part of QpcrResultsModel
+
+        """
+        temperatures = get_tms(qpcr_well)
+        cycle_threshold = get_ct(qpcr_well)
+        amplification_data = get_amplification_data(qpcr_well)
+        melt_data = get_melt_data(qpcr_well)
+        well = qpcr_well['well']
+        experiment = qpcr_well['expt']
+
+        return {
                 'temperatures':temperatures,
                 'cycle_threshold':cycle_threshold,
                 'amplification_cycle':amplification_data['amplification_cycle'],
@@ -42,27 +54,7 @@ class QpcrResultsProcessor():
                     amplification_data['amplification_delta_rn'],
                 'melt_temperature':melt_data['melt_temperature'],
                 'melt_derivative': melt_data['melt_derivative'],
-                'well':well,
+                'qpcr_well':well,
                 'experiment':experiment,
                 'plate_id':self.plate_name,
-            })
-        return results
-
-
-    def get_experiment(self,experiment_name):
-        """
-        Function returns experiment object from the db , returns 404 if no
-        matching objects are found
-        """
-
-        return get_object_or_404(ExperimentModel,experiment_name=experiment_name)
-
-    def write_to_qpcr_results(self,experiment, plate_id, well, cycle_threshold,
-                              temperatures,amplification_data,melt_data):
-
-        QpcrResultsModel.make(experiment, plate_id, well, cycle_threshold,
-                              temperatures,
-                              amplification_data['amplification_cycle'],
-                              amplification_data['amplification_delta_rn'],
-                              melt_data['melt_temperature'],
-                              melt_data['melt_derivative'])
+            }

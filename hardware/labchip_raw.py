@@ -18,9 +18,9 @@ class LabChipRaw:
                 Returns:
                     raws: a dictionary indexed by well
                 """
-        raw_dataframe = self._get_raw_dataframe()
+        raw_dataframe = self._get_raw_dataframe(data)
         df = self._sanitize_raw_file_column_names(raw_dataframe)
-
+        self.well_names = self._get_well_names(raw_dataframe)
         raws = {}
         for well in self.well_names:
             raws[well] = {}
@@ -36,7 +36,7 @@ class LabChipRaw:
 
 
 
-    def _sanitize_well_name(well_name):
+    def _sanitize_well_name(self,well_name):
         """
         Sanitize non-standard well names to a standard nomenclature.
         :param well_name: a potentially non-standard well name i.e. a single alpha
@@ -56,8 +56,6 @@ class LabChipRaw:
         """
         bytes = BytesIO(data.read())
         df = pd.read_csv(bytes,index_col=0, dtype=float,
-                         na_values=' ', keep_default_na=True)
-        df = pd.read_csv(self.lab_chip_files['raw'], index_col=0, dtype=float,
                          na_values=' ', keep_default_na=True)
         df.index.names = [i.lower().replace(' ', '_') for i in df.index.names]
         df.columns = [self._sanitize_well_name(n) for n in df.columns]
@@ -89,3 +87,17 @@ class LabChipRaw:
         df.columns = columns
 
         return df
+
+    def _get_well_names(self,dataframe):
+        """
+        Helper function to get valid well names.
+
+        Returns:
+            well_names: a sorted list of well names
+        """
+
+        well_names = sorted(
+            set(list(dataframe.columns.values)[1:]))
+        well_names = [w for w in well_names if 'ladder' not in w.lower()]
+
+        return well_names
