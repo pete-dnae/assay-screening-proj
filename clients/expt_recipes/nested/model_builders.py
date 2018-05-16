@@ -21,11 +21,11 @@ def build_id_qpcr_datas_from_inst_data(id_qconsts, qinst_data):
     :return:
     """
     id_qpcr_datas = {}
-    id_grouped = group_by_id_assay(id_qconsts)
+    id_grouped = _group_by_id_assay(id_qconsts)
     for id_assay, id_constits in id_grouped.items():
         max_conc_mean_tm = \
-            calc_max_conc_mean_tm(id_constits, qinst_data)
-        pa_grouped = group_by_pa_assay(id_constits)
+            _calc_max_conc_mean_tm(id_constits, qinst_data)
+        pa_grouped = _group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pa_grouped.items():
             ntc_wells = get_ntc_wells(pa_constits)
             qpcr_datas = [qinst_data[w] for w in ntc_wells]
@@ -45,7 +45,7 @@ def get_wells_by_id_assay(id_qconsts):
     :param id_qconsts: a dictionary of wells containing constituents
     :return:
     """
-    groupings = create_nested_groupings(id_qconsts)
+    groupings = _create_nested_groupings(id_qconsts)
 
     wells_by_id_assay = {}
     for id_assay in groupings:
@@ -58,26 +58,26 @@ def get_wells_by_id_assay(id_qconsts):
     return wells_by_id_assay
 
 
-def create_nested_groupings(id_qconsts):
+def _create_nested_groupings(id_qconsts):
     """
     Group nested wells based upon their constituents.
     :param id_qconsts: a dictionary of wells containing constituents
     :return:
     """
     groups = {}
-    idgrp = group_by_id_assay(id_qconsts)
+    idgrp = _group_by_id_assay(id_qconsts)
     for id_assay, id_constits in idgrp.items():
         groups[id_assay] = {}
-        pagrp = group_by_pa_assay(id_constits)
+        pagrp = _group_by_pa_assay(id_constits)
         for pa_assay, pa_constits in pagrp.items():
             groups[id_assay][pa_assay] = {}
-            tgrp = group_by_template_origin(pa_constits)
+            tgrp = _group_by_template_origin(pa_constits)
             for t, t_constituents in tgrp.items():
                 groups[id_assay][pa_assay][t] = t_constituents
     return groups
 
 
-def group_by_id_assay(id_qconsts):
+def _group_by_id_assay(id_qconsts):
     """
     Groups constituents by id assay.
     :param id_qconsts: a dictionary of wells containing constituents
@@ -91,7 +91,7 @@ def group_by_id_assay(id_qconsts):
     return wells_by_id_assay
 
 
-def group_by_pa_assay(id_qconsts):
+def _group_by_pa_assay(id_qconsts):
     """
     Groups constituents by pa assay.
     :param id_qconsts: a dictionary of wells containing constituents
@@ -105,7 +105,7 @@ def group_by_pa_assay(id_qconsts):
     return wells_by_pa_assay
 
 
-def group_by_template_origin(id_qconsts):
+def _group_by_template_origin(id_qconsts):
     """
     Groups constituents by template origin.
     :param id_qconsts: a dictionary of wells containing constituents
@@ -125,7 +125,7 @@ def group_by_template_origin(id_qconsts):
     return wells_by_template
 
 
-def calc_max_conc_mean_tm(id_qconsts, qinst_plate):
+def _calc_max_conc_mean_tm(id_qconsts, qinst_plate):
     """
     Calculates the melting temperature ("tm") for the wells that have
     the maximum concentration of template.
@@ -136,14 +136,14 @@ def calc_max_conc_mean_tm(id_qconsts, qinst_plate):
     :param qinst_plate: qPCR instrument data
     :return:
     """
-    id_template_only_wells = get_id_template_only_wells(id_qconsts)
-    max_conc_wells = get_max_conc_template_from_id_wells(id_template_only_wells)
+    id_template_only_wells = _get_id_template_only_wells(id_qconsts)
+    max_conc_wells = _get_max_conc_template_from_id_wells(id_template_only_wells)
     qpcr_datas = [qinst_plate[w] for w in max_conc_wells]
     max_conc_mean_tm = calc_mean_tm(qpcr_datas)
     return max_conc_mean_tm
 
 
-def get_id_template_only_wells(id_qconsts):
+def _get_id_template_only_wells(id_qconsts):
     """
     Gets a dictionary of those wells which only contain template introduced
     at the id stage.
@@ -159,7 +159,7 @@ def get_id_template_only_wells(id_qconsts):
     return id_template_only_wells
 
 
-def get_max_conc_template_from_id_wells(id_qconsts):
+def _get_max_conc_template_from_id_wells(id_qconsts):
     """
     Get from the id wells, those wells that have the highest template
     concentration.
