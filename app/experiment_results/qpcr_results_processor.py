@@ -56,5 +56,5 @@ class QpcrResultsProcessor():
                 'melt_derivative': melt_data['melt_derivative'],
                 'qpcr_well':well,
                 'experiment':experiment,
-                'plate_id':self.plate_name,
+                'qpcr_plate_id':self.plate_name,
             }

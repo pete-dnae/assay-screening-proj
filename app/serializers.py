@@ -9,6 +9,7 @@ from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import ReagentCategoryModel
 from app.models.reagent_group_model import ReagentGroupModel
 from app.models.qpcr_results_model import QpcrResultsModel
+from app.models.labchip_results_model import LabChipResultsModel
 from .models.units_model import UnitsModel
 
 # Serialization helpers.
@@ -137,8 +138,8 @@ class QpcrResultsSerializer(serializers.ModelSerializer):
         model = QpcrResultsModel
         fields = (
             'experiment',
-            'plate_id',
-            'well',
+            'qpcr_plate_id',
+            'qpcr_well',
             'cycle_threshold',
             'temperatures',
             'amplification_cycle',
@@ -161,6 +162,37 @@ class QpcrResultsSerializer(serializers.ModelSerializer):
                      'cycle_threshold': cycle_threshold})
         return data
 
+class LabChipResultsSerializer(serializers.ModelSerializer):
+
+    qpcr_well = QpcrResultsSerializer
+
+    class Meta:
+        model = LabChipResultsModel
+        fields = (
+            'labchip_well',
+            'peak_name',
+            'size',
+            'concentration',
+            'molarity',
+            'qpcr_well'
+        )
+
+    def to_representation(self, instance):
+        """
+        Interrupts default serialization to replace null values from prone
+        fields
+        """
+        data = super(LabChipResultsSerializer, self).to_representation(instance)
+        size = data['size'] if data['size'] is not float('nan') else ''
+        concentration = data['concentration'] if data['concentration'] \
+                                                     is not float('nan')  \
+            else ''
+        molarity = data['molarity'] if data['molarity'] is not float('nan')  \
+            else ''
+        data.update({'size': size,
+                     'concentration': concentration,
+                     'molarity':molarity})
+        return data
 
 # -------------------------------------------------------------------------
 # Some convenience serializers to help in particular use-cases.

@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from app.experiment_results.qpcr_results_processor import QpcrResultsProcessor
+from app.experiment_results.labchip_results_processor import LabChipResultsProcessor
 class ExperimentViewSet(viewsets.ModelViewSet):
 
     queryset = ExperimentModel.objects.all()
@@ -133,6 +134,22 @@ class QpcrResultsViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data)
 
+
+
+class LabChipResultsViewSet(viewsets.ModelViewSet):
+
+    queryset = LabChipResultsModel.objects.all()
+    serializer_class = LabChipResultsSerializer
+
+    def create(self, request, *args, **kwargs):
+        file = request.FILES['file']
+        labchip_processor = LabChipResultsProcessor(
+            plate_name='20180103_A', experiment_name='A81_E214')
+        labchip_results = labchip_processor.parse_labchip_file(file)
+        serializer = self.get_serializer(data=labchip_results, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
 
 #-------------------------------------------------------------------------
 # Some convenience (non-model) views.

@@ -1,6 +1,7 @@
 from django.db import models
-from app.models.qpcr_results_model import QpcrResultsModel
-class LabChipResults(models.Model):
+from .qpcr_results_model import QpcrResultsModel
+
+class LabChipResultsModel(models.Model):
     """
     Model captures information retrieved from labchip experiment results
     """
@@ -13,7 +14,7 @@ class LabChipResults(models.Model):
 
     @classmethod
     def make(cls, labchip_well,peak_name,size,concentration,molarity,qpcr_well):
-        return LabChipResults.objects.create(labchip_well=labchip_well,
+        return LabChipResultsModel.objects.create(labchip_well=labchip_well,
                                              peak_name=peak_name,
                                              size=size,
                                              concentration=concentration,

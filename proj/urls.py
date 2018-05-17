@@ -42,6 +42,7 @@ router.register(r'api/reagent-categories', ReagentCategoryViewSet)
 router.register(r'api/reagent-groups', ReagentGroupViewSet)
 router.register(r'api/units', UnitViewSet)
 router.register(r'api/qpcr-results',QpcrResultsViewSet)
+router.register(r'api/labchip-results',LabChipResultsViewSet)
 
 urlpatterns = format_suffix_patterns(urlpatterns)
 

@@ -100,13 +100,14 @@ class AllocationResults:
     def add_source(self,plate,row,col,source_row,source_col,source_plate):
         cols = self.source_map.setdefault(plate, OrderedDict())
         rows = cols.setdefault(col, OrderedDict())
-        rows[row] = {'source_row':source_row,'source_col':source_col,
-                     'source_plate':source_plate}
+        source_info = rows.setdefault(row, {})
+        source_info.update({'source_row':source_row,'source_col':source_col,
+                     'source_plate':source_plate})
 
     def void_source(self,plate,row,col):
         cols = self.source_map.setdefault(plate, OrderedDict())
         rows = cols.setdefault(col, OrderedDict())
-        rows[row] = None
+        rows.setdefault(row, {})
 
 class ThermalCyclingResults:
 
