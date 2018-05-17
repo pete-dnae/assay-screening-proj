@@ -21,7 +21,7 @@ class LabChip:
 
     """
 
-    def __init__(self, peak_file, raw_file, well_file):
+    def __init__(self, peak_file=None, raw_file=None, well_file=None):
         """
         Args:
             peak_file: path to a LabChip peak file

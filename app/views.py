@@ -5,9 +5,9 @@ from django.db import transaction
 from .serializers import *
 from .view_helpers import ViewHelpers
 from rest_framework import status
-from rest_framework.exceptions import ValidationError, ParseError
+from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
-
+from app.experiment_results.qpcr_results_processor import QpcrResultsProcessor
 class ExperimentViewSet(viewsets.ModelViewSet):
 
     queryset = ExperimentModel.objects.all()
@@ -112,6 +112,28 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class QpcrResultsViewSet(viewsets.ModelViewSet):
+
+    queryset = QpcrResultsModel.objects.all()
+    serializer_class = QpcrResultsSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Reads the excel file in request and extracts necessary information
+        from it using QpcrResultsProcessor
+
+        Expects an excel file to be passed as a part of request
+        """
+        file = request.FILES['file']
+        file_name = request.POST['fileName']
+        results_processor = QpcrResultsProcessor(plate_name=file_name)
+        results = results_processor.parse_qpcr_file(file)
+        serializer = self.get_serializer(data=results, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data)
+
+
 #-------------------------------------------------------------------------
 # Some convenience (non-model) views.
 #-------------------------------------------------------------------------
@@ -146,7 +168,6 @@ class ReagentGroupListView(APIView):
         try:
             group_name = request.data['group_name']
             with transaction.atomic():
-                #TODO raise an exception when group name does not exists
                 ReagentGroupModel.objects.filter(group_name=group_name).delete()
         except :
             raise ValidationError('Invalid request;Please mention a group name')
@@ -161,4 +182,3 @@ class AvailableReagentsCategoryView(APIView):
 
     def get(self,request):
         return Response(ViewHelpers.available_reagents_category())
-

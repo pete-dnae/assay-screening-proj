@@ -236,7 +236,7 @@ Click on change button to proceed to editing.
 
 Resetting Production DB:
     
-    Take a copy of existing rulescripts and note their experimetn name
+    Take a copy of existing rulescripts and note their experiment name
     Take a copy of existing units
 
     Log in to https://dashboard.heroku.com using below credentials
