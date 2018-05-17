@@ -12,10 +12,11 @@ class TestQpcr(unittest.TestCase):
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     DATA_FILE = 'A81_E214_1_ID.xls'
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
 
         f = os.path.join(TestQpcr.CURRENT_DIR, 'data', TestQpcr.DATA_FILE)
-        self.qpcr_plate_data = QpcrDataFile(f).get_data_by_well()
+        cls.qpcr_plate_data = QpcrDataFile(f).get_data_by_well()
 
     def test_tm_and_ct_extraction(self):
 

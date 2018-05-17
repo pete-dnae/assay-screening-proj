@@ -1,6 +1,7 @@
 from io import BytesIO
 import pandas as pd
-from re import search
+from hardware.utils import sanitize_well_name
+
 
 class LabChipRaw:
     """
@@ -25,8 +26,8 @@ class LabChipRaw:
         for well in self.well_names:
             raws[well] = {}
             raws[well]['data'] = df[well].dropna().tolist()
-            raws[well]['sample_period'] = df[well].dropna().index[-1] / \
-                                          df[well].dropna().shape[0]
+            raws[well]['sample_period'] = \
+                df[well].dropna().index[-1] / df[well].dropna().shape[0]
 
         return raws
 
@@ -34,31 +35,18 @@ class LabChipRaw:
     # Private below.
     # -----------------------------------------------------------------------
 
-
-
-    def _sanitize_well_name(self,well_name):
-        """
-        Sanitize non-standard well names to a standard nomenclature.
-        :param well_name: a potentially non-standard well name i.e. a single alpha
-        followed by a SINGLE numeral
-        :return:
-        """
-        searched = search('([a-zA-Z]+)(\d+)', well_name).groups()
-        well_name = '{}{:0>2}'.format(searched[0], searched[1])
-        return well_name
-
-    def _get_raw_dataframe(self,data):
+    def _get_raw_dataframe(self, data):
         """
         Helper function that creates a dataframe from the raw_file.
 
         Returns:
             df: DataFrame of raw_file
         """
-        bytes = BytesIO(data.read())
-        df = pd.read_csv(bytes,index_col=0, dtype=float,
+        bs = BytesIO(data.read())
+        df = pd.read_csv(bs,index_col=0, dtype=float,
                          na_values=' ', keep_default_na=True)
         df.index.names = [i.lower().replace(' ', '_') for i in df.index.names]
-        df.columns = [self._sanitize_well_name(n) for n in df.columns]
+        df.columns = [sanitize_well_name(n) for n in df.columns]
 
         return df
 
@@ -74,21 +62,21 @@ class LabChipRaw:
         Returns:
             df: a cleaned raws dataframe
         """
-        columns = []
+        cols = []
         for col in df.columns.tolist():
             if col.startswith('Ladder'):
-                columns.append(col)
+                cols.append(col)
             else:
                 try:
-                    swell = self._sanitize_well_name(col)
-                    columns.append('{}'.format(swell))
+                    swell = sanitize_well_name(col)
+                    cols.append('{}'.format(swell))
                 except Exception as e:
                     print(e)
-        df.columns = columns
+        df.columns = cols
 
         return df
 
-    def _get_well_names(self,dataframe):
+    def _get_well_names(self, dataframe):
         """
         Helper function to get valid well names.
 

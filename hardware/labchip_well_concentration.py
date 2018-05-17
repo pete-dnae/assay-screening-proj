@@ -1,6 +1,7 @@
 from io import BytesIO
 import pandas as pd
 
+
 class LabChipWellConcentration:
     """
         Utility class which knows how to process csv file containing labchip
@@ -23,15 +24,15 @@ class LabChipWellConcentration:
     # -----------------------------------------------------------------------
 
 
-    def _get_concentration_dataframe(self,data):
+    def _get_concentration_dataframe(self, data):
         """
         Helper function that creates a dataframe from the wells_table.
 
         Returns:
             df: DataFrame of wells_table
         """
-        bytes = BytesIO(data.read())
-        df = pd.read_csv(bytes, index_col=1)
+        bs = BytesIO(data.read())
+        df = pd.read_csv(bs, index_col=1)
         df.index.names = [i.lower().replace(' ', '_') for i in df.index.names]
         # Need to replace "." in column names as this is incompatable with
         # MongoDB
@@ -40,7 +41,7 @@ class LabChipWellConcentration:
 
         return df
 
-    def _get_well_names(self,dataframe):
+    def _get_well_names(self, dataframe):
         """
         Helper function to get valid well names.
 

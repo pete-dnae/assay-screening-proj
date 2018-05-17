@@ -2,10 +2,9 @@
 
 from typing import NewType, Dict
 import pandas as pd
-from hardware.plates import sanitize_well_name
+from hardware.utils import sanitize_well_name
 
-from hardware.plates import WellName
-
+WellName = NewType('WellName', str)
 LabChipInstWell = NewType('LabChipInstWell', Dict)
 LabChipInstPlate = Dict[WellName, LabChipInstWell]
 
@@ -274,3 +273,13 @@ def get_peak_bp_size(peak_data):
 
 def get_peak_purity(peak_data):
     return peak_data['%_purity']
+
+
+def extract_bp_conc_pairs(labchip_well: LabChipInstWell):
+    bp_concs = []
+    peaks = get_peaks(labchip_well)
+    for p in peaks:
+        bp = get_peak_bp_size(peaks[p])
+        conc = get_peak_concentration(peaks[p])
+        bp_concs.append((bp, conc))
+    return bp_concs

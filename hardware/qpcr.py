@@ -5,9 +5,9 @@ import pandas as pd
 import numpy as np
 import re
 from typing import NewType, Dict, List
-from hardware.plates import WellName, sanitize_well_name
+from hardware.utils import sanitize_well_name
 
-
+WellName = NewType('WellName', str)
 qPCRInstWell = NewType('qPCRInstWell', Dict)
 qPCRInstPlate = Dict[WellName, qPCRInstWell]
 
@@ -17,7 +17,7 @@ class QpcrDataFile:
     A class to hande StepOne Excel files.
     """
 
-    def __init__(self, xls_path = None, verbose=False , file_name=None):
+    def __init__(self, xls_path=None, verbose=False, file_name=None):
         """
         The common header is parsed from the first sheet.
         All sheets in the file are parsed skipping the header.
@@ -32,13 +32,12 @@ class QpcrDataFile:
         self.verbose = verbose
         self.expt = 'UNKNOWN'
 
-    def get_common_header(self,xls):
+    def get_common_header(self, xls):
         """
         The StepOne Excel has a common header with 2 columns on each sheet.
         Parse the header from the first sheet and get the number of rows.
         The number of rows can then be used to skip headers for all sheets.
         """
-
 
         df = xls.parse(0, parse_cols=[0, 1], header=None)
         header_rows = df[df[0].isnull()].index[0]
@@ -82,7 +81,7 @@ class QpcrDataFile:
         else:
             raise ValueError('Cannot convert well number to identifier.')
 
-    def get_dataframes(self,data=None):
+    def get_dataframes(self, data=None):
         """
         Parses all sheets in the excel file and returns a dictionary of
             dataframes:

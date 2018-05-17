@@ -5,15 +5,18 @@ import numpy as np
 
 from clients.utils import create_allocation_table
 from hardware.qpcr import QpcrDataFile
-from hardware.plates import create_plates_from_allocation_table
-from clients.expt_recipes.nested import build_constituents, build_qpcr_datas
+from clients.expt_recipes.db_query import \
+    create_plates_from_allocation_table
+from clients.expt_recipes.nested.model_builders import \
+    build_qpcr_constituents, build_id_qpcr_datas_from_inst_data
 
 
 class TestNested(unittest.TestCase):
 
     EXPT_NAME = 'A81_E214'
     CURRENT_DIR = op.dirname(op.abspath(__file__))
-    NAV_ROOT = op.abspath(op.join(CURRENT_DIR, op.pardir, op.pardir, op.pardir))
+    NAV_ROOT = op.abspath(op.join(CURRENT_DIR, op.pardir, op.pardir,
+                                  op.pardir, op.pardir))
     DATA_DIR = op.join(NAV_ROOT, 'hardware', 'tests', 'data')
     DATA_FILE = 'A81_E214_1_ID.xls'
 
@@ -25,8 +28,8 @@ class TestNested(unittest.TestCase):
             create_plates_from_allocation_table(allocation_table)
         plate_id = TestNested.DATA_FILE.split('.')[0]
         cls.plate_constituents = \
-            build_constituents(plate_allocation_data[plate_id],
-                               plate_allocation_data)
+            build_qpcr_constituents(plate_allocation_data[plate_id],
+                                    plate_allocation_data)
 
         f = op.join(TestNested.DATA_DIR, TestNested.DATA_FILE)
         qpcr_data = QpcrDataFile(f)
@@ -62,12 +65,12 @@ class TestNested(unittest.TestCase):
 
     def test_build_qpcr_datas(self):
 
-        plate_results = build_qpcr_datas(self.plate_constituents,
-                                         self.plate_results)
+        plate_results = build_id_qpcr_datas_from_inst_data(
+            self.plate_constituents, self.plate_results)
         wr = plate_results['A01']
         self.assertEqual(wr['Ct'], 5.587069988250732)
-        self.assertEqual(wr['∆NTC_Ct'], 0.0)
-        self.assertEqual(wr['Ct_Call'], 'NEG')
+        self.assertEqual(wr['∆NTC Ct'], 0.0)
+        self.assertEqual(wr['Ct Call'], False)
         self.assertEqual(wr['Tm1'], 79.1648941040039)
         self.assertEqual(wr['Tm2'], 74.78462219238281)
         self.assertEqual(wr['Tm3'], 62.46510314941406)

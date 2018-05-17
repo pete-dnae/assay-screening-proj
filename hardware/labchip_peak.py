@@ -1,6 +1,8 @@
 import pandas as pd
 from re import search
 from io import BytesIO
+from hardware.utils import sanitize_well_name
+
 
 class LabChipPeakProcessor:
     """
@@ -11,7 +13,7 @@ class LabChipPeakProcessor:
 
         self.well_names = None
 
-    def parse_labchip_peak_data(self,data):
+    def parse_labchip_peak_data(self, data):
 
         peak_dataframe = self._get_peak_dataframe(data)
         self.well_names = self._get_well_names(peak_dataframe)
@@ -28,26 +30,22 @@ class LabChipPeakProcessor:
 
         return peaks
 
-
-
-
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
 
-
-    def _get_peak_dataframe(self,data):
+    def _get_peak_dataframe(self, data):
         """
         Helper function that creates a dataframe from the peak_file.
 
         Returns:
             df: DataFrame of peak_file
         """
-        bytes = BytesIO(data.read())
-        df = pd.read_csv(bytes, index_col=1)
+        bs = BytesIO(data.read())
+        df = pd.read_csv(bs, index_col=1)
         df.index.names = [i.lower().replace(' ', '_') for i in
                           df.index.names]
-        df.index = [self._sanitize_well_name(n) for n in df.index]
+        df.index = [sanitize_well_name(n) for n in df.index]
         # Need to replace "." in column names as this is incompatable with
         # MongoDB
         df.columns = [c.lower().replace(' ', '_').replace('.', '') for
@@ -85,27 +83,15 @@ class LabChipPeakProcessor:
 
         return df
 
-    def _get_well_names(self,dataframe):
+    def _get_well_names(self, dataframe):
         """
         Helper function to get valid well names.
 
         Returns:
             well_names: a sorted list of well names
         """
-
         well_names = sorted(
             set([n for n in dataframe.index.unique()]))
         well_names = [w for w in well_names if 'ladder' not in w.lower()]
 
         return well_names
-
-    def _sanitize_well_name(self,well_name):
-        """
-        Sanitize non-standard well names to a standard nomenclature.
-        :param well_name: a potentially non-standard well name i.e. a single alpha
-        followed by a SINGLE numeral
-        :return:
-        """
-        searched = search('([a-zA-Z]+)(\d+)', well_name).groups()
-        well_name = '{}{:0>2}'.format(searched[0], searched[1])
-        return well_name
