@@ -19,10 +19,10 @@ class LabChipWellConcentration:
         wells = wells.T.to_dict()
 
         return wells
+
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
-
 
     def _get_concentration_dataframe(self, data):
         """

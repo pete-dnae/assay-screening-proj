@@ -1,5 +1,4 @@
 import pandas as pd
-from re import search
 from io import BytesIO
 from hardware.utils import sanitize_well_name
 
