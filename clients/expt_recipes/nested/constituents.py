@@ -9,6 +9,9 @@ class IdConstituents(OrderedDict):
 
     def __init__(self):
         super().__init__()
+        self['assays'] = None
+        self['templates'] = None
+        self['human'] = None
         self['transferred_assays'] = None
         self['transferred_templates'] = None
         self['transferred_human'] = None
