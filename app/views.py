@@ -72,46 +72,9 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
     serializer_class = ReagentGroupSerializer
 
 
-    def get_queryset(self):
-        """
-        Overridden to provide the search functionality.
-        """
-        name_to_search_for = self.request.query_params.get('name', None)
-        if name_to_search_for:
-            matching = ReagentGroupModel.objects.filter\
-                (group_name=name_to_search_for)
-            return matching
-        return ReagentGroupModel.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        """
-        create a list of reagent group instances if a list is provided or a
-        single instance otherwise
-
-        deletes existing instances under the same reagent group name
-        """
-
-        data = request.data
-        if isinstance(data,list):
-            if len(data)>0:
-                serializer = self.get_serializer(data=request.data, many=True)
-                serializer.is_valid(raise_exception=True)
-                group_name = data[0]['group_name']
-            else:
-                raise ValidationError('Invalid request;Please check if '
-                                      'reaquest data list has at least one '
-                                      'element in it')
-        else:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            group_name = data['group_name']
-
-        with transaction.atomic():
-            ReagentGroupModel.objects.filter(group_name=group_name).delete()
-            self.perform_create(serializer)
-
-        return Response(serializer.data)
-
+class ReagentGroupDetailsViewSet(viewsets.ModelViewSet):
+    queryset = ReagentGroupDetailsModel.objects.all()
+    serializer_class = ReagentGroupDetailsSerializer
 
 class QpcrResultsViewSet(viewsets.ModelViewSet):
 
@@ -126,13 +89,35 @@ class QpcrResultsViewSet(viewsets.ModelViewSet):
         Expects an excel file to be passed as a part of request
         """
         file = request.FILES['file']
-        file_name = request.POST['fileName']
-        results_processor = QpcrResultsProcessor(plate_name=file_name)
-        results = results_processor.parse_qpcr_file(file)
-        serializer = self.get_serializer(data=results, many=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data)
+        plate_name = request.POST['plateName']
+        experiment_name = request.POST['experimentName']
+        results_processor = QpcrResultsProcessor(plate_name=plate_name,
+                                                 experiment_name=experiment_name,
+                                                 category_tags=['assay',
+                                                                'template',
+                                                                'human'])
+        results,reagents_used,reagent_group_used = \
+            results_processor.parse_qpcr_file(file)
+        for record in results:
+            qpcr_serializer = self.get_serializer(data=record)
+            qpcr_serializer.is_valid(raise_exception=True)
+            instance = qpcr_serializer.save()
+            if instance.qpcr_well in reagents_used:
+                for reagent in reagents_used[instance.qpcr_well]:
+                    reagent['well'] = instance.id
+                    reagent_serializer = ReagentWellLookupSerializer(
+                        data=reagent)
+                    reagent_serializer.is_valid(raise_exception=True)
+                    reagent_serializer.save()
+            if instance.qpcr_well in reagent_group_used :
+                for reagent_group in reagent_group_used[instance.qpcr_well]:
+                    reagent_group['well']=instance.id
+                    reagent_group_serializer = ReagentGroupWellLookupSerializer(
+                        data=reagent_group)
+                    reagent_group_serializer.is_valid(raise_exception=True)
+                    reagent_group_serializer.save()
+
+        return Response(qpcr_serializer.data)
 
 
 
@@ -143,8 +128,10 @@ class LabChipResultsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         file = request.FILES['file']
+        plate_name = request.POST['plateName']
+        experiment_name = request.POST['experimentName']
         labchip_processor = LabChipResultsProcessor(
-            plate_name='20180103_A', experiment_name='A81_E214')
+            plate_name=plate_name, experiment_name=experiment_name)
         labchip_results = labchip_processor.parse_labchip_file(file)
         serializer = self.get_serializer(data=labchip_results, many=True)
         serializer.is_valid(raise_exception=True)

@@ -2,16 +2,19 @@ import json
 from rest_framework import serializers
 from pdb import set_trace as st
 import numpy as np
+import math
 # Models
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import ReagentCategoryModel
 from app.models.reagent_group_model import ReagentGroupModel
+from app.models.reagent_group_model import ReagentGroupDetailsModel
 from app.models.qpcr_results_model import QpcrResultsModel
 from app.models.labchip_results_model import LabChipResultsModel
 from .models.units_model import UnitsModel
-
+from app.models.reagent_well_lookup_model import ReagentWellLookupModel
+from app.models.reagent_group_well_lookup_model import ReagentGroupWellLookupModel
 # Serialization helpers.
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_maker import ImageMaker
@@ -66,32 +69,36 @@ class ReagentSerializer(serializers.ModelSerializer):
         return opaque_json_payload
 
 
-class ReagentGroupSerializer(serializers.ModelSerializer):
+class ReagentGroupDetailsSerializer(serializers.ModelSerializer):
     reagent = ReagentSerializer
     units = UnitsSerializer
 
     class Meta:
-        model = ReagentGroupModel
+        model = ReagentGroupDetailsModel
         fields = (
-            'group_name',
             'reagent',
             'concentration',
             'units',
         )
 
-    def validate(self, data):
-        # Reagent names must not already exist in the group.
-        group_name = data['group_name']
-        reagent_name = data['reagent'].name
-        existing_member_names = [group.reagent.name for group in \
-                                 ReagentGroupModel.objects.filter(
-                                     group_name=group_name)]
-        if reagent_name in existing_member_names:
-            raise serializers.ValidationError(
-                ('Cannot add <%s> to group <%s> because it ' + \
-                 'already contains it.') % (reagent_name, group_name)
-            )
-        return data
+
+class ReagentGroupSerializer(serializers.ModelSerializer):
+
+    details = ReagentGroupDetailsSerializer(many=True)
+
+    class Meta:
+        model = ReagentGroupModel
+        fields = ('group_name','details')
+
+    def create(self, validated_data):
+        group_details = validated_data.pop('details')
+        reagent_group = ReagentGroupModel.objects.create(**validated_data)
+        for group_detail in group_details:
+            ReagentGroupDetailsModel.objects.create(group_name=reagent_group,
+                                                    **group_detail)
+        return reagent_group
+
+
 
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
@@ -132,8 +139,8 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class QpcrResultsSerializer(serializers.ModelSerializer):
-    experiment = ExperimentSerializer
 
+    experiment = ExperimentSerializer
     class Meta:
         model = QpcrResultsModel
         fields = (
@@ -148,24 +155,9 @@ class QpcrResultsSerializer(serializers.ModelSerializer):
             'melt_derivative'
         )
 
-    def to_representation(self, instance):
-        """
-        Interrupts default serialization to replace null values from prone
-        fields
-        """
-        data = super(QpcrResultsSerializer, self).to_representation(instance)
-        temperatures = [tm if tm is not None else '' for tm in \
-                        data['temperatures']]
-        cycle_threshold = data['cycle_threshold'] if data['cycle_threshold'] \
-                                                     is not None else ''
-        data.update({'temperatures': temperatures,
-                     'cycle_threshold': cycle_threshold})
-        return data
-
 class LabChipResultsSerializer(serializers.ModelSerializer):
 
     qpcr_well = QpcrResultsSerializer
-
     class Meta:
         model = LabChipResultsModel
         fields = (
@@ -174,25 +166,31 @@ class LabChipResultsSerializer(serializers.ModelSerializer):
             'size',
             'concentration',
             'molarity',
-            'qpcr_well'
+            'qpcr_well',
+            'experiment',
+            'labchip_plate_id'
         )
 
-    def to_representation(self, instance):
-        """
-        Interrupts default serialization to replace null values from prone
-        fields
-        """
-        data = super(LabChipResultsSerializer, self).to_representation(instance)
-        size = data['size'] if data['size'] is not float('nan') else ''
-        concentration = data['concentration'] if data['concentration'] \
-                                                     is not float('nan')  \
-            else ''
-        molarity = data['molarity'] if data['molarity'] is not float('nan')  \
-            else ''
-        data.update({'size': size,
-                     'concentration': concentration,
-                     'molarity':molarity})
-        return data
+class ReagentWellLookupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReagentWellLookupModel
+        fields = (
+            'well',
+            'reagent',
+            'transfer'
+        )
+
+class ReagentGroupWellLookupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReagentGroupWellLookupModel
+        fields = (
+            'well',
+            'reagent_group',
+            'transfer'
+        )
+
 
 # -------------------------------------------------------------------------
 # Some convenience serializers to help in particular use-cases.

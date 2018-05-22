@@ -43,6 +43,7 @@ class LabChipPeakProcessor:
         """
         bs = BytesIO(data.read())
         df = pd.read_csv(bs, index_col=1)
+
         df.index.names = [i.lower().replace(' ', '_') for i in
                           df.index.names]
         df.index = [sanitize_well_name(n) for n in df.index]

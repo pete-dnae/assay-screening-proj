@@ -6,3 +6,5 @@ from .reagent_group_model import ReagentGroupModel
 from .reagent_model import ReagentModel
 from .rules_script_model import RulesScriptModel
 from .units_model import UnitsModel
+from .reagent_group_well_lookup_model import ReagentGroupWellLookupModel
+from .reagent_well_lookup_model import ReagentWellLookupModel

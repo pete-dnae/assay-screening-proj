@@ -9,9 +9,6 @@ class ExperitmentResultsTest(unittest.TestCase):
 
 
     def test_excel_entry(self):
-        experiment = ExperimentModel.objects.all()
-        for exp in experiment:
-            print(exp)
         root = os.path.abspath(os.getcwd())
         with open(root + r'/hardware/tests/data/2018-01-03_11-08'
                          r'-50_A81_20180103_A_PeakTable.csv', 'rb') as \
