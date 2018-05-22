@@ -261,7 +261,7 @@ def get_ct(qpcr_data: qPCRInstWell):
     if ct:
         return ct
     else:
-        return None
+        return float('nan')
 
 
 def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
@@ -276,7 +276,7 @@ def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
     if tm:
         return tm
     else:
-        return None
+        return float('nan')
 
 
 def get_tms(qpcr_data: qPCRInstWell, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \
@@ -317,7 +317,7 @@ def get_mean_ct(qpcr_datas: List[qPCRInstWell]):
     if cts:
         return np.mean(cts)
     else:
-        return np.nan
+        return float('nan')
 
 
 def calc_mean_tm(qpcr_datas: List[qPCRInstWell],
@@ -341,8 +341,8 @@ def get_amplification_data(qpcr_datas: qPCRInstWell)->Dict:
     amplification_delta_rn = qpcr_datas['results']['amplification_data'][
         'delta_rn']
 
-    return {'amplification_cycle':amplification_cycle,'amplification_delta_rn':
-        amplification_delta_rn}
+    return {'amplification_cycle': amplification_cycle,
+            'amplification_delta_rn': amplification_delta_rn}
 
 
 def get_melt_data(qpcr_datas: qPCRInstWell)->Dict:
@@ -352,15 +352,15 @@ def get_melt_data(qpcr_datas: qPCRInstWell)->Dict:
     """
 
     if 'melt_curve_raw_data' in qpcr_datas['results']:
-        melt_temperature = qpcr_datas['results']['melt_curve_raw_data'][
-            'temperature']
-        melt_derivative = qpcr_datas['results']['melt_curve_raw_data'][
-            'derivative']
+        melt_temperature = \
+            qpcr_datas['results']['melt_curve_raw_data']['temperature']
+        melt_derivative = \
+            qpcr_datas['results']['melt_curve_raw_data']['derivative']
     else:
-        melt_temperature = qpcr_datas['results']['melt_region_temperature_' \
-                                                   'data']['value']
-        melt_derivative = qpcr_datas['results']['melt_region_derivative_' \
-                                                   'data']['value']
+        melt_temperature = \
+            qpcr_datas['results']['melt_region_temperature_data']['value']
+        melt_derivative = \
+            qpcr_datas['results']['melt_region_derivative_data']['value']
 
-    return {'melt_temperature':melt_temperature,
-            'melt_derivative':melt_derivative}
+    return {'melt_temperature': melt_temperature,
+            'melt_derivative': melt_derivative}

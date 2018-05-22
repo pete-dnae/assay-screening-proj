@@ -50,7 +50,6 @@ class LabChipRaw:
 
         return df
 
-
     def _sanitize_raw_file_column_names(self, df):
         """
         Ensures all columns have the correct naming convention, e.g.: B02 as
