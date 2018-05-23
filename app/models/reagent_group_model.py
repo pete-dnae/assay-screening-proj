@@ -19,8 +19,10 @@ class ReagentGroupModel(models.Model):
 
 class ReagentGroupDetailsModel(models.Model):
     """
-    Contains details about reagents used in a reagent group ,has reagent name as
-    foreign key
+    Captures one to many relationship between a reagent group and its
+    constituents
+    Contains details about reagent  used in a reagent group ,has pointers to
+    reagent group and reagents
     """
     reagent_group = models.ForeignKey(ReagentGroupModel,
                                       related_name='details',

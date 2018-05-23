@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
-from clients.expt_recipes.inst_data import qpcr
+from clients.expt_recipes.inst_data import qpcr as qinst
+from clients.expt_recipes.db_data import qpcr as qdb
 from clients.expt_recipes.inst_data import labchip
 
 
@@ -36,7 +37,13 @@ class IdQpcrData(OrderedDict):
 
     @classmethod
     def create_from_inst_data(cls, qinst_data, max_conc_mean_tm, mean_ntc_ct):
-        payload = qpcr.create_payload(qinst_data, max_conc_mean_tm, mean_ntc_ct)
+        payload = qinst.create_payload(qinst_data, max_conc_mean_tm, mean_ntc_ct)
+        inst = cls()
+        return inst.create(*payload)
+
+    @classmethod
+    def create_from_db_data(cls, qdb_data, max_conc_mean_tm, mean_ntc_ct):
+        payload = qdb.create_payload(qdb_data, max_conc_mean_tm, mean_ntc_ct)
         inst = cls()
         return inst.create(*payload)
 

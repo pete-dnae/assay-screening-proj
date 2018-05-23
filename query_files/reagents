@@ -1,0 +1,16 @@
+select reagent.well,reagent.reagent_id,reagent.category_id,reagent.transfer as reagentTransfer,reagent_grp.group_name,reagent_grp.reagentlist,reagent_grp.transfer as reagentGroupTransfer
+from 
+(select app_reagentwelllookupmodel.well,app_reagentwelllookupmodel.reagent_id,app_reagentmodel.category_id,app_reagentwelllookupmodel.transfer
+	from app_reagentwelllookupmodel 
+	join app_reagentmodel on app_reagentwelllookupmodel.reagent_id = app_reagentmodel.name ) as reagent left join
+(select 
+	app_reagentgroupwelllookupmodel.well,	
+	reagent_group.group_name ,
+	string_agg(reagent_group.reagent_id, ',' order by reagent_group.reagent_id) as reagentlist	,
+	app_reagentgroupwelllookupmodel.transfer
+	from app_reagentgroupwelllookupmodel 
+	join (select app_reagentgroupmodel.group_name,app_reagentgroupdetailsmodel.* from app_reagentgroupmodel inner join app_reagentgroupdetailsmodel 
+		  on app_reagentgroupmodel.group_name = app_reagentgroupdetailsmodel.reagent_group_id) as reagent_group
+	on app_reagentgroupwelllookupmodel.reagent_group_id = reagent_group.group_name 
+	group by app_reagentgroupwelllookupmodel.well,reagent_group.group_name,app_reagentgroupwelllookupmodel.transfer) as reagent_grp
+	on reagent.well = reagent_grp.well

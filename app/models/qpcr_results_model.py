@@ -4,7 +4,10 @@ from .experiment_model import ExperimentModel
 
 class QpcrResultsModel(models.Model):
     """
-    This model captures information retrieved from qpcr experiment results
+    This model captures information retrieved from qpcr experiment results .
+    excel file
+    Each object contains information about what was observed in a unique
+    physical location(well on a plate)
     """
 
     cycle_threshold = models.FloatField(null=True)

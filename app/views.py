@@ -9,6 +9,9 @@ from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from app.experiment_results.qpcr_results_processor import QpcrResultsProcessor
 from app.experiment_results.labchip_results_processor import LabChipResultsProcessor
+from app.experiment_results.well_results_processor import WellResultsProcessor
+import ast
+
 class ExperimentViewSet(viewsets.ModelViewSet):
 
     queryset = ExperimentModel.objects.all()
@@ -186,3 +189,13 @@ class AvailableReagentsCategoryView(APIView):
 
     def get(self,request):
         return Response(ViewHelpers.available_reagents_category())
+
+class WellResultsView(APIView):
+
+    def get(self,request):
+        experiment_id = request.query_params['expt']
+        plate_id = request.query_params['plate_id']
+        wells = ast.literal_eval(request.query_params['wells'])
+
+        return Response(WellResultsProcessor(experiment_id,plate_id,
+                                             wells).fetch_well_results())

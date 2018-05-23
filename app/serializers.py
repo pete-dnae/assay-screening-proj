@@ -165,6 +165,7 @@ class LabChipResultsSerializer(serializers.ModelSerializer):
             'peak_name',
             'size',
             'concentration',
+            'purity',
             'molarity',
             'qpcr_well',
             'experiment',
