@@ -4,10 +4,11 @@ from app.models.reagent_group_model import ReagentGroupModel
 from app.models.experiment_model import ExperimentModel
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from .well_constituents_maker import WellConstituentsMaker
-from .well_results_summary import WellsSummaryMaker
+from .qpcr_results_summary import WellsSummaryMaker
 from .labchip_results_summary import LabchipResultsSummary
 from django.shortcuts import get_object_or_404
-
+from clients.expt_recipes.nested.models import NestedMasterTable
+from clients.expt_recipes.vanilla.models import VanillaMasterTable
 class WellResultsProcessor:
 
     def __init__(self,experiment_name,plate_id,wells):
@@ -16,6 +17,7 @@ class WellResultsProcessor:
         self.wells = wells
         self.allocation_results = self._fetch_allocation_results()
         self.reagent_categories = self._fetch_reagent_categories()
+        self.labchip_plate_id = '20180103_A'
 
     def fetch_well_results(self):
 
@@ -26,11 +28,19 @@ class WellResultsProcessor:
         well_constituents = well_constituents_maker.prepare_well_constituents()
         well_summary = WellsSummaryMaker(self.experiment_name,self.plate_id,
                                          well_constituents)
-        labchip_results = LabchipResultsSummary(self.experiment_name,
-                                              self.plate_id,
-                              self.allocation_results,
-                              self.wells,well_constituents).fetch_labchip_results()
-        return well_summary.prepare_vanilla_summary()
+        labchip_results,lc_wells,mapping = LabchipResultsSummary(
+            self.experiment_name, self.plate_id,self.allocation_results,
+            self.wells,well_constituents).fetch_labchip_results()
+        qpcr_restuls = well_summary.prepare_nested_summary()
+
+        results = NestedMasterTable.create_from_db(self.plate_id,
+                                                   self.labchip_plate_id,
+                                                   mapping,
+                                                   well_constituents,
+                                                   qpcr_restuls,
+                                                   labchip_results)
+
+        return results.rows
 
 
 

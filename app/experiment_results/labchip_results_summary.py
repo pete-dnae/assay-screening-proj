@@ -14,18 +14,21 @@ class LabchipResultsSummary:
         self.well_constituents = well_constituents
         self.allocation_results = allocation_results
         self.qpcr_wells = qpcr_wells
+        self.labchip_wells = None
         self.labchip_plate = '20180103_A'
+        self.mapping = None
         self.assays = {'Ab_pgaD_x.10_Aba38_Aba42': 225,
                         'Ca_rpb7_x.1_Cal04_Cal03': 215,
                         'Cg_rps0_x.1_Cgl03_Cgl04': 217,
                         'Ec_uidA_x.2_Eco64_Eco66': 240}
 
     def fetch_labchip_results(self):
-        mapping,labchip_results = self._fetch_labchip_data()
-        dilutions = self._fetch_dilutions()
+        labchip_results,self.mapping = self._fetch_labchip_data()
+        dilutions = self._fetch_dilutions(self.labchip_wells)
         return build_labchip_datas_from_inst_data(self.well_constituents,
-                                           labchip_results,mapping,
-                                           self.assays,dilutions)
+                                           labchip_results,self.mapping,
+                                           self.assays,dilutions),\
+               self.labchip_wells,self.mapping
     # -----------------------------------------------------------------------
     # Private below.
     # -----------------------------------------------------------------------
@@ -46,8 +49,10 @@ class LabchipResultsSummary:
         qpcr_labchip_well_lookup = {v:k for (k,v) in
                                     labchip_qpcr_well_lookup.items()}
         labchip_results = {}
+        self.labchip_wells = qpcr_labchip_well_lookup.values()
         for labchip in labchip_results_queryset.values():
             labchip_results.setdefault(labchip['labchip_well'],
+                                               {}).setdefault('peak',
                                                {})[labchip['peak_name']]={
                 '%_purity':labchip['purity'],
                 'conc_(ng/ul)':labchip['concentration'],
@@ -58,16 +63,12 @@ class LabchipResultsSummary:
         return labchip_results,qpcr_labchip_well_lookup
 
 
-    def _fetch_dilutions(self):
+    def _fetch_dilutions(self,labchip_wells):
         dilution_dict = {}
-        for col,rows in self.allocation_results.source_map[
-            self.labchip_plate].items():
-            for row,source_info in rows.items():
-                well_id = self._well_position_to_alpha_numeric((col,row))
-                s_plate,s_row,s_col = self._get_source_plate_row_col(
-                    source_info)
+        for well_id in labchip_wells:
+                row,col =self._well_position_to_numeric(well_id)
                 well_allocation = self.allocation_results.plate_info[
-                    s_plate][s_col][s_row]
+                    self.labchip_plate][col][row]
                 dilutions = [conc for (reagent,conc,unit) in well_allocation if
                              unit == 'dilution']
                 if len(dilutions)>0:

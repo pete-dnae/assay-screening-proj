@@ -101,6 +101,68 @@ class NestedTableRow(OrderedDict):
 
         return inst
 
+    @classmethod
+    def create_from_db(cls, qpcr_well: WellName,
+                           qpcr_plate: PlateName,
+                           lc_well: WellName,
+                           lc_plate: PlateName,
+                           id_constit: IdConstituents,
+                           id_qpcr_data: IdQpcrData,
+                           lc_data: LabChipData):
+        inst = cls()
+        inst['qPCR Well'] = qpcr_well
+        inst['qPCR Plate'] = qpcr_plate
+        inst['LC Well'] = lc_well
+        inst['LC Plate'] = lc_plate
+
+        inst['PA Assay Name'] = \
+                _get_item_attribute('transferred_assays','reagent_name',id_constit)
+        inst['PA Assay Conc.'] = \
+            _get_item_attribute('transferred_assays', 'concentration',
+                                id_constit)
+        inst['PA Template Name'] = \
+            _get_item_attribute('transferred_templates', 'reagent_name',
+                                id_constit)
+        inst['PA Template Conc.'] = \
+            _get_item_attribute('transferred_templates', 'concentration',
+                                id_constit)
+        inst['PA Human Name'] = \
+            _get_item_attribute('transferred_humans', 'reagent_name',
+                                id_constit)
+        inst['PA Human Conc.'] = \
+            _get_item_attribute('transferred_humans', 'concentration',
+                                id_constit)
+
+        inst['ID Assay Name'] = \
+            _get_item_attribute('assays', 'reagent_name',
+                                id_constit)
+        inst['ID Assay Conc.'] = \
+            _get_item_attribute('assays', 'concentration',
+                                id_constit)
+
+        inst['ID Template Name'] = \
+            _get_item_attribute('templates', 'reagent_name',
+                                id_constit)
+        inst['ID Template Conc.'] = \
+            _get_item_attribute('templates', 'concentration',
+                                id_constit)
+
+        inst['ID Human Name'] = \
+            _get_item_attribute('humans', 'reagent_name',
+                                id_constit)
+        inst['ID Human Conc.'] = \
+            _get_item_attribute('humans', 'concentration',
+                                id_constit)
+
+        for k, v in id_qpcr_data.items():
+            inst[k] = v
+
+        for k, v in lc_data.items():
+            inst[k] = v
+
+        return inst
+
+
 
 class NestedMasterTable:
 
@@ -132,3 +194,37 @@ class NestedMasterTable:
         inst = cls()
         inst.rows = rows
         return inst
+
+    @classmethod
+    def create_from_db(
+            cls,
+            qpcr_plate: str,
+            lc_plate: str,
+            mapping: List,
+            id_constits: Dict[WellName, IdConstituents],
+            id_qpcr_datas: IdQpcrData,
+            lc_datas: LabChipData):
+
+        rows = []
+        for qw, lw in mapping.items():
+            constits = id_constits[qw]
+            id_qpcr_data = id_qpcr_datas[qw]
+            lc_data = lc_datas[qw]
+            r = NestedTableRow.create_from_db(qw, qpcr_plate, lw,
+                                                  lc_plate, constits,
+                                                  id_qpcr_data, lc_data)
+            rows.append(r)
+
+        inst = cls()
+        inst.rows = rows
+        return inst
+
+
+
+def _get_item_attribute(key, attribute,contents):
+    if key in contents:
+        item = contents[key]
+    else:
+        item = []
+    attributes = tuple(i[attribute] for i in item)
+    return attributes

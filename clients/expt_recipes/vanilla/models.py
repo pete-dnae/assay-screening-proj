@@ -65,6 +65,44 @@ class VanillaMasterTableRow(OrderedDict):
 
         return inst
 
+    @classmethod
+    def create_from_db(cls, qwell_name, qplate_name, lwell_name,
+                           lplate_name, id_constit, id_qdata, ldata):
+        inst = cls()
+        inst['qPCR Plate'] = qplate_name
+        inst['qPCR Well'] = qwell_name
+        inst['LC Plate'] = lplate_name
+        inst['LC Well'] = lwell_name
+
+        inst['ID Assay Name'] = \
+            _get_item_attribute('assays', 'reagent_name',
+                                id_constit)
+        inst['ID Assay Conc.'] = \
+            _get_item_attribute('assays', 'concentration',
+                                id_constit)
+
+        inst['ID Template Name'] = \
+            _get_item_attribute('templates', 'reagent_name',
+                                id_constit)
+        inst['ID Template Conc.'] = \
+            _get_item_attribute('templates', 'concentration',
+                                id_constit)
+
+        inst['ID Human Name'] = \
+            _get_item_attribute('humans', 'reagent_name',
+                                id_constit)
+        inst['ID Human Conc.'] = \
+            _get_item_attribute('humans', 'concentration',
+                                id_constit)
+
+        for k, v in id_qdata.items():
+            inst[k] = v
+
+        for k, v in ldata.items():
+            inst[k] = v
+
+        return inst
+
 
 class VanillaMasterTable:
 
@@ -82,6 +120,24 @@ class VanillaMasterTable:
             id_qdata = id_qdatas[qw]
             ldata = ldatas[qw]
             r = VanillaMasterTableRow.create_from_models(qw, qplate_name, lw,
+                                                         lplate_name, constits,
+                                                         id_qdata, ldata)
+            rows.append(r)
+
+        inst = cls()
+        inst.rows = rows
+        return inst
+
+    @classmethod
+    def create_from_db(cls, qwells, qplate_name, lwells, lplate_name,
+                           id_constits, id_qdatas, ldatas):
+
+        rows = []
+        for qw, lw in zip(qwells, lwells):
+            constits = id_constits[qw]
+            id_qdata = id_qdatas[qw]
+            ldata = ldatas[qw]
+            r = VanillaMasterTableRow.create_from_db(qw, qplate_name, lw,
                                                          lplate_name, constits,
                                                          id_qdata, ldata)
             rows.append(r)
@@ -198,3 +254,12 @@ class VanillaSummaryTable:
         inst = cls()
         inst.rows = rows
         return inst
+
+
+def _get_item_attribute(key, attribute,contents):
+    if key in contents:
+        item = contents[key]
+    else:
+        item = []
+    attributes = tuple(i[attribute] for i in item)
+    return attributes
