@@ -9,6 +9,7 @@ class QpcrResultsModel(models.Model):
     Each object contains information about what was observed in a unique
     physical location(well on a plate)
     """
+    #TODO: Find out what these fields mean and provide a description
 
     cycle_threshold = models.FloatField(null=True)
     temperatures = ArrayField(models.FloatField(null=True))

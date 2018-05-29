@@ -32,7 +32,8 @@ urlpatterns = [
     re_path(r'api/available-reagents-category$',
             AvailableReagentsCategoryView.as_view()),
     re_path(r'api/well-results/$',
-            WellResultsView.as_view())
+            WellResultsView.as_view()),
+    re_path(r'api/well-aggregate/$',WellAggregationView.as_view())
 ]
 # Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()

@@ -4,11 +4,10 @@ from .reagent_model import ReagentModel
 
 class ReagentWellLookupModel(models.Model):
     """
-    Model is created to provide ease of access to a qpcr well result
-    This model captures relationship between a qpcr well and the reagents
-    allocated in the well during experiment design
-    It has additional transfer flag to indicate reagents transferred to a
-    qpcr well
+    This model does not provide anything that could not be worked out by
+    cross examination of other tables.So why does it exist ? It exists as a
+    convenient cache to support queries that cant afford the cost of cross
+    examination.
     """
     well = models.CharField(max_length=100)
     reagent = models.ForeignKey(ReagentModel,on_delete=models.PROTECT)

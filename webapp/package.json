@@ -73,6 +73,7 @@
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "ora": "^1.2.0",
     "phantomjs-prebuilt": "^2.1.14",
+    "plotly.js": "^1.38.0",
     "popper": "^1.0.1",
     "popper.js": "^1.12.9",
     "portfinder": "^1.0.13",

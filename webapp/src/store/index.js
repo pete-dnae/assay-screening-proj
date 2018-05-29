@@ -7,6 +7,7 @@ import suggestions from './modules/suggestions/index';
 import pictures from './modules/pictures/index';
 import reagentgroups from './modules/reagentgroups/index';
 import reagents from './modules/reagents/index';
+import results from './modules/results/index';
 
 Vue.use(Vuex);
 
@@ -21,5 +22,6 @@ export default new Vuex.Store({
     pictures,
     reagentgroups,
     reagents,
+    results,
   },
 });

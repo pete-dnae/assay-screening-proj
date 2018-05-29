@@ -18,7 +18,7 @@ def build_labchip_datas_from_inst_data(id_qconsts, linst_plate, ql_mapping,
     lc_datas = {}
     for idw, constits in id_qconsts.items():
         # If a Labchip was run, populate an instance
-        if idw in ql_mapping:
+        if idw in ql_mapping and ql_mapping[idw]:
             lcw = ql_mapping[idw]
             ass =[assay['reagent_name'] for assay in constits['assays']]
             lc_datas[idw] = \

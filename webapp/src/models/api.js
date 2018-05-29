@@ -94,3 +94,8 @@ export const removeReagent = reagentName =>
 export const editReagent = ({ data, reagentName }) =>
   putRes(`/api/reagents/${reagentName}/`, data);
 export const getReagentCategories = () => fetchRes('/api/reagent-categories/');
+export const getWellResultSummary = () => fetchRes('/api/well-aggregate/');
+export const getWellSummary = ({ wellArray, experimentId, qpcrPlateId }) =>
+  fetchRes(
+    `/api/well-results/?expt=${experimentId}&plate_id=${qpcrPlateId}&wells=${wellArray}`,
+  );

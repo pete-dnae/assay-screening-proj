@@ -223,7 +223,7 @@ class VanillaSummaryRow(OrderedDict):
     def _mean(key, rows):
         vals = [r[key] for r in rows if r[key] is not None]
         if all(np.isnan(vals)):
-            return np.nan
+            return 'nan'
         else:
             return np.nanmean(vals)
 
@@ -231,7 +231,7 @@ class VanillaSummaryRow(OrderedDict):
     def _min(key, rows):
         vals = [r[key] for r in rows if r[key] is not None]
         if all(np.isnan(vals)):
-            return np.nan
+            return 'nan'
         else:
             return np.nanmin(vals)
 
@@ -239,7 +239,7 @@ class VanillaSummaryRow(OrderedDict):
     def _max(key, rows):
         vals = [r[key] for r in rows if r[key] is not None]
         if all(np.isnan(vals)):
-            return np.nan
+            return 'nan'
         else:
             return np.nanmax(vals)
 

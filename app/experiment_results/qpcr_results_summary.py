@@ -1,4 +1,4 @@
-from app.models.qpcr_results_model import QpcrResultsModel
+
 import numpy as np
 from numpy.core.umath import isnan
 from clients.expt_recipes.inst_data.data_models import IdQpcrData
@@ -9,14 +9,11 @@ class WellsSummaryMaker:
     data from db
     """
 
-    def __init__(self,experiment_id,plate_id,well_constituents):
-        """
-        Need experiment and plate info to extract well information from DB
-        """
-        self.experiment_id = experiment_id
-        self.plate_id = plate_id
+    def __init__(self,well_constituents,qpcr_results):
+
+
         self.well_constituents = well_constituents
-        self.qpcr_results = self._fetch_qpcr_results()
+        self.qpcr_results = qpcr_results
 
     def prepare_nested_summary(self):
         id_qpcr_datas = {}
@@ -56,15 +53,7 @@ class WellsSummaryMaker:
 
 
 
-    def _fetch_qpcr_results(self):
-        qpcr_result_queryset = QpcrResultsModel.objects.filter(
-            experiment_id=self.experiment_id,qpcr_plate_id=self.plate_id,
-            qpcr_well__in=self.well_constituents.keys())
 
-        qpcr_results = {result['qpcr_well']:result for result in
-                        qpcr_result_queryset.values()}
-
-        return qpcr_results
 
     def _calc_max_conc_mean_tm(self,id_qconsts, qinst_plate):
         """

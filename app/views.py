@@ -10,6 +10,8 @@ from django.db.models.deletion import ProtectedError
 from app.experiment_results.qpcr_results_processor import QpcrResultsProcessor
 from app.experiment_results.labchip_results_processor import LabChipResultsProcessor
 from app.experiment_results.well_results_processor import WellResultsProcessor
+from django.db import connection
+from app.experiment_results.result_aggregation_query import GroupByIDASSAY
 import ast
 
 class ExperimentViewSet(viewsets.ModelViewSet):
@@ -199,3 +201,14 @@ class WellResultsView(APIView):
 
         return Response(WellResultsProcessor(experiment_id,plate_id,
                                              wells).fetch_well_results())
+
+class WellAggregationView(APIView):
+
+    def get(self,request):
+        with connection.cursor() as cursor:
+            cursor.execute(GroupByIDASSAY)
+            columns = [col[0] for col in cursor.description]
+            return Response([
+                dict(zip(columns, row))
+                for row in cursor.fetchall()
+            ])

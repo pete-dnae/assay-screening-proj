@@ -200,7 +200,7 @@ class NestedMasterTable:
             cls,
             qpcr_plate: str,
             lc_plate: str,
-            mapping: List,
+            mapping,
             id_constits: Dict[WellName, IdConstituents],
             id_qpcr_datas: IdQpcrData,
             lc_datas: LabChipData):
