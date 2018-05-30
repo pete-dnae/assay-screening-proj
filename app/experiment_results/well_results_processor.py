@@ -14,11 +14,14 @@ from .experiment_data_extractor import get_qpcr_well_ids,\
     fetch_assay_amplicon_lengths,get_dilutions
 
 
+
+
+
 class WellResultsAggregation:
 
     def __init__(self):
-        self.master_calculations = None
-        self.summary_calculations = None
+        self.master_table_rows = None
+        self.summary_table_rows = None
         self.amp_melt_graph = None
         self.copy_cnt_graph = None
         self.lab_chip_results = None
@@ -72,8 +75,8 @@ class WellResultsAggregation:
 
         graphDataProcessor = GraphDataProcessor(well_constituents,qpcr_results)
         inst = cls()
-        inst.master_calculations = master_calculations.rows
-        inst.summary_calculations = srows
+        inst.master_table_rows = master_calculations.rows
+        inst.summary_table_rows = srows
         inst.amp_melt_graph = graphDataProcessor.prepare_amp_melt_graph()
         inst.copy_cnt_graph = graphDataProcessor.prepare_copy_count_graph()
         inst.lab_chip_results = labchip_results
@@ -87,17 +90,19 @@ class WellResultsAggregation:
         qpcr_well_db_id_map = get_qpcr_well_ids(qpcr_results_queryset)
 
         lab_chip_results_queryset = LabChipResultsModel.objects.filter(
-            qpcr_well__in=qpcr_well_db_id_map.keys()
-        )
+            qpcr_well__in=qpcr_well_db_id_map.keys())
 
-        return WellResultsAggregation.create(expt_id,plate_id,wells,
-                              get_labchip_wells(lab_chip_results_queryset),
-                              get_qpcr_results_by_well(qpcr_results_queryset),
-                              fetch_allocation_results(expt_id),
-                              get_qpcr_well_lookup(lab_chip_results_queryset,
-                                                   qpcr_well_db_id_map),
-                              fetch_reagent_categories(),
-                              fetch_assay_amplicon_lengths(),
-                              get_labchip_palate_id(lab_chip_results_queryset),
-                              get_labchip_results_from_queryset(
-                                  lab_chip_results_queryset))
+        inst = cls.create(
+            expt_id,plate_id,wells,
+            get_labchip_wells(lab_chip_results_queryset),
+            get_qpcr_results_by_well(qpcr_results_queryset),
+            fetch_allocation_results(expt_id),
+            get_qpcr_well_lookup(lab_chip_results_queryset,
+                                 qpcr_well_db_id_map),
+            fetch_reagent_categories(),
+            fetch_assay_amplicon_lengths(),
+            get_labchip_palate_id(lab_chip_results_queryset),
+            get_labchip_results_from_queryset(lab_chip_results_queryset))
+
+        return inst
+
