@@ -8,8 +8,7 @@ class WellConstituentsMaker:
     Extracts contents related to a well from db
     """
 
-    def __init__(self, plate_id, wells,allocation_results,
-                 reagent_category):
+    def __init__(self, plate_id, wells, allocation_results, reagent_category):
         self.plate_id = plate_id
         self.wells = wells
         self.allocation_results = allocation_results
@@ -22,7 +21,7 @@ class WellConstituentsMaker:
             row, col = self._well_position_to_numeric(well_id)
             transfered_reagents = self._get_transfered_reagents(row, col)
             source_reagents = self._get_source_reagents(row, col)
-            self._add__transfer_reagents_to_wells(well_id, transfered_reagents)
+            self._add_transfer_reagents_to_wells(well_id, transfered_reagents)
             self._add_reagents_to_wells(well_id, source_reagents)
 
         return self.well_constituents.well_info
@@ -31,7 +30,7 @@ class WellConstituentsMaker:
     # Private below.
     # -----------------------------------------------------------------------
 
-    def _add__transfer_reagents_to_wells(self, well_id, reagents):
+    def _add_transfer_reagents_to_wells(self, well_id, reagents):
 
         for reagent in reagents:
             if reagent['reagent_category'] == 'assay':

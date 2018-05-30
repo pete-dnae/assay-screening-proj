@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from app.experiment_results.qpcr_results_processor import QpcrResultsProcessor
 from app.experiment_results.labchip_results_processor import LabChipResultsProcessor
-from app.experiment_results.well_results_processor import WellResultsProcessor
+from app.experiment_results.well_results_processor import WellResultsAggregation
 from django.db import connection
 from app.experiment_results.result_aggregation_query import GroupByIDASSAY
 import ast
@@ -198,9 +198,9 @@ class WellResultsView(APIView):
         experiment_id = request.query_params['expt']
         plate_id = request.query_params['plate_id']
         wells = ast.literal_eval(request.query_params['wells'])
-
-        return Response(WellResultsProcessor(experiment_id,plate_id,
-                                             wells).fetch_well_results())
+        results = WellResultsAggregation.create_from_wells(experiment_id, plate_id,
+                                                   wells)
+        return Response(results)
 
 class WellAggregationView(APIView):
 
