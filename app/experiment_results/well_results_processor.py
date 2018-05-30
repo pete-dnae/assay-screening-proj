@@ -14,7 +14,65 @@ from .experiment_data_extractor import get_qpcr_well_ids,\
     fetch_assay_amplicon_lengths,get_dilutions
 
 
+def build_well_constituents(plate_id, qpcr_wells, allocation_results,
+                            reagent_categories):
 
+    well_constituents_maker = \
+        WellConstituentsMaker(plate_id, qpcr_wells, allocation_results,
+                              reagent_categories)
+    well_constituents = well_constituents_maker.prepare_well_constituents()
+    return well_constituents
+
+
+def build_labchip_results(allocation_results, labchip_plate_id,
+                          labchip_wells, well_constituents, lab_chip_results,
+                          qpcr_labchip_well_lookup, reagent_amplicon_lengths):
+    lab_chip_plate_allocation = allocation_results.plate_info[labchip_plate_id]
+    dilutions = get_dilutions(lab_chip_plate_allocation, labchip_wells)
+    labchip_results = build_labchip_datas_from_inst_data(
+        well_constituents, lab_chip_results, qpcr_labchip_well_lookup,
+        reagent_amplicon_lengths, dilutions)
+    return labchip_results
+
+
+def get_nested_master_table(well_summary_maker, plate_id, labchip_plate_id,
+                            qpcr_labchip_well_lookup, well_constituents,
+                            labchip_results):
+    qpcr_summary = well_summary_maker.prepare_nested_summary()
+    master_table = NestedMasterTable.create_from_db(plate_id,
+                                           labchip_plate_id,
+                                           qpcr_labchip_well_lookup,
+                                           well_constituents,
+                                           qpcr_summary,
+                                           labchip_results)
+    return master_table
+
+
+def get_vanilla_master_table(well_summary_maker, qpcr_wells, plate_id,
+                             labchip_wells, labchip_plate_id,
+                             well_constituents, labchip_results):
+    qpcr_summary = well_summary_maker.prepare_vanilla_summary()
+    master_table = VanillaMasterTable. create_from_db(qpcr_wells, plate_id,
+                                                      labchip_wells,
+                                                      labchip_plate_id,
+                                                      well_constituents,
+                                                      qpcr_summary,
+                                                      labchip_results)
+    return master_table
+
+
+def create_summary_rows(master_table):
+    grps = {}
+    for r in master_table.rows:
+        grp_key = (r['ID Template Name'], r['ID Template Conc.'],
+                   r['ID Human Name'], r['ID Human Conc.'])
+        grps.setdefault(grp_key, []).append(r)
+
+    summary_rows = []
+    for g in grps:
+        summary_rows.append(
+            VanillaSummaryRow.create_from_master_table_rows(grps[g]))
+    return summary_rows
 
 
 class WellResultsAggregation:
@@ -33,50 +91,40 @@ class WellResultsAggregation:
                reagent_categories,reagent_amplicon_lengths, labchip_plate_id,
                lab_chip_results):
 
-        well_constituents_maker = WellConstituentsMaker(plate_id,
-                                                        qpcr_wells,
-                                                        allocation_results,
-                                                        reagent_categories)
-        well_constituents = well_constituents_maker.prepare_well_constituents()
+        well_constituents = build_well_constituents(plate_id, qpcr_wells,
+                                                    allocation_results,
+                                                    reagent_categories)
 
-        lab_chip_plate_allocation = allocation_results.plate_info[labchip_plate_id]
-        dilutions = get_dilutions(lab_chip_plate_allocation,labchip_wells)
-        labchip_results = build_labchip_datas_from_inst_data(
-            well_constituents,lab_chip_results, qpcr_labchip_well_lookup,
-            reagent_amplicon_lengths, dilutions)
-        well_summary_maker = WellsSummaryMaker(well_constituents,qpcr_results)
+        labchip_results = build_labchip_results(allocation_results,
+                                                labchip_plate_id,
+                                                labchip_wells,
+                                                well_constituents,
+                                                lab_chip_results,
+                                                qpcr_labchip_well_lookup,
+                                                reagent_amplicon_lengths)
+        well_summary_maker = WellsSummaryMaker(well_constituents, qpcr_results)
         if experiment_type=='nested':
-            qpcr_summary = well_summary_maker.prepare_nested_summary()
-            master_calculations = NestedMasterTable.create_from_db(plate_id,
+            master_table = get_nested_master_table(well_summary_maker,
+                                                   plate_id,
                                                    labchip_plate_id,
                                                    qpcr_labchip_well_lookup,
                                                    well_constituents,
-                                                   qpcr_summary,
                                                    labchip_results)
         else:
-            qpcr_summary = well_summary_maker.prepare_vanilla_summary()
-            master_calculations = VanillaMasterTable.\
-                create_from_db(qpcr_wells,plate_id,labchip_wells,
-                               labchip_plate_id,well_constituents,
-                               qpcr_summary,labchip_results)
+            master_table = get_vanilla_master_table(well_summary_maker,
+                                                    qpcr_wells, plate_id,
+                                                    labchip_wells,
+                                                    labchip_plate_id,
+                                                    well_constituents,
+                                                    labchip_results)
 
-        grps = {}
-
-        for r in master_calculations.rows:
-            grp_key = (r['ID Template Name'], r['ID Template Conc.'],
-                       r['ID Human Name'], r['ID Human Conc.'])
-            grps.setdefault(grp_key, []).append(r)
-
-        srows = []
-        for g in grps:
-            srows.append(
-                VanillaSummaryRow.create_from_master_table_rows(grps[g]))
+        summary_rows = create_summary_rows(master_table)
 
 
-        graphDataProcessor = GraphDataProcessor(well_constituents,qpcr_results)
+        graphDataProcessor = GraphDataProcessor(well_constituents, qpcr_results)
         inst = cls()
-        inst.master_table_rows = master_calculations.rows
-        inst.summary_table_rows = srows
+        inst.master_table_rows = master_table.rows
+        inst.summary_table_rows = summary_rows
         inst.amp_melt_graph = graphDataProcessor.prepare_amp_melt_graph()
         inst.copy_cnt_graph = graphDataProcessor.prepare_copy_count_graph()
         inst.lab_chip_results = labchip_results
