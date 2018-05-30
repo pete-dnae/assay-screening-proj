@@ -14,6 +14,89 @@ from .experiment_data_extractor import get_qpcr_well_ids,\
     fetch_assay_amplicon_lengths,get_dilutions
 
 
+
+class WellResultsAggregation:
+
+    def __init__(self):
+        self.master_table_rows = None
+        self.summary_table_rows = None
+        self.amp_melt_graph = None
+        self.copy_cnt_graph = None
+        self.lab_chip_results = None
+
+
+    @classmethod
+    def create(cls, master_table_rows, summary_table_rows, amp_melt_graph,
+               copy_cnt_graph):
+        inst = cls()
+        inst.master_table_rows = master_table_rows
+        inst.summary_table_rows = summary_table_rows
+        inst.amp_melt_graph = amp_melt_graph
+        inst.copy_cnt_graph = copy_cnt_graph
+        return inst
+
+    @classmethod
+    def create_from_wells(cls, experiment_type, expt_id, plate_id, wells):
+
+        qpcr_results_queryset = QpcrResultsModel.objects.filter(
+            experiment_id=expt_id, qpcr_plate_id=plate_id, qpcr_well__in=wells)
+        qpcr_results = get_qpcr_results_by_well(qpcr_results_queryset)
+
+        qpcr_well_db_id_map = get_qpcr_well_ids(qpcr_results_queryset)
+
+        allocation_results = fetch_allocation_results(expt_id)
+        reagent_categories = fetch_reagent_categories()
+        reagent_amplicon_lengths = fetch_assay_amplicon_lengths()
+
+        lab_chip_results_queryset = LabChipResultsModel.objects.filter(
+            qpcr_well__in=qpcr_well_db_id_map.keys())
+        qpcr_labchip_well_lookup = get_qpcr_well_lookup(
+            lab_chip_results_queryset, qpcr_well_db_id_map)
+        labchip_plate_id = get_labchip_palate_id(lab_chip_results_queryset)
+
+        labchip_wells = get_labchip_wells(lab_chip_results_queryset)
+        labchip_results = \
+            get_labchip_results_from_queryset(lab_chip_results_queryset)
+
+
+        well_constituents = build_well_constituents(plate_id, wells,
+                                                    allocation_results,
+                                                    reagent_categories)
+
+        labchip_results = build_labchip_results(allocation_results,
+                                                labchip_plate_id,
+                                                labchip_wells,
+                                                well_constituents,
+                                                labchip_results,
+                                                qpcr_labchip_well_lookup,
+                                                reagent_amplicon_lengths)
+        well_summary_maker = WellsSummaryMaker(well_constituents, qpcr_results)
+        if experiment_type == 'nested':
+            master_table = get_nested_master_table(well_summary_maker,
+                                                   plate_id,
+                                                   labchip_plate_id,
+                                                   qpcr_labchip_well_lookup,
+                                                   well_constituents,
+                                                   labchip_results)
+        else:
+            master_table = get_vanilla_master_table(well_summary_maker,
+                                                    wells, plate_id,
+                                                    labchip_wells,
+                                                    labchip_plate_id,
+                                                    well_constituents,
+                                                    labchip_results)
+
+        summary_rows = create_summary_rows(master_table)
+
+        graphDataProcessor = GraphDataProcessor(well_constituents, qpcr_results)
+        amp_melt_graph = graphDataProcessor.prepare_amp_melt_graph()
+        copy_count_graph = graphDataProcessor.prepare_copy_count_graph()
+        inst = cls.create(master_table, summary_rows, amp_melt_graph,
+                          copy_count_graph)
+
+        return inst
+
+
 def build_well_constituents(plate_id, qpcr_wells, allocation_results,
                             reagent_categories):
 
@@ -73,84 +156,3 @@ def create_summary_rows(master_table):
         summary_rows.append(
             VanillaSummaryRow.create_from_master_table_rows(grps[g]))
     return summary_rows
-
-
-class WellResultsAggregation:
-
-    def __init__(self):
-        self.master_table_rows = None
-        self.summary_table_rows = None
-        self.amp_melt_graph = None
-        self.copy_cnt_graph = None
-        self.lab_chip_results = None
-
-
-    @classmethod
-    def create(cls, experiment_type, plate_id, qpcr_wells, labchip_wells,
-               qpcr_results,allocation_results,qpcr_labchip_well_lookup,
-               reagent_categories,reagent_amplicon_lengths, labchip_plate_id,
-               lab_chip_results):
-
-        well_constituents = build_well_constituents(plate_id, qpcr_wells,
-                                                    allocation_results,
-                                                    reagent_categories)
-
-        labchip_results = build_labchip_results(allocation_results,
-                                                labchip_plate_id,
-                                                labchip_wells,
-                                                well_constituents,
-                                                lab_chip_results,
-                                                qpcr_labchip_well_lookup,
-                                                reagent_amplicon_lengths)
-        well_summary_maker = WellsSummaryMaker(well_constituents, qpcr_results)
-        if experiment_type=='nested':
-            master_table = get_nested_master_table(well_summary_maker,
-                                                   plate_id,
-                                                   labchip_plate_id,
-                                                   qpcr_labchip_well_lookup,
-                                                   well_constituents,
-                                                   labchip_results)
-        else:
-            master_table = get_vanilla_master_table(well_summary_maker,
-                                                    qpcr_wells, plate_id,
-                                                    labchip_wells,
-                                                    labchip_plate_id,
-                                                    well_constituents,
-                                                    labchip_results)
-
-        summary_rows = create_summary_rows(master_table)
-
-
-        graphDataProcessor = GraphDataProcessor(well_constituents, qpcr_results)
-        inst = cls()
-        inst.master_table_rows = master_table.rows
-        inst.summary_table_rows = summary_rows
-        inst.amp_melt_graph = graphDataProcessor.prepare_amp_melt_graph()
-        inst.copy_cnt_graph = graphDataProcessor.prepare_copy_count_graph()
-        inst.lab_chip_results = labchip_results
-        return inst
-
-    @classmethod
-    def create_from_wells(cls,  expt_id, plate_id,wells):
-        qpcr_results_queryset = QpcrResultsModel.objects.filter(
-            experiment_id=expt_id, qpcr_plate_id=plate_id,qpcr_well__in=wells)
-
-        qpcr_well_db_id_map = get_qpcr_well_ids(qpcr_results_queryset)
-
-        lab_chip_results_queryset = LabChipResultsModel.objects.filter(
-            qpcr_well__in=qpcr_well_db_id_map.keys())
-
-        inst = cls.create(
-            expt_id,plate_id,wells,
-            get_labchip_wells(lab_chip_results_queryset),
-            get_qpcr_results_by_well(qpcr_results_queryset),
-            fetch_allocation_results(expt_id),
-            get_qpcr_well_lookup(lab_chip_results_queryset,
-                                 qpcr_well_db_id_map),
-            fetch_reagent_categories(),
-            fetch_assay_amplicon_lengths(),
-            get_labchip_palate_id(lab_chip_results_queryset),
-            get_labchip_results_from_queryset(lab_chip_results_queryset))
-
-        return inst
-
