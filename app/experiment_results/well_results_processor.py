@@ -27,12 +27,13 @@ class WellResultsAggregation:
 
     @classmethod
     def create(cls, master_table_rows, summary_table_rows, amp_melt_graph,
-               copy_cnt_graph):
+               copy_cnt_graph, lab_chip_results):
         inst = cls()
         inst.master_table_rows = master_table_rows
         inst.summary_table_rows = summary_table_rows
         inst.amp_melt_graph = amp_melt_graph
         inst.copy_cnt_graph = copy_cnt_graph
+        inst.lab_chip_results = lab_chip_results
         return inst
 
     @classmethod
@@ -87,7 +88,7 @@ class WellResultsAggregation:
         copy_count_graph = graphDataProcessor.prepare_copy_count_graph()
 
         inst = cls.create(master_table, summary_rows, amp_melt_graph,
-                          copy_count_graph)
+                          copy_count_graph, labchip_results)
 
         return inst
 
