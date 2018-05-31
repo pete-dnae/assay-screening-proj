@@ -1,7 +1,7 @@
 from app.models.labchip_results_model import LabChipResultsModel
 from app.models.qpcr_results_model import QpcrResultsModel
 from .well_constituents_maker import WellConstituentsMaker
-from .qpcr_results_summary import WellsSummaryMaker
+from .qpcr_results_summary import QpcrSummaryMaker
 from clients.expt_recipes.nested.models import NestedMasterTable
 from clients.expt_recipes.vanilla.models import VanillaMasterTable
 from clients.expt_recipes.vanilla.models import VanillaSummaryRow
@@ -58,13 +58,14 @@ class WellResultsAggregation:
         allocation_results = fetch_allocation_results(expt_id)
         well_constituents = build_well_constituents(plate_id, wells,
                                                     allocation_results)
-        labchip_results = build_labchip_results(allocation_results,
-                                                labchip_plate_id,
-                                                labchip_wells,
+        lab_chip_plate_allocation = allocation_results.plate_info[
+            labchip_plate_id]
+        dilutions = get_dilutions(lab_chip_plate_allocation, labchip_wells)
+        labchip_results = build_labchip_results(dilutions,
                                                 well_constituents,
                                                 labchip_results,
                                                 qpcr_labchip_well_lookup)
-        well_summary_maker = WellsSummaryMaker(well_constituents, qpcr_results)
+        well_summary_maker = QpcrSummaryMaker(well_constituents, qpcr_results)
         # --------------------------------------------------------------------
 
         if experiment_type == 'nested':
@@ -76,9 +77,9 @@ class WellResultsAggregation:
                                                    labchip_results)
         else:
             master_table = get_vanilla_master_table(well_summary_maker,
-                                                    wells, plate_id,
-                                                    labchip_wells,
+                                                    plate_id,
                                                     labchip_plate_id,
+                                                    qpcr_labchip_well_lookup,
                                                     well_constituents,
                                                     labchip_results)
 
@@ -102,11 +103,9 @@ def build_well_constituents(plate_id, qpcr_wells, allocation_results):
     return well_constituents
 
 
-def build_labchip_results(allocation_results, labchip_plate_id,
-                          labchip_wells, well_constituents, lab_chip_results,
+def build_labchip_results(dilutions,well_constituents, lab_chip_results,
                           qpcr_labchip_well_lookup):
-    lab_chip_plate_allocation = allocation_results.plate_info[labchip_plate_id]
-    dilutions = get_dilutions(lab_chip_plate_allocation, labchip_wells)
+
     reagent_amplicon_lengths = fetch_assay_amplicon_lengths()
     labchip_results = build_labchip_datas_from_inst_data(
         well_constituents, lab_chip_results, qpcr_labchip_well_lookup,
@@ -127,12 +126,12 @@ def get_nested_master_table(well_summary_maker, plate_id, labchip_plate_id,
     return master_table
 
 
-def get_vanilla_master_table(well_summary_maker, qpcr_wells, plate_id,
-                             labchip_wells, labchip_plate_id,
-                             well_constituents, labchip_results):
+def get_vanilla_master_table(well_summary_maker, plate_id, labchip_plate_id,
+                            qpcr_labchip_well_lookup, well_constituents,
+                            labchip_results):
     qpcr_summary = well_summary_maker.prepare_vanilla_summary()
-    master_table = VanillaMasterTable. create_from_db(qpcr_wells, plate_id,
-                                                      labchip_wells,
+    master_table = VanillaMasterTable.create_from_db(plate_id,
+                                                      qpcr_labchip_well_lookup,
                                                       labchip_plate_id,
                                                       well_constituents,
                                                       qpcr_summary,

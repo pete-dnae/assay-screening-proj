@@ -1,11 +1,12 @@
 from scipy.stats import linregress
 import numpy as np
+from .experiment_data_extractor import get_qpcr_results_by_well
 class GraphDataProcessor:
 
-    def __init__(self,well_constituents,qpcr_results):
+    def __init__(self,well_constituents,qpcr_queryset):
 
         self.well_constituents = well_constituents
-        self.qpcr_data = qpcr_results
+        self.qpcr_data = get_qpcr_results_by_well(qpcr_queryset)
 
 
 

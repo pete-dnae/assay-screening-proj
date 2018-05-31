@@ -129,11 +129,11 @@ class VanillaMasterTable:
         return inst
 
     @classmethod
-    def create_from_db(cls, qwells, qplate_name, lwells, lplate_name,
+    def create_from_db(cls, qplate_name, mapping, lplate_name,
                            id_constits, id_qdatas, ldatas):
 
         rows = []
-        for qw, lw in zip(qwells, lwells):
+        for qw, lw in mapping.items():
             constits = id_constits[qw]
             id_qdata = id_qdatas[qw]
             ldata = ldatas[qw]

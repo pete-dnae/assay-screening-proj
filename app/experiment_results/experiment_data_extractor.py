@@ -124,9 +124,8 @@ def fetch_experiment(experiment_id):
 def fetch_reagent_data(query_set):
 
 
-    reagent_category = fetch_reagent_categories(query_set)
-    assay_amplicon_lengths = fetch_assay_amplicon_lengths(
-        query_set)
+    reagent_category = fetch_reagent_categories()
+    assay_amplicon_lengths = fetch_assay_amplicon_lengths()
     return reagent_category,assay_amplicon_lengths
 
 def fetch_reagent_categories():
@@ -188,4 +187,11 @@ def well_position_to_numeric( well_position):
         return numrow, numcol
     except:
         raise UnexpectedWellNameError()
+
+def get_plate_allocation(allocation_results,plate_id):
+
+    if plate_id in allocation_results.plate_info:
+        return allocation_results.plate_info[plate_id]
+    else:
+        return None
 

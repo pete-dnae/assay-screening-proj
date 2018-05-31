@@ -2,18 +2,18 @@
 import numpy as np
 from numpy.core.umath import isnan
 from clients.expt_recipes.inst_data.data_models import IdQpcrData
-
-class WellsSummaryMaker:
+from .experiment_data_extractor import get_qpcr_results_by_well
+class QpcrSummaryMaker:
     """
     Class takes in well allocation and prepares summary calculations with
     data from db
     """
 
-    def __init__(self,well_constituents,qpcr_results):
+    def __init__(self,well_constituents,qpcr_queryset):
 
 
         self.well_constituents = well_constituents
-        self.qpcr_results = qpcr_results
+        self.qpcr_results = get_qpcr_results_by_well(qpcr_queryset)
 
     def prepare_nested_summary(self):
         id_qpcr_datas = {}
