@@ -1,6 +1,6 @@
 from django.db import models
 from .reagent_group_model import ReagentGroupModel
-
+from .qpcr_results_model import QpcrResultsModel
 
 class ReagentGroupWellLookupModel(models.Model):
     """
@@ -10,7 +10,8 @@ class ReagentGroupWellLookupModel(models.Model):
     examination.
        """
 
-    well = models.CharField(max_length=100)
+    well = models.ForeignKey(QpcrResultsModel,
+                                      on_delete=models.PROTECT)
     reagent_group = models.ForeignKey(ReagentGroupModel,
                                       on_delete=models.PROTECT)
     transfer = models.BooleanField()

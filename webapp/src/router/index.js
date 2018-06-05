@@ -31,7 +31,7 @@ export default new Router({
       component: wellresults,
     },
     {
-      path: '/summary',
+      path: '/summary/:Expt/:Plate/:Wells',
       name: 'summaryHome',
       component: wellSummary,
     },

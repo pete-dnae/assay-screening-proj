@@ -261,7 +261,7 @@ def get_ct(qpcr_data: qPCRInstWell):
     if ct:
         return ct
     else:
-        return float('nan')
+        return None
 
 
 def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
@@ -276,7 +276,7 @@ def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
     if tm:
         return tm
     else:
-        return float('nan')
+        return None
 
 
 def get_tms(qpcr_data: qPCRInstWell, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \

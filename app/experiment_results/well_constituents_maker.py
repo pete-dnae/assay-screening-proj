@@ -1,122 +1,111 @@
 from collections import OrderedDict
 import re
-from .labchip_results_processor import UnexpectedWellNameError
+from .utilities import well_position_to_numeric
 
 
-class WellConstituentsMaker:
+def make_well_constituents(plate_id, wells, allocation_results,
+                           reagent_categories):
     """
-    Extracts contents related to a well from db
+    Makes a well constituents dictionary for a mentioned plate and set of
+    wells
     """
+    well_constituents = {}
+    for well_id in wells:
 
-    def __init__(self, plate_id, wells, allocation_results, reagent_category):
-        self.plate_id = plate_id
-        self.wells = wells
-        self.allocation_results = allocation_results
-        self.reagent_category = reagent_category
-        self.well_constituents = WellConstituents()
+        transfered_reagents = _get_transfered_reagents(allocation_results,
+                                                       reagent_categories,
+                                                       plate_id ,well_id)
+        source_reagents = _get_alocation_reagents(allocation_results,
+                                                  reagent_categories,
+                                                  plate_id,
+                                                  well_id)
+        transfered_reagents = \
+            _get_transfer_reagents_package(transfered_reagents)
+        reagents = _get_reagents_package(source_reagents)
+        well_constituents[well_id] = {**transfered_reagents, **reagents}
 
-    def prepare_well_constituents(self):
+    return well_constituents
 
-        for well_id in self.wells:
-            row, col = self._well_position_to_numeric(well_id)
-            transfered_reagents = self._get_transfered_reagents(row, col)
-            source_reagents = self._get_source_reagents(row, col)
-            self._add_transfer_reagents_to_wells(well_id, transfered_reagents)
-            self._add_reagents_to_wells(well_id, source_reagents)
+def _get_transfer_reagents_package(reagents):
+    """
+    Creates a dictionary for transferred reagents , assumes reagents passed
+    in are transfer reagents
+    """
+    well_constituent = {}
+    for reagent in reagents:
+        if reagent['reagent_category'] == 'assay':
+            well_constituent.setdefault('transferred_assays',
+                                        []).append(reagent)
+        if reagent['reagent_category'] == 'template':
+            well_constituent.setdefault('transferred_templates',
+                                        []).append(reagent)
+        if reagent['reagent_category'] == 'human':
+            well_constituent.setdefault('transferred_humans',
+                                        []).append(reagent)
+    return well_constituent
 
-        return self.well_constituents.well_info
+def _get_reagents_package( reagents):
+    """
+       Creates a dictionary for  reagents , assumes reagents passed
+       in are not transfer reagents
+       """
+    well_constituent = {}
+    for reagent in reagents:
+        if reagent['reagent_category'] == 'assay':
+            well_constituent.setdefault('assays', []).append(reagent)
 
-    # -----------------------------------------------------------------------
-    # Private below.
-    # -----------------------------------------------------------------------
+        if reagent['reagent_category'] == 'template':
+            well_constituent.setdefault('templates', []).append(reagent)
+        if reagent['reagent_category'] == 'human':
+            well_constituent.setdefault('humans', []).append(reagent)
+    return well_constituent
 
-    def _add_transfer_reagents_to_wells(self, well_id, reagents):
 
-        for reagent in reagents:
-            if reagent['reagent_category'] == 'assay':
-                self.well_constituents.add(well_id, 'transferred_assays',
-                                           reagent)
-            if reagent['reagent_category'] == 'template':
-                self.well_constituents.add(well_id,
-                                           'transferred_templates', reagent)
-            if reagent['reagent_category'] == 'human':
-                self.well_constituents.add(well_id, 'transferred_humans',
-                                           reagent)
 
-    def _add_reagents_to_wells(self, well_id, reagents):
+def _get_transfered_reagents(allocation_results, reagent_category, plate_id,
+                             well_id):
+    """
+    Identifies and returns transfer reagents if any for a particular well in a
+    plate
+    """
+    row, col = well_position_to_numeric(well_id)
+    source_well = allocation_results.source_map[plate_id][col][row]
 
-        for reagent in reagents:
-            if reagent['reagent_category'] == 'assay':
-                self.well_constituents.add(well_id, 'assays', reagent)
-            if reagent['reagent_category'] == 'template':
-                self.well_constituents.add(well_id, 'templates', reagent)
-            if reagent['reagent_category'] == 'human':
-                self.well_constituents.add(well_id, 'humans', reagent)
+    if source_well:
+        s_plate, s_row, s_col = _get_source_plate_row_col(source_well)
 
-    def _well_position_to_numeric(self, well_position):
-        """
-        Converts well position from alphanumeric to numeric
-        """
-
-        match = re.match(r"([A-Z])([0-9]+)", well_position)
-
-        if not match:
-            raise UnexpectedWellNameError()
-
-        try:
-            row, col = match.groups()
-            numrow = ord(row) - 64
-            numcol = int(col)
-            return numrow, numcol
-        except:
-            raise UnexpectedWellNameError()
-
-    def _get_transfered_reagents(self, row, col):
-
-        source_well = self.allocation_results.source_map[self.plate_id][
-            col][row]
-
-        if source_well:
-            s_plate, s_row, s_col = self._get_source_plate_row_col(source_well)
-            well_allocation = self._get_well_allocation(s_plate, s_row, s_col)
-            return self._get_reagents(well_allocation)
-
+        well_allocation = allocation_results.plate_info[s_plate][s_col][s_row]
+        return _get_reagents(well_allocation,reagent_category)
+    else:
         return []
 
-    def _get_source_reagents(self, row, col):
-
-        well_allocation = self._get_well_allocation(self.plate_id, row, col)
-        return self._get_reagents(well_allocation)
-
-    def _get_reagents(self, well_allocation):
-        results = []
-        for (reagent, conc, unit) in well_allocation:
-            if reagent in self.reagent_category:
-                results.append({'concentration': conc,
-                                'reagent_category': self.reagent_category[
-                                    reagent],
-                                'reagent_name': reagent,
-                                'unit': unit})
-        return results
-
-    def _get_source_plate_row_col(self, source_well):
-        return source_well['source_plate'], source_well['source_row'], \
-               source_well['source_col']
-
-    def _get_well_allocation(self, plate, row, col):
-
-        return self.allocation_results.plate_info[plate][col][row]
-
-
-class WellConstituents:
+def _get_alocation_reagents(allocation_results, reagent_category, plate_id,
+                            well_id):
     """
-    A container that carries information about well constituents
+     Identifies and returns allocation reagents for a particular well in a plate
     """
+    row, col = well_position_to_numeric(well_id)
 
-    def __init__(self):
-        self.well_info = OrderedDict()
+    well_allocation = allocation_results.plate_info[plate_id][col][row]
+    return _get_reagents(well_allocation,reagent_category)
 
-    def add(self, well_id, property, value):
+def _get_reagents(well_allocation,reagent_category):
+    """
+    Helper function to get reagents of specific category in well allocation
+    """
+    results = []
+    for (reagent, conc, unit) in well_allocation:
+        if reagent in reagent_category:
+            results.append({'concentration': conc,
+                            'reagent_category': reagent_category[reagent],
+                            'reagent_name': reagent,
+                            'unit': unit})
+    return results
 
-        well_detail = self.well_info.setdefault(well_id, {})
-        well_detail.setdefault(property,[]).append(value)
+def _get_source_plate_row_col(source_well):
+    """
+    function to split source well dictionary into a tuple
+    """
+    return source_well['source_plate'], source_well['source_row'], \
+           source_well['source_col']
+

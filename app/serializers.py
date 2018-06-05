@@ -1,8 +1,5 @@
 import json
 from rest_framework import serializers
-from pdb import set_trace as st
-import numpy as np
-import math
 # Models
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
@@ -27,6 +24,7 @@ class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'experiment_name',
             'rules_script',
+            'experiment_type'
         )
 
 
@@ -94,7 +92,7 @@ class ReagentGroupSerializer(serializers.ModelSerializer):
         group_details = validated_data.pop('details')
         reagent_group = ReagentGroupModel.objects.create(**validated_data)
         for group_detail in group_details:
-            ReagentGroupDetailsModel.objects.create(group_name=reagent_group,
+            ReagentGroupDetailsModel.objects.create(reagent_group=reagent_group,
                                                     **group_detail)
         return reagent_group
 

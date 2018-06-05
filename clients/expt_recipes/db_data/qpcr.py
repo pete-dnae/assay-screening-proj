@@ -42,7 +42,7 @@ def _calc_delta_ct(ct, ntc_ct):
     return delta_ct
 
 
-def _get_ct_call(delta_ct, ntc_ct_threshold=1 / 3):
+def _get_ct_call(delta_ct, ntc_ct_threshold=3.333333):
     """
     Get ct call given a delta ct and a relative ntc threshold ct value.
     :param delta_ct: a delta ct value

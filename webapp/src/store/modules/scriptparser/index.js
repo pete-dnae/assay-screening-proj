@@ -81,7 +81,7 @@ const actions = {
         });
     });
   },
-  saveExperimentAs({ commit }, experimentName) {
+  saveExperimentAs({ commit }, args) {
     commit(types.REQUEST_POST_RULE_SCRIPT);
 
     return new Promise(function(resolve, reject) {
@@ -90,10 +90,10 @@ const actions = {
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
           commit(types.REQUEST_POST_NEW_EXPERIMENT);
-
+          debugger
           api
             .postNewExperiment({
-              experiment_name: experimentName,
+              ...args,
               rules_script: data.url
             })
             .then(({ data }) => {

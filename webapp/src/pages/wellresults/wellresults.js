@@ -25,12 +25,7 @@ export default {
   methods: {
     ...mapActions(['fetchWellResultSummary', 'fetchWellSummary']),
     getSummary({ experiment_id, qpcr_plate_id, wells }) {
-      const wellArray = JSON.stringify(wells.split(','));
-      this.fetchWellSummary({
-        wellArray,
-        experimentId: experiment_id,
-        qpcrPlateId: qpcr_plate_id,
-      });
+      this.$router.push({ name: 'summaryHome', params: { Expt: experiment_id, Plate: qpcr_plate_id, Wells: wells } });
     },
   },
   mounted() {

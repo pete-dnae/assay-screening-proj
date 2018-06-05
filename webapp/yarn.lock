@@ -11715,6 +11715,10 @@ vt-pbf@^3.0.1:
     "@mapbox/vector-tile" "^1.3.1"
     pbf "^3.0.5"
 
+vue-draggable-resizable@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/vue-draggable-resizable/-/vue-draggable-resizable-1.7.1.tgz#49ac42732187a71c1384b2266bc61ea32c8de6b5"
+
 vue-hot-reload-api@^2.2.0:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.2.4.tgz#683bd1d026c0d3b3c937d5875679e9a87ec6cd8f"

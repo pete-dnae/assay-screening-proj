@@ -21,8 +21,11 @@ export const plotCopyCountGraph = (data, element = 'copyCountGraph') =>
       },
     ],
     {
-      height: 500,
-      width: 750,
+      height: 300,
+      width: 500,
+      title: 'Ct vs Log Copy Count',
+      xAxisTitle: 'Log Copy Count',
+      yAxisTitle: 'Ct',
     },
   );
 
@@ -35,8 +38,12 @@ export const plotAmpGraph = (data, element = 'ampGraph') =>
       name: getTraceName(row),
     })),
     {
-      height: 500,
-      width: 750,
+      height: 300,
+      width: 500,
+      title: 'Amplification Data',
+      xAxisTitle: 'Cycle',
+      yAxisTitle: 'Delta Rn',
+      exponent: true,
     },
   );
 
@@ -49,8 +56,12 @@ export const plotMeltGraph = (data, element = 'meltGraph') =>
       name: getTraceName(row),
     })),
     {
-      height: 500,
-      width: 750,
+      height: 300,
+      width: 500,
+      title: 'Temperature Melt Curve Data',
+      xAxisTitle: 'Temperature',
+      yAxisTitle: 'Melt Derivative',
+      exponent: true,
     },
   );
 

@@ -13,6 +13,7 @@ import {
   SUMMARY_COLOR_CONFIG,
 } from '@/models/tableConfiguration';
 import _ from 'lodash';
+import VueDraggableResizable from 'vue-draggable-resizable';
 
 export default {
   name: 'wellsummary',
@@ -22,35 +23,37 @@ export default {
       masterHeaders: MASTER_HEADERS,
       columnsToColor: SUMMARY_COLOR_CONFIG,
       summaryHeaders: SUMMARY_HEADERS,
+      showSummary: true,
     };
   },
   components: {
     calcTable,
+    VueDraggableResizable,
   },
   computed: {
     ...mapGetters({
       resultMaster: 'getResultMaster',
       resultSummary: 'getResultSummary',
-      ampMeltGraphData: 'getAmpMeltGraphData',
+      ampGraphData: 'getAmpGraphData',
+      meltGraphData: 'getMeltGraphData',
       copyCountGraphData: 'getCopyCountGraphData',
       labchipGraphData: 'getLabchiPGraphData',
     }),
   },
   methods: {
-    ...mapActions([]),
-
+    ...mapActions(['fetchWellSummary']),
     handleWellSelection(wellList) {
       const qpcrWells = _.map(wellList, 'qPCR Well');
       const lcWells = _.map(wellList, 'LC Well');
       plotAmpGraph(
         _.filter(
-          this.ampMeltGraphData.amp_data,
+          this.ampGraphData,
           row => qpcrWells.indexOf(row.meta.well_id) > -1,
         ),
       );
       plotMeltGraph(
         _.filter(
-          this.ampMeltGraphData.melt_data,
+          this.meltGraphData,
           row => qpcrWells.indexOf(row.meta.well_id) > -1,
         ),
       );
@@ -71,9 +74,17 @@ export default {
     },
   },
   mounted() {
-    plotAmpGraph(this.ampMeltGraphData.amp_data);
-    plotMeltGraph(this.ampMeltGraphData.melt_data);
-    plotCopyCountGraph(this.copyCountGraphData);
-    plotLabchipGraph(generateLabChipPlotTraces(this.labchipGraphData));
+    const { Expt, Plate, Wells } = this.$route.params;
+    const wellArray = JSON.stringify(Wells.split(','));
+    this.fetchWellSummary({
+      wellArray,
+      experimentId: Expt,
+      qpcrPlateId: Plate,
+    }).then(() => {
+      plotAmpGraph(this.ampGraphData);
+      plotMeltGraph(this.meltGraphData);
+      plotCopyCountGraph(this.copyCountGraphData);
+      plotLabchipGraph(generateLabChipPlotTraces(this.labchipGraphData));
+    });
   },
 };

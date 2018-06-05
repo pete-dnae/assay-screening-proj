@@ -129,11 +129,11 @@ class VanillaMasterTable:
         return inst
 
     @classmethod
-    def create_from_db(cls, qplate_name, mapping, lplate_name,
+    def create_from_db(cls, qplate_name, lplate_name, qpcr_labchip_well_map,
                            id_constits, id_qdatas, ldatas):
 
         rows = []
-        for qw, lw in mapping.items():
+        for qw, lw in qpcr_labchip_well_map.items():
             constits = id_constits[qw]
             id_qdata = id_qdatas[qw]
             ldata = ldatas[qw]
@@ -209,10 +209,13 @@ class VanillaSummaryRow(OrderedDict):
     def _reduce(key, rows):
         vals = [r[key] for r in rows if r[key] is not None]
         val = list(set(vals))
-        if len(val) != 1:
-            raise ValueError('{} does not return common value'.format(key))
+        if val:
+            if len(val) > 1:
+                raise ValueError('{} does not return common value'.format(key))
+            else:
+                return val[0]
         else:
-            return val[0]
+            return None
 
     @staticmethod
     def _count(key, rows):

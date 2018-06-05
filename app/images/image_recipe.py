@@ -1,7 +1,6 @@
 from functools import reduce
 from collections import OrderedDict
 
-
 class ImageRecipe:
     """
     Responsibility of this class is to decide what should go into images for

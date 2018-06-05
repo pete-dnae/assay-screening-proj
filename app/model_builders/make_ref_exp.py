@@ -32,7 +32,7 @@ class ReferenceExperiment():
 
         # An experiment
         self.experiment = ExperimentModel.make(
-                self._REFERENCE_EXPERIMENT, rules_script,'vannila')
+                self._REFERENCE_EXPERIMENT, 'vanilla' ,rules_script)
 
         # Approved concentration units.
         for units in REFERENCE_UNITS:

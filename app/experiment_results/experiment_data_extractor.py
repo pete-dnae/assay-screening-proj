@@ -1,41 +1,25 @@
-from app.models.reagent_model import ReagentModel
-from app.models.units_model import UnitsModel
-from app.models.reagent_group_model import ReagentGroupModel
-from app.models.experiment_model import ExperimentModel
+from app.models import *
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.models.reagent_group_model import ReagentGroupDetailsModel
 from django.shortcuts import get_object_or_404
 from json.decoder import JSONDecodeError
 from rest_framework.exceptions import ValidationError
 import json
-from .labchip_results_processor import UnexpectedWellNameError
+from .utilities import UnexpectedWellNameError
 import re
 from collections import defaultdict
+from clients.expt_recipes.lost import build_labchip_datas_from_inst_data
 
-def fetch_labchip_data(query_set):
-    qpcr_labchip_lookup = get_qpcr_well_lookup(query_set)
-    labchip_results = get_labchip_results_from_queryset(query_set)
-    labchip_wells = get_labchip_wells(query_set)
-    labchip_plate_id = get_labchip_palate_id(query_set)
-
-    return qpcr_labchip_lookup,labchip_results,labchip_results,labchip_plate_id
-
-
-def get_qpcr_well_lookup(query_set,qpcr_well_map):
+def get_labchip_query(qpcr_query):
     """
-    Returns a dictionary keyes by qpcr wells with values corresponding to
-    labchip wells
+    Returns query which represent labchip wells associated to the given qpcr
+    query
     """
-    labchip_lookup_dict = {record['qpcr_well_id']: record['labchip_well']
-                           for record in query_set.values('qpcr_well_id',
-                                                          'labchip_well')}
-    qpcr_lookup_dict = {}
+    qpcr_well_db_ids = qpcr_query.values_list('id', flat=True)
+    labchip_query_set = \
+        LabChipResultsModel.objects.filter(qpcr_well__in=qpcr_well_db_ids)
+    return labchip_query_set
 
-    for qpcr_well_id, qpcr_well in qpcr_well_map.items():
-        qpcr_lookup_dict[qpcr_well] = labchip_lookup_dict[qpcr_well_id] if \
-            qpcr_well_id in labchip_lookup_dict else None
-
-    return qpcr_lookup_dict
 
 
 
@@ -56,33 +40,6 @@ def get_labchip_results_from_queryset(query_set):
 
     return results
 
-def get_labchip_wells(query_set):
-
-    return [result['labchip_well'] for result in query_set.values(
-        'labchip_well')]
-
-def get_labchip_palate_id(query_set):
-
-    labchip_record = query_set.first()
-    if labchip_record:
-        return labchip_record.labchip_plate_id
-
-    return None
-
-
-def fetch_qpcr_data(query_set):
-
-    qpcr_well_ids = get_qpcr_well_ids(query_set)
-    qpcr_results = get_qpcr_results_by_well(query_set)
-
-    return qpcr_results,qpcr_well_ids
-
-def get_qpcr_well_ids(query_set):
-    """
-    Prepares a dictionary with well db id as key and well name as value
-    """
-    return {record['id']: record['qpcr_well'] for record in
-            query_set.values('id', 'qpcr_well')}
 
 def get_qpcr_results_by_well(query_set):
     """
@@ -121,12 +78,6 @@ def fetch_experiment(experiment_id):
     """
     return get_object_or_404(ExperimentModel, pk=experiment_id)
 
-def fetch_reagent_data(query_set):
-
-
-    reagent_category = fetch_reagent_categories()
-    assay_amplicon_lengths = fetch_assay_amplicon_lengths()
-    return reagent_category,assay_amplicon_lengths
 
 def fetch_reagent_categories():
     """
@@ -143,8 +94,13 @@ def fetch_reagent_categories():
 
     return reagent_category
 
+
 def fetch_assay_amplicon_lengths():
-    query_set=ReagentModel.objects.filter(category_id='assay')
+    """
+    Returns amplicon length meta field for all the assay type reagents
+    present in database
+    """
+    query_set = ReagentModel.objects.filter(category_id = 'assay')
     amplicon_len_dict = {}
     for element in query_set:
         json_string = element.opaque_json_payload
@@ -159,7 +115,27 @@ def fetch_assay_amplicon_lengths():
             raise ValidationError
     return amplicon_len_dict
 
-def get_dilutions(plate_allocation, labchip_wells):
+def get_dilutions(labchip_query):
+    """
+    Preapares data required to calculate dilutions from the passed in labchip
+    query
+    """
+    if labchip_query.exists():
+        labchip_record = labchip_query.first()
+        allocation_results = fetch_allocation_results(labchip_record.experiment_id)
+        labchip_wells = labchip_query.values_list('labchip_well',flat=True)
+        dilutions = make_dilution(
+            allocation_results.plate_info[labchip_record.labchip_plate_id],
+            labchip_wells)
+        return dilutions
+    else:
+        return None
+
+def make_dilution(plate_allocation,labchip_wells):
+    """
+    Returns the dilution amounts from plate allocation for the given
+    labchip wells
+    """
     dilution_dict = {}
     for well_id in labchip_wells:
         row, col = well_position_to_numeric(well_id)
@@ -188,10 +164,43 @@ def well_position_to_numeric( well_position):
     except:
         raise UnexpectedWellNameError()
 
-def get_plate_allocation(allocation_results,plate_id):
+def fetch_qpcr_well(qpcr_plate, qpcr_well):
+    """"
+    Fetches qpcr well object from db , returns http:404 if not fould
+    """
+    return get_object_or_404(QpcrResultsModel,
+                             qpcr_plate_id=qpcr_plate,
+                             qpcr_well=qpcr_well)
 
-    if plate_id in allocation_results.plate_info:
-        return allocation_results.plate_info[plate_id]
+
+def get_labchip_results_by_well(well_constituents, labchip_query):
+    """
+    Preapares labchip wells related data required to build labchip data
+    container and builds them
+    """
+
+    reagent_amplicon_lenghts = fetch_assay_amplicon_lengths()
+    qpcr_labchip_well_map = \
+        {record.qpcr_well.qpcr_well: record.labchip_well for record in
+         labchip_query}
+    labchip_results = get_labchip_results_from_queryset(labchip_query)
+    dilutions = get_dilutions(labchip_query)
+    labchip_data = \
+        build_labchip_datas_from_inst_data(well_constituents,
+                                           labchip_results,
+                                           qpcr_labchip_well_map,
+                                           reagent_amplicon_lenghts,
+                                           dilutions)
+    return labchip_data
+
+
+def get_labchip_plate_id(labchip_query):
+    """
+    returns labchip plate id from labchip query passed
+    """
+
+    if labchip_query.exists():
+        labchip_record = labchip_query.first()
+        return labchip_record.labchip_plate_id
     else:
         return None
-

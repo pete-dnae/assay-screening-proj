@@ -103,7 +103,7 @@ const mutations = {
     state.reagentGroupList.didInvalidate = false;
   },
   [types.RECEIVED_AVAILABLE_REAGENT_GROUPS](state, data) {
-    state.reagentGroupList.data = data;
+    state.reagentGroupList.data = data.map(x=>x.group_name);
     state.reagentGroupList.isFetching = false;
     state.reagentGroupList.fetched = true;
     state.reagentGroupList.didInvalidate = false;

@@ -3,6 +3,7 @@ export const MASTER_HEADERS = {
   'qPCR Well': { title: 'qPCR Well', array: false, round: false },
   'LC Plate': { title: 'LC Plate', array: false, round: false },
   'LC Well': { title: 'LC Well', array: false, round: false },
+  'PA Assay Name': { title: 'PA Assay Name.', array: true, round: false },
   'PA Template Conc.': { title: 'PA Template Conc.', array: true, round: true },
   'PA Human Conc.': { title: 'PA Human Conc.', array: true, round: true },
   'ID Template Conc.': { title: 'ID Template Conc.', array: true, round: true },
@@ -28,7 +29,11 @@ export const SUMMARY_HEADERS = {
   'ID Assay Name': { title: 'ID Assay Name', array: true, round: false },
   'ID Assay Conc.': { title: 'ID Assay Conc.', array: true, round: false },
   'ID Template Name': { title: 'ID Template Name', array: true, round: false },
-  'ID Template Conc.': { title: 'ID Template Conc.', array: true, round: false },
+  'ID Template Conc.': {
+    title: 'ID Template Conc.',
+    array: true,
+    round: false,
+  },
   'ID Human Name': { title: 'ID Human Name', array: true, round: false },
   'ID Human Conc.': { title: 'ID Human Conc.', array: true, round: false },
   Reps: { title: 'qPCR Plate', array: false, round: false },
@@ -43,7 +48,11 @@ export const SUMMARY_HEADERS = {
   'Min Tm1': { title: 'Min Tm1', array: false, round: true },
   'Mean Tm1': { title: 'Mean Tm1', array: false, round: true },
   'Max Tm1': { title: 'Max Tm1', array: false, round: true },
-  'Mean Specif ng/ul': { title: 'Mean Specif ng/ul', array: false, round: true },
+  'Mean Specif ng/ul': {
+    title: 'Mean Specif ng/ul',
+    array: false,
+    round: true,
+  },
   'Mean NS ng/ul': { title: 'Mean NS ng/ul', array: false, round: true },
   'Mean PD ng/ul': { title: 'Mean PD ng/ul', array: false, round: true },
 };
@@ -59,7 +68,8 @@ export const RESULTS_SUMMARY_HEADERS = {
   transfered_templates: { title: 'Transfered Templates', array: true },
   reagent_group: { title: 'Reagent Group', array: true },
   transfered_reagent_group: { title: 'Transfered Reagent Group', array: true },
-//   reagent_group_entities: { title: 'Reagent Group Entities', array: true },
-//   transfered_reagent_group_entities: { title: 'Transfered Reagent Group Entities', array: true },
+  //   reagent_group_entities: { title: 'Reagent Group Entities', array: true },
+  //   transfered_reagent_group_entities:
+//   { title: 'Transfered Reagent Group Entities', array: true },
 };
 export const RESULTS_COLOR_CONFIG = [];

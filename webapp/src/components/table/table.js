@@ -13,6 +13,10 @@ export default {
       default: () => [],
       type: Array,
     },
+    searchByColumns: {
+      default: () => false,
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -26,6 +30,9 @@ export default {
     };
   },
   watch: {
+    data() {
+      this.filteredRows = this.data;
+    },
     search: {
       handler(newVal) {
         for (const propName in newVal) {
@@ -102,7 +109,7 @@ export default {
           ].sort((a, b) => a - b);
           this.highlightRows = _.uniq(
             this.highlightRows.concat(
-              _.range(start, end).map(idx => this.filteredRows[idx]),
+              _.range(start, end + 1).map(idx => this.filteredRows[idx]),
             ),
           );
         }

@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export const getTraceName = (data) => {
   let name = '';
+
   if ('templates' in data.meta) {
     name = data.meta.templates[0].concentration + data.meta.templates[0].unit;
   }
@@ -9,14 +10,14 @@ export const getTraceName = (data) => {
     name += data.meta.humans[0].concentration + data.meta.humans[0].unit;
   }
   if ('transferred_templates' in data.meta) {
-    name = `PA${data.meta.transferred_templates[0].concentration}${
+    name += `PA${data.meta.transferred_templates[0].concentration} ${
       data.meta.transferred_templates[0].unit
-    }`;
+    } `;
   }
-  if ('transferred_humane' in data.meta) {
-    name += `PA${data.meta.transferred_humane[0].concentration}${
-      data.meta.transferred_humane[0].unit
-    }`;
+  if ('transferred_humans' in data.meta) {
+    name += `PA${data.meta.transferred_humans[0].concentration} ${
+      data.meta.transferred_humans[0].unit
+    } `;
   }
   if (!name) name = 'NTC';
   name = `${data.meta.well_id} ${name}`;
@@ -50,7 +51,8 @@ export const getLabChipGraphOpacity = arr =>
 export const getLabChipGraphShapes = (args, obj) =>
   _.map(obj.x, (x, i) => {
     const color = `rgba(1, 1, 1,${args[i]})`;
-    const delta = 0.2 * Math.pow(10, Math.log10(obj.y[i] + 1));
+    const log10 = 10 ** Math.log10(obj.y[i] + 1);
+    const delta = 0.2 * log10;
     const border = obj.y[i] > 0 ? 'rgba(1, 1, 1, .2)' : 'rgba(1, 1, 1, 0)';
     return {
       type: 'rect',
@@ -79,8 +81,8 @@ export const getLabChipGraphLayout = (args) => {
       ticktext: tickText,
     },
     yaxis: { range: [1, 4], title: 'Length(bp)', type: 'log' },
-    height: 500,
-    width: 750,
+    height: 300,
+    width: 500,
     shapes,
   };
 };
@@ -91,12 +93,15 @@ export const generateLabChipPlotTraces = (wellData) => {
     (acc, val, wellId) => {
       acc[wellId] = _.reduce(
         val.peak,
-        (a, v) => {
-          a.push({
-            'LC Well': wellId,
-            bp: v['size_[bp]'],
-            conc: v['conc_(ng/ul)'],
-          });
+        (a, v, i) => {
+          if (i !== 'LM' && i !== 'UM') {
+            a.push({
+              'LC Well': wellId,
+              bp: v['size_[bp]'],
+              conc: v['conc_(ng/ul)'],
+            });
+          }
+
           return a;
         },
         [],

@@ -1,5 +1,6 @@
 from django.db import models
 from .reagent_model import ReagentModel
+from .qpcr_results_model import QpcrResultsModel
 
 
 class ReagentWellLookupModel(models.Model):
@@ -9,7 +10,8 @@ class ReagentWellLookupModel(models.Model):
     convenient cache to support queries that cant afford the cost of cross
     examination.
     """
-    well = models.CharField(max_length=100)
+    well = models.ForeignKey(QpcrResultsModel,
+                             on_delete=models.PROTECT)
     reagent = models.ForeignKey(ReagentModel,on_delete=models.PROTECT)
     transfer = models.BooleanField()
 

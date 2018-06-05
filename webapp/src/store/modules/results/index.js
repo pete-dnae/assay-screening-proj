@@ -13,11 +13,10 @@ export const state = {
   resultSummary: {
     data: {
       summary_table: null,
-      graphData: {
-        amp_melt_graph: { amp_data: null, melt_data: null },
-        cpy_cnt_graph: null,
-        labchip_peaks: null
-      },
+      amp_graph:null,
+      melt_grapp:null,
+      copy_cnt_graph:null,
+      labchip_peaks:null,
       master_table: null
     },
     received: false,
@@ -104,14 +103,17 @@ const getters = {
   getResultSummary(state, getters, rootState) {
     return state.resultSummary.data.summary_table;
   },
-  getAmpMeltGraphData(state, getters, rootState) {
-    return state.resultSummary.data.graphData.amp_melt_graph;
+  getAmpGraphData(state, getters, rootState) {
+    return state.resultSummary.data.amp_graph;
+  },
+  getMeltGraphData(state, getters, rootState) {
+    return state.resultSummary.data.melt_graph;
   },
   getCopyCountGraphData(state, getters, rootState) {
-    return state.resultSummary.data.graphData.cpy_cnt_graph;
+    return state.resultSummary.data.copy_cnt_graph;
   },
   getLabchiPGraphData(state, getters, rootState) {
-    return state.resultSummary.data.graphData.labchip_peaks;
+    return state.resultSummary.data.labchip_peaks;
   }
 };
 
