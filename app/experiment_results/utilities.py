@@ -23,12 +23,12 @@ def well_position_to_numeric(well_position):
 
 def get_qpcr_labchip_well_map(qpcr_query,labchip_query):
 
+    qpcr_labchip_well_map = {record.qpcr_well: None for record in
+                             qpcr_query}
     if labchip_query.exists():
-        qpcr_labchip_well_map = {record.qpcr_well.qpcr_well: record.labchip_well for
+        qpcr_labchip_dict = {record.qpcr_well.qpcr_well: record.labchip_well for
                              record in labchip_query}
-    else:
-        qpcr_labchip_well_map = {record.qpcr_well:None for record in
-                                 qpcr_query}
+        qpcr_labchip_well_map.update(qpcr_labchip_dict)
 
     return qpcr_labchip_well_map
 
