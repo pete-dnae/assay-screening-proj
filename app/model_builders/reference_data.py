@@ -48,4 +48,5 @@ REFERENCE_REAGENT_NAMES = [name for name, category,opaque_payload in
 REFERENCE_GROUP_NAMES = [REFERENCE_GROUP['name']]
 REFERENCE_ALLOWED_NAMES = REFERENCE_REAGENT_NAMES + REFERENCE_GROUP_NAMES
 
-REFERENCE_UNITS = ('M/uL', 'x', 'uM', 'dilution')
+REFERENCE_UNITS = ('M/uL', 'x', 'uM', 'dilution',"mM", "nM", "mg/ml", "ug/ml",
+             "ng/ul", "%", "cp/ul", "cp", "ng")
