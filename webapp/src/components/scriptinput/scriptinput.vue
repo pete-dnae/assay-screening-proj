@@ -38,6 +38,7 @@
                         </li>
                         
                     </ul>
+                    <button class="btn btn-secondary" @click="showUpload=!showUpload">Upload Files</button>
                 </div>
 
                 <div v-show="!showPictures">
@@ -99,6 +100,9 @@
             </div>
         </modal>
         <!-- sampleExperiment -->    
+        <!--fileUploader-->
+        <fileUploader :show="showUpload" :experimentName="experimentId" :plateName="currentPlate" @exit="showUpload=!showUpload"></fileUploader>
+        <!--fileUploader-->
     </div>
  <div id="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>

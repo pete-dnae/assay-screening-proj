@@ -5,7 +5,7 @@ from app.model_builders.make_ref_exp import ReferenceExperiment
 from app.model_builders.batch_reagent_entry import BatchReagentEntry
 from app.model_builders.batch_groups_entry import BatchGroupsEntry
 from app.models.reagent_model import ReagentModel
-from app.models.reagent_group_model import ReagentGroupModel
+from app.models.reagent_group_model import ReagentGroupDetailsModel
 
 class BatchCreatorTest(unittest.TestCase):
 
@@ -40,11 +40,12 @@ class BatchCreatorTest(unittest.TestCase):
         }
         submitter.load_db(groups)
 
-        group_records = ReagentGroupModel.objects.filter(group_name='Pool_43')
+        group_records = ReagentGroupDetailsModel.objects.filter(
+            reagent_group='Pool_43')
         group_records = list(group_records)
 
-        self.assertEqual(group_records[0].group_name, 'Pool_43')
-        self.assertEqual(group_records[0].reagent.name, '(Eco)-ATCC-BAA-2355')
-        self.assertEqual(group_records[0].concentration, 3.32)
+        self.assertEqual(group_records[0].reagent_group.group_name, 'Pool_43')
+        self.assertEqual(group_records[0].reagent.name,'(Eco)-ATCC-BAA-9999')
+        self.assertEqual(group_records[0].concentration, 4)
         self.assertEqual(group_records[0].units.abbrev, 'x')
         

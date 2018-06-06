@@ -12,7 +12,9 @@ def load_qpcr_results(experiment_id,plate_name,file):
         if instance.qpcr_well in reagent_group_used:
             validate_create_reagent_group_lookup(instance,reagent_group_used)
 
-    return results
+    response = generate_upload_response(results)
+
+    return response
 
 def validate_create_reagent_lookup(instance,reagents_used):
 
@@ -40,3 +42,11 @@ def validate_create_qpcr_result_record(record):
     instance = qpcr_serializer.save()
 
     return instance
+
+def generate_upload_response(results):
+
+    wells_entered = [record['qpcr_well'] for record in results]
+    experiment_id = set([record['experiment'] for record in results])
+    plate_id = set([record['qpcr_plate_id'] for record in results])
+    return {'wells': wells_entered, 'experiment_id': experiment_id,
+            'plate_id': plate_id}

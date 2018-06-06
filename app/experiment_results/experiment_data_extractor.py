@@ -105,12 +105,11 @@ def fetch_assay_amplicon_lengths():
     for element in query_set:
         json_string = element.opaque_json_payload
         try:
-            if json_string is None:
-                raise ValueError('opaque payload for assay not found')
-            meta_data = json.loads(json_string)
-            if 'amplicon_length' in meta_data:
-                amplicon_len_dict[element.name] = float(meta_data[
-                                                            'amplicon_length'])
+            if json_string is not None:
+                meta_data = json.loads(json_string)
+                if 'amplicon_length' in meta_data:
+                    amplicon_len_dict[element.name] = float(meta_data[
+                                                                'amplicon_length'])
         except JSONDecodeError:
             raise ValidationError
     return amplicon_len_dict

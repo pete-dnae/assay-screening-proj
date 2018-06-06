@@ -42,6 +42,13 @@ const postRes = (url, data) =>
     },
   });
 
+const postFile = (url, data) =>
+  axios.post(url, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
 const fetchResWithParam = (url, params) =>
   new Promise((resolve, reject) => {
     axios.get(url, { params }).then(
@@ -99,3 +106,5 @@ export const getWellSummary = ({ wellArray, experimentId, qpcrPlateId }) =>
   fetchRes(
     `/api/well-results/?expt=${experimentId}&plate_id=${qpcrPlateId}&wells=${wellArray}`,
   );
+export const postLabchipResults = data => postFile('/api/labchip-results/', data);
+export const postQpcrResults = data => postFile('/api/qpcr-results/', data);

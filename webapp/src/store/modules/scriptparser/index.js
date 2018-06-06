@@ -322,7 +322,7 @@ const getters = {
     return state.ruleScript.referenceExperiment.data.text;
   },
   getExperimentId(state, getters, rootState) {
-    return state.experiment.currentExperiment.data.id;
+    return state.experiment.currentExperiment.name;
   },
   getPlateBoundaries(state, getters, rootState) {
     return state.ruleScript.currentExperiment.plateBoundaries;
