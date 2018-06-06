@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.postgres.fields import JSONField
 from .reagent_category_model import ReagentCategoryModel
 
 

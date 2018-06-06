@@ -5,6 +5,7 @@ from app.models.rules_script_model import RulesScriptModel
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import ReagentCategoryModel
 from app.models.reagent_group_model import ReagentGroupModel
+from app.models.reagent_group_model import ReagentGroupDetailsModel
 from app.models.units_model import UnitsModel
 from app.model_builders.reference_data import REFERENCE_SCRIPT
 from app.model_builders.reference_data import REFERENCE_REAGENTS_DATA
@@ -31,7 +32,7 @@ class ReferenceExperiment():
 
         # An experiment
         self.experiment = ExperimentModel.make(
-                self._REFERENCE_EXPERIMENT, rules_script)
+                self._REFERENCE_EXPERIMENT, 'vanilla' ,rules_script)
 
         # Approved concentration units.
         for units in REFERENCE_UNITS:
@@ -49,10 +50,12 @@ class ReferenceExperiment():
 
         # Make a primer group with two of the primers in.
         group_name = REFERENCE_GROUP['name']
+        ReagentGroupModel.make(group_name)
         for member_name, conc, units in REFERENCE_GROUP['members']:
             reagent = ReagentModel.objects.get(name=member_name)
             units = UnitsModel.objects.get(abbrev=units)
-            ReagentGroupModel.make(group_name, reagent, conc, units)
+            reagent_group = ReagentGroupModel(group_name=group_name)
+            ReagentGroupDetailsModel.make(reagent_group, reagent, conc, units)
 
 
         return self.experiment

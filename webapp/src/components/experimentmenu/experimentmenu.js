@@ -12,6 +12,7 @@ export default {
       experiment: null,
       invalidExpName: false,
       experimentNameTaken: false,
+      experimentType: 'nested',
     };
   },
   components: {
@@ -53,8 +54,11 @@ export default {
     loadExperimentFromName(value) {
       this.loadExperiment(value);
     },
-    handleSave(experimentName) {
-      this.saveExperimentAs(experimentName).then((data) => {
+    handleSave(experimentName, experimentType) {
+      this.saveExperimentAs({
+        experiment_type: experimentType,
+        experiment_name: experimentName,
+      }).then((data) => {
         this.loadExperiment(data.experiment_name);
         this.showModal = false;
         this.fetchExperimentList().then(() => {

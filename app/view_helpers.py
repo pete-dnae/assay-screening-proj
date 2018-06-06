@@ -1,5 +1,6 @@
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_group_model import ReagentGroupModel
+from app.models.reagent_group_model import ReagentGroupDetailsModel
 from app.models.units_model import UnitsModel
 from collections import defaultdict
 class ViewHelpers:
@@ -71,9 +72,12 @@ class ViewHelpers:
         group_category = {}
         group_names = cls.group_names()
         for group_name in group_names:
-            group_record= ReagentGroupModel.objects.filter\
-                (group_name=group_name).first()
-            group_category[group_name] = group_record.reagent.category.name
+            group_record= ReagentGroupDetailsModel.objects.filter\
+                (reagent_group=group_name).first()
+            if not group_record:
+                group_category[group_name] = None
+            else:
+                group_category[group_name] = group_record.reagent.category.name
         return group_category
 
     @classmethod
@@ -83,3 +87,4 @@ class ViewHelpers:
         """
 
         return {**cls.reagents_category(), **cls.reagent_groups_category()}
+

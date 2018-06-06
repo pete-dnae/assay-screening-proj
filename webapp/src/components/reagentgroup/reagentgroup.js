@@ -84,7 +84,7 @@ export default {
       this.fetchSelectedReagentGroup({
         reagentGroupName,
       }).then(() => {
-        const data = this.currentGroupReagents.map(reagentObj => [
+        const data = this.currentGroupReagents.details.map(reagentObj => [
           reagentObj.reagent,
           reagentObj.concentration,
           reagentObj.units,
@@ -137,13 +137,13 @@ export default {
       const reagentGroupObjectList = dataArray
         .filter(row => !row.includes('') && !row.includes(null))
         .map(row => ({
-          group_name: groupName,
+          reagent_group: groupName,
           reagent: row[0],
           concentration: row[1],
           units: row[2],
         }));
 
-      this.saveReagents(reagentGroupObjectList).then(() => {
+      this.saveReagents({ group_name: groupName, details: reagentGroupObjectList }).then(() => {
         this.fetchAvailableReagentGroups();
         this.currentReagentGroup = groupName;
         this.currentText = groupName;

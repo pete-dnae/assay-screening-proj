@@ -28,12 +28,12 @@ urlpatterns = [
     re_path(r'^api/allowed-names/$', AllowedNamesView.as_view()),
     re_path(r'^api/experiment-images/(?P<experiment_id>[a-zA-Z0-9_ ]+)$',
             ExperimentImagesView.as_view()),
-    re_path(r'^api/reagent-groups/list',ReagentGroupListView.as_view()),
     re_path(r'api/available-reagents-category$',
             AvailableReagentsCategoryView.as_view()),
-
+    re_path(r'api/well-results/$',
+            WellResultsView.as_view()),
+    re_path(r'api/well-aggregate/$',WellAggregationView.as_view())
 ]
-
 # Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()
 
@@ -43,7 +43,9 @@ router.register(r'api/reagents', ReagentViewSet)
 router.register(r'api/reagent-categories', ReagentCategoryViewSet)
 router.register(r'api/reagent-groups', ReagentGroupViewSet)
 router.register(r'api/units', UnitViewSet)
-
+router.register(r'api/qpcr-results',QpcrResultsViewSet)
+router.register(r'api/labchip-results',LabChipResultsViewSet)
+router.register(r'api/reagent-group-details',ReagentGroupDetailsViewSet)
 
 urlpatterns = format_suffix_patterns(urlpatterns)
 

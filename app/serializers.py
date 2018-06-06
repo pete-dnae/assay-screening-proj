@@ -1,53 +1,58 @@
 import json
 from rest_framework import serializers
-from pdb import set_trace as st
-
 # Models
 from .models.experiment_model import ExperimentModel
 from .models.rules_script_model import RulesScriptModel
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_category_model import ReagentCategoryModel
 from app.models.reagent_group_model import ReagentGroupModel
+from app.models.reagent_group_model import ReagentGroupDetailsModel
+from app.models.qpcr_results_model import QpcrResultsModel
+from app.models.labchip_results_model import LabChipResultsModel
 from .models.units_model import UnitsModel
-
+from app.models.reagent_well_lookup_model import ReagentWellLookupModel
+from app.models.reagent_group_well_lookup_model import ReagentGroupWellLookupModel
 # Serialization helpers.
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_maker import ImageMaker
 
-class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
 
+class ExperimentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ExperimentModel
         fields = (
-           'url',
-           'experiment_name',
-           'rules_script',
+            'url',
+            'experiment_name',
+            'rules_script',
+            'experiment_type'
         )
 
-class UnitsSerializer(serializers.ModelSerializer):
 
+class UnitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UnitsModel
         fields = (
-           'url',
-           'abbrev',
+            'url',
+            'abbrev',
         )
 
-class ReagentCategorySerializer(serializers.ModelSerializer):
 
+class ReagentCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ReagentCategoryModel
         fields = (
-           'name',
+            'name',
         )
+
 
 class ReagentSerializer(serializers.ModelSerializer):
     category = ReagentCategorySerializer
+
     class Meta:
         model = ReagentModel
         fields = (
-           'name',
-           'category',
+            'name',
+            'category',
             'opaque_json_payload'
         )
 
@@ -62,61 +67,61 @@ class ReagentSerializer(serializers.ModelSerializer):
         return opaque_json_payload
 
 
-
-class ReagentGroupSerializer(serializers.ModelSerializer):
-
+class ReagentGroupDetailsSerializer(serializers.ModelSerializer):
     reagent = ReagentSerializer
     units = UnitsSerializer
+
     class Meta:
-        model = ReagentGroupModel
+        model = ReagentGroupDetailsModel
         fields = (
-           'url',
-           'group_name',
-           'reagent',
-           'concentration',
-           'units',
+            'reagent',
+            'concentration',
+            'units',
         )
 
 
-    def validate(self, data):
-        # Reagent names must not already exist in the group.
-        group_name = data['group_name']
-        reagent_name = data['reagent'].name
-        existing_member_names = [group.reagent.name for group in \
-            ReagentGroupModel.objects.filter(group_name=group_name)]
-        if reagent_name in existing_member_names:
-            raise serializers.ValidationError(
-                ('Cannot add <%s> to group <%s> because it ' + \
-                'already contains it.') % (reagent_name, group_name)
-            )
-        return data
+class ReagentGroupSerializer(serializers.ModelSerializer):
+
+    details = ReagentGroupDetailsSerializer(many=True)
+
+    class Meta:
+        model = ReagentGroupModel
+        fields = ('group_name','details')
+
+    def create(self, validated_data):
+        group_details = validated_data.pop('details')
+        reagent_group = ReagentGroupModel.objects.create(**validated_data)
+        for group_detail in group_details:
+            ReagentGroupDetailsModel.objects.create(reagent_group=reagent_group,
+                                                    **group_detail)
+        return reagent_group
+
+
 
 
 class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
-
     # Camel-case to make it nice to consume as JSON.
     interpretationResults = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = RulesScriptModel
         fields = (
-           'url',
-           'text',
-           'interpretationResults',
+            'url',
+            'text',
+            'interpretationResults',
         )
 
     def get_interpretationResults(self, rule_script):
         reagent_names = [r.name for r in ReagentModel.objects.all()]
         group_names = set([g.group_name for g in \
-                ReagentGroupModel.objects.all()])
+                           ReagentGroupModel.objects.all()])
         allowed_names = reagent_names + list(group_names)
         units = [u.abbrev for u in UnitsModel.objects.all()]
 
         interpreter = RulesScriptProcessor(
-                rule_script.text, allowed_names, units)
-        parse_error, alloc_table,thermal_cycling_results ,line_num_mapping = \
-                interpreter.parse_and_interpret()
-
+            rule_script.text, allowed_names, units)
+        parse_error, alloc_table, thermal_cycling_results, line_num_mapping = \
+            interpreter.parse_and_interpret()
 
         err = None if not parse_error else parse_error.__dict__
         table = None if not alloc_table else alloc_table.plate_info
@@ -127,24 +132,78 @@ class RulesScriptSerializer(serializers.HyperlinkedModelSerializer):
             'parseError': err,
             'table': table,
             'lnums': lnums,
-            'thermalCycling':thermal_cycling
+            'thermalCycling': thermal_cycling
         }
 
-#-------------------------------------------------------------------------
+
+class QpcrResultsSerializer(serializers.ModelSerializer):
+
+    experiment = ExperimentSerializer
+    class Meta:
+        model = QpcrResultsModel
+        fields = (
+            'experiment',
+            'qpcr_plate_id',
+            'qpcr_well',
+            'cycle_threshold',
+            'temperatures',
+            'amplification_cycle',
+            'amplification_delta_rn',
+            'melt_temperature',
+            'melt_derivative'
+        )
+
+class LabChipResultsSerializer(serializers.ModelSerializer):
+
+    qpcr_well = QpcrResultsSerializer
+    class Meta:
+        model = LabChipResultsModel
+        fields = (
+            'labchip_well',
+            'peak_name',
+            'size',
+            'concentration',
+            'purity',
+            'molarity',
+            'qpcr_well',
+            'experiment',
+            'labchip_plate_id'
+        )
+
+class ReagentWellLookupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReagentWellLookupModel
+        fields = (
+            'well',
+            'reagent',
+            'transfer'
+        )
+
+class ReagentGroupWellLookupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReagentGroupWellLookupModel
+        fields = (
+            'well',
+            'reagent_group',
+            'transfer'
+        )
+
+
+# -------------------------------------------------------------------------
 # Some convenience serializers to help in particular use-cases.
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 
 class MakeImageSerializer(serializers.Serializer):
-
     experimentImages = serializers.SerializerMethodField(read_only=True)
 
-    def get_experimentImages(self,experiment_id):
-
+    def get_experimentImages(self, experiment_id):
         image_maker = ImageMaker(experiment_id)
-        err,results = image_maker.make_images()
+        err, results = image_maker.make_images()
 
         return {
-            'parseError':err,
-            'results':results
+            'parseError': err,
+            'results': results
         }

@@ -3,7 +3,7 @@ from pdb import set_trace as st
 from app.models.reagent_model import ReagentModel
 from app.models.reagent_group_model import ReagentGroupModel
 from app.models.units_model import UnitsModel
-
+from app.models.reagent_group_model import ReagentGroupDetailsModel
 
 class BatchGroupsEntry():
     """
@@ -46,4 +46,14 @@ class BatchGroupsEntry():
             units_obj = UnitsModel.objects.get(abbrev=units)
         except UnitsModel.DoesNotExist:
             raise RuntimeError('Units: <%s> does not exist' % units)
-        ReagentGroupModel.make(group_name, reagent_obj, conc, units_obj)
+
+        try:
+            reagent_group = ReagentGroupModel.objects.get(group_name=group_name)
+            ReagentGroupDetailsModel.make(reagent_group, reagent_obj,
+                                          conc,
+                                          units_obj)
+        except ReagentGroupModel.DoesNotExist:
+            reagent_group = ReagentGroupModel.objects.create(
+                group_name=group_name)
+            ReagentGroupDetailsModel.make(reagent_group,                                          reagent_obj, conc,
+                                     units_obj)

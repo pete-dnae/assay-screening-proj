@@ -42,6 +42,13 @@ const postRes = (url, data) =>
     },
   });
 
+const postFile = (url, data) =>
+  axios.post(url, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
 const fetchResWithParam = (url, params) =>
   new Promise((resolve, reject) => {
     axios.get(url, { params }).then(
@@ -81,16 +88,23 @@ export const getAvailableSuggestions = () => fetchRes('/api/allowed-names');
 export const getExperimentImages = experimentName =>
   fetchRes(`/api/experiment-images/${experimentName}`);
 export const getAvailableReagentGroups = () =>
-  fetchRes('/api/reagent-groups/list');
+  fetchRes('/api/reagent-groups/');
 export const getSelectedReagentGroup = reagentGroupName =>
-  fetchResWithParam('/api/reagent-groups/', { name: reagentGroupName });
+  fetchResWithParam(`/api/reagent-groups/${reagentGroupName}/`);
 export const postReagentGroup = reagentGroup =>
   postRes('/api/reagent-groups/', reagentGroup);
 export const deleteReagentGroup = reagentGroupName =>
-  deleteRes('/api/reagent-groups/list', { group_name: reagentGroupName });
+  deleteRes(`/api/reagent-groups/${reagentGroupName}/`);
 export const addReagent = data => postRes('/api/reagents/', data);
 export const removeReagent = reagentName =>
   deleteRes(`/api/reagents/${reagentName}/`);
 export const editReagent = ({ data, reagentName }) =>
   putRes(`/api/reagents/${reagentName}/`, data);
 export const getReagentCategories = () => fetchRes('/api/reagent-categories/');
+export const getWellResultSummary = () => fetchRes('/api/well-aggregate/');
+export const getWellSummary = ({ wellArray, experimentId, qpcrPlateId }) =>
+  fetchRes(
+    `/api/well-results/?expt=${experimentId}&plate_id=${qpcrPlateId}&wells=${wellArray}`,
+  );
+export const postLabchipResults = data => postFile('/api/labchip-results/', data);
+export const postQpcrResults = data => postFile('/api/qpcr-results/', data);

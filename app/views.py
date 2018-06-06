@@ -5,8 +5,16 @@ from django.db import transaction
 from .serializers import *
 from .view_helpers import ViewHelpers
 from rest_framework import status
-from rest_framework.exceptions import ValidationError, ParseError
+from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
+from app.experiment_results.qpcr_results_loader import load_qpcr_results
+from app.experiment_results.labchip_results_loader import load_labchip_results
+from django.db import connection
+from app.experiment_results.result_aggregation_query import GroupByIDASSAY
+from app.experiment_results.qpcr_well_aggregation import QpcrWellAggregation
+from django.http import Http404
+
+import ast
 
 class ExperimentViewSet(viewsets.ModelViewSet):
 
@@ -71,46 +79,42 @@ class ReagentGroupViewSet(viewsets.ModelViewSet):
     serializer_class = ReagentGroupSerializer
 
 
-    def get_queryset(self):
-        """
-        Overridden to provide the search functionality.
-        """
-        name_to_search_for = self.request.query_params.get('name', None)
-        if name_to_search_for:
-            matching = ReagentGroupModel.objects.filter\
-                (group_name=name_to_search_for)
-            return matching
-        return ReagentGroupModel.objects.all()
+class ReagentGroupDetailsViewSet(viewsets.ModelViewSet):
+    queryset = ReagentGroupDetailsModel.objects.all()
+    serializer_class = ReagentGroupDetailsSerializer
+
+class QpcrResultsViewSet(viewsets.ModelViewSet):
+
+    queryset = QpcrResultsModel.objects.all()
+    serializer_class = QpcrResultsSerializer
 
     def create(self, request, *args, **kwargs):
         """
-        create a list of reagent group instances if a list is provided or a
-        single instance otherwise
+        Reads the excel file in request and extracts necessary information
+        from it using QpcrResultsProcessor
 
-        deletes existing instances under the same reagent group name
+        Expects an excel file to be passed as a part of request
         """
+        file = request.FILES['file']
+        plate_name = request.POST['plateName']
+        experiment_name = request.POST['experimentName']
+        results = load_qpcr_results(experiment_name,plate_name,file)
 
-        data = request.data
-        if isinstance(data,list):
-            if len(data)>0:
-                serializer = self.get_serializer(data=request.data, many=True)
-                serializer.is_valid(raise_exception=True)
-                group_name = data[0]['group_name']
-            else:
-                raise ValidationError('Invalid request;Please check if '
-                                      'reaquest data list has at least one '
-                                      'element in it')
-        else:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            group_name = data['group_name']
+        return Response(results)
 
-        with transaction.atomic():
-            ReagentGroupModel.objects.filter(group_name=group_name).delete()
-            self.perform_create(serializer)
 
-        return Response(serializer.data)
 
+class LabChipResultsViewSet(viewsets.ModelViewSet):
+
+    queryset = LabChipResultsModel.objects.all()
+    serializer_class = LabChipResultsSerializer
+
+    def create(self, request, *args, **kwargs):
+        file = request.FILES['file']
+        plate_name = request.POST['plateName']
+        experiment_name = request.POST['experimentName']
+        results = load_labchip_results(experiment_name,plate_name,file)
+        return Response(results)
 
 #-------------------------------------------------------------------------
 # Some convenience (non-model) views.
@@ -132,26 +136,6 @@ class ExperimentImagesView(APIView):
         results = MakeImageSerializer(experiment_id).data
         return Response(results)
 
-class ReagentGroupListView(APIView):
-
-
-    def get(self,request):
-        # Returns list of unique reagent group names in db
-        return Response(ViewHelpers.group_names())
-
-    def delete(self, request):
-        # Its easier to implement this explicitly rather than trying to use
-        # the serializer , because serializer demands all the fields whereas
-        # we only need group name
-        try:
-            group_name = request.data['group_name']
-            with transaction.atomic():
-                #TODO raise an exception when group name does not exists
-                ReagentGroupModel.objects.filter(group_name=group_name).delete()
-        except :
-            raise ValidationError('Invalid request;Please mention a group name')
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class AvailableReagentsCategoryView(APIView):
     """
@@ -162,3 +146,33 @@ class AvailableReagentsCategoryView(APIView):
     def get(self,request):
         return Response(ViewHelpers.available_reagents_category())
 
+class WellResultsView(APIView):
+    """
+    Returns well results in the form of summary table ,master table and
+    in data format edible for JavaScript graphs
+    """
+
+    def get(self,request):
+        experiment_id = request.query_params['expt']
+        plate_id = request.query_params['plate_id']
+        wells = ast.literal_eval(request.query_params['wells'])
+        qpcr_query_set=QpcrResultsModel.objects.filter(
+            experiment_id=experiment_id, qpcr_plate_id=plate_id,
+            qpcr_well__in=wells)
+        if qpcr_query_set.exists():
+            result = QpcrWellAggregation.create_from_query(qpcr_query_set)
+            return Response(result)
+        else:
+            raise Http404
+
+
+class WellAggregationView(APIView):
+
+    def get(self,request):
+        with connection.cursor() as cursor:
+            cursor.execute(GroupByIDASSAY)
+            columns = [col[0] for col in cursor.description]
+            return Response([
+                dict(zip(columns, row))
+                for row in cursor.fetchall()
+            ])

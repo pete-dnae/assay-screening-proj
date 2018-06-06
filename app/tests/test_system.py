@@ -64,7 +64,10 @@ class HighLevelSystemSmokeTest(APITestCase):
         """
         client = APIClient()
         post_data = {'text': 'I am a malformed rules script'}
-        resp = client.put('/api/rule-scripts/1/', post_data, format='json')
+        experiment_response = client.get('/api/experiments/Reference '
+                                         'Experiment/')
+        rules_script_url = experiment_response.data['rules_script']
+        resp = client.put(rules_script_url, post_data, format='json')
 
         message = resp.data['interpretationResults']['parseError']['message']
 

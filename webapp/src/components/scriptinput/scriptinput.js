@@ -13,6 +13,7 @@ import suggestionsList from '@/components/suggestionslist/suggestionslist.vue';
 import suggestionToolTip from '@/components/suggestionstooltip/suggestionstooltip.vue';
 import pictures from '@/components/pictures/pictures.vue';
 import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
+import fileUploader from '@/components/fileupload/fileupload.vue';
 
 export default {
   name: 'ScriptInputComponent',
@@ -26,14 +27,10 @@ export default {
     suggestionsList,
     suggestionToolTip,
     pictures,
+    fileUploader,
   },
   data() {
-    return {
-      msg: 'Welcome',
-      suggestionIndex: 0,
-      editor: null,
-      showPictures: false,
-    };
+    return { msg: 'Welcome', suggestionIndex: 0, editor: null, showPictures: false, showUpload: false };
   },
   computed: {
     ...mapGetters({
@@ -271,13 +268,5 @@ export default {
       referenceExperimentFlag: true,
     });
     this.fetchExperiment({ experimentName: 'Reference Experiment' });
-
-    // document.addEventListener(
-    //   'contextmenu',
-    //   (e) => {
-    //     e.preventDefault();
-    //   },
-    //   false,
-    // );
   },
 };

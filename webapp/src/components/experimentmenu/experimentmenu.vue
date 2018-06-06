@@ -27,7 +27,10 @@
             <li class="nav-item">
               <a class="nav-link" href="#/maintenance">Maintenance</a>
             </li>
-            </tooltip>      
+            </tooltip> 
+            <li class="nav-item">
+              <a class="nav-link" href="#/results">Experiment Results</a>
+            </li>     
           </ul>
         </div>
     </div>
@@ -35,6 +38,11 @@
       <div class="form-group mx-sm-3 mb-2 ">
         <label class="text-primary float-left">Experiment Name :</label>
         <input type="text" :class="{'form-control':true,'is-invalid':invalidExpName||experimentNameTaken}" v-model="experiment"/>
+        <label class="text-primary text-left mt-3 d-block">Experiment Type :</label>        
+        <select class="btn btn-primary" v-model="experimentType">
+          <option>nested</option>
+          <option>vanilla</option>
+        </select>
          <div :class="{'invalid-feedback':invalidExpName||experimentNameTaken,'float-left':true}">
             <label v-if="experimentNameTaken">Experiment name already taken</label>
             <label v-if="invalidExpName">Experiment name should contain characters within 'a-z','A-Z','0-9','_',' '</label>
@@ -42,7 +50,7 @@
       </div>
     <div slot="modal-footer" class="modal-footer">
       <button type="button" class="btn btn-default" @click="showModal = !showModal">Exit</button>
-      <button type="button" class="btn btn-success" @click="handleSave(experiment)" :disabled="invalidExpName||experimentNameTaken"> Save</button>    
+      <button type="button" class="btn btn-success" @click="handleSave(experiment,experimentType)" :disabled="invalidExpName||experimentNameTaken"> Save</button>    
     </div>
     </modal>
 </div>
