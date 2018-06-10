@@ -1,4 +1,4 @@
-GroupByIDASSAY = """
+GroupByIDAssay = """
 select 
 well_aggregation.experiment_id,
 well_aggregation.qpcr_plate_id,

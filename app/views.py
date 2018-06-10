@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db import transaction
 from .serializers import *
 from .view_helpers import ViewHelpers
 from rest_framework import status
@@ -9,8 +8,8 @@ from rest_framework.exceptions import ValidationError
 from django.db.models.deletion import ProtectedError
 from app.experiment_results.qpcr_results_loader import load_qpcr_results
 from app.experiment_results.labchip_results_loader import load_labchip_results
-from django.db import connection
-from app.experiment_results.result_aggregation_query import GroupByIDASSAY
+from app.experiment_results.experiment_data_extractor import \
+    get_wells_grouped_by_id_assay,get_qpcr_query_from_meta
 from app.experiment_results.qpcr_well_aggregation import QpcrWellAggregation
 from django.http import Http404
 
@@ -169,10 +168,20 @@ class WellResultsView(APIView):
 class WellAggregationView(APIView):
 
     def get(self,request):
-        with connection.cursor() as cursor:
-            cursor.execute(GroupByIDASSAY)
-            columns = [col[0] for col in cursor.description]
-            return Response([
-                dict(zip(columns, row))
-                for row in cursor.fetchall()
-            ])
+        wells_by_id_assay = get_wells_grouped_by_id_assay()
+        return Response(wells_by_id_assay)
+
+
+class WellSuperSummaryView(APIView):
+
+    def get(self,request):
+        super_summary = {}
+        wells_by_id_assay = get_wells_grouped_by_id_assay()
+        for row in wells_by_id_assay:
+            qpcr_query = get_qpcr_query_from_meta(row)
+            result = QpcrWellAggregation.create_from_query(qpcr_query)
+            super_summary.setdefault('master_table',[]).append(result[
+                                                                   'master_table'])
+            super_summary.setdefault('summary_table',[]).append(result[
+                                                                    'summary_table'])
+        return Response(super_summary)

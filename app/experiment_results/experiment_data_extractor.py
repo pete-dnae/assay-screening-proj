@@ -7,8 +7,11 @@ from rest_framework.exceptions import ValidationError
 import json
 from .utilities import UnexpectedWellNameError
 import re
+import ast
 from collections import defaultdict
 from clients.expt_recipes.lost import build_labchip_datas_from_inst_data
+from django.db import connection
+from app.experiment_results.result_aggregation_query import GroupByIDAssay
 
 def get_labchip_query(qpcr_query):
     """
@@ -20,8 +23,16 @@ def get_labchip_query(qpcr_query):
         LabChipResultsModel.objects.filter(qpcr_well__in=qpcr_well_db_ids)
     return labchip_query_set
 
+def get_qpcr_query_from_meta(meta):
+    """
+    Returns a qpcr query from meta information passed
+    """
+    wells = meta['wells'].split(",")
+    qpcr_query = \
+        QpcrResultsModel.objects.filter(experiment_id=meta['experiment_id'],
+        qpcr_plate_id=meta['qpcr_plate_id'],qpcr_well__in=wells)
 
-
+    return qpcr_query
 
 def get_labchip_results_from_queryset(query_set):
     """
@@ -203,3 +214,17 @@ def get_labchip_plate_id(labchip_query):
         return labchip_record.labchip_plate_id
     else:
         return None
+
+def get_wells_grouped_by_id_assay():
+    """
+    Runs a raw sqpl query to get wells and their meta properties grouped by
+    ID Assay
+    Doesnt care about meta properties check query to find fields retrieved
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(GroupByIDAssay)
+        columns = [col[0] for col in cursor.description]
+        return [
+            dict(zip(columns, row))
+            for row in cursor.fetchall()
+        ]

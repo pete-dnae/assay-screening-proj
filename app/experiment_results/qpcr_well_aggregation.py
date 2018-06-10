@@ -8,7 +8,7 @@ from app.experiment_results.vanilla.builder import make_summary_table as \
     make_vanilla_summary_table
 from .experiment_data_extractor import  get_labchip_query, \
     fetch_allocation_results, fetch_reagent_categories,\
-    get_labchip_results_from_queryset
+    get_labchip_results_from_queryset,get_wells_grouped_by_id_assay
 
 from .well_constituents_maker import make_well_constituents
 
@@ -63,7 +63,6 @@ class QpcrWellAggregation:
         inst = cls.create(summary_table, master_table, amp_graph, melt_graph,
                           copy_cnt_graph, labchip_peaks)
         return inst
-
 
 ##TODO make below functions private
 
