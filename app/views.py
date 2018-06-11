@@ -170,18 +170,3 @@ class WellAggregationView(APIView):
     def get(self,request):
         wells_by_id_assay = get_wells_grouped_by_id_assay()
         return Response(wells_by_id_assay)
-
-
-class WellSuperSummaryView(APIView):
-
-    def get(self,request):
-        super_summary = {}
-        wells_by_id_assay = get_wells_grouped_by_id_assay()
-        for row in wells_by_id_assay:
-            qpcr_query = get_qpcr_query_from_meta(row)
-            result = QpcrWellAggregation.create_from_query(qpcr_query)
-            super_summary.setdefault('master_table',[]).append(result[
-                                                                   'master_table'])
-            super_summary.setdefault('summary_table',[]).append(result[
-                                                                    'summary_table'])
-        return Response(super_summary)

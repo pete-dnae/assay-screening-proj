@@ -220,7 +220,7 @@ class VanillaSummaryRow(OrderedDict):
     @staticmethod
     def _count(key, rows):
         vals = [r[key] for r in rows if r[key] is not None]
-        return vals.count(True)
+        return '%d | %d'%(vals.count(True),len(rows))
 
     @staticmethod
     def _mean(key, rows):

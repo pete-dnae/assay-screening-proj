@@ -113,7 +113,7 @@ class NestedTableRow(OrderedDict):
         inst['qPCR Well'] = qpcr_well
         inst['qPCR Plate'] = qpcr_plate
         inst['LC Well'] = lc_well
-        inst['LC Plate'] = lc_plate
+        inst['LC Plate'] = lc_plate if lc_well else None
 
         inst['PA Assay Name'] = \
                 _get_item_attribute('transferred_assays','reagent_name',id_constit)
@@ -316,7 +316,7 @@ class NestedSummaryRow(OrderedDict):
     @staticmethod
     def _count(key, rows):
         vals = [r[key] for r in rows if r[key] is not None]
-        return vals.count(True)
+        return '%d | %d'%(vals.count(True),len(rows))
 
     @staticmethod
     def _mean(key, rows):
