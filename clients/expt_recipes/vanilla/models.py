@@ -71,7 +71,7 @@ class VanillaMasterTableRow(OrderedDict):
         inst = cls()
         inst['qPCR Plate'] = qplate_name
         inst['qPCR Well'] = qwell_name
-        inst['LC Plate'] = lplate_name
+        inst['LC Plate'] = lplate_name if lwell_name else None
         inst['LC Well'] = lwell_name
 
         inst['ID Assay Name'] = \
