@@ -38,6 +38,7 @@ export const SUMMARY_HEADERS = {
   'ID Human Conc.': { title: 'ID Human Conc.', array: true, round: false },
   Reps: { title: 'qPCR Plate', array: false, round: false },
   '#Ct Pos': { title: '#Ct Pos', array: false, round: false },
+  '#Ct Valid': { title: '#Ct Valid', array: false, round: false },
   '#Tm Specif': { title: '#Tm Specif', array: false, round: false },
   '#Tm NS': { title: '#Tm NS', array: false, round: false },
   '#Tm PD': { title: '#Tm PD', array: false, round: false },
@@ -48,6 +49,7 @@ export const SUMMARY_HEADERS = {
   'Min Tm1': { title: 'Min Tm1', array: false, round: true },
   'Mean Tm1': { title: 'Mean Tm1', array: false, round: true },
   'Max Tm1': { title: 'Max Tm1', array: false, round: true },
+  'Specif ng/ul Pos': { title: 'Specif ng/ul Pos', array: false, round: true },
   'Mean Specif ng/ul': {
     title: 'Mean Specif ng/ul',
     array: false,
@@ -70,6 +72,6 @@ export const RESULTS_SUMMARY_HEADERS = {
   transfered_reagent_group: { title: 'Transfered Reagent Group', array: true },
   //   reagent_group_entities: { title: 'Reagent Group Entities', array: true },
   //   transfered_reagent_group_entities:
-//   { title: 'Transfered Reagent Group Entities', array: true },
+  //   { title: 'Transfered Reagent Group Entities', array: true },
 };
 export const RESULTS_COLOR_CONFIG = [];

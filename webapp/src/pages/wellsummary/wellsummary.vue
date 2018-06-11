@@ -1,19 +1,45 @@
 <template>
     <div class="container-fluid">   
-        <nav class="nav nav-pills nav-justified mt-3">
-            <a :class="{'nav-link':true,active:showSummary}" href="javascript:;" @click="showSummary=!showSummary">Summary Table</a>
-            <a :class="{'nav-link':true,active:!showSummary}" href="javascript:;" @click="showSummary=!showSummary">Master Table</a>            
-        </nav>
-        <div class="container-fluid" v-show="showSummary">
-            
-                <calcTable class="mt-3" :options="summaryHeaders" 
+            <div class="row">
+                <table class="table m-3 text-left w-50">
+                    <tr>
+                        <td>
+                            <label>Experiment</label> 
+                        </td>
+                        <td>
+                            <label>{{experimentId}}</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Plate</label> 
+                        </td>
+                        <td>
+                            <label>{{plateId}}</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Wells</label> 
+                        </td>
+                        <td>
+                            <label>{{wells}}</label>
+                        </td>
+                    </tr>
+                </table>
+                
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h4 class="text-left">Summary Table</h4>
+                    <calcTable class="mt-3" :options="summaryHeaders" 
                                     :data="resultSummary" 
                                     ></calcTable> 
-            
-        </div>
-            <div class="row" v-show="!showSummary">
-                <div class="col-8">
-            
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-8">                   
+                    <h4 class="text-left">Master Table</h4>
                         <calcTable class="mt-3" :options="masterHeaders" 
                                     :data="resultMaster" 
                                     :columnsToColor="columnsToColor"
@@ -23,6 +49,7 @@
             
                 </div>
                 <div class="col-4">
+                    <h4 class="text-left">Graphs</h4>
                     <div id="ampGraph"></div>
                     <div id="meltGraph"></div>
                     <div id="labChipGraph"></div>

@@ -285,6 +285,7 @@ class NestedSummaryRow(OrderedDict):
         inst['PA Human Conc.'] = cls._reduce('PA Human Conc.', rows)
         inst['Reps'] = len(rows)
         inst['#Ct Pos'] = cls._count('Ct Call', rows)
+        inst['#Ct Valid'] = cls._count('Ct', rows)
         inst['#Tm Specif'] = cls._count('Tm Specif', rows)
         inst['#Tm NS'] = cls._count('Tm NS', rows)
         inst['#Tm PD'] = cls._count('Tm PD', rows)
@@ -295,6 +296,7 @@ class NestedSummaryRow(OrderedDict):
         inst['Min Tm1'] = cls._min('Tm1', rows)
         inst['Mean Tm1'] = cls._mean('Tm1', rows)
         inst['Max Tm1'] = cls._max('Tm1', rows)
+        inst['Specif ng/ul Pos'] = cls._count('Specif ng/ul', rows)
         inst['Mean Specif ng/ul'] = cls._mean('Specif ng/ul', rows)
         inst['Mean NS ng/ul'] = cls._mean('NS ng/ul', rows)
         inst['Mean PD ng/ul'] = cls._mean('PD ng/ul', rows)
@@ -315,8 +317,8 @@ class NestedSummaryRow(OrderedDict):
 
     @staticmethod
     def _count(key, rows):
-        vals = [r[key] for r in rows if r[key] is not None]
-        return '%d | %d'%(vals.count(True),len(rows))
+        valid = [True for r in rows if r[key]]
+        return '{} | {}'.format(len(valid),len(rows))
 
     @staticmethod
     def _mean(key, rows):

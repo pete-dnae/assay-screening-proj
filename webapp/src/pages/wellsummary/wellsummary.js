@@ -23,7 +23,9 @@ export default {
       masterHeaders: MASTER_HEADERS,
       columnsToColor: SUMMARY_COLOR_CONFIG,
       summaryHeaders: SUMMARY_HEADERS,
-      showSummary: true,
+      experimentId: null,
+      plateId: null,
+      wells: null,
     };
   },
   components: {
@@ -75,6 +77,9 @@ export default {
   },
   mounted() {
     const { Expt, Plate, Wells } = this.$route.params;
+    this.experimentId = Expt;
+    this.plateId = Plate;
+    this.wells = Wells;
     const wellArray = JSON.stringify(Wells.split(','));
     this.fetchWellSummary({
       wellArray,
