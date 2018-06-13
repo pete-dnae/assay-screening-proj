@@ -139,11 +139,12 @@ export const getLabChipGraphLayout = (args) => {
 };
 
 export const generateLabChipPlotTraces = (wellData) => {
+  const sortedWellKeys = Object.keys(wellData).sort();
   const wellList = _.reduce(
-    wellData,
-    (acc, val, wellId) => {
+    sortedWellKeys,
+    (acc, wellId) => {
       acc[wellId] = _.reduce(
-        val.peak,
+        wellData[wellId].peak,
         (a, v, i) => {
           if (i !== 'LM' && i !== 'UM') {
             a.push({
@@ -184,7 +185,6 @@ export const generateLabChipPlotTraces = (wellData) => {
     zoom: { scrollZoom: true },
   };
 };
-
 
 export const getTraces = data =>
   _.map(data, (row) => {
