@@ -13,8 +13,7 @@
                         <input v-model="search[key]" style="max-width:100%;width:100%"/>                        
                     </th> 
                 </thead>
-            <tbody class="text-left">
-                
+            <tbody class="text-left">                
                 <tr v-for ="(row,id) in filteredRows"  v-bind:key="id" @click="handleTableRowClick(id)">
                     <td v-if="checkRowSelected(id)">
                         <i class="fa fa-check" aria-hidden="true"></i>
@@ -35,6 +34,11 @@
                         <label v-else-if="columnsToColor.includes(key)" 
                         :class="{'text-success':row[key],'text-danger':!row[key]}">{{row[key]}}</label>
                         <label v-else>{{row[key]}}</label>
+                    </td>
+                    <td>
+                        <slot v-bind:row="row" name='redirect'>                    
+                            
+                        </slot>
                     </td>
                 </tr>
             </tbody>

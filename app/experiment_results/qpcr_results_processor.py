@@ -3,7 +3,7 @@ from hardware.qpcr import get_amplification_data, get_ct, get_melt_data, get_tms
 from app.models import ReagentGroupModel,ReagentModel
 from .utilities import well_position_to_numeric,fetch_wells
 from app.experiment_results.experiment_data_extractor import \
-    fetch_allocation_results,fetch_reagent_categories
+    fetch_allocation_results
 
 
 

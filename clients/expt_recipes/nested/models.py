@@ -296,7 +296,8 @@ class NestedSummaryRow(OrderedDict):
         inst['Min Tm1'] = cls._min('Tm1', rows)
         inst['Mean Tm1'] = cls._mean('Tm1', rows)
         inst['Max Tm1'] = cls._max('Tm1', rows)
-        inst['Specif ng/ul Pos'] = cls._count('Specif ng/ul', rows)
+        inst['Specif ng/ul Pos'] = cls._filter_count('LC Well','Specif '
+                                                               'ng/ul', rows)
         inst['Mean Specif ng/ul'] = cls._mean('Specif ng/ul', rows)
         inst['Mean NS ng/ul'] = cls._mean('NS ng/ul', rows)
         inst['Mean PD ng/ul'] = cls._mean('PD ng/ul', rows)
@@ -319,6 +320,12 @@ class NestedSummaryRow(OrderedDict):
     def _count(key, rows):
         valid = [True for r in rows if r[key]]
         return '{} | {}'.format(len(valid),len(rows))
+
+    @staticmethod
+    def _filter_count(filter_key, count_key, rows):
+        filtered_vals = list(filter(lambda x: filter_key in x, rows))
+        count = NestedSummaryRow._count(count_key, filtered_vals)
+        return count
 
     @staticmethod
     def _mean(key, rows):

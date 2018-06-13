@@ -272,11 +272,10 @@ def get_tm(qpcr_data: qPCRInstWell, tm) -> float:
     'tm4']
     :return:
     """
-    tm = qpcr_data['results']['results'][tm]
-    if tm:
-        return tm
-    else:
-        return None
+    if tm in qpcr_data['results']['results']:
+        tm = qpcr_data['results']['results'][tm]
+        return tm if tm else None
+
 
 
 def get_tms(qpcr_data: qPCRInstWell, tms=('tm1', 'tm2', 'tm3', 'tm4')) -> \

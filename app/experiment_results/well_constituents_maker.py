@@ -1,5 +1,3 @@
-from collections import OrderedDict
-import re
 from .utilities import well_position_to_numeric
 
 
