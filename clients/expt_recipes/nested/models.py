@@ -323,7 +323,7 @@ class NestedSummaryRow(OrderedDict):
 
     @staticmethod
     def _filter_count(filter_key, count_key, rows):
-        filtered_vals = list(filter(lambda x: filter_key in x, rows))
+        filtered_vals = list(filter(lambda x: x[filter_key], rows))
         count = NestedSummaryRow._count(count_key, filtered_vals)
         return count
 
