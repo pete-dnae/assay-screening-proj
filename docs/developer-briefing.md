@@ -274,3 +274,20 @@ Resetting Production DB:
         # populate units manually from http://assay-screening.herokuapp.com/api/units/
 
         re-enter rulescripts on front end 
+
+
+Tips for upgrading production DB:
+    Note: Before upgrading production db you should have already purchased db addon for 
+    upgraded version of the db ex foo db
+    
+    In Heroku Client :
+        Run heroku config --app assay-screening to know all the db addons available
+        Run heroku maintenance:on --app assay-screening to take down the application 
+        temporarily to prevent any db writes
+        Run heroku pg:copy DATABASE_URL HEROKU_POSTGRESQL_foo_URL --app assay-screening 
+        to copy data from current db to foo db  
+        Run heroku pg:promote HEROKU_POSTGRESQL_foo_URL --app assay-screening to promote
+        the foo db as primary db for the app
+        Run heroku maintenance:off --app assay-screening to bring app back online
+        Run heroku addons:destroy HEROKU_POSTGRESQL_CHARCOAL_URL --app assay-screening
+        to delete the old db
