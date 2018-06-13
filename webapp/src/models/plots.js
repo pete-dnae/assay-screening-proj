@@ -1,6 +1,6 @@
 import Plotly from '@/models/lean_plotly';
-import _ from 'lodash';
-import { getTraceName } from './plotUtilities';
+import { getTraces } from './plotUtilities';
+
 
 export const plotCopyCountGraph = (data, element = 'copyCountGraph') =>
   Plotly.newPlot(
@@ -30,40 +30,26 @@ export const plotCopyCountGraph = (data, element = 'copyCountGraph') =>
   );
 
 export const plotAmpGraph = (data, element = 'ampGraph') =>
-  Plotly.newPlot(
-    element,
-    _.map(data, row => ({
-      x: row.x,
-      y: row.y,
-      name: getTraceName(row),
-    })),
-    {
-      height: 300,
-      width: 500,
-      title: 'Amplification Data',
-      xAxisTitle: 'Cycle',
-      yAxisTitle: 'Delta Rn',
-      exponent: true,
-    },
-  );
+  Plotly.newPlot(element, getTraces(data), {
+    height: 300,
+    width: 500,
+    title: 'Amplification Data',
+    xAxisTitle: 'Cycle',
+    yAxisTitle: 'Delta Rn',
+    exponent: true,
+  });
 
 export const plotMeltGraph = (data, element = 'meltGraph') =>
-  Plotly.newPlot(
-    element,
-    _.map(data, row => ({
-      x: row.x,
-      y: row.y,
-      name: getTraceName(row),
-    })),
-    {
-      height: 300,
-      width: 500,
-      title: 'Temperature Melt Curve Data',
-      xAxisTitle: 'Temperature',
-      yAxisTitle: 'Melt Derivative',
-      exponent: true,
-    },
-  );
+  Plotly.newPlot(element, getTraces(data), {
+    height: 300,
+    width: 500,
+    title: 'Temperature Melt Curve Data',
+    xAxisTitle: 'Temperature',
+    yAxisTitle: 'Melt Derivative',
+    exponent: true,
+  });
 
-export const plotLabchipGraph = ({ trace, layout }, element = 'labChipGraph') =>
-  Plotly.newPlot(element, trace, layout);
+export const plotLabchipGraph = (
+  { trace, layout, zoom },
+  element = 'labChipGraph',
+) => Plotly.newPlot(element, trace, layout, zoom);

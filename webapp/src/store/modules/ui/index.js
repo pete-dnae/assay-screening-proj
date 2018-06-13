@@ -14,13 +14,13 @@ export const state = {
   },
   suggestions: { showTooltip: false, showList: false },
   showBlur: false,
-  showWellContents:false,
-  showInfo:false,
-  highlightHover:true,
-  highlightedLineNumber:null,
-  currentPlate:null,
-  currentCol:null,
-  currentRow:null
+  showWellContents: false,
+  showInfo: false,
+  highlightHover: true,
+  highlightedLineNumber: null,
+  currentPlate: null,
+  currentCol: null,
+  currentRow: null
 };
 
 const actions = {};

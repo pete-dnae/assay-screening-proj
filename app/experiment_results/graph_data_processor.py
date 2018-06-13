@@ -1,7 +1,7 @@
 from scipy.stats import linregress
 import numpy as np
-from .experiment_data_extractor import get_qpcr_results_by_well
-
+from .experiment_data_extractor import get_qpcr_results_by_well,\
+    get_labchip_results_from_queryset,get_dilutions
 
 
 def prepare_amp_graph(well_constituents,qpcr_queryset):
@@ -88,3 +88,24 @@ def calc_eff_r2(template, ct):
     r2 = lin_fit.rvalue ** 2
 
     return eff, r2
+
+def prepare_labchip_graph(well_constituents,labchip_query):
+    """
+    Includes dilution calculations and meta data about qpcr allocation to
+    labchip results
+    """
+
+    labchip_qpcr_well_map = {record.labchip_well: record.qpcr_well.qpcr_well for record in
+         labchip_query}
+    labchip_results = get_labchip_results_from_queryset(labchip_query)
+    dilutions = get_dilutions(labchip_query)
+    for well_id,record in labchip_results.items():
+        peak_data = record['peak']
+        for key,peak in peak_data.items():
+            peak['meta'] = well_constituents[labchip_qpcr_well_map[well_id]]
+            peak['conc_(ng/ul)'] = peak['conc_(ng/ul)']*dilutions[well_id]
+            peak_data[key] = peak
+        labchip_results[well_id] = record
+    return labchip_results
+
+

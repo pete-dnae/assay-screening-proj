@@ -1,28 +1,79 @@
 import _ from 'lodash';
 
-export const getTraceName = (data) => {
+export const COLORS = {
+  template: {
+    10: '#b30000',
+    100: '#41b5f4',
+    1000: 'Orange',
+    10000: '#069906',
+  },
+  NTC: { default: 'Grey' },
+  human: { 50: 'Purple', 500: '#e542f4' },
+};
+
+export const getColorName = (type, conc) => {
+  const randomColor = () =>
+    `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  if (conc in COLORS[type]) {
+    return COLORS[type][conc];
+  }
+  if (type === 'human') {
+    return COLORS[type][500];
+  }
+  if (type === 'template') {
+    if (conc >= 5000) return COLORS[type][10000];
+    if (conc >= 500) return COLORS[type][1000];
+    if (conc >= 50) return COLORS[type][100];
+    if (conc >= 5) return '#0000A0';
+    if (conc <= 5000) return COLORS[type][10];
+  }
+  return randomColor();
+};
+
+export const getTraceDetails = (data) => {
   let name = '';
 
+  let color = '';
+  let lineFormat = '';
   if ('templates' in data.meta) {
     name = data.meta.templates[0].concentration + data.meta.templates[0].unit;
+    color = getColorName('template', data.meta.templates[0].concentration);
+    lineFormat = 'Solid';
   }
   if ('humans' in data.meta) {
     name += data.meta.humans[0].concentration + data.meta.humans[0].unit;
+    color = getColorName('human', data.meta.humans[0].concentration);
+    lineFormat = 'dashdot';
   }
   if ('transferred_templates' in data.meta) {
     name += `PA${data.meta.transferred_templates[0].concentration} ${
       data.meta.transferred_templates[0].unit
     } `;
+    color = getColorName(
+      'template',
+      data.meta.transferred_templates[0].concentration,
+    );
+    lineFormat = 'Solid';
   }
   if ('transferred_humans' in data.meta) {
     name += `PA${data.meta.transferred_humans[0].concentration} ${
       data.meta.transferred_humans[0].unit
     } `;
+    color = getColorName(
+      'human',
+      data.meta.transferred_humans[0].concentration,
+    );
+    lineFormat = 'dashdot';
   }
-  if (!name) name = 'NTC';
+  if (!name) {
+    name = 'NTC';
+    lineFormat = 'dashdot';
+    color = getColorName('NTC', 'default');
+  }
+
   name = `${data.meta.well_id} ${name}`;
 
-  return name;
+  return { name, lineFormat, color };
 };
 
 export const getLabChipCartesianCoords = obj =>
@@ -67,7 +118,7 @@ export const getLabChipGraphShapes = (args, obj) =>
     };
   });
 
-export const getLabChipGraphText = obj => _.map(obj, (val, i) => `${i}`);
+export const getLabChipGraphText = obj => _.map(obj, val => `${val[0].sample}`);
 
 export const getLabChipGraphLayout = (args) => {
   const { tickText, shapes } = args;
@@ -99,6 +150,14 @@ export const generateLabChipPlotTraces = (wellData) => {
               'LC Well': wellId,
               bp: v['size_[bp]'],
               conc: v['conc_(ng/ul)'],
+              sample: getTraceDetails(v).name,
+            });
+          } else {
+            a.push({
+              'LC Well': wellId,
+              bp: null,
+              conc: null,
+              sample: getTraceDetails(v).name,
             });
           }
 
@@ -119,5 +178,27 @@ export const generateLabChipPlotTraces = (wellData) => {
     shapes,
   });
 
-  return { trace: [labChipCartesianCoords], layout: layoutConfig };
+  return {
+    trace: [labChipCartesianCoords],
+    layout: layoutConfig,
+    zoom: { scrollZoom: true },
+  };
 };
+
+
+export const getTraces = data =>
+  _.map(data, (row) => {
+    const { name, lineFormat, color } = getTraceDetails(row);
+    return {
+      x: row.x,
+      y: row.y,
+      name,
+      line: {
+        dash: lineFormat,
+        width: name.indexOf('PA') > -1 ? 1 : 2,
+      },
+      marker: {
+        color,
+      },
+    };
+  });

@@ -13,7 +13,7 @@ from .experiment_data_extractor import  get_labchip_query, \
 from .well_constituents_maker import make_well_constituents
 
 from .graph_data_processor import prepare_amp_graph, prepare_copy_count_graph, \
-    prepare_melt_graph
+    prepare_melt_graph,prepare_labchip_graph
 
 
 class QpcrWellAggregation:
@@ -58,7 +58,7 @@ class QpcrWellAggregation:
         amp_graph = prepare_amp_graph(well_constituents, qpcr_query)
         melt_graph = prepare_melt_graph(well_constituents, qpcr_query)
         copy_cnt_graph = prepare_copy_count_graph(well_constituents, qpcr_query)
-        labchip_peaks = get_labchip_results_from_queryset(labchip_query)
+        labchip_peaks = prepare_labchip_graph(well_constituents,labchip_query)
 
         inst = cls.create(summary_table, master_table, amp_graph, melt_graph,
                           copy_cnt_graph, labchip_peaks)
