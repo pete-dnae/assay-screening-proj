@@ -20,16 +20,16 @@
           <ul class="nav nav-pills nav-fill">
             <tooltip effect="scale" placement="bottom" content="Create and edit experiments">
             <li class="nav-item">
-              <a :class="{'nav-link':true,active:checkActive('experimenthome')}" href="#/">Experiment</a>
+              <a :class="{'nav-link':true,active:checkActive('experimenthome')}" @click="redirect('/experiment')" href="javascript:">Experiment</a>
             </li>
             </tooltip>
             <tooltip effect="scale" placement="bottom" content="Edit database entities here">
             <li class="nav-item">
-              <a :class="{'nav-link':true,active:checkActive('reagentHome')}" href="#/maintenance">Maintenance</a>
+              <a :class="{'nav-link':true,active:checkActive('reagentHome')}"  @click="redirect('/maintenance')"  href="javascript:">Maintenance</a>
             </li>
             </tooltip> 
             <li class="nav-item">
-              <a :class="{'nav-link':true,active:checkActive('resultsHome')}" href="#/results">Experiment Results</a>
+              <a :class="{'nav-link':true,active:checkActive('resultsHome')}" @click="redirect('/results')"  href="javascript:">Experiment Results</a>
             </li>     
           </ul>
         </div>

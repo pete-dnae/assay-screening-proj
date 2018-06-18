@@ -61,6 +61,9 @@ export default {
     checkActive(value) {
       return this.$route.name === value;
     },
+    redirect(value) {
+      this.$router.push(value);
+    },
     handleSave(experimentName, experimentType) {
       this.saveExperimentAs({
         experiment_type: experimentType,
