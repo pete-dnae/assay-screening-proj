@@ -1,9 +1,8 @@
 <template>
 
-<div class="container-fluid text-white">
+<div class="container-fluid">
     <div class="navbar navbar-dark bg-dark">
-      <a class="navbar-brand">Assay Screening</a>
-      
+      <a class="navbar-brand text-white">Assay Screening</a>      
         <div class="form-inline my-2 my-lg-0">                   
             <tooltip effect="scale" placement="left" content="Search your experiment here">            
               <typeahead class="form-control mr-sm-2" 
@@ -21,20 +20,33 @@
           <ul class="nav nav-pills nav-fill">
             <tooltip effect="scale" placement="bottom" content="Create and edit experiments">
             <li class="nav-item">
-              <a class="nav-link active" href="#/">Experiment</a>
+              <a :class="{'nav-link':true,active:checkActive('experimenthome')}" href="#/">Experiment</a>
             </li>
             </tooltip>
             <tooltip effect="scale" placement="bottom" content="Edit database entities here">
             <li class="nav-item">
-              <a class="nav-link" href="#/maintenance">Maintenance</a>
+              <a :class="{'nav-link':true,active:checkActive('reagentHome')}" href="#/maintenance">Maintenance</a>
             </li>
             </tooltip> 
             <li class="nav-item">
-              <a class="nav-link" href="#/results">Experiment Results</a>
+              <a :class="{'nav-link':true,active:checkActive('resultsHome')}" href="#/results">Experiment Results</a>
             </li>     
           </ul>
         </div>
     </div>
+    <div class="row mt-3" v-show="user">
+      <div class="col-md-8">
+      </div>
+      <div class="col text-right">   
+        
+          <i class="fa fa-user-circle-o fa-2x mr-2" aria-hidden="true"></i>
+        
+        <label class="text-primary mr-2">{{user}}</label>
+        
+          <i class="fa fa-sign-out fa-2x" aria-hidden="true" @click="handleLogOut"></i>
+        
+      </div>
+      </div>
     <modal effect="fade/zoom" :value="showModal">
       <div class="form-group mx-sm-3 mb-2 ">
         <label class="text-primary float-left">Experiment Name :</label>

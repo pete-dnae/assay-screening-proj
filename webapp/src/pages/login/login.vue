@@ -31,7 +31,10 @@
                 >
             </div>
           </div>
-      <button class="btn btn-primary" @click="handleSubmit()">Access</button>
+      <button class="btn btn-primary"
+       @click="handleSubmit()"
+       :disabled="!(username&&password)">
+        Access</button>
     </div>
 </template>
 <script src='./login.js'></script>

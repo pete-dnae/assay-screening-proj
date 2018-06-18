@@ -35,6 +35,7 @@ export default {
   computed: {
     ...mapGetters({
       experiments: 'getExperimentList',
+      user: 'getUserName',
     }),
     currentExperiment: {
       get() {
@@ -53,6 +54,12 @@ export default {
     },
     loadExperimentFromName(value) {
       this.loadExperiment(value);
+    },
+    handleLogOut() {
+      this.$store.commit('LOG_OUT');
+    },
+    checkActive(value) {
+      return this.$route.name === value;
     },
     handleSave(experimentName, experimentType) {
       this.saveExperimentAs({

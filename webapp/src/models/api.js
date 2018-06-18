@@ -66,29 +66,13 @@ const postFile = (url, data) =>
     },
   });
 
-const fetchResWithParam = (url, params) =>
-  new Promise((resolve, reject) => {
-    axios.get(url, { params }).then(
-      ({ data }) => {
-        const response = _.isEmpty(data) ? null : data;
-        resolve(response);
-      },
-      (err) => {
-        reject(err);
-      },
-    );
-  });
-
-const deleteRes = (url, data) =>
-  axios.delete(
-    url,
-    { data },
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+const deleteRes = url =>
+  axios.delete(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `JWT ${localStorage.getItem('t')}`,
     },
-  );
+  });
 
 export const getExperiment = experimentName =>
   fetchRes(`api/experiments/${experimentName}/`);
@@ -106,7 +90,7 @@ export const getExperimentImages = experimentName =>
   fetchRes(`/api/experiment-images/${experimentName}`);
 export const getAvailableReagentGroups = () => fetchRes('/api/reagent-groups/');
 export const getSelectedReagentGroup = reagentGroupName =>
-  fetchResWithParam(`/api/reagent-groups/${reagentGroupName}/`);
+  fetchRes(`/api/reagent-groups/${reagentGroupName}/`);
 export const postReagentGroup = reagentGroup =>
   postRes('/api/reagent-groups/', reagentGroup);
 export const deleteReagentGroup = reagentGroupName =>
@@ -127,3 +111,4 @@ export const postLabchipResults = data =>
 export const postQpcrResults = data => postFile('/api/qpcr-results/', data);
 export const getToken = payload => postRes('/auth/obtain_token/', payload);
 export const refreshToken = payload => postRes('/auth/refresh_token/', payload);
+export const verifyToken = payload => postRes('/auth/verify_token/', payload);
