@@ -24,20 +24,17 @@ export default {
       formData.append('plateName', this.plateName);
       api
         .postLabchipResults(formData)
-        .then(
-          ({ data }) => {
-            this.uploadFeedBack = `Upload sucessful for plate ${data.plate_id}
+        .then(({ data }) => {
+          this.uploadFeedBack = `Upload sucessful for plate ${data.plate_id}
               Wells Extracted :  ${data.wells}`;
-          },
-          (e) => {
-            this.uploadFeedBack = `Upload Failure 
-                                    ${JSON.stringify(e)}
+        }, ({ response }) => {
+          this.uploadFeedBack = `Upload Failure 
+                                    ${response.data}
                                 `;
-          },
-        )
+        })
         .catch((e) => {
           this.uploadFeedBack = `Upload Failure 
-                                    ${JSON.stringify(e)}
+                                    ${e.toString()}
                                 `;
         });
     },
@@ -55,15 +52,15 @@ export default {
             this.uploadFeedBack = `Upload sucessful for plate ${data.plate_id}
               Wells Extracted :  ${data.wells}`;
           },
-          (e) => {
+          ({ response }) => {
             this.uploadFeedBack = `Upload Failure 
-                                    ${JSON.stringify(e)}
+                                    ${response.data}
                                 `;
           },
         )
         .catch((e) => {
           this.uploadFeedBack = `Upload Failure 
-                                    ${JSON.stringify(e)}
+                                    ${e.toString()}
                                 `;
         });
     },

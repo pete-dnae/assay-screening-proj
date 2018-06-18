@@ -1,9 +1,11 @@
 from app.experiment_results.labchip_results_processor import \
     parse_labchip_file
 from app.serializers import LabChipResultsSerializer
+from app.models import LabChipResultsModel
+from rest_framework.exceptions import ValidationError
 
 def load_labchip_results(experiment_id,plate_id,file):
-
+    assert_duplicate(plate_id)
     labchip_results = parse_labchip_file(plate_id,experiment_id,file)
     serializer =LabChipResultsSerializer(data=labchip_results, many=True)
     serializer.is_valid(raise_exception=True)
@@ -17,3 +19,8 @@ def get_labchip_upload_response(labchip_results):
     wells = [record['labchip_well']for record in labchip_results]
     return {'wells': wells, 'experiment_id': experiment_id,
             'plate_id': plate_id}
+
+def assert_duplicate(plate_id):
+    query_set = LabChipResultsModel.objects.filter(labchip_plate_id = plate_id)
+    if query_set.exists():
+        raise ValidationError('Labchip results already exists')

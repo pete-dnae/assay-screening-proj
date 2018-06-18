@@ -1,7 +1,9 @@
 from app.serializers import *
 from app.experiment_results.qpcr_results_processor import parse_qpcr_file
+from rest_framework.exceptions import ValidationError
 
 def load_qpcr_results(experiment_id,plate_name,file):
+    assert_duplicate(plate_name)
     results, reagents_used, reagent_group_used = \
         parse_qpcr_file(plate_name,experiment_id,file)
 
@@ -50,3 +52,10 @@ def generate_upload_response(results):
     plate_id = set([record['qpcr_plate_id'] for record in results])
     return {'wells': wells_entered, 'experiment_id': experiment_id,
             'plate_id': plate_id}
+
+def assert_duplicate(plate_name):
+
+    query_set = QpcrResultsModel.objects.filter(qpcr_plate_id=plate_name)
+
+    if query_set.exists():
+        raise ValidationError('Qpcr results already loaded')

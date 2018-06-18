@@ -48,28 +48,31 @@ const actions = {
   },
   inspectToken({ dispatch }) {
     return new Promise((resolve, reject) => {
-        const token = state.jwt.data;
-        if (token) {
-          const decoded = jwt_decode(token);
-          const exp = decoded.exp;
-          const orig_iat = decoded.orig_iat;
-          if (exp - Date.now() / 1000 < 1800 && Date.now() / 1000 - orig_iat < 628200) {
-            dispatch("refreshToken");
-            
-          } else if (exp - Date.now() / 1000 < 1800) {
-            // DO NOTHING, DO NOT REFRESH
-            
-          }
-          resolve("continue");
-          console.log("fine");
-        } else {
-          // PROMPT USER LOGIN
+      const token = state.jwt.data;
+      if (token) {
+        const decoded = jwt_decode(token);
+        const exp = decoded.exp;
+        const orig_iat = decoded.orig_iat;
+        if (
+          exp - Date.now() / 1000 < 1800 &&
+          Date.now() / 1000 - orig_iat < 628200
+        ) {
+          dispatch("refreshToken");
+        } else if (exp - Date.now() / 1000 < 1800) {
+          // DO NOTHING, DO NOT REFRESH
+        }
+        if (Date.now() / 1000 - orig_iat > 628200) {
           reject("err");
-          console.log('error');
-          
+
           router.push("/login");
         }
-          
+        resolve("continue");
+      } else {
+        // PROMPT USER LOGIN
+        reject("err");
+
+        router.push("/login");
+      }
     });
   }
 };
