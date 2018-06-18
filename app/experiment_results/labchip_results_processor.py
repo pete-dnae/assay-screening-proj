@@ -55,8 +55,6 @@ def _extract_peaks(labchip_well, well_id,source_map,plate_id):
                                                                  'ng/ul)'),
             'purity': _normalize_peak_data(peak_data,'%_purity'),
             'peak_name': peak_name,
-            'molarity': _normalize_peak_data(peak_data,'molarity_('
-                                                            'nmol/l)'),
             'labchip_well': peak_data['well_label'],
             'qpcr_well': qpcr_well.id
         })

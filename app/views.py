@@ -43,7 +43,7 @@ class ReagentViewSet(viewsets.ModelViewSet):
     lookup_value_regex = '[^/]+'
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-    
+
     def get_queryset(self):
         """
         Overridden to provide the search functionality.
