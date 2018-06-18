@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
-
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 from app.views import *
 
@@ -32,7 +32,9 @@ urlpatterns = [
             AvailableReagentsCategoryView.as_view()),
     re_path(r'api/well-results/$',
             WellResultsView.as_view()),
-    re_path(r'api/well-aggregate/$',WellAggregationView.as_view())
+    re_path(r'api/well-aggregate/$',WellAggregationView.as_view()),
+    re_path(r'^auth/obtain_token/', obtain_jwt_token),
+    re_path(r'^auth/refresh_token/', refresh_jwt_token),
 ]
 # Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()

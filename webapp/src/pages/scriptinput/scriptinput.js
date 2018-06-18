@@ -14,6 +14,7 @@ import suggestionToolTip from '@/components/suggestionstooltip/suggestionstoolti
 import pictures from '@/components/pictures/pictures.vue';
 import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
 import fileUploader from '@/components/fileupload/fileupload.vue';
+import store from '@/store';
 
 export default {
   name: 'ScriptInputComponent',
@@ -30,7 +31,18 @@ export default {
     fileUploader,
   },
   data() {
-    return { msg: 'Welcome', suggestionIndex: 0, editor: null, showPictures: false, showUpload: false };
+    return {
+      msg: 'Welcome',
+      suggestionIndex: 0,
+      editor: null,
+      showPictures: false,
+      showUpload: false,
+    };
+  },
+  beforeRouteEnter(to, from, next) {
+    store.dispatch('inspectToken').then(() => {
+      next();
+    });
   },
   computed: {
     ...mapGetters({
@@ -70,6 +82,7 @@ export default {
       'fetchExperiment',
       'fetchAvailableSuggestions',
       'setSuggestions',
+      'inspectToken',
     ]),
     handleSwitchInfoVisiblity() {
       this.$store.commit('SHOW_INFO');
@@ -258,6 +271,7 @@ export default {
     },
   },
   mounted() {
+    this.inspectToken();
     // Quill Initialization
     this.setupQuill();
     // Data Retreival
@@ -267,6 +281,8 @@ export default {
       experimentName: 'Reference Experiment',
       referenceExperimentFlag: true,
     });
-    this.fetchExperiment({ experimentName: 'Reference Experiment' });
+    this.fetchExperiment({
+      experimentName: 'Reference Experiment',
+    });
   },
 };

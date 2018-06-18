@@ -143,7 +143,10 @@ export default {
           units: row[2],
         }));
 
-      this.saveReagents({ group_name: groupName, details: reagentGroupObjectList }).then(() => {
+      this.saveReagents({
+        group_name: groupName,
+        details: reagentGroupObjectList,
+      }).then(() => {
         this.fetchAvailableReagentGroups();
         this.currentReagentGroup = groupName;
         this.currentText = groupName;

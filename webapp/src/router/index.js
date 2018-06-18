@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import experimenthome from '@/pages/experimenthome/experimenthome.vue';
+
 import reagents from '@/pages/reagentshome/reagentshome.vue';
 import wellresults from '@/pages/wellresults/wellresults.vue';
 import wellSummary from '@/pages/wellsummary/wellsummary.vue';
+import login from '@/pages/login/login.vue';
+import scriptInput from '@/pages/scriptinput/scriptinput.vue';
 
 Vue.use(Router);
 
@@ -22,13 +24,17 @@ export default new Router({
     {
       path: '/experiment',
       name: 'experimenthome',
-      component: experimenthome,
-      props: true,
+      component: scriptInput,
     },
     {
       path: '/results',
       name: 'resultsHome',
       component: wellresults,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login,
     },
     {
       path: '/summary/:Expt/:Plate/:Wells',

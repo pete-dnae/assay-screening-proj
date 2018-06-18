@@ -5,33 +5,48 @@ const pureAxios = axios.create();
 
 const fetchRes = url =>
   new Promise((resolve, reject) => {
-    axios.get(url).then(
-      ({ data }) => {
-        const response = _.isEmpty(data) ? null : data;
-        resolve(response);
-      },
-      (err) => {
-        reject(err);
-      },
-    );
+    axios
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `JWT ${localStorage.getItem('t')}`,
+        },
+      })
+      .then(
+        ({ data }) => {
+          const response = _.isEmpty(data) ? null : data;
+          resolve(response);
+        },
+        (err) => {
+          reject(err);
+        },
+      );
   });
 
 const fetchResPure = url =>
   new Promise((resolve, reject) => {
-    pureAxios.get(url).then(
-      ({ data }) => {
-        const response = _.isEmpty(data) ? null : data;
-        resolve(response);
-      },
-      (err) => {
-        reject(err);
-      },
-    );
+    pureAxios
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `JWT ${localStorage.getItem('t')}`,
+        },
+      })
+      .then(
+        ({ data }) => {
+          const response = _.isEmpty(data) ? null : data;
+          resolve(response);
+        },
+        (err) => {
+          reject(err);
+        },
+      );
   });
 const putRes = (url, data) =>
   pureAxios.put(url, data, {
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `JWT ${localStorage.getItem('t')}`,
     },
   });
 
@@ -39,6 +54,7 @@ const postRes = (url, data) =>
   axios.post(url, data, {
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `JWT ${localStorage.getItem('t')}`,
     },
   });
 
@@ -46,6 +62,7 @@ const postFile = (url, data) =>
   axios.post(url, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
+      Authorization: `JWT ${localStorage.getItem('t')}`,
     },
   });
 
@@ -84,11 +101,10 @@ export const putRuleSCript = ({ ruleScriptUrl, text }) =>
 export const getReagents = () => fetchRes('/api/reagents/');
 export const getUnits = () => fetchRes('/api/units/');
 export const postNewExperiment = data => postRes('/api/experiments/', data);
-export const getAvailableSuggestions = () => fetchRes('/api/allowed-names');
+export const getAvailableSuggestions = () => fetchRes('/api/allowed-names/');
 export const getExperimentImages = experimentName =>
   fetchRes(`/api/experiment-images/${experimentName}`);
-export const getAvailableReagentGroups = () =>
-  fetchRes('/api/reagent-groups/');
+export const getAvailableReagentGroups = () => fetchRes('/api/reagent-groups/');
 export const getSelectedReagentGroup = reagentGroupName =>
   fetchResWithParam(`/api/reagent-groups/${reagentGroupName}/`);
 export const postReagentGroup = reagentGroup =>
@@ -106,5 +122,8 @@ export const getWellSummary = ({ wellArray, experimentId, qpcrPlateId }) =>
   fetchRes(
     `/api/well-results/?expt=${experimentId}&plate_id=${qpcrPlateId}&wells=${wellArray}`,
   );
-export const postLabchipResults = data => postFile('/api/labchip-results/', data);
+export const postLabchipResults = data =>
+  postFile('/api/labchip-results/', data);
 export const postQpcrResults = data => postFile('/api/qpcr-results/', data);
+export const getToken = payload => postRes('/auth/obtain_token/', payload);
+export const refreshToken = payload => postRes('/auth/refresh_token/', payload);

@@ -9,10 +9,11 @@ from django.db.models.deletion import ProtectedError
 from app.experiment_results.qpcr_results_loader import load_qpcr_results
 from app.experiment_results.labchip_results_loader import load_labchip_results
 from app.experiment_results.experiment_data_extractor import \
-    get_wells_grouped_by_id_assay,get_qpcr_query_from_meta
+    get_wells_grouped_by_id_assay
 from app.experiment_results.qpcr_well_aggregation import QpcrWellAggregation
 from django.http import Http404
-
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 import ast
 
 class ExperimentViewSet(viewsets.ModelViewSet):
@@ -22,6 +23,10 @@ class ExperimentViewSet(viewsets.ModelViewSet):
     lookup_value_regex = '[a-zA-Z0-9_ ]+'
 
 class RulesScriptViewSet(viewsets.ModelViewSet):
+
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
     queryset = RulesScriptModel.objects.all()
     serializer_class =  RulesScriptSerializer
 
@@ -36,7 +41,9 @@ class ReagentViewSet(viewsets.ModelViewSet):
     queryset = ReagentModel.objects.all()
     serializer_class =  ReagentSerializer
     lookup_value_regex = '[^/]+'
-
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    
     def get_queryset(self):
         """
         Overridden to provide the search functionality.
@@ -69,11 +76,15 @@ class UnitViewSet(viewsets.ModelViewSet):
 
 
 class ReagentCategoryViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     queryset = ReagentCategoryModel.objects.all()
     serializer_class = ReagentCategorySerializer
 
 
 class ReagentGroupViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     queryset = ReagentGroupModel.objects.all()
     serializer_class = ReagentGroupSerializer
 

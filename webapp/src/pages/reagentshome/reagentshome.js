@@ -5,6 +5,7 @@ import _ from 'lodash';
 import alert from '@/components/alert/Alert.vue';
 import reagentCreateForm from '@/components/addreagent/addreagent.vue';
 import reagentEditForm from '@/components/editreagent/editreagent.vue';
+import store from '@/store';
 
 export default {
   name: 'reagentshome',
@@ -23,6 +24,9 @@ export default {
         opaque_json_payload: 'Metadata',
       },
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    store.dispatch('inspectToken').then(() => { next(); });
   },
   components: {
     reagentGroup,
@@ -60,6 +64,7 @@ export default {
       'editReagent',
       'fetchReagents',
       'fetchReagentCategories',
+      'inspectToken',
     ]),
     handleReagentEdit(data) {
       this.showEditForm = false;
@@ -102,7 +107,6 @@ export default {
       if (_.isEmpty(list)) {
         list = [{ key: 'None', value: '' }];
       }
-
 
       return list;
     },
