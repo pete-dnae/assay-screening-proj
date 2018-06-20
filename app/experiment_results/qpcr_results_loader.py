@@ -1,18 +1,28 @@
 from app.serializers import *
 from app.experiment_results.qpcr_results_processor import parse_qpcr_file
 from rest_framework.exceptions import ValidationError
+from django.db import transaction
 
 def load_qpcr_results(experiment_id,plate_name,file):
     assert_duplicate(plate_name)
-    results, reagents_used, reagent_group_used = \
-        parse_qpcr_file(plate_name,experiment_id,file)
+    try:
+        results, reagents_used, reagent_group_used = parse_qpcr_file(
+            plate_name,experiment_id,file)
+    except:
+        raise ValidationError('Error while parsing qpcr file')
 
-    for record in results:
-        instance = validate_create_qpcr_result_record(record)
-        if instance.qpcr_well in reagents_used:
-            validate_create_reagent_lookup(instance,reagents_used)
-        if instance.qpcr_well in reagent_group_used:
-            validate_create_reagent_group_lookup(instance,reagent_group_used)
+    try:
+        with transaction.atomic():
+            for record in results:
+                instance = validate_create_qpcr_result_record(record)
+                if instance.qpcr_well in reagents_used:
+                    validate_create_reagent_lookup(instance,reagents_used)
+                if instance.qpcr_well in reagent_group_used:
+                    validate_create_reagent_group_lookup(instance,
+                                                         reagent_group_used)
+    except:
+        raise ValidationError('QPCR results write failed , Operation '
+                              'reversed')
 
     response = generate_upload_response(results)
 
