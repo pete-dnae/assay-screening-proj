@@ -22,18 +22,22 @@
                     </td>        
                     <td v-for="(value,key) in options" v-bind:key="key" v-if="value.array" 
                     >
-                    <ul style="padding:0;list-style-type: none">
-                        <li v-for="value in row[key]" v-bind:key="value" v-if ="value">
-                            <i v-if="options[key].round">{{handleRoundOff(value)}}</i>
-                            <label v-else>{{value}}</label>
-                        </li>
-                        </ul>
+                    <slot v-bind:row="row" :name="key">     
+                        <ul style="padding:0;list-style-type: none">
+                            <li v-for="value in row[key]" v-bind:key="value" v-if ="value">
+                                <i v-if="options[key].round">{{handleRoundOff(value)}}</i>
+                                <label v-else>{{value}}</label>
+                            </li>
+                            </ul>
+                    </slot>
                     </td>
                     <td v-else >
-                        <i v-if="options[key].round">{{handleRoundOff(row[key])}}</i>
-                        <label v-else-if="columnsToColor.includes(key)" 
-                        :class="{'text-success':row[key],'text-danger':!row[key]}">{{row[key]}}</label>
-                        <label v-else>{{row[key]}}</label>
+                        <slot v-bind:row="row" :name="key">     
+                            <i v-if="options[key].round">{{handleRoundOff(row[key])}}</i>
+                            <label v-else-if="columnsToColor.includes(key)" 
+                            :class="{'text-success':row[key],'text-danger':!row[key]}">{{row[key]}}</label>
+                            <label v-else>{{row[key]}}</label>
+                        </slot>
                     </td>
                     <td>
                         <slot v-bind:row="row" name='redirect'>                    
