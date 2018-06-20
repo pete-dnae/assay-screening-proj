@@ -45,7 +45,6 @@ def get_labchip_results_from_queryset(query_set):
         key = labchip['peak_name']
         peak_dict[key] = {'%_purity': labchip['purity'],
                           'conc_(ng/ul)': labchip['concentration'],
-                          'molarity_(nmol/l)': labchip['molarity'],
                           'size_[bp]': labchip['size']
                           }
 

@@ -164,7 +164,6 @@ class LabChipResultsSerializer(serializers.ModelSerializer):
             'size',
             'concentration',
             'purity',
-            'molarity',
             'qpcr_well',
             'experiment',
             'labchip_plate_id'
