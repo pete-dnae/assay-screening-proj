@@ -9,7 +9,7 @@ from .utilities import UnexpectedWellNameError
 import re
 import ast
 from collections import defaultdict
-from clients.expt_recipes.lost import build_labchip_datas_from_inst_data
+from clients.expt_recipes.lost import build_labchip_datas_from_db_data
 from django.db import connection
 from app.experiment_results.result_aggregation_query import GroupByIDAssay
 
@@ -45,7 +45,10 @@ def get_labchip_results_from_queryset(query_set):
         key = labchip['peak_name']
         peak_dict[key] = {'%_purity': labchip['purity'],
                           'conc_(ng/ul)': labchip['concentration'],
-                          'size_[bp]': labchip['size']
+                          'size_[bp]': labchip['size'],
+                          'comment':labchip['comment'],
+                          'labchip_well_id':labchip['id'],
+                          'exclude_labchip_well':labchip['exclude_well']
                           }
 
     return results
@@ -195,7 +198,7 @@ def get_labchip_results_by_well(well_constituents, labchip_query):
     labchip_results = get_labchip_results_from_queryset(labchip_query)
     dilutions = get_dilutions(labchip_query)
     labchip_data = \
-        build_labchip_datas_from_inst_data(well_constituents,
+        build_labchip_datas_from_db_data(well_constituents,
                                            labchip_results,
                                            qpcr_labchip_well_map,
                                            reagent_amplicon_lenghts,

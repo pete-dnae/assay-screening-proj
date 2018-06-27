@@ -30,4 +30,6 @@ class ViewHelperTest(unittest.TestCase):
                 'Titanium-Taq'):
             self.assertTrue(name in reagents_and_groups)
 
-        self.assertEqual(all_names['units'], ['M/uL', 'dilution', 'uM', 'x'])
+        self.assertEqual(all_names['units'], ['%','M/uL','cp','cp/ul',
+                                              'dilution','mM','mg/ml','nM',
+                                              'ng','ng/ul','uM','ug/ml','x'])

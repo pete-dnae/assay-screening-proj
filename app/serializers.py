@@ -168,7 +168,7 @@ class LabChipResultsSerializer(serializers.ModelSerializer):
             'purity',
             'qpcr_well',
             'experiment',
-            'labchip_plate_id'
+            'labchip_plate_id',
             'exclude_well',
             'comment'
         )

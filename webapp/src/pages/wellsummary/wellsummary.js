@@ -13,7 +13,7 @@ import {
   SUMMARY_COLOR_CONFIG,
 } from '@/models/tableConfiguration';
 import _ from 'lodash';
-import VueDraggableResizable from 'vue-draggable-resizable';
+import annotator from '@/components/annotator/annotator.vue';
 
 export default {
   name: 'wellsummary',
@@ -26,11 +26,12 @@ export default {
       experimentId: null,
       plateId: null,
       wells: null,
+      showAnnotator: false,
     };
   },
   components: {
     calcTable,
-    VueDraggableResizable,
+    annotator,
   },
   computed: {
     ...mapGetters({
@@ -40,11 +41,35 @@ export default {
       meltGraphData: 'getMeltGraphData',
       copyCountGraphData: 'getCopyCountGraphData',
       labchipGraphData: 'getLabchiPGraphData',
+      currentSelection: 'getCurrentSelection',
     }),
   },
   methods: {
     ...mapActions(['fetchWellSummary']),
+    publishSummary() {
+      const { Expt, Plate, Wells } = this.$route.params;
+      this.experimentId = Expt;
+      this.plateId = Plate;
+      this.wells = Wells;
+      const wellArray = JSON.stringify(Wells.split(','));
+      this.fetchWellSummary({
+        wellArray,
+        experimentId: Expt,
+        qpcrPlateId: Plate,
+      }).then(() => {
+        plotAmpGraph(this.ampGraphData);
+        plotMeltGraph(this.meltGraphData);
+        plotCopyCountGraph(this.copyCountGraphData);
+        plotLabchipGraph(generateLabChipPlotTraces(this.labchipGraphData));
+      });
+    },
     handleWellSelection(wellList) {
+      this.$store.commit('SET_CURRENT_SELECTION', wellList.map(well => ({
+        'qPCR Well': well['qPCR Well'],
+        'LC Well': well['LC Well'],
+        'qPCR Well Id': well['qPCR Well Id'],
+        'Labchip Well Id': well['Labchip Well Id'],
+      })));
       const qpcrWells = _.map(wellList, 'qPCR Well');
       const lcWells = _.map(wellList, 'LC Well');
       plotAmpGraph(
@@ -76,20 +101,6 @@ export default {
     },
   },
   mounted() {
-    const { Expt, Plate, Wells } = this.$route.params;
-    this.experimentId = Expt;
-    this.plateId = Plate;
-    this.wells = Wells;
-    const wellArray = JSON.stringify(Wells.split(','));
-    this.fetchWellSummary({
-      wellArray,
-      experimentId: Expt,
-      qpcrPlateId: Plate,
-    }).then(() => {
-      plotAmpGraph(this.ampGraphData);
-      plotMeltGraph(this.meltGraphData);
-      plotCopyCountGraph(this.copyCountGraphData);
-      plotLabchipGraph(generateLabChipPlotTraces(this.labchipGraphData));
-    });
+    this.publishSummary();
   },
 };

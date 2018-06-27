@@ -1,6 +1,7 @@
 <template>
 <div>
     <modal title="File Upload" effect="fade/zoom" large :value="show">
+    <loader v-if="isPosting"></loader>
             <div class="row text-left">
                 <div class="col">                    
                     <input type="text" class="d-block" placeholder="No Plate Name Chosen" v-model="plateName" disabled/>

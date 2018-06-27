@@ -6,11 +6,11 @@ _NON_SPECIFIC_PRODUCT = '_non_spec'
 _PRIMER_DIMER = '_primer_dimer'
 
 
-def create_payload(qinst_data, max_conc_mean_tm, mean_ntc_ct):
-    tms = qinst_data['temperatures']
+def create_payload(qdb_data, max_conc_mean_tm, mean_ntc_ct):
+    tms = qdb_data['temperatures']
     tm_delta = [abs(tm - max_conc_mean_tm) if tm is not None else None for tm
                 in tms ]
-    ct =qinst_data['cycle_threshold']
+    ct =qdb_data['cycle_threshold']
     delta_ct = _calc_delta_ct(ct, mean_ntc_ct)
     ct_call = _get_ct_call(delta_ct)
     spec, non_spec, pd = _get_product_labels_from_tms(tms, tm_delta,

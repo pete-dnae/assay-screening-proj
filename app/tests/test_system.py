@@ -4,7 +4,7 @@ from pdb import set_trace as st
 from rest_framework.test import APIClient
 from rest_framework.test import APITestCase
 
-
+from django.contrib.auth.models import User
 from app.model_builders.make_ref_exp import ReferenceExperiment
 
 class HighLevelSystemSmokeTest(APITestCase):
@@ -16,7 +16,11 @@ class HighLevelSystemSmokeTest(APITestCase):
     def setUp(self):
         experiment = ReferenceExperiment()
         experiment.create()
-
+        client = APIClient()
+        User.objects.create_superuser('admin', 'admin@example.com', 'fabble')
+        response = client.post('/auth/obtain_token/', {'username': 'admin',
+                                                       'password': 'fabble'})
+        self.jwt = response.data['token']
     def test_typical_read_only_use_case(self):
         """
         We'll try to GET the reference experiment from its end point.
@@ -34,6 +38,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         client = APIClient()
         experiment_response = client.get('/api/experiments/Reference '
                                          'Experiment/')
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
         rules_script_url = experiment_response.data['rules_script']
 
         rules_script_response = client.get(rules_script_url)
@@ -63,6 +68,7 @@ class HighLevelSystemSmokeTest(APITestCase):
         properly formed response that describes the syntax error.
         """
         client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
         post_data = {'text': 'I am a malformed rules script'}
         experiment_response = client.get('/api/experiments/Reference '
                                          'Experiment/')
@@ -76,6 +82,7 @@ class HighLevelSystemSmokeTest(APITestCase):
 
     def test_allowed_names_end_point(self):
         client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
         resp = client.get('/api/allowed-names/', format='json')
         all_names = resp.data
 
@@ -88,11 +95,13 @@ class HighLevelSystemSmokeTest(APITestCase):
             'Pool_1',
             'Titanium-Taq'])
 
-        self.assertEqual(all_names['units'], ['M/uL', 'dilution', 'uM', 'x'])
+        self.assertEqual(all_names['units'], ['%','M/uL','cp','cp/ul',
+                                              'dilution','mM','mg/ml','nM',
+                                              'ng','ng/ul','uM','ug/ml','x'])
 
     def test_name_filtered_reagent_query(self):
         client = APIClient()
-
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + self.jwt)
         # First with a name that does exist.
         resp = client.get('/api/reagents/?name=Titanium-Taq', format='json')
         reagents = resp.data

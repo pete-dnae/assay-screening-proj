@@ -113,7 +113,6 @@ class QpcrResultsViewSet(viewsets.ModelViewSet):
         return Response(results)
 
 
-
 class LabChipResultsViewSet(viewsets.ModelViewSet):
 
     queryset = LabChipResultsModel.objects.all()
@@ -181,3 +180,29 @@ class WellAggregationView(APIView):
     def get(self,request):
         wells_by_id_assay = get_wells_grouped_by_id_assay()
         return Response(wells_by_id_assay)
+
+class qPCRWellAnnotationsView(APIView):
+
+    http_method_names = ['patch','options']
+
+    def patch(self,request):
+        qpcr_well_ids =  ast.literal_eval(request.data['qpcr_well_ids'])
+        comment = request.data['comment']
+        exclude_flag = request.data['exclude_well']
+        result = QpcrResultsModel.objects.filter(id__in=qpcr_well_ids).update(
+            comment=comment,exclude_well = exclude_flag)
+
+        return Response(result)
+
+class LabChipWellAnnotationsView(APIView):
+
+    http_method_names = ['patch','options']
+
+    def patch(self,request):
+        labchip_well_ids =  ast.literal_eval(request.data['labchip_well_ids'])
+        comment = request.data['comment']
+        exclude_flag = request.data['exclude_well']
+        result = LabChipResultsModel.objects.filter(id__in=labchip_well_ids).update(
+            comment=comment,exclude_well = exclude_flag)
+
+        return Response(result)

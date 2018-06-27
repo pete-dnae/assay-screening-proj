@@ -22,7 +22,8 @@ export const state = {
     received: false,
     isReceiving: false,
     didInvalidate: false
-  }
+  },
+  currentSelection:[]
 };
 
 const actions = {
@@ -91,6 +92,9 @@ const mutations = {
     state.resultSummary.isReceiving = false;
     state.resultSummary.received = false;
     state.resultSummary.didInvalidate = true;
+  },
+  [types.SET_CURRENT_SELECTION](state,value) {
+    state.currentSelection = value;
   }
 };
 const getters = {
@@ -114,6 +118,9 @@ const getters = {
   },
   getLabchiPGraphData(state, getters, rootState) {
     return state.resultSummary.data.labchip_peaks;
+  },
+  getCurrentSelection(state, getters, rootState) {
+    return state.currentSelection;
   }
 };
 
