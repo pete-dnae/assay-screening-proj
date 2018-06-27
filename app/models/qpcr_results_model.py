@@ -20,6 +20,11 @@ class QpcrResultsModel(models.Model):
     experiment = models.ForeignKey(ExperimentModel, on_delete=models.PROTECT)
     qpcr_plate_id = models.CharField(max_length=200)
     qpcr_well = models.CharField(max_length=100)
+    ##Updated 27/06/2018
+    """
+    Two new columns to capture exclusion of a qpcr well and comment against a  
+    qpcr well
+    """
     exclude_well = models.BooleanField(default=False)
     comment = models.CharField(max_length=200,null=True)
 
