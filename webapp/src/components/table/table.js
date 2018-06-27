@@ -80,9 +80,21 @@ export default {
         })),
       );
     },
+    determineClass(data, options) {
+      const bootstrapClass = {};
+      if (options.colorOn) {
+        if (data[options.colorOn]) {
+          bootstrapClass['table-danger'] = true;
+        }
+      }
+      if (options.title.indexOf('Comment') > -1) {
+        bootstrapClass['overflow-wrap'] = true;
+      }
+      return bootstrapClass;
+    },
     handleTableRowClick(id) {
       if (!_.isEmpty(this.selectedRowProps)) {
-        const props = this.pickProps(this.filteredRows[id]);
+        const props = this.filteredRows[id];
         this.$emit('tableRowSelected', props);
         this.handleRowClick(props);
       }
@@ -117,7 +129,7 @@ export default {
       this.$emit('multipleSelection', this.highlightRows);
     },
     checkRowSelected(id) {
-      const elem = this.pickProps(this.filteredRows[id]);
+      const elem = this.filteredRows[id];
       const value = _.find(this.highlightRows, { ...elem });
       return typeof value !== 'undefined';
     },

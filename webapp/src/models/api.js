@@ -23,6 +23,25 @@ const fetchRes = url =>
       );
   });
 
+const patchRes = (url, payload) =>
+  new Promise((resolve, reject) => {
+    axios
+      .patch(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `JWT ${localStorage.getItem('t')}`,
+        },
+      })
+      .then(
+        ({ data }) => {
+          resolve(data);
+        },
+        (err) => {
+          reject(err);
+        },
+      );
+  });
+
 const fetchResPure = url =>
   new Promise((resolve, reject) => {
     pureAxios
@@ -112,3 +131,5 @@ export const postQpcrResults = data => postFile('/api/qpcr-results/', data);
 export const getToken = payload => postRes('/auth/obtain_token/', payload);
 export const refreshToken = payload => postRes('/auth/refresh_token/', payload);
 export const verifyToken = payload => postRes('/auth/verify_token/', payload);
+export const annotateQPCRWells = payload => patchRes('/api/annotate-qpcr/', payload);
+export const annotateLabchipWells = payload => patchRes('/api/annotate-labchip/', payload);

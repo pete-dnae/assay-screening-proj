@@ -20,11 +20,13 @@ class QpcrResultsModel(models.Model):
     experiment = models.ForeignKey(ExperimentModel, on_delete=models.PROTECT)
     qpcr_plate_id = models.CharField(max_length=200)
     qpcr_well = models.CharField(max_length=100)
+    exclude_well = models.BooleanField(default=False)
+    comment = models.CharField(max_length=200,null=True)
 
     @classmethod
     def make(cls,experiment,qpcr_plate_id,qpcr_well,cycle_threshold, temperatures,
              amplification_cycle,amplification_delta_rn, melt_temperature,
-             melt_derivative):
+             melt_derivative,exclude_well,comment):
         return QpcrResultsModel.objects.create(experiment=experiment,
                                                qpcr_plate_id=qpcr_plate_id,
                                                qpcr_well=qpcr_well,
@@ -36,4 +38,6 @@ class QpcrResultsModel(models.Model):
                                                amplification_delta_rn,
                                                melt_temperature=
                                                melt_temperature,
-                                               melt_derivative=melt_derivative)
+                                               melt_derivative=melt_derivative,
+                                               exclude_well=exclude_well,
+                                               comment=comment)

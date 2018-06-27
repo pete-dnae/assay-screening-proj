@@ -1,13 +1,22 @@
 import { modal } from 'vue-strap';
 import * as api from '@/models/api';
+import loader from '@/components/loader';
 
 export default {
   name: 'pictures',
   components: {
     modal,
+    loader,
   },
   data() {
-    return { showUpload: false, disableUpload: true, uploadFeedBack: null };
+    return {
+      showUpload: false,
+      disableUpload: true,
+      uploadFeedBack: null,
+      isPosting: false,
+      posted: false,
+      didInvalidate: false,
+    };
   },
   props: {
     show: Boolean,
@@ -15,6 +24,21 @@ export default {
     plateName: String,
   },
   methods: {
+    handleSuccess(data) {
+      this.uploadFeedBack = `Upload sucessful for plate ${data.plate_id}
+              Wells Extracted :  ${data.wells}`;
+      this.isPosting = false;
+      this.posted = true;
+      this.didInvalidate = false;
+    },
+    handleFailure(response) {
+      this.uploadFeedBack = `Upload Failure : 
+                                    ${response.data}
+                                `;
+      this.isPosting = false;
+      this.posted = false;
+      this.didInvalidate = true;
+    },
     handleLabchipUpload() {
       this.uploadFeedBack = null;
       const formData = new FormData();
@@ -22,16 +46,15 @@ export default {
       formData.append('file', file.files[0]);
       formData.append('experimentName', this.experimentName);
       formData.append('plateName', this.plateName);
+      this.isPosting = true;
+      this.posted = false;
+      this.didInvalidate = false;
       api
         .postLabchipResults(formData)
-        .then(({ data }) => {
-          this.uploadFeedBack = `Upload sucessful for plate ${data.plate_id}
-              Wells Extracted :  ${data.wells}`;
-        }, ({ response }) => {
-          this.uploadFeedBack = `Upload Failure 
-                                    ${response.data}
-                                `;
-        })
+        .then(
+          ({ data }) => this.handleSuccess(data),
+          ({ response }) => this.handleFailure(response),
+        )
         .catch((e) => {
           this.uploadFeedBack = `Upload Failure 
                                     ${e.toString()}
@@ -45,18 +68,14 @@ export default {
       formData.append('file', file.files[0]);
       formData.append('experimentName', this.experimentName);
       formData.append('plateName', this.plateName);
+      this.isPosting = true;
+      this.posted = false;
+      this.didInvalidate = false;
       api
         .postQpcrResults(formData)
         .then(
-          ({ data }) => {
-            this.uploadFeedBack = `Upload sucessful for plate ${data.plate_id}
-              Wells Extracted :  ${data.wells}`;
-          },
-          ({ response }) => {
-            this.uploadFeedBack = `Upload Failure 
-                                    ${response.data}
-                                `;
-          },
+          ({ data }) => this.handleSuccess(data),
+          ({ response }) => this.handleFailure(response),
         )
         .catch((e) => {
           this.uploadFeedBack = `Upload Failure 

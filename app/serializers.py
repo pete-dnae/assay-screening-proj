@@ -150,7 +150,9 @@ class QpcrResultsSerializer(serializers.ModelSerializer):
             'amplification_cycle',
             'amplification_delta_rn',
             'melt_temperature',
-            'melt_derivative'
+            'melt_derivative',
+            'exclude_well',
+            'comment'
         )
 
 class LabChipResultsSerializer(serializers.ModelSerializer):
@@ -164,10 +166,11 @@ class LabChipResultsSerializer(serializers.ModelSerializer):
             'size',
             'concentration',
             'purity',
-            'molarity',
             'qpcr_well',
             'experiment',
-            'labchip_plate_id'
+            'labchip_plate_id',
+            'exclude_well',
+            'comment'
         )
 
 class ReagentWellLookupSerializer(serializers.ModelSerializer):

@@ -38,12 +38,17 @@
                 </div>
             </div>
             <div class="row" >
-                <div class="col-8">                   
-                    <h4 class="text-left">Master Table</h4>
+                <div class="col-8">        
+                    <div class="row text-left">
+                        <h4 class="col-2">Master Table</h4>
+                        <div class="col">
+                            <button class="btn btn-primary" @click="showAnnotator=!showAnnotator">Annotate Wells</button>
+                        </div>
+                    </div>
                         <calcTable class="mt-3" :options="masterHeaders" 
                                     :data="resultMaster" 
                                     :columnsToColor="columnsToColor"
-                                    :selectedRowProps="['qPCR Well','LC Well']"
+                                    :selectedRowProps="['qPCR Well','LC Well','Labchip Well Id','qPCR Well Id']"
                                     @multipleSelection="handleWellSelection">
                         </calcTable>
             
@@ -55,9 +60,14 @@
                     <div id="labChipGraph"></div>
                     <div id="copyCountGraph"></div>
                 </div>
-                             
-                
+
             </div>
+                    
+                <annotator :currentSelection='currentSelection' 
+                            :showAnnotator="showAnnotator" 
+                            @annotated="publishSummary()"
+                            @exit="showAnnotator=!showAnnotator"></annotator>
+                    
             </div>
 </template>
 <script src='./wellsummary.js'></script>

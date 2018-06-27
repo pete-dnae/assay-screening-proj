@@ -1,7 +1,7 @@
 
 import numpy as np
 from numpy.core.umath import isnan
-from clients.expt_recipes.inst_data.data_models import IdQpcrData
+from clients.expt_recipes.inst_data.data_models import IdQpcrData,IdQpcrMetaData
 
 
 def make_nested_idqpcr_datas(well_constituents, qpcr_results):
@@ -18,9 +18,12 @@ def make_nested_idqpcr_datas(well_constituents, qpcr_results):
         mean_ntc_ct = default_ct_if_nan(get_mean_ct(qpcr_datas))
         for well in pa_constits:
             well_data = qpcr_results[well]
-            id_qpcr_datas[well] = \
-                IdQpcrData.create_from_db_data(well_data, max_conc_mean_tm,
+            idqpcr_data = IdQpcrData.create_from_db_data(well_data, max_conc_mean_tm,
                                                mean_ntc_ct)
+            idqpcr_meta = IdQpcrMetaData.create_from_db_data(well_data)
+            id_qpcr_datas[well] = {**idqpcr_data,**idqpcr_meta}
+
+
     return id_qpcr_datas
 
 
@@ -36,9 +39,11 @@ def make_vanilla_summary_idqpcr_datas(well_constituents, qpcr_results):
     mean_ntc_ct = default_ct_if_nan(get_mean_ct(qpcr_datas))
     for well in well_constituents:
         well_data = qpcr_results[well]
-        id_qpcr_datas[well] = IdQpcrData.create_from_db_data(well_data,
-                                         max_conc_mean_tm,
-                                         mean_ntc_ct)
+        idqpcr_data = IdQpcrData.create_from_db_data(well_data,
+                                                     max_conc_mean_tm,
+                                                     mean_ntc_ct)
+        idqpcr_meta = IdQpcrMetaData.create_from_db_data(well_data)
+        id_qpcr_datas[well] = {**idqpcr_data,**idqpcr_meta}
     return id_qpcr_datas
 
 
