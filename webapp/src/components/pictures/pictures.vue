@@ -7,16 +7,17 @@
                 <option v-for="(value,key) in experimentImages"  v-bind:key="key">{{key}}</option>
             </select>
         </div>
-        <div class="col-4" v-show="selected">
+        <!-- <div class="col-4" v-show="selected">
             <i class="fa fa-lightbulb-o fa-2x btn" aria-hidden="true"></i>       
             <label class="text-info">Right click to save image</label>
-        </div>
+        </div> -->
     </div>
-    <small class="form-text text-muted text-right">
+    <!-- <small class="form-text text-muted text-right">
         Downloadable picture , Right click for options
-    </small>
-<img :src="image" class="mt-3" style='height: 100%; width: 100%; object-fit: contain'/>
-
+    </small> -->
+<!-- <img :src="image" class="mt-3" style='height: 100%; width: 100%; object-fit: contain'/> -->
+    
+    <div id='csvTable' class="mt-3"></div>
 </div>
 </template>
 <script src="./pictures.js"></script>
