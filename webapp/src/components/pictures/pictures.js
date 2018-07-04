@@ -1,6 +1,4 @@
 import { dropdown } from 'vue-strap';
-import SVGtoPNGDataURL from '@/models/SVGtoPNG';
-import { makeSVG } from '@/models/visualizer';
 import Handsontable from 'handsontable';
 import _ from 'lodash';
 
