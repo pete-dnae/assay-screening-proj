@@ -43,8 +43,8 @@ class ImageMaker:
             for plate_name, plate_info in self.allocation_results.items():
                 recipe_maker = ImageRecipe(plate_info)
                 image_spec = recipe_maker.make_image_spec()
-                html_table = ImageRenderer(image_spec).make_html()
-                self.images[plate_name] = html_table
+                # html_table = ImageRenderer(image_spec).make_html()
+                self.images[plate_name] = image_spec
             return None, self.images
         else:
             err = 'There are no allocation results for the script'
