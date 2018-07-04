@@ -180,9 +180,14 @@ def fetch_qpcr_well(qpcr_plate, qpcr_well):
     """"
     Fetches qpcr well object from db , returns http:404 if not fould
     """
-    return get_object_or_404(QpcrResultsModel,
-                             qpcr_plate_id=qpcr_plate,
+    try:
+        instance = QpcrResultsModel.objects.get(qpcr_plate_id=qpcr_plate,
                              qpcr_well=qpcr_well)
+        return instance
+    except QpcrResultsModel.DoesNotExist:
+        raise ValidationError('Unable to find Qpcr Plate {} Well{}'.format(
+            qpcr_plate,qpcr_well))
+
 
 
 def get_labchip_results_by_well(well_constituents, labchip_query):

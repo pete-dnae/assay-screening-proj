@@ -7,10 +7,8 @@ from django.db import transaction
 
 def load_labchip_results(experiment_id,plate_id,file):
     assert_duplicate(plate_id,experiment_id)
-    try:
-        labchip_results = parse_labchip_file(plate_id,experiment_id,file)
-    except:
-        raise ValidationError('Error occured while processing labchip file')
+
+    labchip_results = parse_labchip_file(plate_id,experiment_id,file)
 
     try:
         with transaction.atomic():

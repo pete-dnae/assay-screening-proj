@@ -4,6 +4,7 @@ import math
 from .utilities import well_position_to_numeric,\
     well_position_to_alpha_numeric,fetch_wells
 from .experiment_data_extractor import fetch_qpcr_well,fetch_allocation_results
+from rest_framework.exceptions import ValidationError
 
 def parse_labchip_file(plate_id, experiment_id, file):
     """
@@ -18,9 +19,12 @@ def parse_labchip_file(plate_id, experiment_id, file):
         file object.
         Orchestrates extraction of peak data from labchip results
         """
+    try:
+        labchip_reader = LabChipPeakProcessor()
+        labchip_results = labchip_reader.parse_labchip_peak_data(file)
+    except:
+        raise ValidationError('Error occured while processing labchip file')
 
-    labchip_reader = LabChipPeakProcessor()
-    labchip_results = labchip_reader.parse_labchip_peak_data(file)
     allocation_results = fetch_allocation_results(experiment_id)
     wells = fetch_wells(allocation_results.source_map[plate_id])
     results = []
