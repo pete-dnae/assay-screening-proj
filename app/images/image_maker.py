@@ -4,7 +4,6 @@ from app.models.units_model import UnitsModel
 from app.models.reagent_group_model import ReagentGroupModel
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_recipe import ImageRecipe
-from app.images.image_renderer import ImageRenderer
 from django.shortcuts import get_object_or_404
 
 class ImageMaker:
@@ -12,15 +11,14 @@ class ImageMaker:
     Class is responsible for generating images for a given experiment
 
     The class returns a json serializable dictionary with plate name as
-    keys and visualization information in html string as values.
+    keys and visualization information in dictionaries as values.
     It also returns a error string along with results, defaults to none if no
     errors present
 
     Class orchestrates the fetching of relevant experiment , then its rule
     script then use rule script processor to get hold of allocation results .
     For each plate it then instantiates an ImageRecipe to get image
-    specification which is then passed to image renderer to create html
-    string. The html string is then stored in the return object keyed by
+    specification which is then stored in the return object keyed by
     plate name.
 
     """
@@ -36,14 +34,12 @@ class ImageMaker:
     def make_images(self):
         """
         Iterates through plates in allocation results and co-ordinates
-        creation of image-spec using ImageRecipe and html table using
-        ImageRenderer
+        creation of image-spec using ImageRecipe
         """
         if self.allocation_results:
             for plate_name, plate_info in self.allocation_results.items():
                 recipe_maker = ImageRecipe(plate_info)
                 image_spec = recipe_maker.make_image_spec()
-                # html_table = ImageRenderer(image_spec).make_html()
                 self.images[plate_name] = image_spec
             return None, self.images
         else:

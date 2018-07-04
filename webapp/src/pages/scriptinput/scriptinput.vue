@@ -27,14 +27,14 @@
                         <li class="nav-item">
                             <a :class="{'nav-link':'true','active':!showPictures}" 
                                 href="javascript:;"
-                                @click="showPictures=!showPictures"
                             >Rules Feedback</a>
                         </li>                       
                         
                         <li class="nav-item">
                             <a :class="{'nav-link':'true','active':showPictures}" 
                                 href="javascript:;"
-                                @click="showPictures=!showPictures">Get Pictures</a>
+                                @click="showPictures=!showPictures">Show Plate Variables
+                                </a>
                         </li>
                         
                     </ul>
@@ -77,9 +77,13 @@
                     </suggestionsList>   
                     <!-- suggestionslist -->  
                 </div>     
-                <div v-show="showPictures" class="h-100">
-                    <!-- experimentImages -->
-                    <pictures  :experimentImages="experimentImages"></pictures>
+                <div v-show="showPictures" class="overlay">
+                    <!-- experimentImages -->  
+                    <div class="overlay-content"> 
+                        <pictures  :experimentImages="experimentImages"
+                                    @exit="showPictures=!showPictures">
+                        </pictures>                      
+                    </div>
                     <!-- experimentImages -->
                 </div>       
             </div>
@@ -104,7 +108,7 @@
         <fileUploader :show="showUpload" :experimentName="experimentId" :plateName="currentPlate" @exit="showUpload=!showUpload"></fileUploader>
         <!--fileUploader-->
     </div>
- <div id="overlay" v-if="showBlur">
+ <div class="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>
 </div>
 

@@ -16,6 +16,7 @@ export default {
       selected: null,
       settings: {
         data: null,
+        autoColumnSize: false,
         stretchH: 'all',
         startRows: 8,
         startCols: 12,
@@ -29,20 +30,34 @@ export default {
   },
   watch: {
     selected() {
-      this.generateImage();
+      this.generateData();
     },
     experimentImages() {
-      this.generateImage();
+      this.generateData();
     },
   },
   methods: {
-    generateImage() {
+    updateTableData(data, colHeaders) {
+      this.settings.data = data;
+      this.settings.colHeaders = colHeaders;
+      this.handsonTable.updateSettings(this.settings);
+    },
+    handleClose() {
+      this.$emit('exit');
+    },
+    generateData() {
       const contentDict = this.experimentImages[this.selected];
-      const colLength = Object.keys(contentDict).length;
-      _.reduce(contentDict, (acc, x) => {
-
-      });
-      debugger;
+      const data = _.reduce(
+        contentDict,
+        (acc, columnValues) => {
+          const rows = _.map(columnValues, row => row.join(' '));
+          acc.push(rows);
+          return acc;
+        },
+        [],
+      );
+      const transposedData = _.zip(...data);
+      this.updateTableData(transposedData, Object.keys(contentDict));
     },
   },
   mounted() {
