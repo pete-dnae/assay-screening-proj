@@ -185,7 +185,7 @@ def fetch_qpcr_well(qpcr_plate, qpcr_well):
                              qpcr_well=qpcr_well)
         return instance
     except QpcrResultsModel.DoesNotExist:
-        raise ValidationError('Unable to find Qpcr Plate {} Well{}'.format(
+        raise ValidationError('Unable to find Qpcr Plate {} Well {}'.format(
             qpcr_plate,qpcr_well))
 
 
