@@ -9,11 +9,15 @@
             </select>
         </div> 
         <div class="col">
-            <button class="float-right btn btn-primary" @click="handleClose()">close</button>
+            <button class="float-right btn btn-primary ml-3" @click="handleClose()">close</button>
+            <button class="float-right btn btn-primary ml-3" @click="coloring =!coloring">
+                <label v-if="coloring">Remove Coloring</label>
+                <label v-else>Add Coloring</label>                
+            </button>            
         </div>
     </div>   
     
-    <div id='csvTable' class="mt-3"></div>
+    <div id='csvTable' class="mt-3" style="overflow-x:scroll"></div>
 </div>
 </template>
 <script src="./pictures.js"></script>
