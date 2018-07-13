@@ -9,7 +9,10 @@
                 </div>
                 <div class="col">
                     <input type="file" class="d-block" id="fileLoad" @change="getFileInfo"/>
-                    <small id="info"></small>
+                    <small id="info"></small>                                        
+                    <div v-if="plateNameWarning" class="text-danger">
+                        Plate Name not found in file name
+                    </div>
                 </div>
                 
             </div>
@@ -21,6 +24,7 @@
                     <button @click="handleQpcrUpload" :disabled="disableUpload">Upload Qpcr Data</button>
                 </div>             
             </div>
+            
             <p id="info"></p>
             <div class="text-left">
                     <textarea rows="4" cols="90" v-model="uploadFeedBack"></textarea>

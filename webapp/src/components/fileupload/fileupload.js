@@ -15,6 +15,7 @@ export default {
       uploadFeedBack: null,
       isPosting: false,
       posted: false,
+      plateNameWarning: false,
       didInvalidate: false,
     };
   },
@@ -87,6 +88,7 @@ export default {
       this.$emit('exit');
     },
     getFileInfo() {
+      this.plateNameWarning = false;
       const x = document.getElementById('fileLoad');
       let txt = '';
       if ('files' in x) {
@@ -95,15 +97,17 @@ export default {
           txt = 'Select a file.';
         } else {
           this.disableUpload = false;
-          for (let i = 0; i < x.files.length; i += 1) {
-            txt += `<br><strong> ${i + 1}. file</strong><br>`;
-            const file = x.files[i];
-            if ('name' in file) {
-              txt += `name: ${file.name}<br>`;
-            }
-            if ('size' in file) {
-              txt += `size: ${file.size} bytes <br>`;
-            }
+
+          txt += '<br><strong> 1. file</strong><br>';
+          const file = x.files[0];
+          if (file.name.indexOf(this.plateName) === -1) {
+            this.plateNameWarning = true;
+          }
+          if ('name' in file) {
+            txt += `name: ${file.name}<br>`;
+          }
+          if ('size' in file) {
+            txt += `size: ${file.size} bytes <br>`;
           }
         }
       } else if (x.value === '') {

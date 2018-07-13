@@ -63,7 +63,10 @@ export default {
       return `rgba(${o(r() * s)},${o(r() * s)},${o(r() * s)},${0.4})`;
     },
     generateData() {
+      this.settings.data = [];
+      this.handsonTable.updateSettings(this.settings);
       const contentDict = this.experimentImages[this.selected];
+
       _.forEach(contentDict, col =>
         _.forEach(
           col,
@@ -75,15 +78,22 @@ export default {
       );
       const data = _.reduce(
         contentDict,
-        (acc, columnValues) => {
-          const rows = _.map(columnValues, row =>
-            _.map(row, elements => `${elements.join(' ')}`).join('\n'),
+        (acc, columnValues, iter) => {
+          const rows = _.reduce(
+            columnValues,
+            (a, row, i) => {
+              a[i] = _.map(row, elements => `${elements.join(' ')}`).join('\n');
+              return a;
+            },
+
+            [],
           );
-          acc.push(rows);
+          acc[iter] = rows;
           return acc;
         },
         [],
       );
+      _.forEach(data, (row, iter) => { if (row) row[0] = iter; return row; });
       const transposedData = _.zip(...data);
       this.updateTableData(transposedData, Object.keys(contentDict));
     },
