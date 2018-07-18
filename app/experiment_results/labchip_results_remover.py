@@ -8,8 +8,8 @@ def remove_labchip_data(labchip_query):
     """
     with transaction.atomic():
 
-        well_count = labchip_query.values_list('labchip_well').distinct()
+        well_count = len(labchip_query.values_list('labchip_well').distinct())
         labchip_query.delete()
-        message =  {'msg': 'Deleted {} wells in labchip results'.format(len(
-            well_count))}
+        message =  {'msg': 'Deleted {} wells in labchip results'.format(
+            well_count)} 
         return message
