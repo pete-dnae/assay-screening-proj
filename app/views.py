@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
+from django.db import transaction
 from .view_helpers import ViewHelpers
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -14,6 +15,8 @@ from app.experiment_results.qpcr_well_aggregation import QpcrWellAggregation
 from django.http import Http404
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from app.experiment_results.qpcr_results_remover import remove_qpcr_data
+from app.experiment_results.labchip_results_remover import remove_labchip_data
 import ast
 
 class ExperimentViewSet(viewsets.ModelViewSet):
@@ -206,3 +209,36 @@ class LabChipWellAnnotationsView(APIView):
             comment=comment,exclude_well = exclude_flag)
 
         return Response(result)
+
+class QpcrWellDeletionsView(APIView):
+
+    http_method_names = ['delete','options']
+    def delete(self,request):
+        if all (k in request.data for k in ("plate_id","experiment_id")):
+            plate_id = request.data['plate_id']
+            experiment_id = request.data['experiment_id']
+            qpcr_query=QpcrResultsModel.objects.filter(experiment
+                                                   =experiment_id,
+                                                    qpcr_plate_id =plate_id)
+            response_message = remove_qpcr_data(qpcr_query)
+            return Response(response_message)
+        else:
+            raise ValidationError('Plate Id / Experiment Id not given in '
+                                  'request')
+
+
+class LabChipWellDeletionsView(APIView):
+    http_method_names = ['delete', 'options']
+    def delete(self, request):
+        if all(k in request.data for k in ("plate_id", "experiment_id")):
+            plate_id = request.data['plate_id']
+            experiment_id = request.data['experiment_id']
+            labchip_query = LabChipResultsModel.objects.filter(
+                experiment=experiment_id, labchip_plate_id=plate_id)
+            response_message = remove_labchip_data(labchip_query)
+            return Response(response_message)
+        else:
+            raise ValidationError('Plate Id / Experiment Id not given in '
+                                  'request')
+
+

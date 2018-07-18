@@ -14,6 +14,7 @@ import suggestionToolTip from '@/components/suggestionstooltip/suggestionstoolti
 import pictures from '@/components/pictures/pictures.vue';
 import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
 import fileUploader from '@/components/fileupload/fileupload.vue';
+import destroyer from '@/components/destroyer/destroyer.vue';
 import store from '@/store';
 
 export default {
@@ -29,6 +30,7 @@ export default {
     suggestionToolTip,
     pictures,
     fileUploader,
+    destroyer,
   },
   data() {
     return {
@@ -37,6 +39,7 @@ export default {
       editor: null,
       showPictures: false,
       showUpload: false,
+      showDelete: false,
     };
   },
   beforeRouteEnter(to, from, next) {

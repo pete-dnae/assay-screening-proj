@@ -85,6 +85,15 @@ const postFile = (url, data) =>
     },
   });
 
+const deleteWithData = (url, data) =>
+  axios.delete(url, {
+    data,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `JWT ${localStorage.getItem('t')}`,
+    },
+  });
+
 const deleteRes = url =>
   axios.delete(url, {
     headers: {
@@ -133,3 +142,6 @@ export const refreshToken = payload => postRes('/auth/refresh_token/', payload);
 export const verifyToken = payload => postRes('/auth/verify_token/', payload);
 export const annotateQPCRWells = payload => patchRes('/api/annotate-qpcr/', payload);
 export const annotateLabchipWells = payload => patchRes('/api/annotate-labchip/', payload);
+export const removeQpcrWells = payload => deleteWithData('/api/delete-qpcr/', payload);
+export const removeLabchipWells = payload => deleteWithData('/api/delete-labchip/', payload)
+;

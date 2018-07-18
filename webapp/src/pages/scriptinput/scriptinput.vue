@@ -38,7 +38,8 @@
                         </li>
                         
                     </ul>
-                    <button class="btn btn-secondary" @click="showUpload=!showUpload">Upload Files</button>
+                    <button class="btn btn-secondary mr-2" @click="showUpload=!showUpload">Upload Files</button>
+                    <button class="btn btn-secondary" @click="showDelete=!showDelete">Delete Results</button>
                 </div>
 
                 <div v-show="!showPictures">
@@ -107,6 +108,9 @@
         <!--fileUploader-->
         <fileUploader :show="showUpload" :experimentName="experimentId" :plateName="currentPlate" @exit="showUpload=!showUpload"></fileUploader>
         <!--fileUploader-->
+        <!--destroyer-->
+        <destroyer :show="showDelete" :experimentName="experimentId" :plateName="currentPlate" @exit="showDelete=!showDelete"></destroyer>
+        <!--destroyer-->
     </div>
  <div class="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>
