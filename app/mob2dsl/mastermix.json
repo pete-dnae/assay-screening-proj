@@ -1,0 +1,76 @@
+{
+  "pa mastermix A": [
+    {
+      "name": "Titanium-PCR-Buffer",
+      "quantity": 0.125,
+      "unit": "x"
+    },
+    {
+      "name": "KCl",
+      "quantity": 48,
+      "unit": "mM"
+    },
+    {
+      "name": "MgCl2",
+      "quantity": 2.06,
+      "unit": "mM"
+    },
+    {
+      "name": "BSA",
+      "quantity": 1,
+      "unit": "mg/ml"
+    },
+    {
+      "name": "dNTPs",
+      "quantity": 0.2,
+      "unit": "mM"
+    },
+    {
+      "name": "Titanium-Taq",
+      "quantity": 1,
+      "unit": "x"
+    }
+  ],
+  "id mastermix A": [
+    {
+      "name": "KCl",
+      "quantity": 50,
+      "unit": "mM"
+    },
+    {
+      "name": "MgCl2",
+      "quantity": 2.5,
+      "unit": "mM"
+    },
+    {
+      "name": "BSA",
+      "quantity": 1,
+      "unit": "mg/ml"
+    },
+    {
+      "name": "SYBRgreen",
+      "quantity": 0.32,
+      "unit": "x"
+    },
+    {
+      "name": "Triton",
+      "quantity": 0.04,
+      "unit": "%"
+    },
+    {
+      "name": "dNTPs",
+      "quantity": 0.2,
+      "unit": "mM"
+    },
+    {
+      "name": "KOH",
+      "quantity": 1,
+      "unit": "mM"
+    },
+    {
+      "name": "Titanium-Taq",
+      "quantity": 1.3,
+      "unit": "x"
+    }
+  ]
+}
