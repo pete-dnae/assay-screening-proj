@@ -1,387 +1,387 @@
 {
    "layout A":{
       "A10":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "A12":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "E07":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "G02":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "C05":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "B02":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "E11":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "G01":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "E10":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "C03":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "F05":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "E06":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "H05":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "F02":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "D12":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "A11":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "B04":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "A02":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "C07":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "B10":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "G12":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "H01":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "G10":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "A01":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "G08":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "F12":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "H07":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "G06":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "B12":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "B03":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "F09":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "F08":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "E04":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "H06":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "D01":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "C06":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "G05":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "C04":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "C10":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "H02":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "F10":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "H12":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "A05":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "B01":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "D02":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "D07":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "E09":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "D03":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "E01":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "D09":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "E05":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "C12":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "F06":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "A09":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "D04":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "E12":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "F11":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "C01":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "H11":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "D10":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "A07":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "C02":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "A04":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "D05":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "G03":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "E08":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "E02":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "E03":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"100cp"
       },
       "C08":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "H08":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "A06":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "H04":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "D11":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "F04":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "H09":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "G11":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "B08":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "B09":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "F03":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "C09":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "G09":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "B05":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "D08":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       },
       "A03":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "B11":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "F01":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "G07":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "H03":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "F07":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"100cp"
       },
       "G04":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"1000cp"
       },
       "C11":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"10cp"
       },
       "A08":{
-         "human":"0ug",
+         "human":"0ng",
          "template":"0cp"
       },
       "B07":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "H10":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"1000cp"
       },
       "B06":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"0cp"
       },
       "D06":{
-         "human":"3ug",
+         "human":"3000ng",
          "template":"10cp"
       }
    }

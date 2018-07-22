@@ -1,4 +1,6 @@
 
+import re
+from itertools import groupby
 
 from app.mob2dsl.mastermix import get_mastermix
 from app.mob2dsl.sample_layout import get_sample_layout
@@ -40,8 +42,14 @@ ALLOCATION = {
         'K.pneumoniae-NDM_2146', 'K.pneumoniae-NDM_2146',
         'K.pneumoniae-NDM_2146', 'K.pneumoniae-NDM_2146',
         'K.pneumoniae-NDM_2146', 'K.pneumoniae-NDM_2146', '', ''
-    ]
+    ],
+    'Human': ['HgDNA_Promega305466', 'HgDNA_Promega305466',
+              'HgDNA_Promega305466', 'HgDNA_Promega305466',
+              'HgDNA_Promega305466', 'HgDNA_Promega305466',
+              'HgDNA_Promega305466', 'HgDNA_Promega305466',
+              'HgDNA_Promega305466', 'HgDNA_Promega305466', '', '']
 }
+
 
 def get_allocated_cols(allocation):
     allocated_cols = {}
@@ -56,33 +64,164 @@ def get_allocated_cols(allocation):
             list(allocated_cols.keys())))
 
 
-def reduce_cols(cols):
-    if len(cols) == cols[-1]:
+def consecutive(items):
+    if items == list(range(min(items), max(items) + 1)):
+        return True
+    else:
+        return False
+
+
+def consecutive_rows(rows):
+    return consecutive([ord(r) for r in rows])
+
+
+def consecutive_cols(cols):
+    return consecutive(cols)
+
+
+def collapse_cols(cols):
+    cols = sorted([int(c) for c in cols])
+    if consecutive_cols(cols):
         return '{}-{}'.format(cols[0], cols[-1])
     else:
-        raise ValueError('Rows not reducible')
+        return ','.join([str(c) for c in cols])
 
-def reduce_rows(rows):
-    if len(rows) == ord(rows[-1]) - 64:
+
+def collapse_rows(rows):
+    rows = sorted(rows)
+    if consecutive_rows(rows):
         return '{}-{}'.format(rows[0], rows[-1])
     else:
-        raise ValueError('Columns not reducible')
+        return ','.join(rows)
 
-def make_mastermix_dsl(mastermix, allocated_cols, allocated_rows=PLATE_ROWS):
 
-    cols = reduce_cols(allocated_cols)
-    rows = reduce_rows(allocated_rows)
+def make_dsl_line(name, cols, rows, quantity, unit):
+    if type(quantity) != str:
+        quantity = '{:.3f}'.format(quantity)
+    line = 'A {} {} {} {} {}'.format(name, cols, rows, quantity, unit)
+    return line
 
-    mastermix_dsl = []
+
+def collapse_dsl_lines(lines):
+    # Get all unique reagent names
+    reagents = list(set([line.split()[1] for line in lines]))
+    collapsed_lines = []
+    for r in reagents:
+        # extract out lines that match reagent
+        matches = [line for line in lines if line.split()[1] == r]
+        # Sort them by quantity/concentration
+        matches = sorted(matches, key=lambda x: x.split()[4])
+
+        # Group them by quantity/concentration
+        for conc, grp in groupby(matches, lambda x: x.split()[4]):
+            grp = list(grp)
+            cols = collapse_cols(set(line.split()[2] for line in grp))
+            rows = collapse_rows(set(line.split()[3] for line in grp))
+
+            unit = list(set(line.split()[5] for line in matches))
+            if len(unit) != 1:
+                raise ValueError('Could not determine unit for {}'.format(r))
+
+            collapsed_lines.append(make_dsl_line(r, cols, rows,
+                                                 conc, unit[0]))
+    return collapsed_lines
+
+
+def make_mastermix_dsl(mastermix, cols, rows=PLATE_ROWS):
+
+    dsl_lines = []
     mastermix = get_mastermix(mastermix)
     for reagent in mastermix:
-        line = [reagent['name'], cols, rows, str(reagent['quantity']),
-                reagent['unit']]
-        mastermix_dsl.append(' '.join(line))
-    return '\n'.join(mastermix_dsl)
+        for r in rows:
+            for c in cols:
+                line = make_dsl_line(reagent['name'], c, r,
+                                     reagent['quantity'], reagent['unit'])
+                dsl_lines.append(line)
+    return dsl_lines
 
-print(make_mastermix_dsl('pa mastermix A', get_allocated_cols(ALLOCATION)))
+
+def group_by_common_reagent(reagents):
+    grps = {r: set() for r in set(reagents)}
+    for i, r in enumerate(reagents, 1):
+        grps[r].add(i)
+    return grps
+
+
+def make_assay_dsl(assays, primer_conc, primer_unit,
+                   rows):
+    # Group by common assays and get their column numbers
+    grps = group_by_common_reagent(assays)
+
+    assay_dsl = []
+    for a, cols in grps.items():
+        if a:
+            for r in rows:
+                for c in cols:
+                    line = make_dsl_line(a, c, r, primer_conc, primer_unit)
+                    assay_dsl.append(line)
+    return assay_dsl
+
+
+def make_template_dsl(templates, template_layout, rows):
+    grps = group_by_common_reagent(templates)
+    templates_dsl = []
+    for t, cols in grps.items():
+        if t:
+            for r in rows:
+                for c in cols:
+                    well = '{}{:02d}'.format(r, c)
+                    conc, unit = re.search('(\d+)(.*)',
+                                           template_layout[well]).groups()
+                    line = make_dsl_line(t, c, r, conc, unit)
+                    templates_dsl.append(line)
+    return templates_dsl
+
+
+def make_human_dsl(humans, human_layout, rows):
+    grps = group_by_common_reagent(humans)
+    human_dsl = []
+    for h, cols in grps.items():
+        if h:
+            for r in rows:
+                for c in cols:
+                    well = '{}{:02d}'.format(r, c)
+                    conc, unit = re.search('(\d+)(.*)',
+                                           human_layout[well]).groups()
+                    line = make_dsl_line(h, c, r, conc, unit)
+                    human_dsl.append(line)
+    return human_dsl
+
 
 def make_nested_dsl(allocation):
     allocated_cols = get_allocated_cols(allocation)
 
+    pa_mastermix_dsl = collapse_dsl_lines(
+        make_mastermix_dsl('pa mastermix A', allocated_cols))
+
+    pa_assays_dsl = collapse_dsl_lines(
+        make_assay_dsl(allocation['PA Primers'], PA_PRIMERS_CONC,
+                       PA_PRIMERS_UNIT, PLATE_ROWS))
+    # sort by columns
+    pa_assays_dsl = sorted(pa_assays_dsl, key=lambda x: x.split()[2])
+
+    sample_layout = get_sample_layout(SAMPLE_LAYOUT)
+
+    template_layout = {k: v['template'] for k, v in sample_layout.items()}
+    template_rows = sorted(set(k[0] for k, v in template_layout.items()
+                               if v != '0cp'))
+    template_dsl = collapse_dsl_lines(
+        make_template_dsl(allocation['Template'], template_layout,
+                          template_rows))
+
+    human_layout = {k: v['human'] for k, v in sample_layout.items()}
+    human_rows = sorted(set(k[0] for k, v in human_layout.items()
+                            if v != '0ng'))
+    human_dsl = collapse_dsl_lines(
+        make_human_dsl(allocation['Human'], human_layout, human_rows))
+
+    pa_dsl = pa_mastermix_dsl + pa_assays_dsl + template_dsl + human_dsl
+
+    return '\n'.join(pa_dsl)
+
+
+print(make_nested_dsl(ALLOCATION))
