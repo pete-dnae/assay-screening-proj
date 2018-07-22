@@ -8,6 +8,13 @@ from app.mob2dsl.sample_layout import get_sample_layout
 PLATE_COLS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 PLATE_ROWS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
+DSL_NAME = 1
+DSL_COL = 2
+DSL_ROW = 3
+DSL_CONC = 4
+DSL_UNIT = 5
+
+
 PLATE = 'A81_E361_1'
 EXP_TYPE = 'NESTED'
 
@@ -104,21 +111,21 @@ def make_dsl_line(name, cols, rows, quantity, unit):
 
 def collapse_dsl_lines(lines):
     # Get all unique reagent names
-    reagents = list(set([line.split()[1] for line in lines]))
+    reagents = list(set([line.split()[DSL_NAME] for line in lines]))
     collapsed_lines = []
     for r in reagents:
         # extract out lines that match reagent
-        matches = [line for line in lines if line.split()[1] == r]
-        # Sort them by quantity/concentration
-        matches = sorted(matches, key=lambda x: x.split()[4])
+        matches = [line for line in lines if line.split()[DSL_NAME] == r]
+        # Sort them by concentration
+        matches = sorted(matches, key=lambda x: x.split()[DSL_CONC])
 
-        # Group them by quantity/concentration
-        for conc, grp in groupby(matches, lambda x: x.split()[4]):
+        # Group them by concentration
+        for conc, grp in groupby(matches, lambda x: x.split()[DSL_CONC]):
             grp = list(grp)
-            cols = collapse_cols(set(line.split()[2] for line in grp))
-            rows = collapse_rows(set(line.split()[3] for line in grp))
+            cols = collapse_cols(set(line.split()[DSL_COL] for line in grp))
+            rows = collapse_rows(set(line.split()[DSL_ROW] for line in grp))
 
-            unit = list(set(line.split()[5] for line in matches))
+            unit = list(set(line.split()[DSL_UNIT] for line in matches))
             if len(unit) != 1:
                 raise ValueError('Could not determine unit for {}'.format(r))
 
@@ -192,7 +199,7 @@ def make_human_dsl(humans, human_layout, rows):
     return human_dsl
 
 
-def make_nested_dsl(allocation):
+def make_nested_pa_dsl(allocation):
     allocated_cols = get_allocated_cols(allocation)
 
     pa_mastermix_dsl = collapse_dsl_lines(
@@ -202,7 +209,7 @@ def make_nested_dsl(allocation):
         make_assay_dsl(allocation['PA Primers'], PA_PRIMERS_CONC,
                        PA_PRIMERS_UNIT, PLATE_ROWS))
     # sort by columns
-    pa_assays_dsl = sorted(pa_assays_dsl, key=lambda x: x.split()[2])
+    pa_assays_dsl = sorted(pa_assays_dsl, key=lambda x: x.split()[DSL_COL])
 
     sample_layout = get_sample_layout(SAMPLE_LAYOUT)
 
@@ -224,4 +231,40 @@ def make_nested_dsl(allocation):
     return '\n'.join(pa_dsl)
 
 
-print(make_nested_dsl(ALLOCATION))
+# print(make_nested_pa_dsl(ALLOCATION))
+
+
+def make_nested_id_dsl(allocation):
+    allocated_cols = get_allocated_cols(allocation)
+
+    id_mastermix_dsl = collapse_dsl_lines(
+        make_mastermix_dsl('id mastermix A', allocated_cols))
+
+    id_assays_dsl = collapse_dsl_lines(
+        make_assay_dsl(allocation['ID Primers'], PA_PRIMERS_CONC,
+                       PA_PRIMERS_UNIT, PLATE_ROWS))
+    # sort by columns
+    id_assays_dsl = sorted(id_assays_dsl, key=lambda x: x.split()[DSL_COL])
+
+    sample_layout = get_sample_layout(SAMPLE_LAYOUT)
+
+    template_layout = {k: v['template'] for k, v in sample_layout.items()}
+    template_rows = sorted(set(k[0] for k, v in template_layout.items()
+                               if v != '0cp'))
+    template_dsl = collapse_dsl_lines(
+        make_template_dsl(allocation['Template'], template_layout,
+                          template_rows))
+
+    human_layout = {k: v['human'] for k, v in sample_layout.items()}
+    human_rows = sorted(set(k[0] for k, v in human_layout.items()
+                            if v != '0ng'))
+    human_dsl = collapse_dsl_lines(
+        make_human_dsl(allocation['Human'], human_layout, human_rows))
+
+    id_dsl = id_mastermix_dsl + id_assays_dsl + template_dsl + human_dsl
+
+    return '\n'.join(id_dsl)
+
+
+# TODO: Need to take account of transfers
+print(make_nested_id_dsl(ALLOCATION))
