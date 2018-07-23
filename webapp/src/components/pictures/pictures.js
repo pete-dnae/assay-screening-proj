@@ -2,6 +2,7 @@ import { dropdown } from 'vue-strap';
 import Handsontable from 'handsontable';
 import _ from 'lodash';
 import { debug } from 'util';
+import { Colors } from '@/models/colors';
 
 export default {
   name: 'pictures',
@@ -14,11 +15,11 @@ export default {
       image: null,
       selected: null,
       coloring: false,
-      uniqEntities: {},
+      uniqFont: {},
+      uniqBackground: {},
       settings: {
         data: null,
-        autoColumnSize: true,
-        // stretchH: 'all',
+        autoColumnSize: true, // stretchH: 'all',
         startRows: 8,
         startCols: 12,
         minSpareRows: 1,
@@ -56,24 +57,28 @@ export default {
     handleClose() {
       this.$emit('exit');
     },
-    getRandomColor() {
-      const o = Math.round;
-      const r = Math.random;
-      const s = 255;
-      return `rgba(${o(r() * s)},${o(r() * s)},${o(r() * s)},${0.4})`;
+    hexToRgbNew(hex) {
+      const arrBuff = new ArrayBuffer(4);
+      const vw = new DataView(arrBuff);
+      vw.setUint32(0, parseInt(hex, 16), false);
+      const arrByte = new Uint8Array(arrBuff);
+
+      return `rgba(${arrByte[1]},${arrByte[2]},${arrByte[3]},0.2)`;
     },
     generateData() {
       this.settings.data = [];
       this.handsonTable.updateSettings(this.settings);
       const contentDict = this.experimentImages[this.selected];
-
       _.forEach(contentDict, col =>
-        _.forEach(
-          col,
-          row =>
-            (this.uniqEntities[
-              _.map(row, elements => `${elements.join(' ')}`).join('\n')
-            ] = this.getRandomColor()),
+        _.forEach(col, row =>
+          _.forEach(row, (elements) => {
+            if (elements[3] === 'assay') {
+              this.uniqFont[elements[0]] = Colors.random();
+            }
+            if (elements[3] === 'template') {
+              this.uniqBackground[elements[0]] = Colors.random();
+            }
+          }),
         ),
       );
       const data = _.reduce(
@@ -93,7 +98,10 @@ export default {
         },
         [],
       );
-      _.forEach(data, (row, iter) => { if (row) row[0] = iter; return row; });
+      _.forEach(data, (row, iter) => {
+        if (row) row[0] = iter;
+        return row;
+      });
       const transposedData = _.zip(...data);
       this.updateTableData(transposedData, Object.keys(contentDict));
     },
@@ -108,7 +116,25 @@ export default {
       ) {
         td.innerText = self.settings.data[row][col];
         if (self.coloring) {
-          td.style.background = self.uniqEntities[self.settings.data[row][col]];
+          const rawColText = self.settings.data[row][col];
+
+          if (
+            typeof rawColText === 'string' &&
+            (rawColText.indexOf('assay') > -1 ||
+              rawColText.indexOf('template') > -1)
+          ) {
+            const elements = rawColText
+              .split('\n')
+              .map(entity => entity.split(' '));
+            _.forEach(elements, (entity) => {
+              if (entity[3] === 'assay') {
+                td.style.color = self.uniqFont[entity[0]];
+              }
+              if (entity[3] === 'template') {
+                td.style.background = self.hexToRgbNew(self.uniqBackground[entity[0]]);
+              }
+            });
+          }
         }
       }
     }
