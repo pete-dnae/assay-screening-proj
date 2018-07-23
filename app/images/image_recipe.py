@@ -14,14 +14,19 @@ class ImageRecipe:
     """
 
 
-    def __init__(self, plate_info):
+    def __init__(self, plate_info,reagent_categories):
         """
          Provide a dictionary keyed on column number ,with values that are
          dictionaries keyed on row number and well contents as values.
-
+        """
+        """
+        Update 23/07/2018
+        Additional argument reagent categories should be passed in to help 
+        class return reagent categories along with allocation information
         """
 
         self.plate_info = plate_info
+        self.reagent_categories = reagent_categories
         self.common_reagents = self._get_common_reagents()
 
     def make_image_spec(self):
@@ -51,6 +56,8 @@ class ImageRecipe:
 
         return reduce(lambda x, y: set(x).intersection(set(y)), entity_list)
 
+
+
     def _reagent_criteria_check(self, reagent):
         """
         Function which decides whether a entity should be included or excluded
@@ -78,5 +85,10 @@ class ImageRecipe:
                 reagents = row.setdefault(row_no, [])
                 for reagent in well_contents:
                     if self._reagent_criteria_check(reagent):
-                        reagents.append(reagent)
+                        name, conc, unit = reagent
+                        if name in self.reagent_categories:
+                            category = self.reagent_categories[name]
+                        else:
+                            category = None
+                        reagents.append((name,conc,unit,category))
         return table

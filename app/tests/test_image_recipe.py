@@ -23,17 +23,20 @@ class ImageMakerTest(unittest.TestCase):
         alloc_table, thermal_cycling_results = interpreter.interpret()
         reagent_categories = \
             {r.name: r.category.name for r in ReagentModel.objects.all()}
-        recipe_maker = ImageRecipe(alloc_table.plate_info['Plate1'])
+        recipe_maker = ImageRecipe(alloc_table.plate_info['Plate1'],
+                                   reagent_categories)
         recipe = recipe_maker.make_image_spec()
 
         self.assertEquals(recipe_maker.common_reagents,
                           {('Titanium-Taq', 0.02, 'M/uL')})
-        self.assertEquals(recipe[1][2],[('(Eco)-ATCC-BAA-2355', 1.16, 'x')])
+        self.assertEquals(recipe[1][2],[('(Eco)-ATCC-BAA-2355', 1.16, 'x',
+                                         'Strain')])
 
-        recipe_maker = ImageRecipe(alloc_table.plate_info['Plate42'])
+        recipe_maker = ImageRecipe(alloc_table.plate_info['Plate42'],
+                                   reagent_categories)
         recipe = recipe_maker.make_image_spec()
 
         self.assertEquals(recipe_maker.common_reagents,
                           {('Transfer Plate1:Col-1:Row-2', 20.0, 'dilution')})
         self.assertEquals(recipe[4][1], [('Ec_uidA_6.x_Eco63_Eco60', 0.4,
-                                          'uM')])
+                                          'uM', 'Primer')])

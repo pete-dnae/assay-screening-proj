@@ -1,7 +1,8 @@
 from app.models.experiment_model import ExperimentModel
 from app.models.reagent_model import ReagentModel
 from app.models.units_model import UnitsModel
-from app.models.reagent_group_model import ReagentGroupModel
+from app.models.reagent_group_model import ReagentGroupModel,\
+    ReagentGroupDetailsModel
 from app.rules_engine.rule_script_processor import RulesScriptProcessor
 from app.images.image_recipe import ImageRecipe
 from django.shortcuts import get_object_or_404
@@ -22,6 +23,11 @@ class ImageMaker:
     plate name.
 
     """
+    """
+    Update 23/07/2018
+        Additional function _fetch_reagent_categories to inject reagent 
+        category information into image recipe
+    """
     def __init__(self, experiment_name):
         """
         Provide experiment name to instantiate the class , allocation_results
@@ -37,8 +43,9 @@ class ImageMaker:
         creation of image-spec using ImageRecipe
         """
         if self.allocation_results:
+            reagent_categories = self._fetch_reagent_categories()
             for plate_name, plate_info in self.allocation_results.items():
-                recipe_maker = ImageRecipe(plate_info)
+                recipe_maker = ImageRecipe(plate_info,reagent_categories)
                 image_spec = recipe_maker.make_image_spec()
                 self.images[plate_name] = image_spec
             return None, self.images
@@ -72,3 +79,18 @@ class ImageMaker:
 
     def _fetch_experiment(self):
         return get_object_or_404(ExperimentModel,pk=self.experiment_name)
+
+    def _fetch_reagent_categories(self):
+        """
+        returns reagents and reagent groups from db , along with their
+        category information
+        """
+        reagent_category = {r.name: r.category.name for r in
+                            ReagentModel.objects.all()}
+
+        for r in ReagentGroupModel.objects.all():
+            group_element = ReagentGroupDetailsModel.objects.filter(
+                reagent_group=r.group_name).first()
+            reagent_category[r.group_name] = group_element.reagent.category.name
+
+        return reagent_category
