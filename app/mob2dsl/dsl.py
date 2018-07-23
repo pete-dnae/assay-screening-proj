@@ -1,16 +1,15 @@
 
 import re
 from itertools import groupby
-
-PLATE_ROWS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 from app.mob2dsl.mastermix import get_mastermix
-
 
 DSL_NAME = 1
 DSL_COL = 2
 DSL_ROW = 3
 DSL_CONC = 4
 DSL_UNIT = 5
+
+PRECISION = 3
 
 
 def collapse_dsl_lines(lines):
@@ -40,7 +39,7 @@ def collapse_dsl_lines(lines):
     return collapsed_lines
 
 
-def make_mastermix_dsl(mastermix, cols, rows=PLATE_ROWS):
+def make_mastermix_dsl(mastermix, rows, cols):
 
     dsl_lines = []
     mastermix = get_mastermix(mastermix)
@@ -77,6 +76,9 @@ def make_template_dsl(templates, template_layout, rows):
                     well = '{}{:02d}'.format(r, c)
                     conc, unit = re.search('(\d+)(.*)',
                                            template_layout[well]).groups()
+                    if unit.replace(' ', '') == 'Kcp':
+                        conc = float(conc) * 1000
+                        unit = 'cp'
                     line = _make_allocate_line(t, c, r, conc, unit)
                     templates_dsl.append(line)
     return templates_dsl
@@ -92,6 +94,9 @@ def make_human_dsl(humans, human_layout, rows):
                     well = '{}{:02d}'.format(r, c)
                     conc, unit = re.search('(\d+)(.*)',
                                            human_layout[well]).groups()
+                    if unit.replace(' ', '') == 'ug':
+                        conc = float(conc) * 1000
+                        unit = 'ng'
                     line = _make_allocate_line(h, c, r, conc, unit)
                     human_dsl.append(line)
     return human_dsl
@@ -100,14 +105,14 @@ def make_human_dsl(humans, human_layout, rows):
 def make_block_transfer(plate_id, rows, cols, dilution):
     rows = '{}-{}'.format(rows[0], rows[-1])
     cols = '{}-{}'.format(cols[0], cols[-1])
-    line = 'T {} {} {} {} {} {}'.format(plate_id, cols, rows, cols, rows,
-                                        dilution)
+    line = 'T {} {} {} {} {} {} dilution'.format(plate_id, cols, rows, cols,
+                                                 rows, dilution)
     return [line]
 
 
 def _make_allocate_line(name, cols, rows, quantity, unit):
     if type(quantity) != str:
-        quantity = '{:.3f}'.format(quantity)
+        quantity = str(round(quantity, PRECISION))
     line = 'A {} {} {} {} {}'.format(name, cols, rows, quantity, unit)
     return line
 

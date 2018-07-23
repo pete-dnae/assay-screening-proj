@@ -15,6 +15,7 @@ ALLOCATED_IDS = [PA_PRIMER_HEADER, ID_PRIMER_HEADER, TEMPLATE_HEADER,
 
 def get_user_allocation(excel):
     df = pd.read_excel(excel, sheet_name='allocation')
+    df = df.dropna(axis='index', how='all')
     df[PLATE_NAME_HEADER] = df['Plate'].fillna(method='pad')
     df = df.fillna('')
     plates = _extract_plate_data(df)

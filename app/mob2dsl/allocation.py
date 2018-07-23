@@ -12,7 +12,7 @@ def make_nested_pa_dsl(plate, rows, cols, mastermix_version,
                        pa_primers_conc, pa_primers_unit, sample_layout):
 
     pa_mastermix_dsl = collapse_dsl_lines(
-        make_mastermix_dsl(mastermix_version, cols))
+        make_mastermix_dsl(mastermix_version, rows, cols))
 
     pa_assays_dsl = collapse_dsl_lines(
         make_assay_dsl(plate[PA_PRIMER_HEADER], pa_primers_conc,
@@ -43,7 +43,7 @@ def make_nested_id_dsl(plate, rows, cols, mastermix_version,
                        id_primers_conc, id_primers_unit):
 
     id_mastermix_dsl = collapse_dsl_lines(
-        make_mastermix_dsl(mastermix_version, cols))
+        make_mastermix_dsl(mastermix_version, rows, cols))
 
     id_assays_dsl = collapse_dsl_lines(
         make_assay_dsl(plate[ID_PRIMER_HEADER], id_primers_conc,
