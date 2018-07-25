@@ -15,6 +15,7 @@ import pictures from '@/components/pictures/pictures.vue';
 import { hesitationTimer, getCurrentLineFields } from '@/models/editor2.0';
 import fileUploader from '@/components/fileupload/fileupload.vue';
 import destroyer from '@/components/destroyer/destroyer.vue';
+import uploadTemplate from '@/components/uploadtemplate/uploadtemplate.vue';
 import store from '@/store';
 
 export default {
@@ -31,6 +32,7 @@ export default {
     pictures,
     fileUploader,
     destroyer,
+    uploadTemplate,
   },
   data() {
     return {
@@ -40,6 +42,7 @@ export default {
       showPictures: false,
       showUpload: false,
       showDelete: false,
+      showTemplateUpload: false,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -71,6 +74,7 @@ export default {
       highlightedLineNumber: 'getHighlightedLineNumber',
       currentPlate: 'getCurrentPlate',
       showInfo: 'getShowInfo',
+      reagentGroupList: 'getReagentGroupList',
     }),
   },
   watch: {
@@ -86,7 +90,12 @@ export default {
       'fetchAvailableSuggestions',
       'setSuggestions',
       'inspectToken',
+      'fetchAvailableReagentGroups',
     ]),
+    handleRuleScriptFromTemplate(data) {
+      this.editor.setText(formatText(data));
+      this.editorChange({ key: 'autoLoad' });
+    },
     handleSwitchInfoVisiblity() {
       this.$store.commit('SHOW_INFO');
     },
@@ -287,5 +296,7 @@ export default {
     this.fetchExperiment({
       experimentName: 'Reference Experiment',
     });
+
+    this.fetchAvailableReagentGroups();
   },
 };

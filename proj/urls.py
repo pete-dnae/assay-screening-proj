@@ -32,6 +32,7 @@ urlpatterns = [
     re_path(r'api/well-results/$',
             WellResultsView.as_view()),
     re_path(r'api/well-aggregate/$',WellAggregationView.as_view()),
+    re_path(r'api/Mob2DslView/',Mob2DslView.as_view()),
     re_path(r'api/delete-qpcr/$',QpcrWellDeletionsView.as_view()),
     re_path(r'api/delete-labchip/$',LabChipWellDeletionsView.as_view()),
     re_path(r'^auth/obtain_token/', obtain_jwt_token),

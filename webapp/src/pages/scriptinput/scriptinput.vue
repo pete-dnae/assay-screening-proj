@@ -40,6 +40,7 @@
                     </ul>
                     <button class="btn btn-secondary mr-2" @click="showUpload=!showUpload">Upload Files</button>
                     <button class="btn btn-secondary" @click="showDelete=!showDelete">Delete Results</button>
+                    <button class="btn btn-secondary ml-2" @click="showTemplateUpload=!showTemplateUpload">Upload Template</button>
                 </div>
 
                 <div v-show="!showPictures">
@@ -111,6 +112,12 @@
         <!--destroyer-->
         <destroyer :show="showDelete" :experimentName="experimentId" :plateName="currentPlate" @exit="showDelete=!showDelete"></destroyer>
         <!--destroyer-->
+        <!--uploadTemplate-->
+        <uploadTemplate :show="showTemplateUpload" :availablePools="reagentGroupList" 
+        @ruleScript="handleRuleScriptFromTemplate"
+         @exit="showTemplateUpload=!showTemplateUpload"></uploadTemplate>
+        <!--uploadTemplate-->
+        
     </div>
  <div class="overlay" v-if="showBlur">
         <div id="text">Possible Connection Error</div>

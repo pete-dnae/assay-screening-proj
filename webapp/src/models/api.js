@@ -145,3 +145,4 @@ export const annotateLabchipWells = payload => patchRes('/api/annotate-labchip/'
 export const removeQpcrWells = payload => deleteWithData('/api/delete-qpcr/', payload);
 export const removeLabchipWells = payload => deleteWithData('/api/delete-labchip/', payload)
 ;
+export const postTemplateFile = data => postFile('/api/Mob2DslView/', data);

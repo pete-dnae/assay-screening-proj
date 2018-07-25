@@ -16,7 +16,7 @@ NESTED_IDS = [PA_PRIMER_HEADER, ID_PRIMER_HEADER, TEMPLATE_HEADER,
 
 
 def get_user_allocation(excel):
-    df = pd.read_excel(excel, sheet_name='allocation')
+    df = excel.parse('allocation')
     df = df.dropna(axis='index', how='all')
     df[PLATE_NAME_HEADER] = df['Plate'].fillna(method='pad')
     df = df.fillna('')
@@ -25,7 +25,8 @@ def get_user_allocation(excel):
 
 
 def get_sample_layout(excel, sheet_name):
-    df = pd.read_excel(excel, sheet_name=sheet_name, index_col=0)
+
+    df = excel.parse(sheet_name=sheet_name, index_col=0)
     layout = {'{}{:02d}'.format(k[0], int(k[1])): _standardize_contents(v)
               for k, v in df.stack().to_dict().items()}
     return layout
