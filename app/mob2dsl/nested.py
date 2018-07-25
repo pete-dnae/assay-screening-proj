@@ -56,12 +56,11 @@ def assert_options(options):
     necessary_options = ['pa_mastermix', 'pa_primer_conc', 'pa_primer_unit',
     'id_mastermix', 'id_primer_conc', 'id_primer_unit', 'dilution']
 
-    if any(nec_op not in options for nec_op in necessary_options):
-        raise ValidationError('Please provide {}'.format(','.join([nec_op for
-                                                                   nec_op in
-                                                         necessary_options if
-                                                                   nec_op not in
-                                                          options])))
+    for op in necessary_options:
+        if op not in options:
+            raise ValidationError('Please provide {}'.format(op))
+        if options[op] == '' or options[op] is None:
+            raise ValidationError('Please provide {}'.format(op))
 
 if __name__ == '__main__':
 

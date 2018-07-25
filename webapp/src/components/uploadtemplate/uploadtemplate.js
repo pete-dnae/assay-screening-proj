@@ -49,7 +49,9 @@ export default {
           this.isPosting = false;
           this.posted = true;
           this.didInvalidate = false;
+          this.uploadFeedBack = 'Upload Success';
           this.$emit('ruleScript', data.join('\n'));
+          this.$emit('exit');
         },
         ({ response }) => {
           this.isPosting = false;

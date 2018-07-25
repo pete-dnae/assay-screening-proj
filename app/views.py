@@ -245,11 +245,13 @@ class LabChipWellDeletionsView(APIView):
 
 class Mob2DslView(APIView):
     """"
-    Helper end point which will convert an excel template into a DSL 
+    Helper end point which will convert an excel template into a DSL
     """
     http_method_names = ['post', 'options']
 
     def post(self,request):
+        if 'file' not in request.FILES:
+            raise ValidationError('Please choose an appropriate template file')
         file = request.FILES['file']
         options = request.POST
         dsl = generate_dsl(file,options)
