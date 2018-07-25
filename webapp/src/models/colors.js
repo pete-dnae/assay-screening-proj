@@ -9,12 +9,7 @@ export const Colors = {
     aqua: '#00ffff',
   },
   foregroundnames: {
-    azure: '#f0ffff',
-    beige: '#f5f5dc',
-    black: '#000000',
-    blue: '#0000ff',
-    brown: '#a52a2a',
-    cyan: '#00ffff',
+
     darkblue: '#00008b',
     darkcyan: '#008b8b',
     darkgrey: '#a9a9a9',
@@ -27,11 +22,7 @@ export const Colors = {
     darkred: '#8b0000',
     darksalmon: '#e9967a',
     darkviolet: '#9400d3',
-    fuchsia: '#ff00ff',
-    gold: '#ffd700',
-    green: '#008000',
-    indigo: '#4b0082',
-    khaki: '#f0e68c',
+
   },
   random(background) {
     let result;
