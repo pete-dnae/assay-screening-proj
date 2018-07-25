@@ -52,16 +52,16 @@ def make_mastermix_dsl(mastermix, rows, cols):
     return dsl_lines
 
 
-def make_assay_dsl(assays, primer_conc, primer_unit,
-                   rows):
+def make_assay_dsl(assays, primer_conc, primer_unit, rows):
     # Group by common assays and get their column numbers
     grps = _group_by_common_reagent(assays)
     assay_dsl = []
     for a, cols in grps.items():
         if a:
+            pc, pu = handle_pools(a, primer_conc, primer_unit)
             for r in rows:
                 for c in cols:
-                    line = _make_allocate_line(a, c, r, primer_conc, primer_unit)
+                    line = _make_allocate_line(a, c, r, pc, pu)
                     assay_dsl.append(line)
     return assay_dsl
 
@@ -73,14 +73,14 @@ def make_template_dsl(templates, template_layout, rows):
         if t:
             for r in rows:
                 for c in cols:
-                    well = '{}{:02d}'.format(r, c)
-                    conc, unit = re.search('(\d+)(.*)',
-                                           template_layout[well]).groups()
-                    if unit.replace(' ', '') == 'Kcp':
-                        conc = float(conc) * 1000
-                        unit = 'cp'
-                    line = _make_allocate_line(t, c, r, conc, unit)
-                    templates_dsl.append(line)
+                    well = f'{r}{c:02d}'
+                    try:
+                        template = template_layout[well]
+                        conc, unit = _get_template_conc_unit(template)
+                        line = _make_allocate_line(t, c, r, conc, unit)
+                        templates_dsl.append(line)
+                    except KeyError:
+                        pass
     return templates_dsl
 
 
@@ -91,29 +91,53 @@ def make_human_dsl(humans, human_layout, rows):
         if h:
             for r in rows:
                 for c in cols:
-                    well = '{}{:02d}'.format(r, c)
-                    conc, unit = re.search('(\d+)(.*)',
-                                           human_layout[well]).groups()
-                    if unit.replace(' ', '') == 'ug':
-                        conc = float(conc) * 1000
-                        unit = 'ng'
+                    well = f'{r}{c:02d}'
+                    human = human_layout[well]
+                    conc, unit = _get_human_conc_unit(human)
                     line = _make_allocate_line(h, c, r, conc, unit)
                     human_dsl.append(line)
     return human_dsl
 
 
+
 def make_block_transfer(plate_id, rows, cols, dilution):
-    rows = '{}-{}'.format(rows[0], rows[-1])
-    cols = '{}-{}'.format(cols[0], cols[-1])
-    line = 'T {} {} {} {} {} {} dilution'.format(plate_id, cols, rows, cols,
-                                                 rows, dilution)
+    rows = f'{rows[0]}-{rows[-1]}'
+    cols = f'{cols[0]}-{cols[-1]}'
+    line = f'T {plate_id} {cols} {rows} {cols} {rows} {dilution} dilution'
     return [line]
 
 
-def _make_allocate_line(name, cols, rows, quantity, unit):
-    if type(quantity) != str:
-        quantity = str(round(quantity, PRECISION))
-    line = 'A {} {} {} {} {}'.format(name, cols, rows, quantity, unit)
+def standardize_conc(conc):
+    return str(round(float(conc), PRECISION))
+
+
+def handle_pools(potential_pool, primer_conc, primer_unit):
+    if potential_pool.lower().startswith('pool'):
+        primer_conc = 1
+        primer_unit = 'x'
+    return primer_conc, primer_unit
+
+
+
+def _get_template_conc_unit(template):
+    conc, unit = re.search('(\d+)(.*)', template).groups()
+    if unit.replace(' ', '') == 'Kcp':
+        conc = float(conc) * 1000
+        unit = 'cp'
+    return conc, unit
+
+
+def _get_human_conc_unit(human):
+    conc, unit = re.search('(\d+)(.*)', human).groups()
+    if unit.replace(' ', '') == 'ug':
+        conc = float(conc) * 1000
+        unit = 'ng'
+    return conc, unit
+
+
+def _make_allocate_line(name, cols, rows, conc, unit):
+    conc = standardize_conc(conc)
+    line = f'A {name} {cols} {rows} {conc} {unit}'
     return line
 
 
@@ -137,8 +161,10 @@ def _consecutive_cols(cols):
 
 def _collapse_cols(cols):
     cols = sorted([int(c) for c in cols])
-    if _consecutive_cols(cols):
-        return '{}-{}'.format(cols[0], cols[-1])
+    if len(cols) == 1:
+        return f'{cols[0]}'
+    elif _consecutive_cols(cols):
+        return f'{cols[0]}-{cols[-1]}'
     else:
         return ','.join([str(c) for c in cols])
 
@@ -149,7 +175,9 @@ def _consecutive_rows(rows):
 
 def _collapse_rows(rows):
     rows = sorted(rows)
-    if _consecutive_rows(rows):
-        return '{}-{}'.format(rows[0], rows[-1])
+    if len(rows) == 1:
+        return f'{rows[0]}'
+    elif _consecutive_rows(rows):
+        return f'{rows[0]}-{rows[-1]}'
     else:
         return ','.join(rows)
