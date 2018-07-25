@@ -53,7 +53,7 @@ class RulesObjInterpreter:
             s_col, s_row = rule.mapping[d_col][d_row]
             s_plate = rule.source_plate
             virtual_reagent_name = \
-                'Transfer %s:Col-%d:Row-%d' % (s_plate, s_col, s_row)
+                'Transfer %s: Well %s%d' % (s_plate,chr(64+s_row),s_col,)
             self._allocation_results.add(plate, d_row, d_col, 
                     virtual_reagent_name, rule.dilution_factor, 'dilution')
             self._allocation_results.add_source(plate,d_row,d_col,s_row,

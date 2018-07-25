@@ -1,6 +1,14 @@
 export const Colors = {
-  names: {
+  backgroundnames: {
+    lightblue: '#add8e6',
+    lightcyan: '#e0ffff',
+    lightgreen: '#90ee90',
+    lightgrey: '#d3d3d3',
+    lightpink: '#ffb6c1',
+    lightyellow: '#ffffe0',
     aqua: '#00ffff',
+  },
+  foregroundnames: {
     azure: '#f0ffff',
     beige: '#f5f5dc',
     black: '#000000',
@@ -24,29 +32,15 @@ export const Colors = {
     green: '#008000',
     indigo: '#4b0082',
     khaki: '#f0e68c',
-    lightblue: '#add8e6',
-    lightcyan: '#e0ffff',
-    lightgreen: '#90ee90',
-    lightgrey: '#d3d3d3',
-    lightpink: '#ffb6c1',
-    lightyellow: '#ffffe0',
-    lime: '#00ff00',
-    magenta: '#ff00ff',
-    maroon: '#800000',
-    navy: '#000080',
-    olive: '#808000',
-    orange: '#ffa500',
-    pink: '#ffc0cb',
-    purple: '#800080',
-    violet: '#800080',
-    red: '#ff0000',
-    silver: '#c0c0c0',
-    yellow: '#ffff00',
   },
-  random() {
+  random(background) {
     let result;
     let count = 0;
-    for (const prop in this.names) {
+    let names = this.foregroundnames;
+    if (background) {
+      names = this.backgroundnames;
+    }
+    for (const prop in names) {
       count += 1;
 
       if (Math.random() < 1 / count) {

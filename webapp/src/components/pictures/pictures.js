@@ -76,7 +76,7 @@ export default {
               this.uniqFont[elements[0]] = Colors.random();
             }
             if (elements[3] === 'template') {
-              this.uniqBackground[elements[0]] = Colors.random();
+              this.uniqBackground[elements[0]] = Colors.random(true);
             }
           }),
         ),
@@ -131,7 +131,7 @@ export default {
                 td.style.color = self.uniqFont[entity[0]];
               }
               if (entity[3] === 'template') {
-                td.style.background = self.hexToRgbNew(self.uniqBackground[entity[0]]);
+                td.style.background = `${self.uniqBackground[entity[0]]}`;
               }
             });
           }
