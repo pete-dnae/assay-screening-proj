@@ -90,7 +90,7 @@ const actions = {
         .then(({ data }) => {
           commit(types.POST_RULE_SCRIPT_SUCCESS);
           commit(types.REQUEST_POST_NEW_EXPERIMENT);
-          debugger
+          debugger;
           api
             .postNewExperiment({
               ...args,

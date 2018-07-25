@@ -17,6 +17,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from app.experiment_results.qpcr_results_remover import remove_qpcr_data
 from app.experiment_results.labchip_results_remover import remove_labchip_data
+from app.mob2dsl.nested import generate_dsl
 import ast
 
 class ExperimentViewSet(viewsets.ModelViewSet):
@@ -242,3 +243,17 @@ class LabChipWellDeletionsView(APIView):
                                   'request')
 
 
+class Mob2DslView(APIView):
+    """"
+    Helper end point which will convert an excel template into a DSL
+    """
+    http_method_names = ['post', 'options']
+
+    def post(self,request):
+        if 'file' not in request.FILES:
+            raise ValidationError('Please choose an appropriate template file')
+        file = request.FILES['file']
+        options = request.POST
+        dsl = generate_dsl(file,options)
+
+        return Response(dsl)
