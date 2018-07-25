@@ -99,7 +99,6 @@ def make_human_dsl(humans, human_layout, rows):
     return human_dsl
 
 
-
 def make_block_transfer(plate_id, rows, cols, dilution):
     rows = f'{rows[0]}-{rows[-1]}'
     cols = f'{cols[0]}-{cols[-1]}'
@@ -116,7 +115,6 @@ def handle_pools(potential_pool, primer_conc, primer_unit):
         primer_conc = 1
         primer_unit = 'x'
     return primer_conc, primer_unit
-
 
 
 def _get_template_conc_unit(template):

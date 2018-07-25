@@ -3,7 +3,7 @@ import os
 import unittest
 import pandas as pd
 
-from app.mob2dsl.nested_main import PATH, generate_dsl
+from app.mob2dsl.nested import PATH, generate_dsl
 from app.mob2dsl.dsl import standardize_conc
 
 
