@@ -29,7 +29,7 @@ class RuleScriptProcessorTest(unittest.TestCase):
         # Check sampled contents, including a reagent group.
         cell_contents = alloc_table.plate_info['Plate42'][1][1]
         self.assertEqual(cell_contents[0], 
-            ('Transfer Plate1:Col-1:Row-2', 20.0, 'dilution'))
+            ('Transfer Plate1: Well B1', 20.0, 'dilution'))
         self.assertEqual(cell_contents[1], 
             ('Pool_1', 1.0, 'x'))
 

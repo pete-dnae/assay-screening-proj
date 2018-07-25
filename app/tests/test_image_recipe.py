@@ -37,6 +37,7 @@ class ImageMakerTest(unittest.TestCase):
         recipe = recipe_maker.make_image_spec()
 
         self.assertEquals(recipe_maker.common_reagents,
-                          {('Transfer Plate1:Col-1:Row-2', 20.0, 'dilution')})
+                          {('Transfer Plate1: Well B1', 20.0,
+                            'dilution')})
         self.assertEquals(recipe[4][1], [('Ec_uidA_6.x_Eco63_Eco60', 0.4,
                                           'uM', 'Primer')])

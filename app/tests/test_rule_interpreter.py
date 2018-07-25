@@ -62,7 +62,7 @@ class RuleInterpreterTest(unittest.TestCase):
         contents = alloc_table.plate_info['Plate42'][2][3]
 
         reagent, conc, units = contents[0]
-        self.assertEqual(reagent, 'Transfer Plate1:Col-1:Row-2')
+        self.assertEqual(reagent, 'Transfer Plate1: Well B1')
         self.assertEqual(conc, 20.0)
         self.assertEqual(units, 'dilution')
 
