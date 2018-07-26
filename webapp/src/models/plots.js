@@ -17,12 +17,12 @@ export const plotCopyCountGraph = (data, element = 'copyCountGraph') =>
         x: data.x1,
         y: data.y2,
         type: 'Scatter',
-        name: `eff=${data.eff.toFixed(2)}`,
+        name: `eff=${(data.eff !== 'nan') ? data.eff.toFixed(2) : null}`,
       },
     ],
     {
-      height: 300,
-      width: 500,
+      height: 400,
+      width: 600,
       title: 'Ct vs Log Copy Count',
       xAxisTitle: 'Log Copy Count',
       yAxisTitle: 'Ct',
@@ -31,8 +31,13 @@ export const plotCopyCountGraph = (data, element = 'copyCountGraph') =>
 
 export const plotAmpGraph = (data, element = 'ampGraph') =>
   Plotly.newPlot(element, getTraces(data), {
-    height: 300,
-    width: 500,
+    showlegend: true,
+    legend: {
+      x: 1,
+      y: 0.5,
+    },
+    height: 400,
+    width: 600,
     title: 'Amplification Data',
     xAxisTitle: 'Cycle',
     yAxisTitle: 'Delta Rn',
@@ -41,8 +46,13 @@ export const plotAmpGraph = (data, element = 'ampGraph') =>
 
 export const plotMeltGraph = (data, element = 'meltGraph') =>
   Plotly.newPlot(element, getTraces(data), {
-    height: 300,
-    width: 500,
+    showlegend: true,
+    legend: {
+      x: 1,
+      y: 0.5,
+    },
+    height: 400,
+    width: 600,
     title: 'Temperature Melt Curve Data',
     xAxisTitle: 'Temperature',
     yAxisTitle: 'Melt Derivative',
