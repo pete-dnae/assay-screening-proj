@@ -63,46 +63,115 @@ def _calc_max_conc_mean_tm(id_qconsts, qinst_plate):
     :param qinst_plate: qPCR instrument data
     :return:
     """
-    id_template_only_wells = _get_id_template_only_wells(id_qconsts)
-    max_conc_wells = _get_max_conc_template_from_id_wells(id_template_only_wells)
+    template_only_wells = _get_template_only_wells(id_qconsts)
+    max_conc_wells = _get_max_conc_template_from_wells(template_only_wells)
     qpcr_datas = [qinst_plate[w] for w in max_conc_wells]
     max_conc_mean_tm = _calc_mean_tm(qpcr_datas)
     return max_conc_mean_tm
 
-def _get_id_template_only_wells(id_qconsts):
+def _get_template_only_wells(id_qconsts):
     """
-    Gets a dictionary of those wells which only contain template introduced
-    at the id stage.
+    Gets a dictionary of those wells which only contain templates.
 
     :param id_qconsts: a dictionary of wells containing constituents
     :return:
     """
-    id_template_only_wells = {}
+    template_only_wells = {}
     for well, contents in id_qconsts.items():
-        if not 'transferred_templates' in contents and \
+        if 'transferred_templates' in contents or \
                 'templates' in contents:
-            id_template_only_wells[well] = contents
-    return id_template_only_wells
+            template_only_wells[well] = contents
+    return template_only_wells
 
-def _get_max_conc_template_from_id_wells(id_qconsts):
+def _get_max_conc_template_from_wells(template_only_wells):
     """
-    Get from the id wells, those wells that have the highest template
+    Get from the  wells, those wells that have the highest template
     concentration.
 
     :param id_qconsts: a dictionary of wells containing constituents
     :return:
     """
-    concs = dict((w, _get_item_attribute('templates',
+    id_concs = dict((w, _get_item_attribute('templates',
                                               'concentration',wc))
-                 for w, wc in id_qconsts.items())
+                 for w, wc in template_only_wells.items())
+    pa_concs = dict((w, _get_item_attribute('transferred_templates',
+                                              'concentration',wc))
+                 for w, wc in template_only_wells.items())
+
     max_conc_wells = {}
-    concentration_values = concs.values()
+    concentration_values = [*id_concs.values(),*pa_concs.values()]
     if concentration_values:
-        max_conc = max(concs.values())
-        for w, c in id_qconsts.items():
-            if concs[w] == max_conc:
+        if any(pa_concs):
+            if any([check_human_prescence(wc) for w,wc in pa_concs.items()]):
+                wells_filtered_by_human = get_wells_by_lowest_human(
+                    template_only_wells)
+
+                max_conc_wells = \
+                    get_wells_by_highest_conc(id_concs, wells_filtered_by_human,
+                                              pa_concs)
+
+            else:
+                max_conc_wells = \
+                    get_wells_by_highest_conc(id_concs,template_only_wells,
+                                              pa_concs)
+
+        else:
+            max_conc_wells = get_wells_by_highest_conc(id_concs,
+                                                       template_only_wells)
+
+    return max_conc_wells
+
+def check_human_prescence(wellcontents):
+    """
+    Checks if humans or transfered humans properties are present in a well
+    :param wellcontents:
+    :return:
+    """
+    return True if 'humans' in wellcontents or 'transferred_humans'in \
+                   wellcontents else False
+
+def get_wells_by_lowest_human(template_only_wells):
+    """
+    Returns wells with lowest human conc
+    :param id_concs:
+    :param pa_concs:
+    :return:
+    """
+    id_concs = dict((w, _get_item_attribute('human',
+                                            'concentration', wc))
+                    for w, wc in template_only_wells.items())
+    pa_concs = dict((w, _get_item_attribute('transferred_human',
+                                            'concentration', wc))
+                    for w, wc in template_only_wells.items())
+
+    min_conc_wells = {}
+    min_conc = min(*id_concs.values(), *pa_concs.values())
+    for w, c in template_only_wells.items():
+        if w in id_concs:
+            if id_concs[w] == min_conc:
+                min_conc_wells[w] = c
+        if w in pa_concs:
+            if pa_concs[w] == min_conc:
+                min_conc_wells[w] = c
+    return min_conc_wells
+
+def get_wells_by_highest_conc(id_concs,template_only_wells,pa_concs={}):
+    """
+    Returns wells with highest conc of input
+    :return:
+    """
+    max_conc_wells = {}
+    max_conc = max(*id_concs.values(),*pa_concs.values())
+    for w, c in template_only_wells.items():
+        if w in id_concs:
+            if id_concs[w] == max_conc:
+                max_conc_wells[w] = c
+        if w in pa_concs:
+            if pa_concs[w] == max_conc:
                 max_conc_wells[w] = c
     return max_conc_wells
+
+
 
 def _get_item_attribute( key, attribute,contents):
     if key in contents:
