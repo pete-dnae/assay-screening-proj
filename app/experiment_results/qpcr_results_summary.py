@@ -101,23 +101,16 @@ def _get_max_conc_template_from_wells(template_only_wells):
     max_conc_wells = {}
     concentration_values = [*id_concs.values(),*pa_concs.values()]
     if concentration_values:
-        if any(pa_concs):
-            if any([check_human_prescence(wc) for w,wc in pa_concs.items()]):
-                wells_filtered_by_human = get_wells_by_lowest_human(
-                    template_only_wells)
-
-                max_conc_wells = \
-                    get_wells_by_highest_conc(id_concs, wells_filtered_by_human,
-                                              pa_concs)
-
-            else:
-                max_conc_wells = \
-                    get_wells_by_highest_conc(id_concs,template_only_wells,
-                                              pa_concs)
-
+        if any([check_human_prescence(wc) for w,wc in pa_concs.items()]):
+            wells_filtered_by_low_human = get_wells_by_lowest_human(
+                template_only_wells)
+            max_conc_wells = \
+                get_wells_by_highest_conc(id_concs, wells_filtered_by_low_human,
+                                          pa_concs)
         else:
-            max_conc_wells = get_wells_by_highest_conc(id_concs,
-                                                       template_only_wells)
+            max_conc_wells = \
+                get_wells_by_highest_conc(id_concs,template_only_wells,
+                                          pa_concs)
 
     return max_conc_wells
 
