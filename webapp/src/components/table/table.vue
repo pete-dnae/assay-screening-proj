@@ -12,7 +12,7 @@
                     <th v-for="(value,key) in options" v-bind:key="key" >
                         <input v-model="search[key]" style="max-width:100%;width:100%"/>                        
                     </th> 
-                </thead>
+            </thead>
             <tbody class="text-left">                
                 <tr v-for ="(row,id) in filteredRows"  v-bind:key="id" @click="handleTableRowClick(id)">
                     <td>

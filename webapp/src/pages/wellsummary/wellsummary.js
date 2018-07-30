@@ -22,7 +22,7 @@ export default {
       msg: 'Welcome',
       masterHeaders: MASTER_HEADERS,
       columnsToColor: SUMMARY_COLOR_CONFIG,
-      summaryHeaders: SUMMARY_HEADERS,
+      summaryHeaders: null,
       experimentId: null,
       plateId: null,
       wells: null,
@@ -44,8 +44,37 @@ export default {
       currentSelection: 'getCurrentSelection',
     }),
   },
+  watch: {
+    resultSummary: {
+      handler(value) {
+        this.summaryHeaders = this.removeHeadersWithNoData(SUMMARY_HEADERS, value);
+      },
+      deep: true,
+    },
+  },
   methods: {
     ...mapActions(['fetchWellSummary']),
+    removeHeadersWithNoData(headers, resultSummary) {
+      const headerValid = {};
+      Object.keys(headers).forEach((head) => {
+        resultSummary.forEach((row) => {
+          if (headers[head].array) {
+            if (!_.isEmpty(row[head])) {
+              headerValid[head] = true;
+            }
+          } else if (row[head]) {
+            headerValid[head] = true;
+          }
+        });
+      });
+      const filteredHeaders = _.reduce(headers, (acc, headVal, headKey) => {
+        if (headerValid[headKey]) {
+          acc[headKey] = headVal;
+        }
+        return acc;
+      }, {});
+      return filteredHeaders;
+    },
     publishSummary() {
       const { Expt, Plate, Wells } = this.$route.params;
       this.experimentId = Expt;
