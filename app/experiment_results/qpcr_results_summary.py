@@ -86,7 +86,11 @@ def _get_template_only_wells(id_qconsts):
 def _get_max_conc_template_from_wells(template_only_wells):
     """
     Get from the  wells, those wells that have the highest template
-    concentration.
+    concentration among lowest human concentration if there is presence of
+    human in pre amp wells .
+
+    Otherwise the wells that have the highest template concentration is
+    returned
 
     :param id_qconsts: a dictionary of wells containing constituents
     :return:
