@@ -14,6 +14,10 @@ PLATE_ROWS = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
 
 
 def generate_dsl(file,options):
+    """
+    Function that coordinates creation of dsl , gets a csv file containing
+    plate layout and a web form response as options
+    """
 
     ## check if all necessary options are available
     assert_options(options)

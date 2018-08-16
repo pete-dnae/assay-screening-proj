@@ -16,6 +16,7 @@ NESTED_IDS = [PA_PRIMER_HEADER, ID_PRIMER_HEADER, TEMPLATE_HEADER,
 
 
 def get_user_allocation(excel):
+
     df = excel.parse('allocation')
     df = df.dropna(axis='index', how='all')
     df[PLATE_NAME_HEADER] = df['Plate'].fillna(method='pad')

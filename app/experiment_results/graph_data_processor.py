@@ -43,7 +43,7 @@ def prepare_copy_count_graph(well_constituents, qpcr_queryset):
         fitted_y = slope * x_for_fit + intercept
         return {'x1': x_for_fit.tolist(), 'y1': y_for_fit.tolist(),
              'y2': fitted_y.tolist(), 'r2': int(r2 * 100),
-             'eff': 'nan' if np.isnan(eff) else eff}
+             'eff': 'nan' if np.isnan(eff) or np.isinf(eff) else eff}
     except:
         return {'x1': [], 'y1': [],'y2': [], 'r2': 'nan','eff': 'nan'}
 

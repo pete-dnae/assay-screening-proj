@@ -19,7 +19,8 @@ export default {
       uniqBackground: {},
       settings: {
         data: null,
-        autoColumnSize: true, // stretchH: 'all',
+        autoColumnSize: true, 
+        // stretchH: 'all',
         startRows: 8,
         startCols: 12,
         minSpareRows: 1,

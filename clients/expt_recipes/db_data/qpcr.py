@@ -100,6 +100,8 @@ def _is_specific(tm, max_conc_mean_tm, tm_product_threshold):
     :param tm_product_threshold: allowed threshold value
     :return:
     """
+    if tm is None :
+        return False
     if abs(tm - max_conc_mean_tm) < tm_product_threshold:
         return True
     else:

@@ -17,7 +17,7 @@
         </div>
     </div>   
     
-    <div id='csvTable' class="mt-3" style="overflow-x:scroll"></div>
+    <div id='csvTable' class="mt-3" style="overflow-x:scroll;min-height: 400px;"></div>
 </div>
 </template>
 <script src="./pictures.js"></script>
