@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
-from django.db import transaction
+from app.management.commands.bulk_load_reagents import Loader as ReagentsLoader
 from .view_helpers import ViewHelpers
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -186,7 +186,15 @@ class WellAggregationView(APIView):
         return Response(wells_by_id_assay)
 
 class qPCRWellAnnotationsView(APIView):
+    """
+    While creation of well records in DB there are two empty fields by default
+    1) Exclude well 2) Comment
 
+    Class helps user to fill 1) and 2) against an existing well result.
+
+    Since this involves adding additional information to existing well
+    records PATCH method is used.
+    """
     http_method_names = ['patch','options']
 
     def patch(self,request):
@@ -199,6 +207,9 @@ class qPCRWellAnnotationsView(APIView):
         return Response(result)
 
 class LabChipWellAnnotationsView(APIView):
+    """
+    Same as qPCR well annotations but for lab chip wells
+    """
 
     http_method_names = ['patch','options']
 
@@ -212,6 +223,13 @@ class LabChipWellAnnotationsView(APIView):
         return Response(result)
 
 class QpcrWellDeletionsView(APIView):
+
+    """
+    Class removes plates whose wells were incorrectly uploaded.
+    Only the user will know which wells are incorrectly uploaded.
+    This class hence expects user to specify the plate id , experiment id for
+    the incorrectly mapped wells
+    """
 
     http_method_names = ['delete','options']
     def delete(self,request):
@@ -229,6 +247,9 @@ class QpcrWellDeletionsView(APIView):
 
 
 class LabChipWellDeletionsView(APIView):
+    """
+    Same as QpcrWellDeletionsView but for lab chip wells
+    """
     http_method_names = ['delete', 'options']
     def delete(self, request):
         if all(k in request.data for k in ("plate_id", "experiment_id")):
@@ -257,3 +278,19 @@ class Mob2DslView(APIView):
         dsl = generate_dsl(file,options)
 
         return Response(dsl)
+
+class ReagentUploadView(APIView):
+    """
+    Helper class which will allow a user to bulk upload reagents
+    """
+
+    def post(self, request):
+        if 'file' not in request.FILES:
+            raise ValidationError('Please provide a reagent file')
+        file = request.FILES['file']
+        try:
+            ReagentsLoader.load(file)
+        except RuntimeError as r:
+            raise ValidationError(str(r))
+
+        return Response('Reagents Load Successful')

@@ -42,6 +42,8 @@ class Loader():
             line = line.strip()
             if len(line) == 0:
                 continue
+            if isinstance(line,bytes):
+                line = line.decode("utf-8")
             fields = line.split(',')
             cls._assert_three_fields(fields, line, lnum)
             fields = [f.strip() for f in fields]

@@ -38,7 +38,8 @@ urlpatterns = [
     re_path(r'^auth/obtain_token/', obtain_jwt_token),
     re_path(r'^auth/refresh_token/', refresh_jwt_token),
     re_path(r'^api/annotate-qpcr/',qPCRWellAnnotationsView.as_view()),
-    re_path(r'^api/annotate-labchip/',LabChipWellAnnotationsView.as_view())
+    re_path(r'^api/annotate-labchip/',LabChipWellAnnotationsView.as_view()),
+    re_path(r'^api/bulk-load-reagents/',ReagentUploadView.as_view())
 ]
 # Automated config of URLs for the default ViewSet-derived views.
 router = routers.DefaultRouter()

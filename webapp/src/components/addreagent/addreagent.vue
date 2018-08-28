@@ -1,5 +1,6 @@
 <template>
 <form>
+    <loader v-if="isPosting"></loader>
     <div class="row ml-2 d-flex justify-content-start text-left">
         <div class="form-group">
             <label class="d-block">Reagent Name</label>
@@ -14,8 +15,7 @@
                 </option>
             </select>
         </div>
-    </div>
-    <hr/>
+    </div>    
     <div class="text-left">
         <h5>Add meta data</h5>
     </div>    
@@ -34,6 +34,22 @@
     <button class="btn btn-primary" @click="handleAddProperty">Add row</button>
     
     <button type="submit" class="btn btn-primary" @click="handleSubmit">Submit</button>
+    <hr/>
+    <h5 class="text-left">Bulk Upload</h5>
+    <div class="row">
+        <div class="col">
+            <input type="file" id='bulkLoad'/>
+        </div>
+        <div class="col">
+            <button class="btn btn-primary" @click="handleFileUpload">Upload reagents in file</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-left">
+            <label>Upload Response</label>
+            <textarea v-model="uploadFeedBack" class="w-100" disabled></textarea>
+        </div>
+    </div>
 </form>
 </template>
 <script src='./addreagent.js'></script>

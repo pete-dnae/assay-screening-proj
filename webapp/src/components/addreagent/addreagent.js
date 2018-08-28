@@ -1,13 +1,22 @@
 import _ from 'lodash';
+import * as api from '@/models/api';
+import loader from '@/components/loader';
 
 export default {
   name: 'AddReagent',
   props: { categoryOptions: Array },
+  components: {
+    loader,
+  },
   data() {
     return {
       msg: 'Welcome',
       name: null,
       category: null,
+      isPosting: null,
+      posted: null,
+      didInvalidate: null,
+      uploadFeedback: null,
       metaObject: [
         {
           key: null,
@@ -17,6 +26,19 @@ export default {
     };
   },
   methods: {
+    handleSuccess() {
+      this.uploadFeedBack = 'Upload sucessful';
+      this.isPosting = false;
+      this.posted = true;
+      this.didInvalidate = false;
+    },
+    handleFailure(response) {
+      debugger;
+      this.uploadFeedBack = `Failure : ${response.data}`;
+      this.isPosting = false;
+      this.posted = false;
+      this.didInvalidate = true;
+    },
     handleRemoveProperty(value) {
       this.metaObject.splice(value, 1);
       if (_.isEmpty(this.metaObject)) {
@@ -34,6 +56,24 @@ export default {
           },
         ];
       }
+    },
+    handleFileUpload() {
+      this.uploadFeedBack = null;
+      const formData = new FormData();
+      const file = document.getElementById('bulkLoad');
+      formData.append('file', file.files[0]);
+      this.isPosting = true;
+      this.posted = false;
+      this.didInvalidate = false;
+      api
+        .postBulkReagents(formData)
+        .then(
+          ({ data }) => this.handleSuccess(data),
+          ({ response }) => this.handleFailure(response),
+        )
+        .catch((e) => {
+          this.uploadFeedBack = `Failure ${e.toString()}`;
+        });
     },
     handleSubmit() {
       let opaquePayload = _.reduce(

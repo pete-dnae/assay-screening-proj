@@ -146,3 +146,4 @@ export const removeQpcrWells = payload => deleteWithData('/api/delete-qpcr/', pa
 export const removeLabchipWells = payload => deleteWithData('/api/delete-labchip/', payload)
 ;
 export const postTemplateFile = data => postFile('/api/Mob2DslView/', data);
+export const postBulkReagents = data => postFile('/api/bulk-load-reagents/', data);
