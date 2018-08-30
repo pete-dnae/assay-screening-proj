@@ -132,8 +132,8 @@ export const getLabChipGraphLayout = (args) => {
       ticktext: tickText,
     },
     yaxis: { range: [1, 4], title: 'Length(bp)', type: 'log' },
-    height: 300,
-    width: 500,
+    height: 500,
+    width: 800,
     shapes,
   };
 };
