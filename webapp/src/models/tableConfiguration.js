@@ -29,6 +29,12 @@ export const MASTER_HEADERS = {
     round: false,
     colorOn: null,
   },
+  'PA Template Name': {
+    title: 'PA Template Name',
+    array: true,
+    round: false,
+    colorOn: null,
+  },
   'PA Template Conc.': {
     title: 'PA Template Conc.',
     array: true,
@@ -60,7 +66,12 @@ export const MASTER_HEADERS = {
   Tm2: { title: 'Tm2', array: false, round: true, colorOn: null },
   Tm3: { title: 'Tm3', array: false, round: true, colorOn: null },
   Tm4: { title: 'Tm4', array: false, round: true, colorOn: null },
-  'Tm Specif': { title: 'Tm Specif', array: false, round: false, colorOn: null },
+  'Tm Specif': {
+    title: 'Tm Specif',
+    array: false,
+    round: false,
+    colorOn: null,
+  },
   'Tm NS': { title: 'Tm NS', array: false, round: false, colorOn: null },
   'Tm PD': { title: 'Tm PD', array: false, round: false, colorOn: null },
   'Specif ng/ul': {
@@ -97,7 +108,11 @@ export const SUMMARY_HEADERS = {
     round: false,
   },
   'PA Template Name': { title: 'PA Template Name', array: true, round: false },
-  'PA Template Conc.': { title: 'PA Template Conc.', array: true, round: false },
+  'PA Template Conc.': {
+    title: 'PA Template Conc.',
+    array: true,
+    round: false,
+  },
   'ID Human Name': { title: 'ID Human Name', array: true, round: false },
   'ID Human Conc.': { title: 'ID Human Conc.', array: true, round: false },
   'PA Human Name': { title: 'PA Human Name', array: true, round: false },
@@ -129,14 +144,14 @@ export const SUMMARY_COLOR_CONFIG = ['Ct Call', 'Tm NS', 'Tm PD', 'Tm Specif'];
 export const RESULTS_SUMMARY_HEADERS = {
   experiment_id: { title: 'Experiment', array: false },
   qpcr_plate_id: { title: 'QPCR Plate', array: false },
-  assays: { title: 'Assays', array: false },
+  transfered_templates: { title: 'Transfered Templates', array: true },
+  transfered_reagent_group: { title: 'Transfered Reagent Group', array: true },
   transfered_assays: { title: 'Transfered Assays', array: true },
   templates: { title: 'Templates', array: true },
-  transfered_templates: { title: 'Transfered Templates', array: true },
   reagent_group: { title: 'Reagent Group', array: true },
-  transfered_reagent_group: { title: 'Transfered Reagent Group', array: true },
-  //   reagent_group_entities: { title: 'Reagent Group Entities', array: true },
-  //   transfered_reagent_group_entities:
-  //   { title: 'Transfered Reagent Group Entities', array: true },
+  assays: { title: 'Assays', array: false },
 };
+//   reagent_group_entities: { title: 'Reagent Group Entities', array: true },
+//   transfered_reagent_group_entities:
+//   { title: 'Transfered Reagent Group Entities', array: true },
 export const RESULTS_COLOR_CONFIG = [];

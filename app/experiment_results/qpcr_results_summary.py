@@ -10,9 +10,13 @@ def make_nested_idqpcr_datas(well_constituents, qpcr_results):
     each well in group
     """
     id_qpcr_datas = {}
-    max_conc_mean_tm = _calc_max_conc_mean_tm(well_constituents, qpcr_results)
+
     pa_grouped = _group_by_pa_assay(well_constituents)
+    max_conc_mean_tm = _calc_max_conc_mean_tm(well_constituents,
+                                              qpcr_results)
     for pa_assay, pa_constits in pa_grouped.items():
+
+
         ntc_wells = _get_ntc_wells(pa_constits)
         qpcr_datas = [qpcr_results[w] for w in ntc_wells]
         mean_ntc_ct = default_ct_if_nan(get_mean_ct(qpcr_datas))
@@ -105,7 +109,8 @@ def _get_max_conc_template_from_wells(template_only_wells):
     max_conc_wells = {}
     concentration_values = [*id_concs.values(),*pa_concs.values()]
     if concentration_values:
-        if any([check_human_prescence(wc) for w,wc in pa_concs.items()]):
+        if any([check_human_prescence(template_only_wells[w]) for w,
+                                                                wc in pa_concs.items()]):
             wells_filtered_by_low_human = get_wells_by_lowest_human(
                 template_only_wells)
             max_conc_wells = \
@@ -134,19 +139,15 @@ def get_wells_by_lowest_human(template_only_wells):
     :param pa_concs:
     :return:
     """
-    id_concs = dict((w, _get_item_attribute('human',
-                                            'concentration', wc))
-                    for w, wc in template_only_wells.items())
-    pa_concs = dict((w, _get_item_attribute('transferred_human',
+
+    pa_concs = dict((w, _get_item_attribute('transferred_humans',
                                             'concentration', wc))
                     for w, wc in template_only_wells.items())
 
     min_conc_wells = {}
-    min_conc = min(*id_concs.values(), *pa_concs.values())
+    conc_list = list(pa_concs.values())
+    min_conc = min(conc_list)
     for w, c in template_only_wells.items():
-        if w in id_concs:
-            if id_concs[w] == min_conc:
-                min_conc_wells[w] = c
         if w in pa_concs:
             if pa_concs[w] == min_conc:
                 min_conc_wells[w] = c
